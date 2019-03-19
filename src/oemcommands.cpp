@@ -17,7 +17,9 @@
 
 #include "xyz/openbmc_project/Common/error.hpp"
 #include <ipmid/api.h>
-
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <array>
 #include <commandutils.hpp>
 #include <cstring>
@@ -37,12 +39,111 @@ static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 
+static constexpr size_t GUID_SIZE = 16;
+// TODO Make offset and location runtime configurable to ensure we
+// can make each define their own locations.
+static constexpr off_t OFFSET_SYS_GUID = 0x17F0;
+static constexpr off_t OFFSET_DEV_GUID = 0x1800;
+static constexpr char *FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
+
 ipmi_ret_t plat_udbg_get_post_desc(uint8_t, uint8_t *, uint8_t, uint8_t *,
                                    uint8_t *, uint8_t *);
 ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
+
+void printGUID(char *guid)
+{
+    for (int i = 0; i < GUID_SIZE; i++)
+    {
+        std::cout << guid[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+int getGUID(off_t offset, char *guid)
+{
+    int fd = -1;
+    ssize_t bytes_rd;
+    int ret = 0;
+
+    errno = 0;
+
+    // Check if file is present
+    if (access(FRU_EEPROM, F_OK) == -1)
+    {
+        std::cerr << "Unable to access: " << FRU_EEPROM << std::endl;
+        return errno;
+    }
+
+    // Open the file
+    fd = open(FRU_EEPROM, O_RDONLY);
+    if (fd == -1)
+    {
+        std::cerr << "Unable to open: " << FRU_EEPROM << std::endl;
+        return errno;
+    }
+
+    // seek to the offset
+    lseek(fd, offset, SEEK_SET);
+
+    // Read bytes from location
+    bytes_rd = read(fd, guid, GUID_SIZE);
+    if (bytes_rd != GUID_SIZE)
+    {
+        std::cerr << "Read: " << bytes_rd << " instead of " << GUID_SIZE
+                  << std::endl;
+        ret = errno;
+    }
+    close(fd);
+    if (ret == 0)
+    {
+        std::cout << "Got GUID from offset : " << offset << " : ";
+        printGUID(guid);
+    }
+    return ret;
+}
+
+int getSystemGUID(char *guid)
+{
+    return getGUID(OFFSET_SYS_GUID, guid);
+}
+
+int getDeviceGUID(char *guid)
+{
+    return getGUID(OFFSET_DEV_GUID, guid);
+}
+
+//----------------------------------------------------------------------
+// Get System GUID
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiGetSystemGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                             ipmi_request_t request, ipmi_response_t response,
+                             ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    if (getSystemGUID((char *)response))
+    {
+        return IPMI_CC_UNSPECIFIED_ERROR;
+    }
+    *data_len = GUID_SIZE;
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Get Device GUID
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiGetDeviceGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                             ipmi_request_t request, ipmi_response_t response,
+                             ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    if (getDeviceGUID((char *)response))
+    {
+        return IPMI_CC_UNSPECIFIED_ERROR;
+    }
+    *data_len = GUID_SIZE;
+    return IPMI_CC_OK;
+}
 
 // return code: 0 successful
 int8_t getFruData(std::string &data, std::string &name)
@@ -556,6 +657,10 @@ static void registerOEMFunctions(void)
                          PRIVILEGE_USER); // Set PPR
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_PPR, NULL, ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
+    ipmiPrintAndRegister(NETFUN_APP, 0x8, NULL, ipmiGetDeviceGUID,
+                         PRIVILEGE_USER); // get device GUID
+    ipmiPrintAndRegister(NETFUN_APP, 0x37, NULL, ipmiGetSystemGUID,
+                         PRIVILEGE_USER); // get system GUID
     return;
 }
 
