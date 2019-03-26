@@ -20,7 +20,7 @@
 #include <boost/container/flat_map.hpp>
 #include <commandutils.hpp>
 #include <iostream>
-#include <phosphor-ipmi-host/utils.hpp>
+#include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/timer.hpp>

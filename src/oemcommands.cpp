@@ -23,7 +23,7 @@
 #include <cstring>
 #include <iostream>
 #include <oemcommands.hpp>
-#include <phosphor-ipmi-host/utils.hpp>
+#include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
 #include <string>
@@ -43,6 +43,92 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
+namespace variant_ns = sdbusplus::message::variant_ns;
+
+enum class LanParam : uint8_t
+{
+    INPROGRESS = 0,
+    AUTHSUPPORT = 1,
+    AUTHENABLES = 2,
+    IP = 3,
+    IPSRC = 4,
+    MAC = 5,
+    SUBNET = 6,
+    GATEWAY = 12,
+    VLAN = 20,
+    CIPHER_SUITE_COUNT = 22,
+    CIPHER_SUITE_ENTRIES = 23,
+    IPV6 = 59,
+};
+
+ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
+{
+    ipmi_ret_t rc = IPMI_CC_OK;
+    sdbusplus::bus::bus bus(ipmid_get_sd_bus_connection());
+
+    const std::string ethdevice = "eth0";
+
+    switch (static_cast<LanParam>(lan_param))
+    {
+        case LanParam::IP:
+        {
+            auto ethIP = ethdevice + "/" + ipmi::network::IP_TYPE;
+            std::string ipaddress;
+            auto ipObjectInfo = ipmi::getIPObject(
+                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT, ethIP);
+
+            auto properties = ipmi::getAllDbusProperties(
+                bus, ipObjectInfo.second, ipObjectInfo.first,
+                ipmi::network::IP_INTERFACE);
+
+            ipaddress = variant_ns::get<std::string>(properties["Address"]);
+
+            std::strcpy(data, ipaddress.c_str());
+        }
+        break;
+
+        case LanParam::IPV6:
+        {
+            auto ethIP = ethdevice + "/ipv6";
+            std::string ipaddress;
+            auto ipObjectInfo = ipmi::getIPObject(
+                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT, ethIP);
+
+            auto properties = ipmi::getAllDbusProperties(
+                bus, ipObjectInfo.second, ipObjectInfo.first,
+                ipmi::network::IP_INTERFACE);
+
+            ipaddress = variant_ns::get<std::string>(properties["Address"]);
+
+            std::strcpy(data, ipaddress.c_str());
+        }
+        break;
+
+        case LanParam::MAC:
+        {
+            std::string macAddress;
+            auto macObjectInfo =
+                ipmi::getDbusObject(bus, ipmi::network::MAC_INTERFACE,
+                                    ipmi::network::ROOT, ethdevice);
+
+            auto variant = ipmi::getDbusProperty(
+                bus, macObjectInfo.second, macObjectInfo.first,
+                ipmi::network::MAC_INTERFACE, "MACAddress");
+
+            macAddress = variant_ns::get<std::string>(variant);
+
+            sscanf(macAddress.c_str(), ipmi::network::MAC_ADDRESS_FORMAT,
+                   (data), (data + 1), (data + 2), (data + 3), (data + 4),
+                   (data + 5));
+            std::strcpy(data, macAddress.c_str());
+        }
+        break;
+
+        default:
+            rc = IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+    return rc;
+}
 
 // return code: 0 successful
 int8_t getFruData(std::string &data, std::string &name)
