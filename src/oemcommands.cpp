@@ -595,6 +595,20 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
+//----------------------------------------------------------------------
+// Set System GUID (CMD_OEM_SET_SYSTEM_GUID)
+// TODO: This needs updation
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOEMSetSystemGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                ipmi_request_t request,
+                                ipmi_response_t response,
+                                ipmi_data_len_t data_len,
+                                ipmi_context_t context)
+{
+    *data_len = 0;
+    return IPMI_CC_OK;
+}
+
 static void registerOEMFunctions(void)
 {
     phosphor::logging::log<phosphor::logging::level::INFO>(
@@ -642,6 +656,9 @@ static void registerOEMFunctions(void)
                          PRIVILEGE_USER); // Set PPR
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_PPR, NULL, ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
+    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_SYSTEM_GUID, NULL,
+                         ipmiOEMSetSystemGUID,
+                         PRIVILEGE_USER); // Set System GUID
     return;
 }
 
