@@ -20,8 +20,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <nlohmann/json.hpp>
 #include <commandutils.hpp>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <appcommands.hpp>
@@ -36,7 +40,11 @@ static constexpr size_t GUID_SIZE = 16;
 static constexpr off_t OFFSET_SYS_GUID = 0x17F0;
 static constexpr off_t OFFSET_DEV_GUID = 0x1800;
 static constexpr const char *FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
+
+// TODO: Need to store this info after identifying proper storage
 static uint8_t globEna = 0x09;
+static SysInfoParam sysInfoParams;
+nlohmann::json appData;
 
 void printGUID(uint8_t *guid, off_t offset)
 {
@@ -102,6 +110,50 @@ int getDeviceGUID(uint8_t *guid)
 }
 
 //----------------------------------------------------------------------
+// Get Self Test Results (IPMI/Section 20.4) (CMD_APP_GET_SELFTEST_RESULTS)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiAppGetSTResults(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                               ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+
+    // TODO: Following data needs to be updated based on self-test results
+    *res++ = 0x55; // Self-Test result
+    *res++ = 0x00; // Extra error info in case of failure
+
+    *data_len = 2;
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Manufacturing Test On (IPMI/Section 20.5) (CMD_APP_MFR_TEST_ON)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                            ipmi_request_t request, ipmi_response_t response,
+                            ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    std::string mfrTest = "sled-cycle";
+
+    if (!memcmp(req, mfrTest.data(), mfrTest.length()) &&
+        (*data_len == mfrTest.length()))
+    {
+        /* sled-cycle the BMC */
+        system("/usr/sbin/power-util mb sled-cycle");
+    }
+    else
+    {
+        return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+    }
+
+    *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
 // Get Device GUID (CMD_APP_GET_DEV_GUID)
 //----------------------------------------------------------------------
 ipmi_ret_t ipmiAppGetDevGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
@@ -154,6 +206,21 @@ ipmi_ret_t ipmiAppGetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 }
 
 //----------------------------------------------------------------------
+// Clear Message flags (IPMI/Section 22.3) (CMD_APP_CLEAR_MESSAGE_FLAGS)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiAppClearMsgFlags(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                ipmi_request_t request,
+                                ipmi_response_t response,
+                                ipmi_data_len_t data_len,
+                                ipmi_context_t context)
+{
+    // Do Nothing and just return success
+    *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
 // Get System GUID (CMD_APP_GET_SYS_GUID)
 //----------------------------------------------------------------------
 ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
@@ -169,21 +236,237 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
+//----------------------------------------------------------------------
+// Platform specific functions for storing app data
+//----------------------------------------------------------------------
+
+void flush_app_data()
+{
+    std::ofstream file(JSON_DATA_FILE);
+    file << appData;
+    return;
+}
+
+static void platSetSysFWVer(uint8_t *ver)
+{
+    std::stringstream ss;
+    int i;
+
+    ss << std::hex;
+
+    for (i = 0; i < SIZE_SYSFW_VER; i++)
+    {
+        ss << std::setw(2) << std::setfill('0') << (int)ver[i];
+    }
+
+    appData[KEY_SYSFW_VER] = ss.str();
+    flush_app_data();
+    return;
+}
+
+static void platGetSysFWVer(uint8_t *ver)
+{
+    std::string str = appData[KEY_SYSFW_VER].get<std::string>();
+    std::string sstr;
+    uint8_t byte;
+    int i;
+
+    for (i = 0; i < (str.length()) / 2; i++)
+    {
+        sstr = str.substr(i * 2, 2);
+        byte = (uint8_t)std::strtol(sstr.c_str(), NULL, 16);
+        ver[i] = byte;
+    }
+
+    return;
+}
+
+//----------------------------------------------------------------------
+// Set Sys Info Params (IPMI/Sec 22.14a) (CMD_APP_SET_SYS_INFO_PARAMS)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                   ipmi_request_t request,
+                                   ipmi_response_t response,
+                                   ipmi_data_len_t data_len,
+                                   ipmi_context_t context)
+{
+    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+
+    uint8_t param = req[0];
+    uint8_t req_len = *data_len;
+
+    *data_len = 0;
+
+    switch (param)
+    {
+        case SYS_INFO_PARAM_SET_IN_PROG:
+            sysInfoParams.set_in_prog = req[1];
+            break;
+        case SYS_INFO_PARAM_SYSFW_VER:
+            memcpy(sysInfoParams.sysfw_ver, &req[1], SIZE_SYSFW_VER);
+            platSetSysFWVer(sysInfoParams.sysfw_ver);
+            break;
+        case SYS_INFO_PARAM_SYS_NAME:
+            memcpy(sysInfoParams.sys_name, &req[1], SIZE_SYS_NAME);
+            break;
+        case SYS_INFO_PARAM_PRI_OS_NAME:
+            memcpy(sysInfoParams.pri_os_name, &req[1], SIZE_OS_NAME);
+            break;
+        case SYS_INFO_PARAM_PRESENT_OS_NAME:
+            memcpy(sysInfoParams.present_os_name, &req[1], SIZE_OS_NAME);
+            break;
+        case SYS_INFO_PARAM_PRESENT_OS_VER:
+            memcpy(sysInfoParams.present_os_ver, &req[1], SIZE_OS_VER);
+            break;
+        case SYS_INFO_PARAM_BMC_URL:
+            memcpy(sysInfoParams.bmc_url, &req[1], SIZE_BMC_URL);
+            break;
+        case SYS_INFO_PARAM_OS_HV_URL:
+            memcpy(sysInfoParams.os_hv_url, &req[1], SIZE_OS_HV_URL);
+            break;
+        case SYS_INFO_PARAM_BIOS_CURRENT_BOOT_LIST:
+            memcpy(sysInfoParams.bios_current_boot_list, &req[1], req_len);
+            appData[KEY_BIOS_BOOT_LEN] = req_len;
+            flush_app_data();
+            break;
+        case SYS_INFO_PARAM_BIOS_FIXED_BOOT_DEVICE:
+            if (SIZE_BIOS_FIXED_BOOT_DEVICE != req_len)
+                break;
+            memcpy(sysInfoParams.bios_fixed_boot_device, &req[1],
+                   SIZE_BIOS_FIXED_BOOT_DEVICE);
+            break;
+        case SYS_INFO_PARAM_BIOS_RSTR_DFLT_SETTING:
+            if (SIZE_BIOS_RSTR_DFLT_SETTING != req_len)
+                break;
+            memcpy(sysInfoParams.bios_rstr_dflt_setting, &req[1],
+                   SIZE_BIOS_RSTR_DFLT_SETTING);
+            break;
+        case SYS_INFO_PARAM_LAST_BOOT_TIME:
+            if (SIZE_LAST_BOOT_TIME != req_len)
+                break;
+            memcpy(sysInfoParams.last_boot_time, &req[1], SIZE_LAST_BOOT_TIME);
+            break;
+        default:
+            return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+            break;
+    }
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Get Sys Info Params (IPMI/Sec 22.14b) (CMD_APP_GET_SYS_INFO_PARAMS)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiAppGetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                   ipmi_request_t request,
+                                   ipmi_response_t response,
+                                   ipmi_data_len_t data_len,
+                                   ipmi_context_t context)
+{
+    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+
+    uint8_t param = req[1];
+    uint8_t boot_len;
+
+    *res++ = 1; // Parameter revision
+    *data_len = 1;
+
+    switch (param)
+    {
+        case SYS_INFO_PARAM_SET_IN_PROG:
+            *res++ = sysInfoParams.set_in_prog;
+            *data_len += 1;
+            break;
+        case SYS_INFO_PARAM_SYSFW_VER:
+            platGetSysFWVer(sysInfoParams.sysfw_ver);
+            memcpy(res, sysInfoParams.sysfw_ver, SIZE_SYSFW_VER);
+            *data_len += SIZE_SYSFW_VER;
+            break;
+        case SYS_INFO_PARAM_SYS_NAME:
+            memcpy(res, sysInfoParams.sys_name, SIZE_SYS_NAME);
+            *data_len += SIZE_SYS_NAME;
+            break;
+        case SYS_INFO_PARAM_PRI_OS_NAME:
+            memcpy(res, sysInfoParams.pri_os_name, SIZE_OS_NAME);
+            *data_len += SIZE_OS_NAME;
+            break;
+        case SYS_INFO_PARAM_PRESENT_OS_NAME:
+            memcpy(res, sysInfoParams.present_os_name, SIZE_OS_NAME);
+            *data_len += SIZE_OS_NAME;
+            break;
+        case SYS_INFO_PARAM_PRESENT_OS_VER:
+            memcpy(res, sysInfoParams.present_os_ver, SIZE_OS_VER);
+            *data_len += SIZE_OS_VER;
+            break;
+        case SYS_INFO_PARAM_BMC_URL:
+            memcpy(res, sysInfoParams.bmc_url, SIZE_BMC_URL);
+            *data_len += SIZE_BMC_URL;
+            break;
+        case SYS_INFO_PARAM_OS_HV_URL:
+            memcpy(res, sysInfoParams.os_hv_url, SIZE_OS_HV_URL);
+            *data_len += SIZE_OS_HV_URL;
+            break;
+        case SYS_INFO_PARAM_BIOS_CURRENT_BOOT_LIST:
+            boot_len = appData[KEY_BIOS_BOOT_LEN].get<uint8_t>();
+            memcpy(res, sysInfoParams.bios_current_boot_list, boot_len);
+            *data_len += boot_len;
+            break;
+        case SYS_INFO_PARAM_BIOS_FIXED_BOOT_DEVICE:
+            memcpy(res, sysInfoParams.bios_fixed_boot_device,
+                   SIZE_BIOS_FIXED_BOOT_DEVICE);
+            *data_len += SIZE_BIOS_FIXED_BOOT_DEVICE;
+            break;
+        case SYS_INFO_PARAM_BIOS_RSTR_DFLT_SETTING:
+            memcpy(res, sysInfoParams.bios_rstr_dflt_setting,
+                   SIZE_BIOS_RSTR_DFLT_SETTING);
+            *data_len += SIZE_BIOS_RSTR_DFLT_SETTING;
+            break;
+        case SYS_INFO_PARAM_LAST_BOOT_TIME:
+            memcpy(res, sysInfoParams.last_boot_time, SIZE_LAST_BOOT_TIME);
+            *data_len += SIZE_LAST_BOOT_TIME;
+            break;
+        default:
+            return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+            break;
+    }
+    return IPMI_CC_OK;
+}
+
 void registerAPPFunctions()
 {
+    /* Get App data stored in json file */
+    std::ifstream file(JSON_DATA_FILE);
+    if (file)
+        file >> appData;
+
+    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SELFTEST_RESULTS, NULL,
+                         ipmiAppGetSTResults,
+                         PRIVILEGE_USER); // Get Self Test Results
+    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_MFR_TEST_ON, NULL,
+                         ipmiAppMfrTestOn,
+                         PRIVILEGE_USER); // Manufacturing Test On
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_DEV_GUID, NULL,
                          ipmiAppGetDevGUID,
                          PRIVILEGE_USER); // Get Device GUID
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_SET_GLOBAL_ENABLES, NULL,
                          ipmiAppSetGlobalEnables,
-                         PRIVILEGE_USER); // Get Global Enables
+                         PRIVILEGE_USER); // Set Global Enables
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_GLOBAL_ENABLES, NULL,
                          ipmiAppGetGlobalEnables,
                          PRIVILEGE_USER); // Get Global Enables
+    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_CLEAR_MESSAGE_FLAGS, NULL,
+                         ipmiAppClearMsgFlags,
+                         PRIVILEGE_USER); // Clear Message flags
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SYS_GUID, NULL,
                          ipmiAppGetSysGUID,
                          PRIVILEGE_USER); // Get System GUID
-
+    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_SET_SYS_INFO_PARAMS, NULL,
+                         ipmiAppSetSysInfoParams,
+                         PRIVILEGE_USER); // Set Sys Info Params
+    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SYS_INFO_PARAMS, NULL,
+                         ipmiAppGetSysInfoParams,
+                         PRIVILEGE_USER); // Get Sys Info Params
     return;
 }
 
