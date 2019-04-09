@@ -18,10 +18,14 @@
 #include "xyz/openbmc_project/Common/error.hpp"
 #include <ipmid/api.h>
 
+#include <nlohmann/json.hpp>
 #include <array>
 #include <commandutils.hpp>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 #include <oemcommands.hpp>
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
@@ -44,6 +48,7 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
 namespace variant_ns = sdbusplus::message::variant_ns;
+nlohmann::json oemData;
 
 enum class LanParam : uint8_t
 {
@@ -60,6 +65,44 @@ enum class LanParam : uint8_t
     CIPHER_SUITE_ENTRIES = 23,
     IPV6 = 59,
 };
+
+//----------------------------------------------------------------------
+// Helper functions for storing oem data
+//----------------------------------------------------------------------
+
+void flushOemData()
+{
+    std::ofstream file(JSON_OEM_DATA_FILE);
+    file << oemData;
+    return;
+}
+
+std::string bytesToStr(uint8_t *byte, int len)
+{
+    std::stringstream ss;
+    int i;
+
+    ss << std::hex;
+    for (i = 0; i < len; i++)
+    {
+        ss << std::setw(2) << std::setfill('0') << (int)byte[i];
+    }
+
+    return ss.str();
+}
+
+int strToBytes(std::string &str, uint8_t *data)
+{
+    std::string sstr;
+    int i;
+
+    for (i = 0; i < (str.length()) / 2; i++)
+    {
+        sstr = str.substr(i * 2, 2);
+        data[i] = (uint8_t)std::strtol(sstr.c_str(), NULL, 16);
+    }
+    return i;
+}
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
 {
@@ -461,7 +504,6 @@ ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return ret;
 }
 
-// Todo: Need to implement all below functions for oem commands
 //----------------------------------------------------------------------
 // Set Dimm Info (CMD_OEM_SET_DIMM_INFO)
 //----------------------------------------------------------------------
@@ -470,11 +512,70 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                               ipmi_data_len_t data_len, ipmi_context_t context)
 {
     uint8_t *req = reinterpret_cast<uint8_t *>(request);
+
+    uint8_t index = req[0];
+    uint8_t type = req[1];
+    uint16_t speed;
+    uint32_t size;
+
+    memcpy(&speed, &req[2], 2);
+    memcpy(&size, &req[4], 4);
+
+    std::stringstream ss;
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)index;
+
+    oemData[KEY_SYS_CONFIG][ss.str()][KEY_DIMM_INDEX] = index;
+    oemData[KEY_SYS_CONFIG][ss.str()][KEY_DIMM_TYPE] = type;
+    oemData[KEY_SYS_CONFIG][ss.str()][KEY_DIMM_SPEED] = speed;
+    oemData[KEY_SYS_CONFIG][ss.str()][KEY_DIMM_SIZE] = size;
+
+    flushOemData();
+
+    *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Get Board ID (CMD_OEM_GET_BOARD_ID)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                             ipmi_request_t request, ipmi_response_t response,
+                             ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    uint8_t *req = reinterpret_cast<uint8_t *>(request);
     uint8_t *res = reinterpret_cast<uint8_t *>(response);
 
-    std::memcpy(res, req, SIZE_IANA_ID + 1); // IANA ID
-    *data_len = SIZE_IANA_ID + 1;
+    /* TODO: Needs to implement this after GPIO implementation */
     *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Set Boot Order (CMD_OEM_SET_BOOT_ORDER)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemSetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                               ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t len = *data_len;
+    std::string str;
+
+    *data_len = 0;
+
+    if (len != SIZE_BOOT_ORDER)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Boot order length received");
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+    }
+
+    str = bytesToStr(req, len);
+    oemData[KEY_BOOT_ORDER] = str.c_str();
+    flushOemData();
 
     return IPMI_CC_OK;
 }
@@ -486,16 +587,10 @@ ipmi_ret_t ipmiOemGetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
     uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    std::string str = oemData[KEY_BOOT_ORDER].get<std::string>();
 
-    *res++ = 0x01;
-    *res++ = 0x00;
-    *res++ = 0x09;
-    *res++ = 0x02;
-    *res++ = 0x03;
-    *res++ = 0xff;
-    *data_len = 6;
+    *data_len = strToBytes(str, res);
 
     return IPMI_CC_OK;
 }
@@ -510,9 +605,21 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                     ipmi_context_t context)
 {
     uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t len = *data_len;
+    std::string str;
 
     *data_len = 0;
+
+    if (len < sizeof(machineConfigInfo_t))
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid machine configuration length received");
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+    }
+
+    str = bytesToStr(req, sizeof(machineConfigInfo_t));
+    oemData[KEY_MC_CONFIG] = str.c_str();
+    flushOemData();
 
     return IPMI_CC_OK;
 }
@@ -524,11 +631,9 @@ ipmi_ret_t ipmiOemSetPostStart(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
-
     phosphor::logging::log<phosphor::logging::level::INFO>("POST Start Event");
 
+    /* Do nothing, return success */
     *data_len = 0;
     return IPMI_CC_OK;
 }
@@ -540,11 +645,57 @@ ipmi_ret_t ipmiOemSetPostEnd(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                              ipmi_request_t request, ipmi_response_t response,
                              ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    struct timespec ts;
 
     phosphor::logging::log<phosphor::logging::level::INFO>("POST End Event");
 
+    *data_len = 0;
+
+    // Timestamp post end time.
+    clock_gettime(CLOCK_REALTIME, &ts);
+    oemData[KEY_TS_SLED] = ts.tv_sec;
+    flushOemData();
+
+    // Sync time with system
+    // TODO: Add code for syncing time
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Set PPIN Info (CMD_OEM_SET_PPIN_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemSetPPINInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                              ipmi_request_t request, ipmi_response_t response,
+                              ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    std::string ppinStr;
+    int len;
+
+    if (*data_len > SIZE_CPU_PPIN * 2)
+        len = SIZE_CPU_PPIN * 2;
+    else
+        len = *data_len;
+    *data_len = 0;
+
+    ppinStr = bytesToStr(req, len);
+    oemData[KEY_PPIN_INFO] = ppinStr.c_str();
+    flushOemData();
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Set ADR Trigger (CMD_OEM_SET_ADR_TRIGGER)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                ipmi_request_t request,
+                                ipmi_response_t response,
+                                ipmi_data_len_t data_len,
+                                ipmi_context_t context)
+{
+    /* Do nothing, return success */
     *data_len = 0;
     return IPMI_CC_OK;
 }
@@ -558,9 +709,7 @@ ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                    ipmi_data_len_t data_len,
                                    ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
-
+    /* Do nothing, return success */
     *data_len = 0;
     return IPMI_CC_OK;
 }
@@ -573,9 +722,85 @@ ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                          ipmi_data_len_t data_len, ipmi_context_t context)
 {
     uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t pprCnt, pprAct, pprIndex;
+    uint8_t selParam = req[0];
+    uint8_t len = *data_len;
+    std::stringstream ss;
+    std::string str;
 
     *data_len = 0;
+
+    switch (selParam)
+    {
+        case PPR_ACTION:
+            if (oemData[KEY_PPR].find(KEY_PPR_ROW_COUNT) ==
+                oemData[KEY_PPR].end())
+                return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+            pprCnt = oemData[KEY_PPR][KEY_PPR_ROW_COUNT];
+            if (pprCnt == 0)
+                return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+            pprAct = req[1];
+            /* Check if ppr is enabled or disabled */
+            if (!(pprAct & 0x80))
+                pprAct = 0;
+
+            oemData[KEY_PPR][KEY_PPR_ACTION] = pprAct;
+            break;
+        case PPR_ROW_COUNT:
+            if (req[1] > 100)
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            oemData[KEY_PPR][KEY_PPR_ROW_COUNT] = req[1];
+            break;
+        case PPR_ROW_ADDR:
+            pprIndex = req[1];
+            if (pprIndex > 100)
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            if (len < PPR_ROW_ADDR_LEN + 1)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Invalid PPR Row Address length received");
+                return IPMI_CC_REQ_DATA_LEN_INVALID;
+            }
+
+            ss << std::hex;
+            ss << std::setw(2) << std::setfill('0') << (int)pprIndex;
+
+            oemData[KEY_PPR][ss.str()][KEY_PPR_INDEX] = pprIndex;
+
+            str = bytesToStr(&req[1], PPR_ROW_ADDR_LEN);
+            oemData[KEY_PPR][ss.str()][KEY_PPR_ROW_ADDR] = str.c_str();
+            break;
+        case PPR_HISTORY_DATA:
+            pprIndex = req[1];
+            if (pprIndex > 100)
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            if (len < PPR_HST_DATA_LEN + 1)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Invalid PPR history data length received");
+                return IPMI_CC_REQ_DATA_LEN_INVALID;
+            }
+
+            ss << std::hex;
+            ss << std::setw(2) << std::setfill('0') << (int)pprIndex;
+
+            oemData[KEY_PPR][ss.str()][KEY_PPR_INDEX] = pprIndex;
+
+            str = bytesToStr(&req[1], PPR_HST_DATA_LEN);
+            oemData[KEY_PPR][ss.str()][KEY_PPR_HST_DATA] = str.c_str();
+            break;
+        default:
+            return IPMI_CC_PARM_OUT_OF_RANGE;
+            break;
+    }
+
+    flushOemData();
+
     return IPMI_CC_OK;
 }
 
@@ -588,15 +813,339 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 {
     uint8_t *req = reinterpret_cast<uint8_t *>(request);
     uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t pprCnt, pprIndex;
+    uint8_t selParam = req[0];
+    std::stringstream ss;
+    std::string str;
 
-    res[0] = 0x00;
-    *data_len = 1;
+    /* Any failure will return zero length data */
+    *data_len = 0;
+
+    switch (selParam)
+    {
+        case PPR_ACTION:
+            res[0] = 0;
+            *data_len = 1;
+
+            if (oemData[KEY_PPR].find(KEY_PPR_ROW_COUNT) !=
+                oemData[KEY_PPR].end())
+            {
+                pprCnt = oemData[KEY_PPR][KEY_PPR_ROW_COUNT];
+                if (pprCnt != 0)
+                {
+                    if (oemData[KEY_PPR].find(KEY_PPR_ACTION) !=
+                        oemData[KEY_PPR].end())
+                    {
+                        res[0] = oemData[KEY_PPR][KEY_PPR_ACTION];
+                    }
+                }
+            }
+            break;
+        case PPR_ROW_COUNT:
+            res[0] = 0;
+            *data_len = 1;
+            if (oemData[KEY_PPR].find(KEY_PPR_ROW_COUNT) !=
+                oemData[KEY_PPR].end())
+                res[0] = oemData[KEY_PPR][KEY_PPR_ROW_COUNT];
+            break;
+        case PPR_ROW_ADDR:
+            pprIndex = req[1];
+            if (pprIndex > 100)
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            ss << std::hex;
+            ss << std::setw(2) << std::setfill('0') << (int)pprIndex;
+
+            if (oemData[KEY_PPR].find(ss.str()) == oemData[KEY_PPR].end())
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            if (oemData[KEY_PPR][ss.str()].find(KEY_PPR_ROW_ADDR) ==
+                oemData[KEY_PPR][ss.str()].end())
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            str = oemData[KEY_PPR][ss.str()][KEY_PPR_ROW_ADDR];
+            *data_len = strToBytes(str, res);
+            break;
+        case PPR_HISTORY_DATA:
+            pprIndex = req[1];
+            if (pprIndex > 100)
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            ss << std::hex;
+            ss << std::setw(2) << std::setfill('0') << (int)pprIndex;
+
+            if (oemData[KEY_PPR].find(ss.str()) == oemData[KEY_PPR].end())
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            if (oemData[KEY_PPR][ss.str()].find(KEY_PPR_HST_DATA) ==
+                oemData[KEY_PPR][ss.str()].end())
+                return IPMI_CC_PARM_OUT_OF_RANGE;
+
+            str = oemData[KEY_PPR][ss.str()][KEY_PPR_HST_DATA];
+            *data_len = strToBytes(str, res);
+            break;
+        default:
+            return IPMI_CC_PARM_OUT_OF_RANGE;
+            break;
+    }
+
+    return IPMI_CC_OK;
+}
+
+/* FB OEM QC Commands */
+
+//----------------------------------------------------------------------
+// Set Proc Info (CMD_OEM_Q_SET_PROC_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                               ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    qProcInfo_t *req = reinterpret_cast<qProcInfo_t *>(request);
+    uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t *);
+    std::stringstream ss;
+    std::string str;
+    uint8_t len = *data_len;
+
+    *data_len = 0;
+
+    /* check for requested data params */
+    if (len < 5 || req->paramSel < 1 || req->paramSel >= numParam)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid parameter received");
+        return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    len = len - 5; // Get Actual data length
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->procIndex;
+    oemData[KEY_Q_PROC_INFO][ss.str()][KEY_PROC_INDEX] = req->procIndex;
+
+    str = bytesToStr(req->data, len);
+    oemData[KEY_Q_PROC_INFO][ss.str()][cpuInfoKey[req->paramSel]] = str.c_str();
+    flushOemData();
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Get Proc Info (CMD_OEM_Q_GET_PROC_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                               ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    qProcInfo_t *req = reinterpret_cast<qProcInfo_t *>(request);
+    uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t *);
+    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    std::stringstream ss;
+    std::string str;
+
+    *data_len = 0;
+
+    /* check for requested data params */
+    if (req->paramSel < 1 || req->paramSel >= numParam)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid parameter received");
+        return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->procIndex;
+
+    if (oemData[KEY_Q_PROC_INFO].find(ss.str()) ==
+        oemData[KEY_Q_PROC_INFO].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    if (oemData[KEY_Q_PROC_INFO][ss.str()].find(cpuInfoKey[req->paramSel]) ==
+        oemData[KEY_Q_PROC_INFO][ss.str()].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    str = oemData[KEY_Q_PROC_INFO][ss.str()][cpuInfoKey[req->paramSel]];
+    *data_len = strToBytes(str, res);
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Set Dimm Info (CMD_OEM_Q_SET_DIMM_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                               ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    qDimmInfo_t *req = reinterpret_cast<qDimmInfo_t *>(request);
+    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t *);
+    std::stringstream ss;
+    std::string str;
+    uint8_t len = *data_len;
+
+    *data_len = 0;
+
+    /* check for requested data params */
+    if (len < 5 || req->paramSel < 1 || req->paramSel >= numParam)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid parameter received");
+        return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    len = len - 5; // Get Actual data length
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->dimmIndex;
+    oemData[KEY_Q_DIMM_INFO][ss.str()][KEY_DIMM_INDEX] = req->dimmIndex;
+
+    str = bytesToStr(req->data, len);
+    oemData[KEY_Q_DIMM_INFO][ss.str()][dimmInfoKey[req->paramSel]] =
+        str.c_str();
+    flushOemData();
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Get Dimm Info (CMD_OEM_Q_GET_DIMM_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                               ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
+{
+    qDimmInfo_t *req = reinterpret_cast<qDimmInfo_t *>(request);
+    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t *);
+    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    std::stringstream ss;
+    std::string str;
+
+    *data_len = 0;
+
+    /* check for requested data params */
+    if (req->paramSel < 1 || req->paramSel >= numParam)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid parameter received");
+        return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->dimmIndex;
+
+    if (oemData[KEY_Q_DIMM_INFO].find(ss.str()) ==
+        oemData[KEY_Q_DIMM_INFO].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    if (oemData[KEY_Q_DIMM_INFO][ss.str()].find(dimmInfoKey[req->paramSel]) ==
+        oemData[KEY_Q_DIMM_INFO][ss.str()].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    str = oemData[KEY_Q_DIMM_INFO][ss.str()][dimmInfoKey[req->paramSel]];
+    *data_len = strToBytes(str, res);
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Set Drive Info (CMD_OEM_Q_SET_DRIVE_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                ipmi_request_t request,
+                                ipmi_response_t response,
+                                ipmi_data_len_t data_len,
+                                ipmi_context_t context)
+{
+    qDriveInfo_t *req = reinterpret_cast<qDriveInfo_t *>(request);
+    uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t *);
+    uint8_t ctrlType = req->hddCtrlType & 0x0f;
+    std::stringstream ss;
+    std::string str;
+    uint8_t len = *data_len;
+
+    *data_len = 0;
+
+    /* check for requested data params */
+    if (len < 6 || req->paramSel < 1 || req->paramSel >= numParam ||
+        ctrlType > 2)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid parameter received");
+        return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    len = len - 6; // Get Actual data length
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->hddIndex;
+    oemData[KEY_Q_DRIVE_INFO][KEY_HDD_CTRL_TYPE] = req->hddCtrlType;
+    oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()][KEY_HDD_INDEX] =
+        req->hddIndex;
+
+    str = bytesToStr(req->data, len);
+    oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()]
+           [driveInfoKey[req->paramSel]] = str.c_str();
+    flushOemData();
+
+    return IPMI_CC_OK;
+}
+
+//----------------------------------------------------------------------
+// Get Drive Info (CMD_OEM_Q_GET_DRIVE_INFO)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                ipmi_request_t request,
+                                ipmi_response_t response,
+                                ipmi_data_len_t data_len,
+                                ipmi_context_t context)
+{
+    qDriveInfo_t *req = reinterpret_cast<qDriveInfo_t *>(request);
+    uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t *);
+    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t ctrlType = req->hddCtrlType & 0x0f;
+    std::stringstream ss;
+    std::string str;
+
+    *data_len = 0;
+
+    /* check for requested data params */
+    if (req->paramSel < 1 || req->paramSel >= numParam || ctrlType > 2)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid parameter received");
+        return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    if (oemData[KEY_Q_DRIVE_INFO].find(ctrlTypeKey[ctrlType]) ==
+        oemData[KEY_Q_DRIVE_INFO].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->hddIndex;
+
+    if (oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]].find(ss.str()) ==
+        oemData[KEY_Q_DRIVE_INFO].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    if (oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()].find(
+            dimmInfoKey[req->paramSel]) ==
+        oemData[KEY_Q_DRIVE_INFO][ss.str()].end())
+        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+
+    str = oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()]
+                 [dimmInfoKey[req->paramSel]];
+    *data_len = strToBytes(str, res);
 
     return IPMI_CC_OK;
 }
 
 static void registerOEMFunctions(void)
 {
+    /* Get OEM data from json file */
+    std::ifstream file(JSON_OEM_DATA_FILE);
+    if (file)
+        file >> oemData;
+
     phosphor::logging::log<phosphor::logging::level::INFO>(
         "Registering OEM commands");
     ipmiPrintAndRegister(NETFUN_CHASSIS, 1, NULL, ipmiGetChassisStatus,
@@ -623,6 +1172,12 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_DIMM_INFO, NULL,
                          ipmiOemSetDimmInfo,
                          PRIVILEGE_USER); // Set Dimm Info
+    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_BOARD_ID, NULL,
+                         ipmiOemGetBoardID,
+                         PRIVILEGE_USER); // Get Board ID
+    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_BOOT_ORDER, NULL,
+                         ipmiOemSetBootOrder,
+                         PRIVILEGE_USER); // Set Boot Order
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_BOOT_ORDER, NULL,
                          ipmiOemGetBootOrder,
                          PRIVILEGE_USER); // Get Boot Order
@@ -635,6 +1190,12 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_POST_END, NULL,
                          ipmiOemSetPostEnd,
                          PRIVILEGE_USER); // Set POST End
+    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_PPIN_INFO, NULL,
+                         ipmiOemSetPPINInfo,
+                         PRIVILEGE_USER); // Set PPIN Info
+    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_ADR_TRIGGER, NULL,
+                         ipmiOemSetAdrTrigger,
+                         PRIVILEGE_USER); // Set ADR Trigger
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_BIOS_FLASH_INFO, NULL,
                          ipmiOemSetBiosFlashInfo,
                          PRIVILEGE_USER); // Set Bios Flash Info
@@ -642,6 +1203,25 @@ static void registerOEMFunctions(void)
                          PRIVILEGE_USER); // Set PPR
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_PPR, NULL, ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
+    /* FB OEM QC Commands */
+    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_PROC_INFO, NULL,
+                         ipmiOemQSetProcInfo,
+                         PRIVILEGE_USER); // Set Proc Info
+    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_PROC_INFO, NULL,
+                         ipmiOemQGetProcInfo,
+                         PRIVILEGE_USER); // Get Proc Info
+    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DIMM_INFO, NULL,
+                         ipmiOemQSetDimmInfo,
+                         PRIVILEGE_USER); // Set Dimm Info
+    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DIMM_INFO, NULL,
+                         ipmiOemQGetDimmInfo,
+                         PRIVILEGE_USER); // Get Dimm Info
+    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DRIVE_INFO, NULL,
+                         ipmiOemQSetDriveInfo,
+                         PRIVILEGE_USER); // Set Drive Info
+    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DRIVE_INFO, NULL,
+                         ipmiOemQGetDriveInfo,
+                         PRIVILEGE_USER); // Get Drive Info
     return;
 }
 

@@ -77,3 +77,116 @@ enum fb_oem_cmds
     CMD_OEM_ADD_CPER_LOG = 0x70,
 
 };
+
+// OEM Command Codes for QC
+enum fb_oem_qc_cmds
+{
+    CMD_OEM_Q_SET_PROC_INFO = 0x10,
+    CMD_OEM_Q_GET_PROC_INFO = 0x11,
+    CMD_OEM_Q_SET_DIMM_INFO = 0x12,
+    CMD_OEM_Q_GET_DIMM_INFO = 0x13,
+    CMD_OEM_Q_SET_DRIVE_INFO = 0x14,
+    CMD_OEM_Q_GET_DRIVE_INFO = 0x15,
+};
+
+#define SIZE_CPU_PPIN 8
+#define SIZE_BOOT_ORDER 6
+
+#define JSON_OEM_DATA_FILE "/etc/oemData.json"
+#define KEY_PPIN_INFO "mb_cpu_ppin"
+#define KEY_MC_CONFIG "mb_machine_config"
+#define KEY_TS_SLED "timestamp_sled"
+#define KEY_BOOT_ORDER "server_boot_order"
+#define KEY_SYS_CONFIG "sys_config"
+#define KEY_DIMM_INDEX "dimm_index"
+#define KEY_DIMM_TYPE "dimm_type"
+#define KEY_DIMM_SPEED "dimm_speed"
+#define KEY_DIMM_SIZE "dimm_size"
+#define KEY_PPR "ppr"
+#define KEY_PPR_ACTION "ppr_row_action"
+#define KEY_PPR_ROW_COUNT "ppr_row_count"
+#define KEY_PPR_INDEX "ppr_index"
+#define KEY_PPR_ROW_ADDR "ppr_row_addr"
+#define KEY_PPR_HST_DATA "ppr_history_data"
+#define CC_PARAM_NOT_SUPP_IN_CURR_STATE 0xD5
+#define PPR_ROW_ADDR_LEN 8
+#define PPR_HST_DATA_LEN 17
+
+enum fb_ppr_sel
+{
+    PPR_ACTION = 1,
+    PPR_ROW_COUNT,
+    PPR_ROW_ADDR,
+    PPR_HISTORY_DATA,
+};
+
+typedef struct
+{
+    uint8_t chassis_type; // 00 - ORv1, 01 - ORv2 (FBTP)
+    uint8_t MB_type;      // 00 - SS, 01 - DS, 02 - Type3
+    uint8_t processor_count;
+    uint8_t memory_count;
+    uint8_t hdd35_count;         // 0/1 in FBTP, ff - unknown
+    uint8_t hdd25_count;         // 0 for FBTP
+    uint8_t riser_type;          // 00 - not installed, 01 - 2 slot, 02 - 3 slot
+    uint8_t pcie_card_loc;       // Bit0 - Slot1 Present/Absent, Bit1 - Slot 2
+                                 // Present/Absent etc.
+    uint8_t slot1_pciecard_type; // Always NIC for FBTP
+    uint8_t slot2_pciecard_type; // 2-4: 00 - Absent, 01 - AVA 2 x m.2, 02 - AVA
+                                 // 3x m.2,
+    uint8_t
+        slot3_pciecard_type; //      03 - AVA 4 x m.2, 04 - Re-timer, 05 - HBA
+    uint8_t slot4_pciecard_type; //      06 - Other flash cards (Intel, HGST),
+                                 //      80 - Unknown
+    uint8_t AEP_mem_count;
+} machineConfigInfo_t;
+
+/* FB OEM QC commands data structures */
+
+#define NETFUN_FB_OEM_QC 0x36
+
+#define KEY_Q_PROC_INFO "q_proc_info"
+#define KEY_PROC_INDEX "proc_index"
+#define KEY_Q_DIMM_INFO "q_dimm_info"
+#define KEY_DIMM_INDEX "dimm_index"
+#define KEY_Q_DRIVE_INFO "q_drive_info"
+#define KEY_HDD_CTRL_TYPE "hdd_ctrl_type"
+#define KEY_HDD_INDEX "hdd_index"
+
+typedef struct
+{
+    uint8_t mfrId[3];
+    uint8_t procIndex;
+    uint8_t paramSel;
+    uint8_t data[];
+} qProcInfo_t;
+
+typedef struct
+{
+    uint8_t mfrId[3];
+    uint8_t dimmIndex;
+    uint8_t paramSel;
+    uint8_t data[];
+} qDimmInfo_t;
+
+typedef struct
+{
+    uint8_t mfrId[3];
+    uint8_t hddCtrlType;
+    uint8_t hddIndex;
+    uint8_t paramSel;
+    uint8_t data[];
+} qDriveInfo_t;
+
+const char *cpuInfoKey[] = {"",     "product_name", "basic_info",
+                            "type", "micro_code",   "turbo_mode"};
+
+const char *dimmInfoKey[] = {
+    "",           "location",        "type",   "speed",      "part_name",
+    "serial_num", "manufacturer_id", "status", "present_bit"};
+
+const char *driveInfoKey[] = {"location",   "serial_num", "model_name",
+                              "fw_version", "capacity",   "quantity",
+                              "type",       "wwn"};
+
+const char *ctrlTypeKey[] = {"bios", "expander", "lsi"};
