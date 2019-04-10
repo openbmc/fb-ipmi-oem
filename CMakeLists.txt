@@ -68,7 +68,8 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library (zfboemcmds
              SHARED src/oemcommands.cpp src/appcommands.cpp
-             src/storagecommands.cpp src/usb-dbg.cpp)
+             src/storagecommands.cpp src/usb-dbg.cpp
+						 src/transportcommands.cpp)
 set_target_properties (zfboemcmds PROPERTIES VERSION "0.1.0")
 set_target_properties (zfboemcmds PROPERTIES SOVERSION "0")
 target_link_libraries (zfboemcmds sdbusplus)
