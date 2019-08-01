@@ -15,11 +15,14 @@
  * limitations under the License.
  */
 
-#include <ipmid/api.h>
+#include <ipmid/api.hpp>
 
 #include <boost/container/flat_map.hpp>
+#include <nlohmann/json.hpp>
 #include <commandutils.hpp>
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
@@ -27,6 +30,9 @@
 #include <sensorutils.hpp>
 #include <storagecommands.hpp>
 
+#define SEL_JSON_DATA_FILE "/etc/appSel.json"
+#define KEY_SEL_COUNT "SelCount"
+#define KEY_SEL_ENTRY_RAW "SelEntry"
 namespace ipmi
 {
 
@@ -74,6 +80,7 @@ std::unique_ptr<phosphor::Timer> cacheTimer = nullptr;
 boost::container::flat_map<uint8_t, std::pair<uint8_t, uint8_t>> deviceHashes;
 
 static sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection());
+static nlohmann::json appSelData;
 
 static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
                          SensorMap &sensorMap)
@@ -810,8 +817,79 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
+static void flushSelData()
+{
+    std::ofstream file("/etc/appSel.json");
+    file << appSelData;
+    return;
+}
+
+static void toHexStr(std::vector<uint8_t>& bytes,
+                     std::string& hexStr)
+{
+    std::stringstream stream;
+    stream << std::hex << std::uppercase << std::setfill('0');
+    for (const uint8_t byte : bytes)
+    {
+        stream << std::setw(2) << static_cast<int>(byte);
+    }
+    hexStr = stream.str();
+}
+
+ipmi::RspType<uint16_t> ipmiStorageAddSELEntry4(std::vector<uint8_t> data)
+{
+		//std::cout << "Vijay sel count: " << appSelData[KEY_SEL_COUNT] << "\n";
+    // Per the IPMI spec, need to cancel any reservation when a SEL entry is
+    // added
+    // cancelSELReservation();
+
+		std::string ipmiRaw;
+		toHexStr(data, ipmiRaw);
+
+    static const std::string openBMCMessageRegistryVersion("0.2");
+    std::string messageID =
+        "OpenBMC." + openBMCMessageRegistryVersion + ".SELEntryAdded";
+
+    std::vector<std::string> messageArgs;
+    messageArgs.push_back(ipmiRaw);
+
+    // Log the Redfish message to the journal with the appropriate metadata
+    std::string journalMsg = "BIOS SEL Entry Added: " + ipmiRaw;
+    //std::string messageArgsString = boost::algorithm::join(messageArgs, ",");
+    std::string messageArgsString = messageArgs[0];
+    phosphor::logging::log<phosphor::logging::level::INFO>(
+        journalMsg.c_str(),
+        phosphor::logging::entry("REDFISH_MESSAGE_ID=%s", messageID.c_str()),
+        phosphor::logging::entry("REDFISH_MESSAGE_ARGS=%s",
+                                 messageArgsString.c_str()));
+
+		std::cout << "Vijay sel count: " << appSelData[KEY_SEL_COUNT] << "\n";
+
+		int selCount = appSelData[KEY_SEL_COUNT];
+		appSelData[KEY_SEL_COUNT] = ++selCount;
+		std::cout << "Vijay sel count: " << selCount << "\n";
+
+		std::stringstream ss;
+		ss << std::hex;
+		ss << std::setw(2) << std::setfill('0') << selCount;
+		std::cout << "Vijay sel count: " << ss.str() << "\n";
+
+		appSelData[ss.str()][KEY_SEL_ENTRY_RAW] = ipmiRaw.c_str();
+		flushSelData();
+    uint16_t responseID = 0x1111;
+    return ipmi::responseSuccess(responseID);
+}
 void registerStorageFunctions()
 {
+    /* Get App data stored in json file */
+    std::ifstream file("/etc/appSel.json");
+    if (file)
+        file >> appSelData;
+
+		if (appSelData.find(KEY_SEL_COUNT) == appSelData.end())
+			appSelData[KEY_SEL_COUNT] = 0;
+		else
+			std::cout << "Vijay data exist: " << appSelData << "\n";
     // <READ FRU Data>
     ipmiPrintAndRegister(
         NETFUN_STORAGE,
@@ -835,6 +913,10 @@ void registerStorageFunctions()
         NETFUN_STORAGE,
         static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdGetSDR), nullptr,
         ipmiStorageGetSDR, PRIVILEGE_USER);
+    // <Add SEL Entry>
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnStorage,
+                          ipmi::storage::cmdAddSelEntry,
+                          ipmi::Privilege::Operator, ipmiStorageAddSELEntry4);
     return;
 }
 } // namespace storage
