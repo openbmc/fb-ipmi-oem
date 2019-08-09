@@ -301,6 +301,67 @@ static void parseOemSel(TsOemSELEntry *data, std::string &errStr)
     return;
 }
 
+static void parseOemUnifiedSel(NtsOemSELEntry *data, std::string &errStr)
+{
+    uint8_t *ptr = data->oemData;
+    int genInfo = ptr[0];
+    int errType = genInfo & 0x0f;
+    std::vector<std::string> dimmEvent = {
+        "Memory training failure", "Memory correctable error",
+        "Memory uncorrectable error", "Reserved"};
+
+    std::stringstream tmpStream;
+    tmpStream << std::hex << std::uppercase << std::setfill('0');
+
+    switch (errType)
+    {
+        case unifiedPcieErr:
+            if (((genInfo & 0x10) >> 4) == 0) // x86
+            {
+                tmpStream << "GeneralInfo: x86/PCIeErr(0x" << std::setw(2)
+                          << genInfo << "),";
+            }
+            else
+            {
+                tmpStream << "GeneralInfo: ARM/PCIeErr(0x" << std::setw(2)
+                          << genInfo << "), Aux. Info: 0x" << std::setw(4)
+                          << (int)((ptr[6] << 8) | ptr[5]) << ",";
+            }
+
+            tmpStream << " Bus " << std::setw(2) << (int)(ptr[8]) << "/Dev "
+                      << std::setw(2) << (int)(ptr[7] >> 3) << "/Fun "
+                      << std::setw(2) << (int)(ptr[7] & 0x7)
+                      << ", TotalErrID1Cnt: 0x" << std::setw(4)
+                      << (int)((ptr[10] << 8) | ptr[9]) << ", ErrID2: 0x"
+                      << std::setw(2) << (int)(ptr[11]) << ", ErrID1: 0x"
+                      << std::setw(2) << (int)(ptr[12]);
+
+            break;
+        case unifiedMemErr:
+            tmpStream << "GeneralInfo: MemErr(0x" << std::setw(2) << genInfo
+                      << "), DIMM Slot Location: Sled " << std::setw(2)
+                      << (int)((ptr[5] >> 4) & 0x03) << "/Socket "
+                      << std::setw(2) << (int)(ptr[5] & 0x0f) << ", Channel "
+                      << std::setw(2) << (int)(ptr[6] & 0x0f) << ", Slot "
+                      << std::setw(2) << (int)(ptr[7] & 0x0f)
+                      << ", DIMM Failure Event: " << dimmEvent[(ptr[9] & 0x03)]
+                      << ", Major Code: 0x" << std::setw(2) << (int)(ptr[10])
+                      << ", Minor Code: 0x" << std::setw(2) << (int)(ptr[11]);
+
+            break;
+        default:
+            std::vector<uint8_t> oemData(ptr, ptr + 13);
+            std::string oemDataStr;
+            toHexStr(oemData, oemDataStr);
+            tmpStream << "Undefined Error Type(0x" << std::setw(2) << errType
+                      << "), Raw: " << oemDataStr;
+    }
+
+    errStr = tmpStream.str();
+
+    return;
+}
+
 static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
 {
 
@@ -380,6 +441,13 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
         msgLog += errType + " (0x" + recTypeStream.str() +
                   "), Time: " + timeStr + ", MFG ID: " + mfrIdStr +
                   ", OEM Data: (" + oemDataStr + ") " + errLog;
+    }
+    else if (recType == fbUniErrType)
+    {
+        NtsOemSELEntry *data = reinterpret_cast<NtsOemSELEntry *>(&reqData[0]);
+        errType = fbUniSELErr;
+        parseOemUnifiedSel(data, errLog);
+        msgLog += errType + " (0x" + recTypeStream.str() + "), " + errLog;
     }
     else if ((recType >= oemNTSErrTypeMin) && (recType <= oemNTSErrTypeMax))
     {
