@@ -143,4 +143,8 @@ struct GetSELEntryResponse
     uint8_t recordData[16]; //!< Record Data.
 } __attribute__((packed));
 
+static constexpr auto initiateErase = 0xAA;
+static constexpr auto getEraseStatus = 0x00;
+static constexpr auto eraseComplete = 0x01;
+
 } // namespace fb_oem::ipmi::sel
