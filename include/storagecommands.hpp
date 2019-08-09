@@ -107,6 +107,55 @@ static constexpr auto lastEntry = 0xFFFF;
 static constexpr auto entireRecord = 0xFF;
 static constexpr auto selRecordSize = 16;
 
+static constexpr auto stdErr = "Standard";
+static constexpr auto oemTSErr = "OEM timestamped";
+static constexpr auto oemNTSErr = "OEM non-timestamped";
+static constexpr auto unknownErr = "Unknown";
+
+static constexpr uint8_t stdErrType = 0x02;
+static constexpr uint8_t oemTSErrTypeMin = 0xC0;
+static constexpr uint8_t oemTSErrTypeMax = 0xDF;
+static constexpr uint8_t oemNTSErrTypeMin = 0xE0;
+static constexpr uint8_t oemNTSErrTypeMax = 0xFF;
+
+static constexpr uint8_t unifiedPcieErr = 0;
+static constexpr uint8_t unifiedMemErr = 1;
+
+/* event sensor name in processing SEL */
+static constexpr uint8_t memoryEccError = 0X63;
+static constexpr uint8_t memoryErrLogDIS = 0X87;
+
+static boost::container::flat_map<uint8_t, std::string> sensorNameTable = {
+    {0xE9, "SYSTEM_EVENT"},
+    {0x7D, "THERM_THRESH_EVT"},
+    {0xAA, "BUTTON"},
+    {0xAB, "POWER_STATE"},
+    {0xEA, "CRITICAL_IRQ"},
+    {0x2B, "POST_ERROR"},
+    {0x40, "MACHINE_CHK_ERR"},
+    {0x41, "PCIE_ERR"},
+    {0x43, "IIO_ERR"},
+    {0X63, "MEMORY_ECC_ERR"},
+    {0X87, "MEMORY_ERR_LOG_DIS"},
+    {0X51, "PROCHOT_EXT"},
+    {0X56, "PWR_ERR"},
+    {0xE6, "CATERR_A"},
+    {0xEB, "CATERR_B"},
+    {0xB3, "CPU_DIMM_HOT"},
+    {0x90, "SOFTWARE_NMI"},
+    {0x1C, "CPU0_THERM_STATUS"},
+    {0x1D, "CPU1_THERM_STATUS"},
+    {0x16, "ME_POWER_STATE"},
+    {0x17, "SPS_FW_HEALTH"},
+    {0x18, "NM_EXCEPTION_A"},
+    {0x08, "PCH_THERM_THRESHOLD"},
+    {0x19, "NM_HEALTH"},
+    {0x1A, "NM_CAPABILITIES"},
+    {0x1B, "NM_THRESHOLD"},
+    {0x3B, "PWR_THRESH_EVT"},
+    {0xE7, "MSMI"},
+    {0xC5, "HPR_WARNING"}};
+
 /** @struct GetSELEntryRequest
  *
  *  IPMI payload for Get SEL Entry command request.
@@ -127,6 +176,41 @@ struct GetSELEntryResponse
 {
     uint16_t nextRecordID;  //!< Next RecordID.
     uint8_t recordData[16]; //!< Record Data.
+} __attribute__((packed));
+
+/** @struct AddSELEntryRequest
+ *
+ *  IPMI payload for ADD SEL Entry command request.
+ */
+struct StdSELEntry
+{
+    uint16_t recordID;        //!< Record ID.
+    uint8_t recordType;       //!< Record Type.
+    uint32_t timeStamp;       //!< Timestamp.
+    uint16_t generatorID;     //!< Generator ID.
+    uint8_t eventMsgRevision; //!< Event Message Revision.
+    uint8_t sensorType;       //!< Sensor Type.
+    uint8_t sensorNum;        //!< Sensor Number.
+    uint8_t eventType;        //!< Event Dir | Event Type.
+    uint8_t eventData1;       //!< Event Data 1.
+    uint8_t eventData2;       //!< Event Data 2.
+    uint8_t eventData3;       //!< Event Data 3.
+} __attribute__((packed));
+
+struct TsOemSELEntry
+{
+    uint16_t recordID;  //!< Record ID.
+    uint8_t recordType; //!< Record Type.
+    uint32_t timeStamp; //!< Timestamp.
+    uint8_t mfrId[3];   //!< Manufacturer Id.
+    uint8_t oemData[6]; //!< OEM Data.
+} __attribute__((packed));
+
+struct NtsOemSELEntry
+{
+    uint16_t recordID;   //!< Record ID.
+    uint8_t recordType;  //!< Record Type.
+    uint8_t oemData[13]; //!< OEM Data.
 } __attribute__((packed));
 
 static constexpr auto initiateErase = 0xAA;
