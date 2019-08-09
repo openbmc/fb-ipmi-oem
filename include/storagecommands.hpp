@@ -109,6 +109,7 @@ static constexpr auto selRecordSize = 16;
 
 static constexpr auto stdErr = "Standard";
 static constexpr auto oemTSErr = "OEM timestamped";
+static constexpr auto fbUniSELErr = "Facebook Unified SEL";
 static constexpr auto oemNTSErr = "OEM non-timestamped";
 static constexpr auto unknownErr = "Unknown";
 
@@ -116,6 +117,7 @@ static constexpr uint8_t stdErrType = 0x02;
 static constexpr uint8_t oemTSErrTypeMin = 0xC0;
 static constexpr uint8_t oemTSErrTypeMax = 0xDF;
 static constexpr uint8_t oemNTSErrTypeMin = 0xE0;
+static constexpr uint8_t fbUniErrType = 0xFB;
 static constexpr uint8_t oemNTSErrTypeMax = 0xFF;
 
 static constexpr uint8_t unifiedPcieErr = 0;
