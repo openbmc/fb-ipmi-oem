@@ -325,6 +325,84 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(std::vector<uint8_t> data)
     return ipmi::responseSuccess((uint16_t)responseID);
 }
 
+ipmi::RspType<uint8_t> ipmiStorageClearSEL(uint16_t reservationID,
+                                           const std::array<uint8_t, 3> &clr,
+                                           uint8_t eraseOperation)
+{
+    if (!checkSELReservation(reservationID))
+    {
+        return ipmi::responseInvalidReservationId();
+    }
+
+    static constexpr std::array<uint8_t, 3> clrExpected = {'C', 'L', 'R'};
+    if (clr != clrExpected)
+    {
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    /* If there is no sel then return erase complete */
+    if (selObj.getCount() == 0)
+    {
+        return ipmi::responseSuccess(fb_oem::ipmi::sel::eraseComplete);
+    }
+
+    /* Erasure status cannot be fetched, so always return erasure
+     * status as `erase completed`.
+     */
+    if (eraseOperation == fb_oem::ipmi::sel::getEraseStatus)
+    {
+        return ipmi::responseSuccess(fb_oem::ipmi::sel::eraseComplete);
+    }
+
+    /* Check that initiate erase is correct */
+    if (eraseOperation != fb_oem::ipmi::sel::initiateErase)
+    {
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    /* Per the IPMI spec, need to cancel any reservation when the
+     * SEL is cleared
+     */
+    cancelSELReservation();
+
+    /* Clear the complete Sel Json object */
+    if (selObj.clear() < 0)
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    return ipmi::responseSuccess(fb_oem::ipmi::sel::eraseComplete);
+}
+
+ipmi::RspType<uint32_t> ipmiStorageGetSELTime()
+{
+    struct timespec selTime = {};
+
+    if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    return ipmi::responseSuccess(selTime.tv_sec);
+}
+
+ipmi::RspType<> ipmiStorageSetSELTime(uint32_t selTime)
+{
+    // Set SEL Time is not supported
+    return ipmi::responseInvalidCommand();
+}
+
+ipmi::RspType<uint16_t> ipmiStorageGetSELTimeUtcOffset()
+{
+    /* TODO: For now, the SEL time stamp is based on UTC time,
+     * so return 0x0000 as offset. Might need to change once
+     * supporting zones in SEL time stamps
+     */
+
+    uint16_t utcOffset = 0x0000;
+    return ipmi::responseSuccess(utcOffset);
+}
+
 void registerSELFunctions()
 {
     // <Get SEL Info>
@@ -341,6 +419,27 @@ void registerSELFunctions()
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnStorage,
                           ipmi::storage::cmdAddSelEntry,
                           ipmi::Privilege::Operator, ipmiStorageAddSELEntry);
+
+    // <Clear SEL>
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnStorage,
+                          ipmi::storage::cmdClearSel, ipmi::Privilege::Operator,
+                          ipmiStorageClearSEL);
+
+    // <Get SEL Time>
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnStorage,
+                          ipmi::storage::cmdGetSelTime, ipmi::Privilege::User,
+                          ipmiStorageGetSELTime);
+
+    // <Set SEL Time>
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnStorage,
+                          ipmi::storage::cmdSetSelTime,
+                          ipmi::Privilege::Operator, ipmiStorageSetSELTime);
+
+    // <Get SEL Time UTC Offset>
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnStorage,
+                          ipmi::storage::cmdGetSelTimeUtcOffset,
+                          ipmi::Privilege::User,
+                          ipmiStorageGetSELTimeUtcOffset);
 
     return;
 }
