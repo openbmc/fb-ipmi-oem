@@ -17,6 +17,15 @@
 #pragma once
 #include "sdrutils.hpp"
 
+#define SEL_JSON_DATA_FILE "/var/log/fbSelRaw.json"
+#define KEY_SEL_COUNT "SelCount"
+#define KEY_SEL_ENTRY_RAW "SelEntry"
+#define KEY_ADD_TIME "AddTimeStamp"
+#define KEY_ERASE_TIME "EraseTimeStamp"
+#define KEY_FREE_SPACE "FreeSpace"
+#define KEY_OPER_SUPP "OperationalSupport"
+#define KEY_SEL_VER "SELVersion"
+
 static constexpr uint8_t ipmiSdrVersion = 0x51;
 
 #pragma pack(push, 1)
@@ -83,3 +92,41 @@ struct FRUHeader
     uint8_t checksum;
 };
 #pragma pack(pop)
+
+namespace fb_oem::ipmi::sel
+{
+
+static constexpr auto selVersion = 0x51;
+static constexpr auto invalidTimeStamp = 0xFFFFFFFF;
+/* Spec indicates that more than 64kB is free */
+static constexpr auto freeSpace = 0xFFFF;
+static constexpr uint8_t selOperationSupport = 0x02;
+
+static constexpr auto firstEntry = 0x0000;
+static constexpr auto lastEntry = 0xFFFF;
+static constexpr auto entireRecord = 0xFF;
+static constexpr auto selRecordSize = 16;
+
+/** @struct GetSELEntryRequest
+ *
+ *  IPMI payload for Get SEL Entry command request.
+ */
+struct GetSELEntryRequest
+{
+    uint16_t reservID; //!< Reservation ID.
+    uint16_t recordID; //!< SEL Record ID.
+    uint8_t offset;    //!< Offset into record.
+    uint8_t readLen;   //!< Bytes to read.
+} __attribute__((packed));
+
+/** @struct GetSELEntryResponse
+ *
+ *  IPMI payload for Get SEL Entry command response.
+ */
+struct GetSELEntryResponse
+{
+    uint16_t nextRecordID;  //!< Next RecordID.
+    uint8_t recordData[16]; //!< Record Data.
+} __attribute__((packed));
+
+} // namespace fb_oem::ipmi::sel
