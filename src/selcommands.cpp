@@ -181,6 +181,232 @@ class SELData
     }
 };
 
+static void parseStdSel(StdSELEntry *data, std::string &errStr)
+{
+    std::stringstream tmpStream;
+    tmpStream << std::hex << std::uppercase;
+
+    /* TODO: add pal_add_cri_sel */
+    switch (data->sensorNum)
+    {
+        case memoryEccError:
+            switch (data->eventData1 & 0x0F)
+            {
+                case 0x00:
+                    errStr = "Correctable";
+                    tmpStream << "DIMM" << std::setw(2) << std::setfill('0')
+                              << data->eventData3 << " ECC err";
+                    break;
+                case 0x01:
+                    errStr = "Uncorrectable";
+                    tmpStream << "DIMM" << std::setw(2) << std::setfill('0')
+                              << data->eventData3 << " UECC err";
+                    break;
+                case 0x02:
+                    errStr = "Parity";
+                    break;
+                case 0x05:
+                    errStr = "Correctable ECC error Logging Limit Reached";
+                    break;
+                default:
+                    errStr = "Unknown";
+            }
+            break;
+        case memoryErrLogDIS:
+            if ((data->eventData1 & 0x0F) == 0)
+            {
+                errStr = "Correctable Memory Error Logging Disabled";
+            }
+            else
+            {
+                errStr = "Unknown";
+            }
+            break;
+        default:
+
+            /* TODO: parse sel helper */
+            errStr = "Unknown";
+            return;
+    }
+
+    errStr += " (DIMM " + std::to_string(data->eventData3) + ")";
+    errStr += " Logical Rank " + std::to_string(data->eventData2 & 0x03);
+
+    switch ((data->eventData2 & 0x0C) >> 2)
+    {
+        case 0x00:
+            // Ignore when " All info available"
+            break;
+        case 0x01:
+            errStr += " DIMM info not valid";
+            break;
+        case 0x02:
+            errStr += " CHN info not valid";
+            break;
+        case 0x03:
+            errStr += " CPU info not valid";
+            break;
+        default:
+            errStr += " Unknown";
+    }
+
+    if (((data->eventType & 0x80) >> 7) == 0)
+    {
+        errStr += " Assertion";
+    }
+    else
+    {
+        errStr += " Deassertion";
+    }
+
+    return;
+}
+
+static void parseOemSel(TsOemSELEntry *data, std::string &errStr)
+{
+    std::stringstream tmpStream;
+    tmpStream << std::hex << std::uppercase << std::setfill('0');
+
+    switch (data->recordType)
+    {
+        case 0xC0:
+            tmpStream << "VID:0x" << std::setw(2) << (int)data->oemData[1]
+                      << std::setw(2) << (int)data->oemData[0] << " DID:0x"
+                      << std::setw(2) << (int)data->oemData[3] << std::setw(2)
+                      << (int)data->oemData[2] << " Slot:0x" << std::setw(2)
+                      << (int)data->oemData[4] << " Error ID:0x" << std::setw(2)
+                      << (int)data->oemData[5];
+            break;
+        case 0xC2:
+            tmpStream << "Extra info:0x" << std::setw(2)
+                      << (int)data->oemData[1] << " MSCOD:0x" << std::setw(2)
+                      << (int)data->oemData[3] << std::setw(2)
+                      << (int)data->oemData[2] << " MCACOD:0x" << std::setw(2)
+                      << (int)data->oemData[5] << std::setw(2)
+                      << (int)data->oemData[4];
+            break;
+        case 0xC3:
+            int bank = (data->oemData[1] & 0xf0) >> 4;
+            int col = ((data->oemData[1] & 0x0f) << 8) | data->oemData[2];
+
+            tmpStream << "Fail Device:0x" << std::setw(2)
+                      << (int)data->oemData[0] << " Bank:0x" << std::setw(2)
+                      << bank << " Column:0x" << std::setw(2) << col
+                      << " Failed Row:0x" << std::setw(2)
+                      << (int)data->oemData[3] << std::setw(2)
+                      << (int)data->oemData[4] << std::setw(2)
+                      << (int)data->oemData[5];
+    }
+
+    errStr = tmpStream.str();
+
+    return;
+}
+
+static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
+{
+
+    /* Get record type */
+    int recType = reqData[2];
+    std::string errType, errLog;
+
+    uint8_t *ptr = NULL;
+
+    std::stringstream recTypeStream;
+    recTypeStream << std::hex << std::uppercase << std::setfill('0')
+                  << std::setw(2) << recType;
+
+    msgLog = "SEL Entry: FRU: 1, Record: ";
+
+    if (recType == stdErrType)
+    {
+        StdSELEntry *data = reinterpret_cast<StdSELEntry *>(&reqData[0]);
+        std::string sensorName;
+
+        errType = stdErr;
+        if (data->sensorType == 0x1F)
+        {
+            sensorName = "OS";
+        }
+        else
+        {
+            auto findSensorName = sensorNameTable.find(data->sensorNum);
+            if (findSensorName == sensorNameTable.end())
+            {
+                sensorName = "Unknown";
+            }
+            else
+            {
+                sensorName = findSensorName->second;
+            }
+        }
+
+        std::tm *ts = localtime((time_t *)(&(data->timeStamp)));
+        std::string timeStr = std::asctime(ts);
+
+        parseStdSel(data, errLog);
+        ptr = &(data->eventData1);
+        std::vector<uint8_t> evtData(ptr, ptr + 3);
+        std::string eventData;
+        toHexStr(evtData, eventData);
+
+        std::stringstream senNumStream;
+        senNumStream << std::hex << std::uppercase << std::setfill('0')
+                     << std::setw(2) << (int)(data->sensorNum);
+
+        msgLog += errType + " (0x" + recTypeStream.str() +
+                  "), Time: " + timeStr + ", Sensor: " + sensorName + " (0x" +
+                  senNumStream.str() + "), Event Data: (" + eventData + ") " +
+                  errLog;
+    }
+    else if ((recType >= oemTSErrTypeMin) && (recType <= oemTSErrTypeMax))
+    {
+        /* timestamped OEM SEL records */
+        TsOemSELEntry *data = reinterpret_cast<TsOemSELEntry *>(&reqData[0]);
+        ptr = data->mfrId;
+        std::vector<uint8_t> mfrIdData(ptr, ptr + 3);
+        std::string mfrIdStr;
+        toHexStr(mfrIdData, mfrIdStr);
+
+        ptr = data->oemData;
+        std::vector<uint8_t> oemData(ptr, ptr + 6);
+        std::string oemDataStr;
+        toHexStr(oemData, oemDataStr);
+
+        std::tm *ts = localtime((time_t *)(&(data->timeStamp)));
+        std::string timeStr = std::asctime(ts);
+
+        errType = oemTSErr;
+        parseOemSel(data, errLog);
+
+        msgLog += errType + " (0x" + recTypeStream.str() +
+                  "), Time: " + timeStr + ", MFG ID: " + mfrIdStr +
+                  ", OEM Data: (" + oemDataStr + ") " + errLog;
+    }
+    else if ((recType >= oemNTSErrTypeMin) && (recType <= oemNTSErrTypeMax))
+    {
+        /* Non timestamped OEM SEL records */
+        NtsOemSELEntry *data = reinterpret_cast<NtsOemSELEntry *>(&reqData[0]);
+        errType = oemNTSErr;
+
+        ptr = data->oemData;
+        std::vector<uint8_t> oemData(ptr, ptr + 13);
+        std::string oemDataStr;
+        toHexStr(oemData, oemDataStr);
+
+        parseOemSel((TsOemSELEntry *)data, errLog);
+        msgLog += errType + " (0x" + recTypeStream.str() + "), OEM Data: (" +
+                  oemDataStr + ") " + errLog;
+    }
+    else
+    {
+        errType = unknownErr;
+        toHexStr(reqData, errLog);
+        msgLog +=
+            errType + " (0x" + recTypeStream.str() + ") RawData: " + errLog;
+    }
+}
+
 } // namespace fb_oem::ipmi::sel
 
 namespace ipmi
@@ -313,9 +539,14 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(std::vector<uint8_t> data)
     std::string ipmiRaw, logErr;
     toHexStr(data, ipmiRaw);
 
+    /* Parse sel data and get an error log to be filed */
+    fb_oem::ipmi::sel::parseSelData(data, logErr);
+
     /* Log the Raw SEL message to the journal */
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;
+
     phosphor::logging::log<phosphor::logging::level::INFO>(journalMsg.c_str());
+    phosphor::logging::log<phosphor::logging::level::INFO>(logErr.c_str());
 
     int responseID = selObj.addEntry(ipmiRaw.c_str());
     if (responseID < 0)
