@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <host-ipmid/ipmid-api.h>
+#include <ipmid/api.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/stat.h>

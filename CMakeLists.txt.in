@@ -49,28 +49,6 @@ externalproject_add (
 )
 
 externalproject_add (
-    phosphor-logging PREFIX ${CMAKE_BINARY_DIR}/phosphor-logging DEPENDS cereal
-    sdbusplus-project dbus-interfaces GIT_REPOSITORY
-    https://github.com/openbmc/phosphor-logging GIT_TAG
-    477b731ad0fd8c116ffcaa8265a508c9fb112479 SOURCE_DIR
-    ${CMAKE_BINARY_DIR}/phosphor-logging-src BINARY_DIR
-    ${CMAKE_BINARY_DIR}/phosphor-logging-build CONFIGURE_COMMAND ""
-    BUILD_COMMAND cd ${CMAKE_BINARY_DIR}/phosphor-logging-src && echo
-    "#!/bin/bash" > build.sh && echo
-    "export PYTHONPATH=${CMAKE_BINARY_DIR}/prefix/lib/python2.7/site-packages:$ENV{PYTHONPATH}"
-    >> build.sh && echo "export PATH=${CMAKE_BINARY_DIR}/prefix/bin:$ENV{PATH}"
-    >> build.sh && echo
-    "export PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/prefix/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}"
-    >> build.sh && echo "./bootstrap.sh clean" >> build.sh && echo
-    "./bootstrap.sh" >> build.sh && echo
-    "./configure --prefix=${CMAKE_BINARY_DIR}/prefix  CPPFLAGS=-I${CMAKE_BINARY_DIR}/prefix/include/ \
-             YAML_DIR=${CMAKE_BINARY_DIR}/prefix/share/phosphor-dbus-yaml/yaml --enable-metadata-processing"
-    >> build.sh && echo "make verbose=1" >> build.sh && echo "make install " >>
-    build.sh && chmod 777 build.sh && ./build.sh INSTALL_COMMAND "" LOG_DOWNLOAD
-    ON
-)
-
-externalproject_add (
     nlohmann-json GIT_REPOSITORY "https://github.com/nlohmann/json.git" GIT_TAG
     d2dd27dc3b8472dbaa7d66f83619b3ebcd9185fe SOURCE_DIR
     "${CMAKE_BINARY_DIR}/nlohmann-json-src" BINARY_DIR
@@ -78,18 +56,6 @@ externalproject_add (
     "" INSTALL_COMMAND mkdir -p "${CMAKE_BINARY_DIR}/prefix/include/nlohmann" &&
     cp -r "${CMAKE_BINARY_DIR}/nlohmann-json-src/include/nlohmann"
     "${CMAKE_BINARY_DIR}/prefix/include"
-)
-
-externalproject_add (
-    host-ipmid PREFIX ${CMAKE_BINARY_DIR}/phosphor-host-ipmid DEPENDS
-    sdbusplus-project dbus-interfaces nlohmann-json GIT_REPOSITORY
-    https://github.com/openbmc/phosphor-host-ipmid SOURCE_DIR
-    ${CMAKE_BINARY_DIR}/phosphor-ipmi-host BINARY_DIR
-    ${CMAKE_BINARY_DIR}/phosphor-host-ipmid-build CONFIGURE_COMMAND ""
-    BUILD_COMMAND "" INSTALL_COMMAND mkdir -p
-    "${CMAKE_BINARY_DIR}/prefix/include/ipmid" && cp
-    ${CMAKE_BINARY_DIR}/phosphor-ipmi-host/include/ipmid/api.h
-    ${CMAKE_BINARY_DIR}/prefix/include/ipmid LOG_DOWNLOAD ON
 )
 
 externalproject_add (
