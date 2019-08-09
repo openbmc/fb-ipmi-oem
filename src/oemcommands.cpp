@@ -30,6 +30,7 @@
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
+//#include <sdbusplus/message.hpp>
 #include <string>
 #include <vector>
 
@@ -47,7 +48,8 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
-namespace variant_ns = sdbusplus::message::variant_ns;
+// namespace variant_ns = sdbusplus::message::variant_ns;
+namespace variant_ns = std;
 nlohmann::json oemData;
 
 enum class LanParam : uint8_t
