@@ -30,6 +30,7 @@
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
+//#include <sdbusplus/message.hpp>
 #include <string>
 #include <vector>
 
@@ -47,7 +48,8 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
-namespace variant_ns = sdbusplus::message::variant_ns;
+// namespace variant_ns = sdbusplus::message::variant_ns;
+namespace variant_ns = std;
 nlohmann::json oemData;
 
 enum class LanParam : uint8_t
@@ -205,8 +207,7 @@ int8_t getFruData(std::string &data, std::string &name)
         try
         {
             Value variant = property->second;
-            std::string &result =
-                sdbusplus::message::variant_ns::get<std::string>(variant);
+            std::string &result = variant_ns::get<std::string>(variant);
             if (result.size() > maxFRUStringLength)
             {
                 phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -216,7 +217,7 @@ int8_t getFruData(std::string &data, std::string &name)
             data = result;
             return 0;
         }
-        catch (sdbusplus::message::variant_ns::bad_variant_access &e)
+        catch (variant_ns::bad_variant_access &e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
