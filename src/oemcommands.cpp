@@ -30,6 +30,7 @@
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
+#include <sdbusplus/message/types.hpp>
 #include <string>
 #include <vector>
 
