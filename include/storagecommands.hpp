@@ -25,6 +25,7 @@
 #define KEY_FREE_SPACE "FreeSpace"
 #define KEY_OPER_SUPP "OperationalSupport"
 #define KEY_SEL_VER "SELVersion"
+#define BIT(value, index) ((value >> index) & 1)
 
 static constexpr uint8_t ipmiSdrVersion = 0x51;
 
@@ -124,39 +125,8 @@ static constexpr uint8_t unifiedPcieErr = 0;
 static constexpr uint8_t unifiedMemErr = 1;
 
 /* event sensor name in processing SEL */
-static constexpr uint8_t memoryEccError = 0X63;
-static constexpr uint8_t memoryErrLogDIS = 0X87;
-
-static boost::container::flat_map<uint8_t, std::string> sensorNameTable = {
-    {0xE9, "SYSTEM_EVENT"},
-    {0x7D, "THERM_THRESH_EVT"},
-    {0xAA, "BUTTON"},
-    {0xAB, "POWER_STATE"},
-    {0xEA, "CRITICAL_IRQ"},
-    {0x2B, "POST_ERROR"},
-    {0x40, "MACHINE_CHK_ERR"},
-    {0x41, "PCIE_ERR"},
-    {0x43, "IIO_ERR"},
-    {0X63, "MEMORY_ECC_ERR"},
-    {0X87, "MEMORY_ERR_LOG_DIS"},
-    {0X51, "PROCHOT_EXT"},
-    {0X56, "PWR_ERR"},
-    {0xE6, "CATERR_A"},
-    {0xEB, "CATERR_B"},
-    {0xB3, "CPU_DIMM_HOT"},
-    {0x90, "SOFTWARE_NMI"},
-    {0x1C, "CPU0_THERM_STATUS"},
-    {0x1D, "CPU1_THERM_STATUS"},
-    {0x16, "ME_POWER_STATE"},
-    {0x17, "SPS_FW_HEALTH"},
-    {0x18, "NM_EXCEPTION_A"},
-    {0x08, "PCH_THERM_THRESHOLD"},
-    {0x19, "NM_HEALTH"},
-    {0x1A, "NM_CAPABILITIES"},
-    {0x1B, "NM_THRESHOLD"},
-    {0x3B, "PWR_THRESH_EVT"},
-    {0xE7, "MSMI"},
-    {0xC5, "HPR_WARNING"}};
+static constexpr uint8_t memoryEccError = 0x63;
+static constexpr uint8_t memoryErrLogDIS = 0x87;
 
 /** @struct GetSELInfoData
  *

@@ -29,6 +29,16 @@
 // Platform specific functions for storing app data
 //----------------------------------------------------------------------
 
+static std::string byteToStr(uint8_t byte)
+{
+    std::stringstream ss;
+
+    ss << std::hex << std::uppercase << std::setfill('0');
+    ss << std::setw(2) << (int)byte;
+
+    return ss.str();
+}
+
 static void toHexStr(std::vector<uint8_t> &bytes, std::string &hexStr)
 {
     std::stringstream stream;
@@ -179,6 +189,745 @@ class SELData
     }
 };
 
+/*
+ * A Function to parse common SEL message, a helper funciton
+ * for parseStdSel.
+ *
+ * Note that this function __CANNOT__ be overriden.
+ * To add board specific routine, please override parseStdSel.
+ */
+
+/*Used by decoding ME event*/
+std::vector<std::string> nmDomName = {
+    "Entire Platform",          "CPU Subsystem",
+    "Memory Subsystem",         "HW Protection",
+    "High Power I/O subsystem", "Unknown"};
+
+// static std::map<uint8_t, std::pair<std::string, std::function<void(uint8_t*,
+// std::string&)>>> sensorNameTable = {{0xE9, {"SYSTEM_EVENT", logDefault}}};
+
+static void logDefault(uint8_t *data, std::string &errLog)
+{
+    // errLog = "Unknown";
+}
+
+static void logSysEvent(uint8_t *data, std::string &errLog)
+{
+    if (data[0] == 0xE5)
+    {
+        errLog = "Cause of Time change - ";
+        switch (data[2])
+        {
+            case 0x00:
+                errLog += "NTP";
+                break;
+            case 0x01:
+                errLog += "Host RTL";
+                break;
+            case 0x02:
+                errLog += "Set SEL time cmd";
+                break;
+            case 0x03:
+                errLog += "Set SEL time UTC offset cmd";
+                break;
+            default:
+                errLog += "Unknown";
+        }
+
+        if (data[1] == 0x00)
+            errLog += " - First Time";
+        else if (data[1] == 0x80)
+            errLog += " - Second Time";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logThermThrsEvt(uint8_t *data, std::string &errLog)
+{
+    if (data[0] == 0x1)
+    {
+        errLog = "Limit Exceeded";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logCritIrq(uint8_t *data, std::string &errLog)
+{
+
+    if (data[0] == 0x0)
+    {
+        errLog = "NMI / Diagnostic Interrupt";
+    }
+    else if (data[0] == 0x03)
+    {
+        errLog = "Software NMI";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+
+    /* TODO: Call add_cri_sel for CRITICAL_IRQ */
+}
+
+static void logPostErr(uint8_t *data, std::string &errLog)
+{
+
+    if ((data[0] & 0x0F) == 0x0)
+    {
+        errLog = "System Firmware Error";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+
+    if (((data[0] >> 6) & 0x03) == 0x3)
+    {
+        // TODO: Need to implement IPMI spec based Post Code
+        errLog += ", IPMI Post Code";
+    }
+    else if (((data[0] >> 6) & 0x03) == 0x2)
+    {
+        errLog +=
+            ", OEM Post Code 0x" + byteToStr(data[2]) + byteToStr(data[1]);
+
+        switch ((data[2] << 8) | data[1])
+        {
+            case 0xA105:
+                errLog += ", BMC Failed (No Response)";
+                break;
+            case 0xA106:
+                errLog += ", BMC Failed (Self Test Fail)";
+                break;
+            case 0xA10A:
+                errLog += ", System Firmware Corruption Detected";
+                break;
+            case 0xA10B:
+                errLog += ", TPM Self-Test FAIL Detected";
+        }
+    }
+}
+
+static void logMchChkErr(uint8_t *data, std::string &errLog)
+{
+    /* TODO: Call add_cri_sel for CRITICAL_IRQ */
+    if ((data[0] & 0x0F) == 0x0B)
+    {
+        errLog = "Uncorrectable";
+    }
+    else if ((data[0] & 0x0F) == 0x0C)
+    {
+        errLog = "Correctable";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+
+    errLog += ", Machine Check bank Number " + std::to_string(data[1]) +
+              ", CPU " + std::to_string(data[2] >> 5) + ", Core " +
+              std::to_string(data[2] & 0x1F);
+}
+
+static void logPcieErr(uint8_t *data, std::string &errLog)
+{
+    std::stringstream tmp1, tmp2;
+    tmp1 << std::hex << std::uppercase << std::setfill('0');
+    tmp2 << std::hex << std::uppercase << std::setfill('0');
+    tmp1 << " (Bus " << std::setw(2) << (int)(data[2]) << " / Dev "
+         << std::setw(2) << (int)(data[1] >> 3) << " / Fun " << std::setw(2)
+         << (int)(data[1] & 0x7) << ")";
+
+    switch (data[0] & 0xF)
+    {
+        case 0x4:
+            errLog = "PCI PERR" + tmp1.str();
+            break;
+        case 0x5:
+            errLog = "PCI SERR" + tmp1.str();
+            break;
+        case 0x7:
+            errLog = "Correctable" + tmp1.str();
+            break;
+        case 0x8:
+            errLog = "Uncorrectable" + tmp1.str();
+            break;
+        case 0xA:
+            errLog = "Bus Fatal" + tmp1.str();
+            break;
+        case 0xD:
+        {
+            uint32_t venId = (uint32_t)data[1] << 8 | (uint32_t)data[2];
+            tmp2 << "Vendor ID: 0x" << std::setw(4) << venId;
+            errLog = tmp2.str();
+        }
+        break;
+        case 0xE:
+        {
+            uint32_t devId = (uint32_t)data[1] << 8 | (uint32_t)data[2];
+            tmp2 << "Device ID: 0x" << std::setw(4) << devId;
+            errLog = tmp2.str();
+        }
+        break;
+        case 0xF:
+            tmp2 << "Error ID from downstream: 0x" << std::setw(2)
+                 << (int)(data[1]) << std::setw(2) << (int)(data[2]);
+            errLog = tmp2.str();
+            break;
+        default:
+            errLog = "Unknown";
+    }
+}
+
+static void logIioErr(uint8_t *data, std::string &errLog)
+{
+    std::vector<std::string> tmpStr = {
+        "IRP0", "IRP1", " IIO-Core", "VT-d", "Intel Quick Data",
+        "Misc", " DMA", "ITC",       "OTC",  "CI"};
+
+    if ((data[0] & 0xF) == 0)
+    {
+        errLog += "CPU " + std::to_string(data[2] >> 5) + ", Error ID 0x" +
+                  byteToStr(data[1]) + " - ";
+
+        if ((data[2] & 0xF) <= 0x9)
+        {
+            errLog += tmpStr[(data[2] & 0xF)];
+        }
+        else
+        {
+            errLog += "Reserved";
+        }
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logMemErr(uint8_t *dataPtr, std::string &errLog)
+{
+    uint8_t snrType = dataPtr[0];
+    uint8_t snrNum = dataPtr[1];
+    uint8_t *data = &(dataPtr[3]);
+
+    /* TODO: add pal_add_cri_sel */
+
+    if (snrNum == memoryEccError)
+    {
+        /* SEL from MEMORY_ECC_ERR Sensor */
+        switch (data[0] & 0x0F)
+        {
+            case 0x0:
+                if (snrType == 0x0C)
+                {
+                    errLog = "Correctable";
+                }
+                else if (snrType == 0x10)
+                {
+                    errLog = "Correctable ECC error Logging Disabled";
+                }
+                break;
+            case 0x1:
+                errLog = "Uncorrectable";
+                break;
+            case 0x5:
+                errLog = "Correctable ECC error Logging Limit Disabled";
+                break;
+            default:
+                errLog = "Unknown";
+        }
+    }
+    else if (snrNum == memoryErrLogDIS)
+    {
+        // SEL from MEMORY_ERR_LOG_DIS Sensor
+        if ((data[0] & 0x0F) == 0x0)
+        {
+            errLog = "Correctable Memory Error Logging Disabled";
+        }
+        else
+        {
+            errLog = "Unknown";
+        }
+    }
+    else
+    {
+        errLog = "Unknown";
+        return;
+    }
+
+    /* Common routine for both MEM_ECC_ERR and MEMORY_ERR_LOG_DIS */
+
+    errLog += " (DIMM " + byteToStr(data[2]) + ") Logical Rank " +
+              std::to_string(data[1] & 0x03);
+
+    /* DIMM number (data[2]):
+     * Bit[7:5]: Socket number  (Range: 0-7)
+     * Bit[4:3]: Channel number (Range: 0-3)
+     * Bit[2:0]: DIMM number    (Range: 0-7)
+     */
+
+    /* TODO: Verify these bits */
+    std::string cpuStr = "CPU# " + std::to_string((data[2] & 0xE0) >> 5);
+    std::string chStr = "CHN# " + std::to_string((data[2] & 0x18) >> 3);
+    std::string dimmStr = "DIMM# " + std::to_string(data[2] & 0x7);
+
+    switch ((data[1] & 0xC) >> 2)
+    {
+        case 0x0:
+        {
+
+            /* All Info Valid */
+            uint8_t chnNum = (data[2] & 0x1C) >> 2;
+            uint8_t dimmNum = data[2] & 0x3;
+
+            /* TODO: If critical SEL logging is available, do it */
+            if (snrType == 0x0C)
+            {
+                if ((data[0] & 0x0F) == 0x0)
+                {
+                    /* TODO: add_cri_sel */
+                    /* "DIMM"+ 'A'+ chnNum + dimmNum + " ECC err,FRU:1"
+                     */
+                }
+                else if ((data[0] & 0x0F) == 0x1)
+                {
+                    /* TODO: add_cri_sel */
+                    /* "DIMM"+ 'A'+ chnNum + dimmNum + " UECC err,FRU:1"
+                     */
+                }
+            }
+            /* Continue to parse the error into a string. All Info Valid
+             */
+            errLog += " (" + cpuStr + ", " + chStr + ", " + dimmStr + ")";
+        }
+
+        break;
+        case 0x1:
+
+            /* DIMM info not valid */
+            errLog += " (" + cpuStr + ", " + chStr + ")";
+            break;
+        case 0x2:
+
+            /* CHN info not valid */
+            errLog += " (" + cpuStr + ", " + dimmStr + ")";
+            break;
+        case 0x3:
+
+            /* CPU info not valid */
+            errLog += " (" + chStr + ", " + dimmStr + ")";
+            break;
+    }
+}
+
+static void logPwrErr(uint8_t *data, std::string &errLog)
+{
+
+    if (data[0] == 0x1)
+    {
+        errLog = "SYS_PWROK failure";
+        /* Also try logging to Critial log file, if available */
+        /* "SYS_PWROK failure,FRU:1" */
+    }
+    else if (data[0] == 0x2)
+    {
+        errLog = "PCH_PWROK failure";
+        /* Also try logging to Critial log file, if available */
+        /* "PCH_PWROK failure,FRU:1" */
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logCatErr(uint8_t *data, std::string &errLog)
+{
+
+    if (data[0] == 0x0)
+    {
+        errLog = "IERR/CATERR";
+        /* Also try logging to Critial log file, if available */
+        /* "IERR,FRU:1 */
+    }
+    else if (data[0] == 0xB)
+    {
+        errLog = "MCERR/CATERR";
+        /* Also try logging to Critial log file, if available */
+        /* "MCERR,FRU:1 */
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logDimmHot(uint8_t *data, std::string &errLog)
+{
+    if ((data[0] << 16 | data[1] << 8 | data[2]) == 0x01FFFF)
+    {
+        errLog = "SOC MEMHOT";
+    }
+    else
+    {
+        errLog = "Unknown";
+        /* Also try logging to Critial log file, if available */
+        /* ""CPU_DIMM_HOT %s,FRU:1" */
+    }
+}
+
+static void logSwNMI(uint8_t *data, std::string &errLog)
+{
+    if ((data[0] << 16 | data[1] << 8 | data[2]) == 0x03FFFF)
+    {
+        errLog = "Software NMI";
+    }
+    else
+    {
+        errLog = "Unknown SW NMI";
+    }
+}
+
+static void logCPUTherSts(uint8_t *data, std::string &errLog)
+{
+    switch (data[0])
+    {
+        case 0x0:
+            errLog = "CPU Critical Temperature";
+            break;
+        case 0x1:
+            errLog = "PROCHOT#";
+            break;
+        case 0x2:
+            errLog = "TCC Activation";
+            break;
+        default:
+            errLog = "Unknown";
+    }
+}
+
+static void logMEPwrState(uint8_t *data, std::string &errLog)
+{
+    switch (data[0])
+    {
+        case 0:
+            errLog = "RUNNING";
+            break;
+        case 2:
+            errLog = "POWER_OFF";
+            break;
+        default:
+            errLog = "Unknown[" + std::to_string(data[0]) + "]";
+            break;
+    }
+}
+
+static void logSPSFwHealth(uint8_t *data, std::string &errLog)
+{
+    if ((data[0] & 0x0F) == 0x00)
+    {
+        const std::vector<std::string> tmpStr = {
+            "Recovery GPIO forced",
+            "Image execution failed",
+            "Flash erase error",
+            "Flash state information",
+            "Internal error",
+            "BMC did not respond",
+            "Direct Flash update",
+            "Manufacturing error",
+            "Automatic Restore to Factory Presets",
+            "Firmware Exception",
+            "Flash Wear-Out Protection Warning",
+            "Unknown",
+            "Unknown",
+            "DMI interface error",
+            "MCTP interface error",
+            "Auto-configuration finished",
+            "Unsupported Segment Defined Feature",
+            "Unknown",
+            "CPU Debug Capability Disabled",
+            "UMA operation error"};
+
+        if (data[1] < 0x14)
+        {
+            errLog = tmpStr[data[1]];
+        }
+        else
+        {
+            errLog = "Unknown";
+        }
+    }
+    else if ((data[0] & 0x0F) == 0x01)
+    {
+        errLog = "SMBus link failure";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logNmExcA(uint8_t *data, std::string &errLog)
+{
+    /*NM4.0 #550710, Revision 1.95, and turn to p.155*/
+    if (data[0] == 0xA8)
+    {
+        errLog = "Policy Correction Time Exceeded";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logPCHTherThres(uint8_t *data, std::string &errLog)
+{
+    const std::vector<std::string> thresEvtName = {"Lower Non-critical",
+                                                   "Unknown",
+                                                   "Lower Critical",
+                                                   "Unknown",
+                                                   "Lower Non-recoverable",
+                                                   "Unknown",
+                                                   "Unknown",
+                                                   "Upper Non-critical",
+                                                   "Unknown",
+                                                   "Upper Critical",
+                                                   "Unknown",
+                                                   "Upper Non-recoverable"};
+
+    if ((data[0] & 0x0f) < 12)
+    {
+        errLog = thresEvtName[(data[0] & 0x0f)];
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+
+    errLog += ", curr_val: " + std::to_string(data[1]) +
+              " C, thresh_val: " + std::to_string(data[2]) + " C";
+}
+
+static void logNmHealth(uint8_t *data, std::string &errLog)
+{
+    std::vector<std::string> nmErrType = {
+        "Unknown",
+        "Unknown",
+        "Unknown",
+        "Unknown",
+        "Unknown",
+        "Unknown",
+        "Unknown",
+        "Extended Telemetry Device Reading Failure",
+        "Outlet Temperature Reading Failure",
+        "Volumetric Airflow Reading Failure",
+        "Policy Misconfiguration",
+        "Power Sensor Reading Failure",
+        "Inlet Temperature Reading Failure",
+        "Host Communication Error",
+        "Real-time Clock Synchronization Failure",
+        "Platform Shutdown Initiated by Intel NM Policy",
+        "Unknown"};
+    uint8_t nmTypeIdx = (data[0] & 0xf);
+    uint8_t domIdx = (data[1] & 0xf);
+    uint8_t errIdx = ((data[1] >> 4) & 0xf);
+
+    if (nmTypeIdx == 2)
+    {
+        errLog = "SensorIntelNM";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+
+    errLog += ", Domain:" + nmDomName[domIdx] +
+              ", ErrType:" + nmErrType[errIdx] + ", Err:0x" +
+              byteToStr(data[2]);
+}
+
+static void logNmCap(uint8_t *data, std::string &errLog)
+{
+
+    const std::vector<std::string> nmCapStsStr = {"Not Available", "Available"};
+    if (data[0] & 0x7) // BIT1=policy, BIT2=monitoring, BIT3=pwr
+                       // limit and the others are reserved
+    {
+        errLog = "PolicyInterface:" + nmCapStsStr[BIT(data[0], 0)] +
+                 ",Monitoring:" + nmCapStsStr[BIT(data[0], 1)] +
+                 ",PowerLimit:" + nmCapStsStr[BIT(data[0], 2)];
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logNmThr(uint8_t *data, std::string &errLog)
+{
+    uint8_t thresNum = (data[0] & 0x3);
+    uint8_t domIdx = (data[1] & 0xf);
+    uint8_t polId = data[2];
+    uint8_t polEvtIdx = BIT(data[0], 3);
+    const std::vector<std::string> polEvtStr = {
+        "Threshold Exceeded", "Policy Correction Time Exceeded"};
+
+    errLog = "Threshold Number:" + std::to_string(thresNum) + "-" +
+             polEvtStr[polEvtIdx] + ", Domain:" + nmDomName[domIdx] +
+             ", PolicyID:0x" + byteToStr(polId);
+}
+
+static void logPwrThr(uint8_t *data, std::string &errLog)
+{
+    if (data[0] == 0x00)
+    {
+        errLog = "Limit Not Exceeded";
+    }
+    else if (data[0] == 0x01)
+    {
+        errLog = "Limit Exceeded";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logMSMI(uint8_t *data, std::string &errLog)
+{
+
+    if (data[0] == 0x0)
+    {
+        errLog = "IERR/MSMI";
+    }
+    else if (data[0] == 0x0B)
+    {
+        errLog = "MCERR/MSMI";
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static void logHprWarn(uint8_t *data, std::string &errLog)
+{
+    if (data[2] == 0x01)
+    {
+        if (data[1] == 0xFF)
+        {
+            errLog = "Infinite Time";
+        }
+        else
+        {
+            errLog = std::to_string(data[1]) + " minutes";
+        }
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
+static const boost::container::flat_map<
+    uint8_t,
+    std::pair<std::string, std::function<void(uint8_t *, std::string &)>>>
+    sensorNameTable = {{0xE9, {"SYSTEM_EVENT", logSysEvent}},
+                       {0x7D, {"THERM_THRESH_EVT", logThermThrsEvt}},
+                       {0xAA, {"BUTTON", logDefault}},
+                       {0xAB, {"POWER_STATE", logDefault}},
+                       {0xEA, {"CRITICAL_IRQ", logCritIrq}},
+                       {0x2B, {"POST_ERROR", logPostErr}},
+                       {0x40, {"MACHINE_CHK_ERR", logMchChkErr}},
+                       {0x41, {"PCIE_ERR", logPcieErr}},
+                       {0x43, {"IIO_ERR", logIioErr}},
+                       {0X63, {"MEMORY_ECC_ERR", logDefault}},
+                       {0X87, {"MEMORY_ERR_LOG_DIS", logDefault}},
+                       {0X51, {"PROCHOT_EXT", logDefault}},
+                       {0X56, {"PWR_ERR", logPwrErr}},
+                       {0xE6, {"CATERR_A", logCatErr}},
+                       {0xEB, {"CATERR_B", logCatErr}},
+                       {0xB3, {"CPU_DIMM_HOT", logDimmHot}},
+                       {0x90, {"SOFTWARE_NMI", logSwNMI}},
+                       {0x1C, {"CPU0_THERM_STATUS", logCPUTherSts}},
+                       {0x1D, {"CPU1_THERM_STATUS", logCPUTherSts}},
+                       {0x16, {"ME_POWER_STATE", logMEPwrState}},
+                       {0x17, {"SPS_FW_HEALTH", logSPSFwHealth}},
+                       {0x18, {"NM_EXCEPTION_A", logNmExcA}},
+                       {0x08, {"PCH_THERM_THRESHOLD", logPCHTherThres}},
+                       {0x19, {"NM_HEALTH", logNmHealth}},
+                       {0x1A, {"NM_CAPABILITIES", logNmCap}},
+                       {0x1B, {"NM_THRESHOLD", logNmThr}},
+                       {0x3B, {"PWR_THRESH_EVT", logPwrThr}},
+                       {0xE7, {"MSMI", logMSMI}},
+                       {0xC5, {"HPR_WARNING", logHprWarn}}};
+
+static void parseSelHelper(StdSELEntry *data, std::string &errStr)
+{
+
+    /* Check if sensor type is OS_BOOT (0x1f) */
+    if (data->sensorType == 0x1F)
+    {
+        /* OS_BOOT used by OS */
+        switch (data->eventData1 & 0xF)
+        {
+            case 0x07:
+                errStr = "Base OS/Hypervisor Installation started";
+                break;
+            case 0x08:
+                errStr = "Base OS/Hypervisor Installation completed";
+                break;
+            case 0x09:
+                errStr = "Base OS/Hypervisor Installation aborted";
+                break;
+            case 0x0A:
+                errStr = "Base OS/Hypervisor Installation failed";
+                break;
+            default:
+                errStr = "Unknown";
+        }
+        return;
+    }
+
+    auto findSensorName = sensorNameTable.find(data->sensorNum);
+    if (findSensorName == sensorNameTable.end())
+    {
+        errStr = "Unknown";
+        return;
+    }
+    else
+    {
+        switch (data->sensorNum)
+        {
+            /* logMemErr function needs data from sensor type */
+            case memoryEccError:
+            case memoryErrLogDIS:
+                findSensorName->second.second(&(data->sensorType), errStr);
+                break;
+            /* Other sensor function needs only event data for parsing */
+            default:
+                findSensorName->second.second(&(data->eventData1), errStr);
+        }
+    }
+
+    if (((data->eventData3 & 0x80) >> 7) == 0)
+    {
+        errStr += " Assertion";
+    }
+    else
+    {
+        errStr += " Deassertion";
+    }
+}
+
 static void parseStdSel(StdSELEntry *data, std::string &errStr)
 {
     std::stringstream tmpStream;
@@ -221,9 +970,7 @@ static void parseStdSel(StdSELEntry *data, std::string &errStr)
             }
             break;
         default:
-
-            /* TODO: parse sel helper */
-            errStr = "Unknown";
+            parseSelHelper(data, errStr);
             return;
     }
 
@@ -396,7 +1143,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
             }
             else
             {
-                sensorName = findSensorName->second;
+                sensorName = findSensorName->second.first;
             }
         }
 
