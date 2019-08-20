@@ -50,26 +50,10 @@ endif ()
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-if (NOT YOCTO)
-    set (SENSOR_TEST_SRC tests/test_sensorcommands.cpp)
-
-    find_package (GTest REQUIRED)
-
-    enable_testing ()
-
-    add_executable (runSensorTests ${SENSOR_TEST_SRC})
-    add_test (NAME test_sensorcommands COMMAND runSensorTests)
-    target_link_libraries (runSensorTests ${GTEST_BOTH_LIBRARIES}
-                           ${CMAKE_THREAD_LIBS_INIT}
-                           phosphor_logging sdbusplus -lsystemd)
-endif ()
-
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 add_library (zfboemcmds
              SHARED src/oemcommands.cpp src/appcommands.cpp
              src/storagecommands.cpp src/usb-dbg.cpp
-						 src/transportcommands.cpp)
+             src/transportcommands.cpp)
 set_target_properties (zfboemcmds PROPERTIES VERSION "0.1.0")
 set_target_properties (zfboemcmds PROPERTIES SOVERSION "0")
 target_link_libraries (zfboemcmds sdbusplus)
