@@ -1348,11 +1348,17 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(std::vector<uint8_t> data)
     /* Parse sel data and get an error log to be filed */
     fb_oem::ipmi::sel::parseSelData(data, logErr);
 
+    static const std::string openBMCMessageRegistryVersion("0.1");
+    std::string messageID =
+        "OpenBMC." + openBMCMessageRegistryVersion + ".SELEntryAdded";
+
     /* Log the Raw SEL message to the journal */
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;
 
-    phosphor::logging::log<phosphor::logging::level::INFO>(journalMsg.c_str());
-    phosphor::logging::log<phosphor::logging::level::INFO>(logErr.c_str());
+    phosphor::logging::log<phosphor::logging::level::INFO>(
+        journalMsg.c_str(),
+        phosphor::logging::entry("IPMISEL_MESSAGE_ID=%s", messageID.c_str()),
+        phosphor::logging::entry("IPMISEL_MESSAGE_ARGS=%s", logErr.c_str()));
 
     int responseID = selObj.addEntry(ipmiRaw.c_str());
     if (responseID < 0)
