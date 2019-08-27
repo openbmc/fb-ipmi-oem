@@ -44,7 +44,7 @@ static constexpr const char *FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
 // TODO: Need to store this info after identifying proper storage
 static uint8_t globEna = 0x09;
 static SysInfoParam sysInfoParams;
-nlohmann::json appData;
+nlohmann::json appData __attribute__((init_priority(101)));
 
 void printGUID(uint8_t *guid, off_t offset)
 {
@@ -242,8 +242,9 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
 void flush_app_data()
 {
-    std::ofstream file(JSON_DATA_FILE);
+    std::ofstream file(JSON_APP_DATA_FILE);
     file << appData;
+    file.close();
     return;
 }
 
@@ -442,9 +443,12 @@ ipmi_ret_t ipmiAppGetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 void registerAPPFunctions()
 {
     /* Get App data stored in json file */
-    std::ifstream file(JSON_DATA_FILE);
+    std::ifstream file(JSON_APP_DATA_FILE);
     if (file)
+    {
         file >> appData;
+        file.close();
+    }
 
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SELFTEST_RESULTS, NULL,
                          ipmiAppGetSTResults,
