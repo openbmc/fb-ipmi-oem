@@ -44,8 +44,8 @@ static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 
-ipmi_ret_t plat_udbg_get_post_desc(uint8_t, uint8_t *, uint8_t, uint8_t *,
-                                   uint8_t *, uint8_t *);
+int plat_udbg_get_post_desc(uint8_t, uint8_t *, uint8_t, uint8_t *, uint8_t *,
+                            uint8_t *);
 ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
@@ -444,16 +444,13 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     uint8_t next = 0;
     uint8_t end = 0;
     uint8_t phase = 0;
-    uint8_t count = 0;
+    uint8_t descLen = 0;
     int ret;
 
     index = req[3];
     phase = req[4];
 
-    phosphor::logging::log<phosphor::logging::level::INFO>(
-        "Get POST Description Event");
-
-    ret = plat_udbg_get_post_desc(index, &next, phase, &end, &count, &res[8]);
+    ret = plat_udbg_get_post_desc(index, &next, phase, &end, &descLen, &res[8]);
     if (ret)
     {
         memcpy(res, req, SIZE_IANA_ID); // IANA ID
@@ -466,8 +463,8 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     res[4] = next;
     res[5] = phase;
     res[6] = end;
-    res[7] = count;
-    *data_len = SIZE_IANA_ID + 5 + count;
+    res[7] = descLen;
+    *data_len = SIZE_IANA_ID + 5 + descLen;
 
     return IPMI_CC_OK;
 }
