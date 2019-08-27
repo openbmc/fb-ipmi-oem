@@ -48,7 +48,7 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
 namespace variant_ns = sdbusplus::message::variant_ns;
-nlohmann::json oemData;
+nlohmann::json oemData __attribute__((init_priority(101)));
 
 enum class LanParam : uint8_t
 {
@@ -74,6 +74,7 @@ void flushOemData()
 {
     std::ofstream file(JSON_OEM_DATA_FILE);
     file << oemData;
+    file.close();
     return;
 }
 
@@ -1479,7 +1480,10 @@ static void registerOEMFunctions(void)
     /* Get OEM data from json file */
     std::ifstream file(JSON_OEM_DATA_FILE);
     if (file)
+    {
         file >> oemData;
+        file.close();
+    }
 
     phosphor::logging::log<phosphor::logging::level::INFO>(
         "Registering OEM commands");
