@@ -15,16 +15,19 @@
  */
 
 #include <host-ipmid/ipmid-api.h>
+#include <nlohmann/json.hpp>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
 #include <fstream>
 #include <iostream>
+#include <phosphor-logging/log.hpp>
 
 namespace ipmi
 {
 
+#define JSON_POST_DATA_FILE "/usr/share/ipmi-providers/post_desc.json"
 #define ETH_INTF_NAME "eth0"
 
 #define ESCAPE "\x1B"
@@ -48,19 +51,6 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char *data);
 int8_t getFruData(std::string &serial, std::string &name);
-
-typedef struct _post_desc
-{
-    uint8_t code;
-    char desc[32];
-} post_desc_t;
-
-typedef struct _post_phase_desc
-{
-    int phase;
-    post_desc_t *post_tbl;
-    size_t post_tbl_cnt;
-} post_phase_desc_t;
 
 typedef struct _gpio_desc
 {
@@ -516,19 +506,82 @@ int plat_udbg_get_updated_frames(uint8_t *count, uint8_t *buffer)
 int plat_udbg_get_post_desc(uint8_t index, uint8_t *next, uint8_t phase,
                             uint8_t *end, uint8_t *length, uint8_t *buffer)
 {
-    int target, pdesc_size;
-    post_phase_desc_t *post_phase;
-    size_t post_phase_desc_cnt, i;
-    post_desc_t *ptr = NULL;
-    post_desc_t *next_phase = NULL;
-    uint8_t pos = plat_get_fru_sel();
+    nlohmann::json postObj;
+    std::string postCode;
 
-    /* Temporary return sample */
-    *next = 0xff;
-    *end = 0x00;
-    memcpy(buffer, "Hello Post", 10);
-    *length = 10;
-    return 0;
+    /* Get post description data stored in json file */
+    std::ifstream file(JSON_POST_DATA_FILE);
+    if (file)
+    {
+        file >> postObj;
+        file.close();
+    }
+    else
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Post code description file not found",
+            phosphor::logging::entry("POST_CODE_FILE=%s", JSON_POST_DATA_FILE));
+        return -1;
+    }
+
+    std::string phaseStr = "PhaseAny";
+    if (postObj.find(phaseStr) == postObj.end())
+    {
+        phaseStr = "Phase" + std::to_string(phase);
+    }
+
+    if (postObj.find(phaseStr) == postObj.end())
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Post code phase not available",
+            phosphor::logging::entry("PHASE=%d", phase));
+        return -1;
+    }
+
+    auto phaseObj = postObj[phaseStr];
+    int phaseSize = phaseObj.size();
+
+    for (int i = 0; i < phaseSize; i++)
+    {
+        postCode = phaseObj[i][0];
+        if (index == stoul(postCode, nullptr, 16))
+        {
+            std::string postDesc = phaseObj[i][1];
+            *length = postDesc.size();
+            memcpy(buffer, postDesc.data(), *length);
+            buffer[*length] = '\0';
+
+            if (phaseSize != i + 1)
+            {
+                postCode = phaseObj[i + 1][0];
+                *next = stoul(postCode, nullptr, 16);
+                *end = 0;
+            }
+            else
+            {
+                if (postObj.size() != phase)
+                {
+                    std::string nextPhaseStr =
+                        "Phase" + std::to_string(phase + 1);
+                    postCode = postObj[nextPhaseStr][0][0];
+                    *next = stoul(postCode, nullptr, 16);
+                    *end = 0;
+                }
+                else
+                {
+                    *next = 0xff;
+                    *end = 1;
+                }
+            }
+
+            return 0;
+        }
+    }
+
+    phosphor::logging::log<phosphor::logging::level::ERR>(
+        "Post code description data not available",
+        phosphor::logging::entry("PHASE_CODE=%d_0x%x", phase, index));
+    return -1;
 }
 
 /* Need to implement this */
