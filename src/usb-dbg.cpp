@@ -23,6 +23,7 @@
 #include <fstream>
 #include <iostream>
 #include <phosphor-logging/log.hpp>
+#include <appcommands.hpp>
 
 namespace ipmi
 {
@@ -721,6 +722,26 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
     return 0;
 }
 
+static int getBiosVer(std::string &ver)
+{
+    nlohmann::json appObj;
+
+    std::ifstream file(JSON_APP_DATA_FILE);
+    if (file)
+    {
+        file >> appObj;
+        file.close();
+        if (appObj.find(KEY_SYSFW_VER) != appObj.end())
+        {
+            ver = appObj[KEY_SYSFW_VER].get<std::string>();
+            std::cout << "Vijay: Bios Ver: " << ver << "\n";
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
 static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
                               uint8_t *count, uint8_t *buffer)
 {
@@ -781,9 +802,15 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
             }
         }
 
-        /* TBD: BIOS ver, ME status and Board ID needs implementation */
         // BIOS ver
+        std::string biosVer;
+        if (getBiosVer(biosVer) == 0)
+        {
+            frame_info.append("BIOS_FW_ver:", 0);
+            frame_info.append(biosVer.c_str(), 1);
+        }
 
+        /* TBD: ME status and Board ID needs implementation */
         // ME status
 
         // Board ID
