@@ -44,7 +44,7 @@ enum fb_app_cmds
 #define SIZE_LAST_BOOT_TIME 4
 #define SIZE_PCIE_PORT_CONFIG 2
 
-#define JSON_DATA_FILE "/etc/appData.json"
+#define JSON_APP_DATA_FILE "/etc/appData.json"
 #define KEY_SYSFW_VER "sysfw_ver_server"
 #define KEY_BIOS_BOOT_LEN "bios_boot_list_len"
 
