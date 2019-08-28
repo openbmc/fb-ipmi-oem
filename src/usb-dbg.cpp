@@ -29,6 +29,7 @@ namespace ipmi
 {
 
 #define JSON_POST_DATA_FILE "/usr/share/ipmi-providers/post_desc.json"
+#define JSON_GPIO_DATA_FILE "/usr/share/ipmi-providers/gpio_desc.json"
 #define ETH_INTF_NAME "eth0"
 
 #define ESCAPE "\x1B"
@@ -45,6 +46,13 @@ namespace ipmi
 #define FRU_ALL 0
 #define MAX_VALUE_LEN 64
 
+#define DEBUG_GPIO_KEY "GpioDesc"
+#define GPIO_ARRAY_SIZE 4
+#define GPIO_PIN_INDEX 0
+#define GPIO_LEVEL_INDEX 1
+#define GPIO_DEF_INDEX 2
+#define GPIO_DESC_INDEX 3
+
 /* Used for systems which do not specifically have a
  * phase, and we want to ignore the phase provided by the
  * debug card */
@@ -52,14 +60,6 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char *data);
 int8_t getFruData(std::string &serial, std::string &name);
-
-typedef struct _gpio_desc
-{
-    uint8_t pin;
-    uint8_t level;
-    uint8_t def;
-    char desc[32];
-} gpio_desc_t;
 
 typedef struct _sensor_desc
 {
@@ -587,9 +587,76 @@ int plat_udbg_get_post_desc(uint8_t index, uint8_t *next, uint8_t phase,
 
 /* Need to implement this */
 int plat_udbg_get_gpio_desc(uint8_t index, uint8_t *next, uint8_t *level,
-                            uint8_t *def, uint8_t *count, uint8_t *buffer)
+                            uint8_t *def, uint8_t *length, uint8_t *buffer)
 {
-    return 0;
+    nlohmann::json gpioObj;
+    std::string gpioPin;
+
+    /* Get gpio data stored in json file */
+    std::ifstream file(JSON_GPIO_DATA_FILE);
+    if (file)
+    {
+        file >> gpioObj;
+        file.close();
+    }
+    else
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "GPIO pin description file not found",
+            phosphor::logging::entry("GPIO_PIN_DETAILS_FILE=%s",
+                                     JSON_GPIO_DATA_FILE));
+        return -1;
+    }
+
+    if (gpioObj.find(DEBUG_GPIO_KEY) == gpioObj.end())
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "GPIO pin details not available",
+            phosphor::logging::entry("GPIO_JSON_KEY=%d", DEBUG_GPIO_KEY));
+        return -1;
+    }
+
+    auto obj = gpioObj[DEBUG_GPIO_KEY];
+    int objSize = obj.size();
+
+    for (int i = 0; i < objSize; i++)
+    {
+        if (obj[i].size() != GPIO_ARRAY_SIZE)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Size of gpio array is incorrect",
+                phosphor::logging::entry("EXPECTED_SIZE=%d", GPIO_ARRAY_SIZE));
+            return -1;
+        }
+
+        gpioPin = obj[i][GPIO_PIN_INDEX];
+        if (index == stoul(gpioPin, nullptr, 16))
+        {
+            if (objSize != i + 1)
+            {
+                gpioPin = obj[i + 1][GPIO_PIN_INDEX];
+                *next = stoul(gpioPin, nullptr, 16);
+            }
+            else
+            {
+                *next = 0xff;
+            }
+
+            *level = obj[i][GPIO_LEVEL_INDEX];
+            *def = obj[i][GPIO_DEF_INDEX];
+            std::string gpioDesc = obj[i][GPIO_DESC_INDEX];
+            *length = gpioDesc.size();
+            memcpy(buffer, gpioDesc.data(), *length);
+            buffer[*length] = '\0';
+
+            return 0;
+        }
+    }
+
+    phosphor::logging::log<phosphor::logging::level::ERR>(
+        "GPIO pin description data not available",
+        phosphor::logging::entry("GPIO_PIN=0x%x", index));
+    return -1;
 }
 
 static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t *next,

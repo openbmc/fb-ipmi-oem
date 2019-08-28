@@ -74,7 +74,7 @@ target_link_libraries (zfboemcmds ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries (zfboemcmds phosphor_logging)
 
 set (PACKAGE_DIR /usr/share/ipmi-providers/)
-set (CONFIG_FILES post_desc.json)
+set (CONFIG_FILES post_desc.json gpio_desc.json)
 
 install (TARGETS zfboemcmds DESTINATION lib/ipmid-providers)
 install (FILES ${CONFIG_FILES} DESTINATION ${PACKAGE_DIR})

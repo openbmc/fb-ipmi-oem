@@ -46,6 +46,8 @@ static constexpr size_t maxFRUStringLength = 0x3F;
 
 int plat_udbg_get_post_desc(uint8_t, uint8_t *, uint8_t, uint8_t *, uint8_t *,
                             uint8_t *);
+int plat_udbg_get_gpio_desc(uint8_t, uint8_t *, uint8_t *, uint8_t *, uint8_t *,
+                            uint8_t *);
 ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
@@ -481,11 +483,31 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     uint8_t *req = reinterpret_cast<uint8_t *>(request);
     uint8_t *res = reinterpret_cast<uint8_t *>(response);
 
-    phosphor::logging::log<phosphor::logging::level::INFO>(
-        "Get GPIO Description Event");
+    uint8_t index = 0;
+    uint8_t next = 0;
+    uint8_t level = 0;
+    uint8_t pinDef = 0;
+    uint8_t descLen = 0;
+    int ret;
 
-    std::memcpy(res, req, SIZE_IANA_ID + 1); // IANA ID
-    *data_len = SIZE_IANA_ID + 1;
+    index = req[3];
+
+    ret = plat_udbg_get_gpio_desc(index, &next, &level, &pinDef, &descLen,
+                                  &res[8]);
+    if (ret)
+    {
+        memcpy(res, req, SIZE_IANA_ID); // IANA ID
+        *data_len = SIZE_IANA_ID;
+        return IPMI_CC_UNSPECIFIED_ERROR;
+    }
+
+    memcpy(res, req, SIZE_IANA_ID); // IANA ID
+    res[3] = index;
+    res[4] = next;
+    res[5] = level;
+    res[6] = pinDef;
+    res[7] = descLen;
+    *data_len = SIZE_IANA_ID + 5 + descLen;
 
     return IPMI_CC_OK;
 }
