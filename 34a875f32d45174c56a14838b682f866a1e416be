@@ -1,0 +1,9 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+1: Amithash Prasad <amithash@fb.com>
+Code-Review+2: Vijay Khemka <vijaykhemka@fb.com>
+Submitted-by: Vijay Khemka <vijaykhemka@fb.com>
+Submitted-at: Mon, 07 Oct 2019 22:45:14 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/fb-ipmi-oem/+/24621
+Project: openbmc/fb-ipmi-oem
+Branch: refs/heads/master
