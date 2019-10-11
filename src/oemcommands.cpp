@@ -37,6 +37,9 @@
 
 namespace ipmi
 {
+
+using namespace phosphor::logging;
+
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
@@ -65,6 +68,61 @@ enum class LanParam : uint8_t
     CIPHER_SUITE_ENTRIES = 23,
     IPV6 = 59,
 };
+
+namespace network
+{
+
+constexpr auto ROOT = "/xyz/openbmc_project/network";
+constexpr auto SERVICE = "xyz.openbmc_project.Network";
+constexpr auto IPV4_TYPE = "ipv4";
+constexpr auto IPV6_TYPE = "ipv6";
+constexpr auto IPV4_PREFIX = "169.254";
+constexpr auto IPV6_PREFIX = "fe80";
+constexpr auto IP_INTERFACE = "xyz.openbmc_project.Network.IP";
+constexpr auto MAC_INTERFACE = "xyz.openbmc_project.Network.MACAddress";
+
+bool isLinkLocalIP(const std::string& address)
+{
+    return address.find(IPV4_PREFIX) == 0 || address.find(IPV6_PREFIX) == 0;
+}
+
+DbusObjectInfo getIPObject(sdbusplus::bus::bus& bus,
+                           const std::string& interface,
+                           const std::string& serviceRoot,
+                           const std::string& match)
+{
+    auto objectTree = getAllDbusObjects(bus, serviceRoot, interface, match);
+
+    if (objectTree.empty())
+    {
+        log<level::ERR>("No Object has implemented the IP interface",
+                        entry("INTERFACE=%s", interface.c_str()));
+    }
+
+    DbusObjectInfo objectInfo;
+
+    for (auto& object : objectTree)
+    {
+        auto variant = ipmi::getDbusProperty(
+            bus, object.second.begin()->first, object.first,
+            IP_INTERFACE, "Address");
+
+        objectInfo = std::make_pair(object.first, object.second.begin()->first);
+
+        // if LinkLocalIP found look for Non-LinkLocalIP
+        if (isLinkLocalIP(std::get<std::string>(variant)))
+        {
+            continue;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return objectInfo;
+}
+
+} // namespace network
 
 //----------------------------------------------------------------------
 // Helper functions for storing oem data
@@ -115,9 +173,9 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
     {
         case LanParam::IP:
         {
-            auto ethIP = ethdevice + "/" + ipmi::network::IP_TYPE;
+            auto ethIP = ethdevice + "/" + ipmi::network::IPV4_TYPE;
             std::string ipaddress;
-            auto ipObjectInfo = ipmi::getIPObject(
+            auto ipObjectInfo = ipmi::network::getIPObject(
                 bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT, ethIP);
 
             auto properties = ipmi::getAllDbusProperties(
@@ -132,9 +190,9 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
 
         case LanParam::IPV6:
         {
-            auto ethIP = ethdevice + "/ipv6";
+            auto ethIP = ethdevice + "/" + ipmi::network::IPV6_TYPE;
             std::string ipaddress;
-            auto ipObjectInfo = ipmi::getIPObject(
+            auto ipObjectInfo = ipmi::network::getIPObject(
                 bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT, ethIP);
 
             auto properties = ipmi::getAllDbusProperties(
