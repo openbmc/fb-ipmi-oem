@@ -23,6 +23,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <phosphor-logging/log.hpp>
 #include <appcommands.hpp>
 
@@ -795,7 +796,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
                 std::stringstream ss;
-                ss << fvalue;
+                ss << std::fixed << std::setprecision(2) << fvalue;
 
                 std::string senStr;
                 if (val.find("short_name") != val.end())
