@@ -1,0 +1,20 @@
+
+{
+ "SensorNames": [
+  [ "DTS_CPU1"                       , "P0_TEMP:"       ],
+  [ "DTS_CPU2"                       , "P1_TEMP:"       ],
+  [ "MB_HSC_IN_POWER"                , "HSC_PWR:"       ],
+  [ "MB_HSC_IN_VOLT"                 , "HSC_VOL:"       ],
+  [ "MB_FAN0_TACH"                   , "Fan0:"          ],
+  [ "MB_FAN1_TACH"                   , "Fan1:"          ],
+  [ "MB_INLET_REMOTE_TEMP"           , "Inlet_TEMP:"    ],
+  [ "MB_VR_CPU0_VCCIN_Temperature"   , "P0_VR_TEMP:"    ],
+  [ "MB_VR_CPU1_VCCIN_Temperature"   , "P1_VR_TEMP:"    ],
+  [ "MB_VR_CPU0_VCCIN_Output_Power"  , "P0_VR_Pwr:"     ],
+  [ "MB_VR_CPU1_VCCIN_Output_Power"  , "P1_VR_Pwr:"     ],
+  [ "MB_CPU0_DIMM_GRPA_TEMP"         , "DIMMA012_TEMP:" ],
+  [ "MB_CPU0_DIMM_GRPB_TEMP"         , "DIMMA345_TEMP:" ],
+  [ "MB_CPU1_DIMM_GRPC_TEMP"         , "DIMMB012_TEMP:" ],
+  [ "MB_CPU1_DIMM_GRPD_TEMP"         , "DIMMB345_TEMP:" ]
+]
+}

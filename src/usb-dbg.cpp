@@ -22,6 +22,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <phosphor-logging/log.hpp>
 #include <appcommands.hpp>
 
@@ -30,6 +31,7 @@ namespace ipmi
 
 #define JSON_POST_DATA_FILE "/usr/share/ipmi-providers/post_desc.json"
 #define JSON_GPIO_DATA_FILE "/usr/share/ipmi-providers/gpio_desc.json"
+#define JSON_SENSOR_NAMES_FILE "/usr/share/ipmi-providers/cri_sensors.json"
 #define ETH_INTF_NAME "eth0"
 
 #define ESCAPE "\x1B"
@@ -53,6 +55,10 @@ namespace ipmi
 #define GPIO_DEF_INDEX 2
 #define GPIO_DESC_INDEX 3
 
+#define DEBUG_SENSOR_KEY "SensorNames"
+#define SENSOR_NAME_INDEX 0
+#define SENSOR_SNAME_INDEX 1
+
 /* Used for systems which do not specifically have a
  * phase, and we want to ignore the phase provided by the
  * debug card */
@@ -60,6 +66,12 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char *data);
 int8_t getFruData(std::string &serial, std::string &name);
+
+/* Declare storage functions used here */
+namespace storage
+{
+int getSensorValue(std::string &, double &);
+}
 
 typedef struct _sensor_desc
 {
@@ -585,7 +597,6 @@ int plat_udbg_get_post_desc(uint8_t index, uint8_t *next, uint8_t phase,
     return -1;
 }
 
-/* Need to implement this */
 int plat_udbg_get_gpio_desc(uint8_t index, uint8_t *next, uint8_t *level,
                             uint8_t *def, uint8_t *length, uint8_t *buffer)
 {
@@ -749,13 +760,8 @@ static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t *next,
 static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
                                uint8_t *count, uint8_t *buffer)
 {
-    char str[32], temp_val[16], temp_thresh[8], print_format[32];
     int i, ret;
-    float fvalue;
-    sensor_desc_t *cri_sensor = NULL;
-    size_t sensor_count = 0;
-    uint8_t pos = plat_get_fru_sel();
-    uint8_t fru;
+    double fvalue;
 
     if (page == 1)
     {
@@ -764,7 +770,60 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
         // initialize and clear frame
         frame_snr.init(FRAME_BUFF_SIZE);
         snprintf(frame_snr.title, 32, "CriSensor");
-        frame_snr.append(str, 0);
+
+        nlohmann::json senObj;
+        std::string gpioPin;
+
+        /* Get critical sensor names stored in json file */
+        std::ifstream file(JSON_SENSOR_NAMES_FILE);
+        if (file)
+        {
+            file >> senObj;
+            file.close();
+        }
+        else
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Critical Sensor names file not found",
+                phosphor::logging::entry("CRI_SENSOR_NAMES_FILE=%s",
+                                         JSON_SENSOR_NAMES_FILE));
+            return -1;
+        }
+
+        if (senObj.find(DEBUG_SENSOR_KEY) == senObj.end())
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Sensor Names details not available",
+                phosphor::logging::entry("DEBUG_SENSOR_KEY=%s",
+                                         DEBUG_SENSOR_KEY));
+            return -1;
+        }
+
+        auto obj = senObj[DEBUG_SENSOR_KEY];
+        int objSize = obj.size();
+
+        /* Get sensors values for all critical sensors */
+        for (int i = 0; i < objSize; i++)
+        {
+            std::string senName = obj[i][SENSOR_NAME_INDEX];
+            if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
+            {
+                std::stringstream ss;
+                ss << fvalue;
+
+                std::string senStr = obj[i][SENSOR_SNAME_INDEX];
+                senStr += ss.str();
+                frame_snr.append(senStr.c_str(), 0);
+            }
+            else
+            {
+                phosphor::logging::log<phosphor::logging::level::INFO>(
+                    "Critical sensor not found",
+                    phosphor::logging::entry("CRI_SENSOR_NAME=%s",
+                                             senName.c_str()));
+            }
+        }
+
     } // End of update frame
 
     if (page > frame_snr.pages)
