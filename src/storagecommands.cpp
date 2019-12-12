@@ -810,6 +810,56 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
+static int getSensorConnectionByName(std::string &name, std::string &connection,
+                                     std::string &path)
+{
+    if (sensorTree.empty() && !getSensorSubtree(sensorTree))
+    {
+        return -1;
+    }
+
+    for (const auto &sensor : sensorTree)
+    {
+        path = sensor.first;
+        if (path.find(name) != std::string::npos)
+        {
+            connection = sensor.second.begin()->first;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+int getSensorValue(std::string &name, double &val)
+{
+    std::string connection;
+    std::string path;
+    int ret = -1;
+
+    ret = getSensorConnectionByName(name, connection, path);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    SensorMap sensorMap;
+    if (!getSensorMap(connection, path, sensorMap))
+    {
+        return ret;
+    }
+    auto sensorObject = sensorMap.find("xyz.openbmc_project.Sensor.Value");
+
+    if (sensorObject == sensorMap.end() ||
+        sensorObject->second.find("Value") == sensorObject->second.end())
+    {
+        return ret;
+    }
+    auto &valueVariant = sensorObject->second["Value"];
+    val = std::visit(VariantToDoubleVisitor(), valueVariant);
+
+    return 0;
+}
+
 void registerStorageFunctions()
 {
     // <READ FRU Data>
