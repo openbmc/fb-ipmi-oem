@@ -69,7 +69,8 @@ int8_t getFruData(std::string &serial, std::string &name);
 namespace storage
 {
 int getSensorValue(std::string &, double &);
-}
+int getSensorUnit(std::string &, std::string &);
+} // namespace storage
 
 typedef struct _sensor_desc
 {
@@ -805,6 +806,12 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
                     senStr = senName;
 
                 senStr += ss.str();
+
+                /* Get unit string for sensor and append in output */
+                std::string unitStr;
+                if (ipmi::storage::getSensorUnit(senName, unitStr) == 0)
+                    senStr += unitStr;
+
                 frame_snr.append(senStr.c_str(), 0);
             }
             else
