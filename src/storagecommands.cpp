@@ -860,6 +860,37 @@ int getSensorValue(std::string &name, double &val)
     return 0;
 }
 
+const static boost::container::flat_map<const char *, std::string, CmpStr>
+    sensorUnitStr{{{"temperature", "C"},
+                   {"voltage", "V"},
+                   {"current", "mA"},
+                   {"fan_tach", "RPM"},
+                   {"fan_pwm", "RPM"},
+                   {"power", "W"}}};
+
+int getSensorUnit(std::string &name, std::string &unit)
+{
+    std::string connection;
+    std::string path;
+    int ret = -1;
+
+    ret = getSensorConnectionByName(name, connection, path);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    std::string sensorTypeStr = getSensorTypeStringFromPath(path);
+    auto findSensor = sensorUnitStr.find(sensorTypeStr.c_str());
+    if (findSensor != sensorUnitStr.end())
+    {
+        unit = findSensor->second;
+        return 0;
+    }
+    else
+        return -1;
+}
+
 void registerStorageFunctions()
 {
     // <READ FRU Data>
