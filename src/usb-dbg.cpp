@@ -57,8 +57,10 @@ namespace ipmi
 #define GPIO_DESC_INDEX 3
 
 #define DEBUG_SENSOR_KEY "SensorNames"
+#define DEBUG_SENSOR_ARRAY_SIZE 3
 #define SENSOR_NAME_INDEX 0
 #define SENSOR_SNAME_INDEX 1
+#define SENSOR_PREC_INDEX 2
 
 /* Used for systems which do not specifically have a
  * phase, and we want to ignore the phase provided by the
@@ -807,11 +809,21 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
         /* Get sensors values for all critical sensors */
         for (int i = 0; i < objSize; i++)
         {
+            if (obj[i].size() != DEBUG_SENSOR_ARRAY_SIZE)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Size of sensor array is incorrect",
+                    phosphor::logging::entry("EXPECTED_SIZE=%d",
+                                             DEBUG_SENSOR_ARRAY_SIZE));
+                return -1;
+            }
+
             std::string senName = obj[i][SENSOR_NAME_INDEX];
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
                 std::stringstream ss;
-                ss << std::fixed << std::setprecision(2) << fvalue;
+                int prec = obj[i][SENSOR_PREC_INDEX];
+                ss << std::fixed << std::setprecision(prec) << fvalue;
 
                 std::string senStr = obj[i][SENSOR_SNAME_INDEX];
                 senStr += ss.str();
