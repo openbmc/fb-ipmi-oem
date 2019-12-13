@@ -73,7 +73,7 @@ target_link_libraries (zfboemcmds -lchannellayer)
 target_link_libraries (zfboemcmds ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries (zfboemcmds phosphor_logging)
 
-set (PACKAGE_DIR /usr/share/ipmi-providers/)
+set (PACKAGE_DIR /usr/share/lcd-debug/)
 set (CONFIG_FILES post_desc.json gpio_desc.json)
 
 install (TARGETS zfboemcmds DESTINATION lib/ipmid-providers)
