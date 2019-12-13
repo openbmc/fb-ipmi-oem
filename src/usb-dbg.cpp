@@ -28,8 +28,9 @@
 namespace ipmi
 {
 
-#define JSON_POST_DATA_FILE "/usr/share/ipmi-providers/post_desc.json"
-#define JSON_GPIO_DATA_FILE "/usr/share/ipmi-providers/gpio_desc.json"
+#define JSON_POST_DATA_FILE "/usr/share/lcd-debug/post_desc.json"
+#define JSON_GPIO_DATA_FILE "/usr/share/lcd-debug/gpio_desc.json"
+
 #define ETH_INTF_NAME "eth0"
 
 #define ESCAPE "\x1B"
