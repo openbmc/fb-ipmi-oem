@@ -136,6 +136,8 @@ enum fb_oem_qc_cmds
 #define PPR_ROW_ADDR_LEN 8
 #define PPR_HST_DATA_LEN 17
 
+#define BOOT_SEQ_ARRAY_SIZE 10
+
 const char *bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
                          "OTHER",   "",         "",         "",
                          "",        "NET_IPV6"};
