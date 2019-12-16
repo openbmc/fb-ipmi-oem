@@ -631,6 +631,32 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
+/* Helper functions to set boot order */
+void setBootOrder(uint8_t *data)
+{
+    nlohmann::json bootMode;
+    uint8_t mode = data[0];
+    int i;
+
+    bootMode["UEFI"] = (mode & BOOT_MODE_UEFI ? true : false);
+    bootMode["CMOS_CLR"] = (mode & BOOT_MODE_CMOS_CLR ? true : false);
+    bootMode["FORCE_BOOT"] = (mode & BOOT_MODE_FORCE_BOOT ? true : false);
+    bootMode["BOOT_FLAG"] = (mode & BOOT_MODE_BOOT_FLAG ? true : false);
+    oemData[KEY_BOOT_ORDER][KEY_BOOT_MODE] = bootMode;
+
+    /* Initialize boot sequence array */
+    oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ] = {};
+    for (i = 1; i < SIZE_BOOT_ORDER; i++)
+    {
+        if (data[i] >= BOOT_SEQ_ARRAY_SIZE)
+            oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ][i - 1] = "NA";
+        else
+            oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ][i - 1] = bootSeq[data[i]];
+    }
+
+    flushOemData();
+}
+
 //----------------------------------------------------------------------
 // Set Boot Order (CMD_OEM_SET_BOOT_ORDER)
 //----------------------------------------------------------------------
@@ -640,9 +666,6 @@ ipmi_ret_t ipmiOemSetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 {
     uint8_t *req = reinterpret_cast<uint8_t *>(request);
     uint8_t len = *data_len;
-    uint8_t mode = req[0];
-    nlohmann::json bootMode;
-    int i;
 
     *data_len = 0;
 
@@ -653,19 +676,7 @@ ipmi_ret_t ipmiOemSetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_REQ_DATA_LEN_INVALID;
     }
 
-    bootMode["UEFI"] = (mode & BOOT_MODE_UEFI ? true : false);
-    bootMode["CMOS_CLR"] = (mode & BOOT_MODE_CMOS_CLR ? true : false);
-    bootMode["FORCE_BOOT"] = (mode & BOOT_MODE_FORCE_BOOT ? true : false);
-    bootMode["BOOT_FLAG"] = (mode & BOOT_MODE_BOOT_FLAG ? true : false);
-
-    oemData[KEY_BOOT_ORDER][KEY_BOOT_MODE] = bootMode;
-
-    /* Initialize boot sequence array */
-    oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ] = {};
-    for (i = 1; i < SIZE_BOOT_ORDER; i++)
-        oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ][i - 1] = bootSeq[req[i]];
-
-    flushOemData();
+    setBootOrder(req);
 
     return IPMI_CC_OK;
 }
@@ -678,23 +689,44 @@ ipmi_ret_t ipmiOemGetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
     uint8_t *res = reinterpret_cast<uint8_t *>(response);
-    nlohmann::json bootMode = oemData[KEY_BOOT_ORDER][KEY_BOOT_MODE];
     uint8_t mode = 0;
     int i;
 
     *data_len = SIZE_BOOT_ORDER;
 
-    if (bootMode["UEFI"])
-        mode |= BOOT_MODE_UEFI;
-    if (bootMode["CMOS_CLR"])
-        mode |= BOOT_MODE_CMOS_CLR;
-    if (bootMode["BOOT_FLAG"])
-        mode |= BOOT_MODE_BOOT_FLAG;
+    if (oemData.find(KEY_BOOT_ORDER) == oemData.end())
+    {
+        /* Return default boot order 0100090203ff */
+        uint8_t defaultBoot[SIZE_BOOT_ORDER] = {
+            BOOT_MODE_UEFI,      bootMap["USB_DEV"], bootMap["NET_IPV6"],
+            bootMap["SATA_HDD"], bootMap["SATA_CD"], 0xff};
 
-    res[0] = mode;
+        memcpy(res, defaultBoot, SIZE_BOOT_ORDER);
+        phosphor::logging::log<phosphor::logging::level::INFO>(
+            "Set default boot order");
+        setBootOrder(defaultBoot);
+    }
+    else
+    {
+        nlohmann::json bootMode = oemData[KEY_BOOT_ORDER][KEY_BOOT_MODE];
+        if (bootMode["UEFI"])
+            mode |= BOOT_MODE_UEFI;
+        if (bootMode["CMOS_CLR"])
+            mode |= BOOT_MODE_CMOS_CLR;
+        if (bootMode["BOOT_FLAG"])
+            mode |= BOOT_MODE_BOOT_FLAG;
 
-    for (i = 1; i < SIZE_BOOT_ORDER; i++)
-        res[i] = bootMap[oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ][i - 1]];
+        res[0] = mode;
+
+        for (i = 1; i < SIZE_BOOT_ORDER; i++)
+        {
+            std::string seqStr = oemData[KEY_BOOT_ORDER][KEY_BOOT_SEQ][i - 1];
+            if (bootMap.find(seqStr) != bootMap.end())
+                res[i] = bootMap[seqStr];
+            else
+                res[i] = 0xff;
+        }
+    }
 
     return IPMI_CC_OK;
 }
