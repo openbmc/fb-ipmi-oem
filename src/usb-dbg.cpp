@@ -797,7 +797,12 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
                 std::stringstream ss;
-                ss << std::fixed << std::setprecision(2) << fvalue;
+                int prec = 0; // Default value
+
+                if (val.find("precision") != val.end())
+                    prec = val["precision"];
+
+                ss << std::fixed << std::setprecision(prec) << fvalue;
 
                 std::string senStr;
                 if (val.find("short_name") != val.end())

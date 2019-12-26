@@ -9,11 +9,13 @@
 	},
 	"MB_HSC_IN_POWER":
 	{
-		"short_name": "HSC_PWR:"
+		"short_name": "HSC_PWR:",
+		"precision": 1
 	},
 	"MB_HSC_IN_VOLT":
 	{
-		"short_name": "HSC_VOL:"
+		"short_name": "HSC_VOL:",
+		"precision": 2
 	},
 	"MB_FAN0_TACH":
 	{
@@ -41,7 +43,8 @@
 	},
 	"MB_VR_CPU1_VCCIN_Output_Power":
 	{
-		"short_name": "P1_VR_Pwr:"
+		"short_name": "P1_VR_Pwr:",
+		"precision": 1
 	},
 	"MB_CPU0_DIMM_GRPA_TEMP":
 	{
