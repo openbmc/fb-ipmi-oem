@@ -16,6 +16,7 @@
 
 #include <host-ipmid/ipmid-api.h>
 #include <nlohmann/json.hpp>
+#include <ipmid/api.hpp>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -25,6 +26,7 @@
 #include <sstream>
 #include <iomanip>
 #include <phosphor-logging/log.hpp>
+#include <sdbusplus/asio/connection.hpp>
 #include <appcommands.hpp>
 
 namespace ipmi
@@ -71,6 +73,13 @@ namespace storage
 int getSensorValue(std::string &, double &);
 int getSensorUnit(std::string &, std::string &);
 } // namespace storage
+
+static constexpr bool DEBUG = false;
+static const uint8_t meAddress = 1;
+static constexpr uint8_t lun = 0;
+
+using IpmbMethodType =
+    std::tuple<int, uint8_t, uint8_t, uint8_t, uint8_t, std::vector<uint8_t>>;
 
 typedef struct _sensor_desc
 {
@@ -871,6 +880,49 @@ static int getBiosVer(std::string &ver)
     return -1;
 }
 
+static int getMeStatus(std::string &status)
+{
+    uint8_t cmd = 0x01;   // Get Device id command
+    uint8_t netFn = 0x06; // Netfn for APP
+    std::shared_ptr<sdbusplus::asio::connection> bus = getSdBus();
+    std::vector<uint8_t> cmdData;
+
+    auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
+                                       "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
+                                       "org.openbmc.Ipmb", "sendRequest");
+    method.append(meAddress, netFn, lun, cmd, cmdData);
+
+    auto reply = bus->call(method);
+    if (reply.is_method_error())
+    {
+        std::cerr << "Error reading from ME\n";
+        return -1;
+    }
+
+    IpmbMethodType resp;
+    reply.read(resp);
+
+    std::vector<uint8_t> data;
+    data = std::get<5>(resp);
+
+    if (DEBUG)
+    {
+        std::cout << "ME Get ID: ";
+        for (size_t d : data)
+        {
+            std::cout << d << " ";
+        }
+        std::cout << "\n";
+    }
+
+    if (data[2] & 0x80)
+        status = "recovery mode";
+    else
+        status = "operation mode";
+
+    return 0;
+}
+
 static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
                               uint8_t *count, uint8_t *buffer)
 {
@@ -939,9 +991,18 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
             frame_info.append(biosVer.c_str(), 1);
         }
 
-        /* TBD: ME status and Board ID needs implementation */
         // ME status
+        std::string meStatus;
+        if (getMeStatus(meStatus) != 0)
+        {
+            phosphor::logging::log<phosphor::logging::level::WARNING>(
+                "Reading ME status failed");
+            meStatus = "unknown";
+        }
+        frame_info.append("ME_status:", 0);
+        frame_info.append(meStatus.c_str(), 1);
 
+        /* TBD: Board ID needs implementation */
         // Board ID
 
         // Battery - Use Escape sequence
