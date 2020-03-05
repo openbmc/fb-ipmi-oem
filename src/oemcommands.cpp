@@ -294,99 +294,6 @@ typedef struct
     uint8_t front_panel_button_cap_status;
 } ipmi_get_chassis_status_t;
 
-// Todo: Needs to update this as per power policy when integrated
-//----------------------------------------------------------------------
-// Get Chassis Status commands
-//----------------------------------------------------------------------
-ipmi_ret_t ipmiGetChassisStatus(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                ipmi_request_t request,
-                                ipmi_response_t response,
-                                ipmi_data_len_t data_len,
-                                ipmi_context_t context)
-{
-    ipmi_get_chassis_status_t chassis_status;
-    uint8_t s = 2;
-
-    *data_len = 4;
-
-    // Current Power State
-    // [7] reserved
-    // [6..5] power restore policy
-    //          00b = chassis stays powered off after AC/mains returns
-    //          01b = after AC returns, power is restored to the state that was
-    //          in effect when AC/mains was lost.
-    //          10b = chassis always powers up after AC/mains returns
-    //          11b = unknow
-    //        Set to 00b, by observing the hardware behavior.
-    //        Do we need to define a dbus property to identify the restore
-    //        policy?
-
-    // [4] power control fault
-    //       1b = controller attempted to turn system power on or off, but
-    //       system did not enter desired state.
-    //       Set to 0b, since We don't support it..
-
-    // [3] power fault
-    //       1b = fault detected in main power subsystem.
-    //       set to 0b. for we don't support it.
-
-    // [2] 1b = interlock (chassis is presently shut down because a chassis
-    //       panel interlock switch is active). (IPMI 1.5)
-    //       set to 0b,  for we don't support it.
-
-    // [1] power overload
-    //      1b = system shutdown because of power overload condition.
-    //       set to 0b,  for we don't support it.
-
-    // [0] power is on
-    //       1b = system power is on
-    //       0b = system power is off(soft-off S4/S5, or mechanical off)
-
-    chassis_status.cur_power_state = ((s & 0x3) << 5) | (1 & 0x1);
-
-    // Last Power Event
-    // [7..5] – reserved
-    // [4] – 1b = last ‘Power is on’ state was entered via IPMI command
-    // [3] – 1b = last power down caused by power fault
-    // [2] – 1b = last power down caused by a power interlock being activated
-    // [1] – 1b = last power down caused by a Power overload
-    // [0] – 1b = AC failed
-    // set to 0x0,  for we don't support these fields.
-
-    chassis_status.last_power_event = 0;
-
-    // Misc. Chassis State
-    // [7] – reserved
-    // [6] – 1b = Chassis Identify command and state info supported (Optional)
-    //       0b = Chassis Identify command support unspecified via this command.
-    //       (The Get Command Support command , if implemented, would still
-    //       indicate support for the Chassis Identify command)
-    // [5..4] – Chassis Identify State. Mandatory when bit[6] =1b, reserved
-    // (return
-    //          as 00b) otherwise. Returns the present chassis identify state.
-    //           Refer to the Chassis Identify command for more info.
-    //         00b = chassis identify state = Off
-    //         01b = chassis identify state = Temporary(timed) On
-    //         10b = chassis identify state = Indefinite On
-    //         11b = reserved
-    // [3] – 1b = Cooling/fan fault detected
-    // [2] – 1b = Drive Fault
-    // [1] – 1b = Front Panel Lockout active (power off and reset via chassis
-    //       push-buttons disabled.)
-    // [0] – 1b = Chassis Intrusion active
-    //  set to 0,  for we don't support them.
-    chassis_status.misc_power_state = 0x40;
-
-    //  Front Panel Button Capabilities and disable/enable status(Optional)
-    //  set to 0,  for we don't support them.
-    chassis_status.front_panel_button_cap_status = 0;
-
-    // Pack the actual response
-    std::memcpy(response, &chassis_status, *data_len);
-
-    return IPMI_CC_OK;
-}
-
 //----------------------------------------------------------------------
 // Get Debug Frame Info
 //----------------------------------------------------------------------
@@ -1596,8 +1503,7 @@ static void registerOEMFunctions(void)
 
     phosphor::logging::log<phosphor::logging::level::INFO>(
         "Registering OEM commands");
-    ipmiPrintAndRegister(NETFUN_CHASSIS, 1, NULL, ipmiGetChassisStatus,
-                         PRIVILEGE_USER); // get chassis status
+
     ipmiPrintAndRegister(NETFN_OEM_USB_DBG_REQ, CMD_OEM_USB_DBG_GET_FRAME_INFO,
                          NULL, ipmiOemDbgGetFrameInfo,
                          PRIVILEGE_USER); // get debug frame info
