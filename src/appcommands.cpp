@@ -38,7 +38,6 @@ static constexpr size_t GUID_SIZE = 16;
 // TODO Make offset and location runtime configurable to ensure we
 // can make each define their own locations.
 static constexpr off_t OFFSET_SYS_GUID = 0x17F0;
-static constexpr off_t OFFSET_DEV_GUID = 0x1800;
 static constexpr const char *FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
 
 // TODO: Need to store this info after identifying proper storage
@@ -104,11 +103,6 @@ int getSystemGUID(uint8_t *guid)
     return getGUID(OFFSET_SYS_GUID, guid);
 }
 
-int getDeviceGUID(uint8_t *guid)
-{
-    return getGUID(OFFSET_DEV_GUID, guid);
-}
-
 //----------------------------------------------------------------------
 // Get Self Test Results (IPMI/Section 20.4) (CMD_APP_GET_SELFTEST_RESULTS)
 //----------------------------------------------------------------------
@@ -149,24 +143,6 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     }
 
     *data_len = 0;
-
-    return IPMI_CC_OK;
-}
-
-//----------------------------------------------------------------------
-// Get Device GUID (CMD_APP_GET_DEV_GUID)
-//----------------------------------------------------------------------
-ipmi_ret_t ipmiAppGetDevGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                             ipmi_request_t request, ipmi_response_t response,
-                             ipmi_data_len_t data_len, ipmi_context_t context)
-{
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
-
-    if (getDeviceGUID(res))
-    {
-        return IPMI_CC_UNSPECIFIED_ERROR;
-    }
-    *data_len = GUID_SIZE;
 
     return IPMI_CC_OK;
 }
@@ -456,9 +432,6 @@ void registerAPPFunctions()
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_MFR_TEST_ON, NULL,
                          ipmiAppMfrTestOn,
                          PRIVILEGE_USER); // Manufacturing Test On
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_DEV_GUID, NULL,
-                         ipmiAppGetDevGUID,
-                         PRIVILEGE_USER); // Get Device GUID
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_SET_GLOBAL_ENABLES, NULL,
                          ipmiAppSetGlobalEnables,
                          PRIVILEGE_USER); // Set Global Enables
