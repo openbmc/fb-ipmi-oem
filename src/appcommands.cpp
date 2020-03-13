@@ -135,7 +135,7 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         (*data_len == mfrTest.length()))
     {
         /* sled-cycle the BMC */
-        system("/usr/sbin/power-util mb sled-cycle");
+        system("/usr/sbin/power-util sled-cycle");
     }
     else
     {
