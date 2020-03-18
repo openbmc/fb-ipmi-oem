@@ -16,7 +16,7 @@
  */
 
 #include "xyz/openbmc_project/Common/error.hpp"
-#include <ipmid/api.h>
+#include <ipmid/api.hpp>
 
 #include <nlohmann/json.hpp>
 #include <array>
@@ -52,6 +52,8 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
                                     uint8_t *);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
+int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t> &, std::vector<uint8_t> &);
+
 namespace variant_ns = sdbusplus::message::variant_ns;
 nlohmann::json oemData __attribute__((init_priority(101)));
 
@@ -1491,6 +1493,50 @@ ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
+/* Helper function for sending DCMI commands to ME and getting response back */
+ipmi::RspType<std::vector<uint8_t>> sendDCMICmd(uint8_t cmd,
+                                                std::vector<uint8_t> &cmdData)
+{
+    std::vector<uint8_t> respData;
+
+    /* Add group id as first byte to request for ME command */
+    cmdData.insert(cmdData.begin(), groupDCMI);
+
+    if (sendMeCmd(ipmi::netFnGroup, cmd, cmdData, respData))
+        return ipmi::responseUnspecifiedError();
+
+    /* Remove group id as first byte as it will be added by IPMID */
+    respData.erase(respData.begin());
+
+    return ipmi::responseSuccess(std::move(respData));
+}
+
+/* DCMI Command handellers. */
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemDCMIGetPowerReading(std::vector<uint8_t> reqData)
+{
+    return sendDCMICmd(ipmi::dcmi::cmdGetPowerReading, reqData);
+}
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemDCMIGetPowerLimit(std::vector<uint8_t> reqData)
+{
+    return sendDCMICmd(ipmi::dcmi::cmdGetPowerLimit, reqData);
+}
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemDCMISetPowerLimit(std::vector<uint8_t> reqData)
+{
+    return sendDCMICmd(ipmi::dcmi::cmdSetPowerLimit, reqData);
+}
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemDCMIApplyPowerLimit(std::vector<uint8_t> reqData)
+{
+    return sendDCMICmd(ipmi::dcmi::cmdActDeactivatePwrLimit, reqData);
+}
+
 static void registerOEMFunctions(void)
 {
     /* Get OEM data from json file */
@@ -1576,6 +1622,28 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DRIVE_INFO, NULL,
                          ipmiOemQGetDriveInfo,
                          PRIVILEGE_USER); // Get Drive Info
+
+    /* FB OEM DCMI Commands as per DCMI spec 1.5 Section 6 */
+    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
+                               ipmi::dcmi::cmdGetPowerReading,
+                               ipmi::Privilege::User,
+                               ipmiOemDCMIGetPowerReading); // Get Power Reading
+
+    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
+                               ipmi::dcmi::cmdGetPowerLimit,
+                               ipmi::Privilege::User,
+                               ipmiOemDCMIGetPowerLimit); // Get Power Limit
+
+    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
+                               ipmi::dcmi::cmdSetPowerLimit,
+                               ipmi::Privilege::Operator,
+                               ipmiOemDCMISetPowerLimit); // Set Power Limit
+
+    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
+                               ipmi::dcmi::cmdActDeactivatePwrLimit,
+                               ipmi::Privilege::Operator,
+                               ipmiOemDCMIApplyPowerLimit); // Apply Power Limit
+
     return;
 }
 

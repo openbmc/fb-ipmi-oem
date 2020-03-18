@@ -880,6 +880,54 @@ static int getBiosVer(std::string &ver)
     return -1;
 }
 
+int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t> &cmdData,
+              std::vector<uint8_t> &respData)
+{
+    auto bus = getSdBus();
+
+    if (DEBUG)
+    {
+        std::cout << "ME NetFn:cmd " << (int)netFn << ":" << (int)cmd << "\n";
+        std::cout << "ME req data: ";
+        for (auto d : cmdData)
+        {
+            std::cout << d << " ";
+        }
+        std::cout << "\n";
+    }
+
+    auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
+                                       "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
+                                       "org.openbmc.Ipmb", "sendRequest");
+    method.append(meAddress, netFn, lun, cmd, cmdData);
+
+    auto reply = bus->call(method);
+    if (reply.is_method_error())
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Error reading from ME");
+        return -1;
+    }
+
+    IpmbMethodType resp;
+    reply.read(resp);
+
+    respData =
+        std::move(std::get<std::remove_reference_t<decltype(respData)>>(resp));
+
+    if (DEBUG)
+    {
+        std::cout << "ME resp data: ";
+        for (auto d : respData)
+        {
+            std::cout << d << " ";
+        }
+        std::cout << "\n";
+    }
+
+    return 0;
+}
+
 static int getMeStatus(std::string &status)
 {
     uint8_t cmd = 0x01;   // Get Device id command
