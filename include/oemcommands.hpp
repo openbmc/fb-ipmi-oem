@@ -138,6 +138,9 @@ enum fb_oem_qc_cmds
 
 #define BOOT_SEQ_ARRAY_SIZE 10
 
+/* Group extension id for DCMI netfn 0x2c */
+static constexpr auto groupExtId = 0xDC;
+
 const char *bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
                          "OTHER",   "",         "",         "",
                          "",        "NET_IPV6"};
