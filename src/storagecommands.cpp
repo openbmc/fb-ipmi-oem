@@ -38,7 +38,6 @@ constexpr static const size_t maxMessageSize = 64;
 constexpr static const size_t maxFruSdrNameSize = 16;
 static constexpr int sensorMapUpdatePeriod = 2;
 using SensorMap = std::map<std::string, std::map<std::string, DbusVariant>>;
-namespace variant_ns = sdbusplus::message::variant_ns;
 
 using ManagedObjectSensor =
     std::map<sdbusplus::message::object_path,
@@ -216,10 +215,8 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
             continue;
         }
 
-        uint8_t fruBus =
-            sdbusplus::message::variant_ns::get<uint32_t>(busFind->second);
-        uint8_t fruAddr =
-            sdbusplus::message::variant_ns::get<uint32_t>(addrFind->second);
+        uint8_t fruBus = std::get<uint32_t>(busFind->second);
+        uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
 
         uint8_t fruHash = 0;
         // Need to revise this strategy for dev id
@@ -481,13 +478,11 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord &resp)
                          {
                              return false;
                          }
-                         if (sdbusplus::message::variant_ns::get<uint32_t>(
-                                 findBus->second) != bus)
+                         if (std::get<uint32_t>(findBus->second) != bus)
                          {
                              return false;
                          }
-                         if (sdbusplus::message::variant_ns::get<uint32_t>(
-                                 findAddress->second) != address)
+                         if (std::get<uint32_t>(findAddress->second) != address)
                          {
                              return false;
                          }
@@ -502,13 +497,11 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord &resp)
     auto findBoardName = fruData->find("PRODUCT_PRODUCT_NAME");
     if (findProductName != fruData->end())
     {
-        name = sdbusplus::message::variant_ns::get<std::string>(
-            findProductName->second);
+        name = std::get<std::string>(findProductName->second);
     }
     else if (findBoardName != fruData->end())
     {
-        name = sdbusplus::message::variant_ns::get<std::string>(
-            findBoardName->second);
+        name = std::get<std::string>(findBoardName->second);
     }
     else
     {
@@ -715,12 +708,12 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     double min = -127;
     if (maxObject != sensorObject->second.end())
     {
-        max = variant_ns::visit(VariantToDoubleVisitor(), maxObject->second);
+        max = std::visit(VariantToDoubleVisitor(), maxObject->second);
     }
 
     if (minObject != sensorObject->second.end())
     {
-        min = variant_ns::visit(VariantToDoubleVisitor(), minObject->second);
+        min = std::visit(VariantToDoubleVisitor(), minObject->second);
     }
 
     int16_t mValue;

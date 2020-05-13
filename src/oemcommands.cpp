@@ -54,7 +54,6 @@ ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
                                    uint8_t *);
 int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t> &, std::vector<uint8_t> &);
 
-namespace variant_ns = sdbusplus::message::variant_ns;
 nlohmann::json oemData __attribute__((init_priority(101)));
 
 enum class LanParam : uint8_t
@@ -187,7 +186,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
                 bus, ipObjectInfo.second, ipObjectInfo.first,
                 ipmi::network::IP_INTERFACE);
 
-            ipaddress = variant_ns::get<std::string>(properties["Address"]);
+            ipaddress = std::get<std::string>(properties["Address"]);
 
             std::strcpy(data, ipaddress.c_str());
         }
@@ -204,7 +203,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
                 bus, ipObjectInfo.second, ipObjectInfo.first,
                 ipmi::network::IP_INTERFACE);
 
-            ipaddress = variant_ns::get<std::string>(properties["Address"]);
+            ipaddress = std::get<std::string>(properties["Address"]);
 
             std::strcpy(data, ipaddress.c_str());
         }
@@ -221,7 +220,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
                 bus, macObjectInfo.second, macObjectInfo.first,
                 ipmi::network::MAC_INTERFACE, "MACAddress");
 
-            macAddress = variant_ns::get<std::string>(variant);
+            macAddress = std::get<std::string>(variant);
 
             sscanf(macAddress.c_str(), ipmi::network::MAC_ADDRESS_FORMAT,
                    (data), (data + 1), (data + 2), (data + 3), (data + 4),
@@ -268,8 +267,7 @@ int8_t getFruData(std::string &data, std::string &name)
         try
         {
             Value variant = property->second;
-            std::string &result =
-                sdbusplus::message::variant_ns::get<std::string>(variant);
+            std::string &result = std::get<std::string>(variant);
             if (result.size() > maxFRUStringLength)
             {
                 phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -279,7 +277,7 @@ int8_t getFruData(std::string &data, std::string &name)
             data = result;
             return 0;
         }
-        catch (sdbusplus::message::variant_ns::bad_variant_access &e)
+        catch (std::bad_variant_access &e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
