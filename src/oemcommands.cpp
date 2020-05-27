@@ -57,6 +57,12 @@ int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t>&, std::vector<uint8_t>&);
 
 nlohmann::json oemData __attribute__((init_priority(101)));
 
+static constexpr size_t GUID_SIZE = 16;
+// TODO Make offset and location runtime configurable to ensure we
+// can make each define their own locations.
+static constexpr off_t OFFSET_SYS_GUID = 0x17F0;
+static constexpr const char* FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
+
 enum class LanParam : uint8_t
 {
     INPROGRESS = 0,
@@ -805,6 +811,72 @@ ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 {
     /* Do nothing, return success */
     *data_len = 0;
+    return IPMI_CC_OK;
+}
+
+// Helper function to set guid at offset in EEPROM
+static int setGUID(off_t offset, uint8_t* guid)
+{
+    int fd = -1;
+    ssize_t len;
+    int ret = 0;
+
+    errno = 0;
+
+    // Check if file is present
+    if (access(FRU_EEPROM, F_OK) == -1)
+    {
+        std::cerr << "Unable to access: " << FRU_EEPROM << std::endl;
+        return errno;
+    }
+
+    // Open the file
+    fd = open(FRU_EEPROM, O_WRONLY);
+    if (fd == -1)
+    {
+        std::cerr << "Unable to open: " << FRU_EEPROM << std::endl;
+        return errno;
+    }
+
+    // seek to the offset
+    lseek(fd, offset, SEEK_SET);
+
+    // Write bytes to location
+    len = write(fd, guid, GUID_SIZE);
+    if (len != GUID_SIZE)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "GUID write data to EEPROM failed");
+        ret = errno;
+    }
+
+    close(fd);
+    return ret;
+}
+
+//----------------------------------------------------------------------
+// Set System GUID (CMD_OEM_SET_SYSTEM_GUID)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                ipmi_request_t request,
+                                ipmi_response_t response,
+                                ipmi_data_len_t data_len,
+                                ipmi_context_t context)
+{
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+
+    if (*data_len != GUID_SIZE) // 16bytes
+    {
+        *data_len = 0;
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+    }
+
+    *data_len = 0;
+
+    if (setGUID(OFFSET_SYS_GUID, req))
+    {
+        return IPMI_CC_UNSPECIFIED_ERROR;
+    }
     return IPMI_CC_OK;
 }
 
@@ -1592,6 +1664,9 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_PPIN_INFO, NULL,
                          ipmiOemSetPPINInfo,
                          PRIVILEGE_USER); // Set PPIN Info
+    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_SYSTEM_GUID, NULL,
+                         ipmiOemSetSystemGuid,
+                         PRIVILEGE_USER); // Set System GUID
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_ADR_TRIGGER, NULL,
                          ipmiOemSetAdrTrigger,
                          PRIVILEGE_USER); // Set ADR Trigger
