@@ -15,6 +15,7 @@
  */
 
 #include <ipmid/api.h>
+
 #include <commandutils.hpp>
 
 #define IPMI_CC_PARAMETER_NOT_SUPPORTED 0x80
@@ -51,8 +52,8 @@ ipmi_ret_t ipmiTransGetSolConfig(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                  ipmi_data_len_t data_len,
                                  ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t param = req[0];
     uint8_t paramSel = req[1];
 

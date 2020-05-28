@@ -15,20 +15,21 @@
  * limitations under the License.
  */
 
-#include <ipmid/api.h>
-
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <ipmid/api.h>
+#include <sys/stat.h>
 #include <unistd.h>
-#include <nlohmann/json.hpp>
+
+#include <appcommands.hpp>
 #include <commandutils.hpp>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
+#include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
-#include <appcommands.hpp>
+
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 namespace ipmi
 {
@@ -38,14 +39,14 @@ static constexpr size_t GUID_SIZE = 16;
 // TODO Make offset and location runtime configurable to ensure we
 // can make each define their own locations.
 static constexpr off_t OFFSET_SYS_GUID = 0x17F0;
-static constexpr const char *FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
+static constexpr const char* FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
 
 // TODO: Need to store this info after identifying proper storage
 static uint8_t globEna = 0x09;
 static SysInfoParam sysInfoParams;
 nlohmann::json appData __attribute__((init_priority(101)));
 
-void printGUID(uint8_t *guid, off_t offset)
+void printGUID(uint8_t* guid, off_t offset)
 {
     std::cout << "Read GUID from offset : " << offset << " :\n";
     for (int i = 0; i < GUID_SIZE; i++)
@@ -56,7 +57,7 @@ void printGUID(uint8_t *guid, off_t offset)
     std::cout << std::endl;
 }
 
-int getGUID(off_t offset, uint8_t *guid)
+int getGUID(off_t offset, uint8_t* guid)
 {
     int fd = -1;
     ssize_t bytes_rd;
@@ -98,7 +99,7 @@ int getGUID(off_t offset, uint8_t *guid)
     return ret;
 }
 
-int getSystemGUID(uint8_t *guid)
+int getSystemGUID(uint8_t* guid)
 {
     return getGUID(OFFSET_SYS_GUID, guid);
 }
@@ -110,7 +111,7 @@ ipmi_ret_t ipmiAppGetSTResults(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     // TODO: Following data needs to be updated based on self-test results
     *res++ = 0x55; // Self-Test result
@@ -128,7 +129,7 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                             ipmi_request_t request, ipmi_response_t response,
                             ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
     std::string mfrTest = "sled-cycle";
 
     if (!memcmp(req, mfrTest.data(), mfrTest.length()) &&
@@ -156,7 +157,7 @@ ipmi_ret_t ipmiAppSetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                    ipmi_data_len_t data_len,
                                    ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
     globEna = *req;
     *data_len = 0;
@@ -173,7 +174,7 @@ ipmi_ret_t ipmiAppGetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                    ipmi_data_len_t data_len,
                                    ipmi_context_t context)
 {
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     *data_len = 1;
     *res++ = globEna;
@@ -203,7 +204,7 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                              ipmi_request_t request, ipmi_response_t response,
                              ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     if (getSystemGUID(res))
     {
         return IPMI_CC_UNSPECIFIED_ERROR;
@@ -224,7 +225,7 @@ void flush_app_data()
     return;
 }
 
-static int platSetSysFWVer(uint8_t *ver)
+static int platSetSysFWVer(uint8_t* ver)
 {
     std::stringstream ss;
     int i;
@@ -248,7 +249,7 @@ static int platSetSysFWVer(uint8_t *ver)
     return 0;
 }
 
-static int platGetSysFWVer(uint8_t *ver)
+static int platGetSysFWVer(uint8_t* ver)
 {
     std::string str = appData[KEY_SYSFW_VER].get<std::string>();
     int len;
@@ -272,7 +273,7 @@ ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                    ipmi_data_len_t data_len,
                                    ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
     uint8_t param = req[0];
     uint8_t req_len = *data_len;
@@ -346,8 +347,8 @@ ipmi_ret_t ipmiAppGetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                    ipmi_data_len_t data_len,
                                    ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     uint8_t param = req[1];
     uint8_t len;

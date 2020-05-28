@@ -19,13 +19,14 @@
 
 #include <boost/container/flat_map.hpp>
 #include <commandutils.hpp>
-#include <iostream>
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/timer.hpp>
 #include <sensorutils.hpp>
 #include <storagecommands.hpp>
+
+#include <iostream>
 
 namespace ipmi
 {
@@ -58,7 +59,7 @@ using ManagedEntry = std::pair<
     boost::container::flat_map<
         std::string, boost::container::flat_map<std::string, DbusVariant>>>;
 
-constexpr static const char *fruDeviceServiceName =
+constexpr static const char* fruDeviceServiceName =
     "xyz.openbmc_project.FruDevice";
 constexpr static const size_t cacheTimeoutSeconds = 10;
 
@@ -75,7 +76,7 @@ boost::container::flat_map<uint8_t, std::pair<uint8_t, uint8_t>> deviceHashes;
 static sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection());
 
 static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
-                         SensorMap &sensorMap)
+                         SensorMap& sensorMap)
 {
     static boost::container::flat_map<
         std::string, std::chrono::time_point<std::chrono::steady_clock>>
@@ -105,7 +106,7 @@ static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
             auto reply = dbus.call(managedObj);
             reply.read(managedObjects);
         }
-        catch (sdbusplus::exception_t &)
+        catch (sdbusplus::exception_t&)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(
                 "Error getting managed objects from connection",
@@ -141,7 +142,7 @@ bool writeFru()
     {
         sdbusplus::message::message writeFruResp = dbus.call(writeFru);
     }
-    catch (sdbusplus::exception_t &)
+    catch (sdbusplus::exception_t&)
     {
         // todo: log sel?
         phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -184,7 +185,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         sdbusplus::message::message resp = dbus.call(getObjects);
         resp.read(frus);
     }
-    catch (sdbusplus::exception_t &)
+    catch (sdbusplus::exception_t&)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "replaceCacheFru: error getting managed objects");
@@ -196,7 +197,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     // hash the object paths to create unique device id's. increment on
     // collision
     std::hash<std::string> hasher;
-    for (const auto &fru : frus)
+    for (const auto& fru : frus)
     {
         auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
         if (fruIface == fru.second.end())
@@ -268,7 +269,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         sdbusplus::message::message getRawResp = dbus.call(getRawFru);
         getRawResp.read(fruCache);
     }
-    catch (sdbusplus::exception_t &)
+    catch (sdbusplus::exception_t&)
     {
         lastDevId = 0xFF;
         cacheBus = 0xFF;
@@ -293,7 +294,7 @@ ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     }
     *dataLen = 0; // default to 0 in case of an error
 
-    auto req = static_cast<GetFRUAreaReq *>(request);
+    auto req = static_cast<GetFRUAreaReq*>(request);
 
     if (req->countToRead > maxMessageSize - 1)
     {
@@ -316,7 +317,7 @@ ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         fromFRUByteLen = fruCache.size() - req->fruInventoryOffset;
     }
     size_t padByteLen = req->countToRead - fromFRUByteLen;
-    uint8_t *respPtr = static_cast<uint8_t *>(response);
+    uint8_t* respPtr = static_cast<uint8_t*>(response);
     *respPtr = req->countToRead;
     std::copy(fruCache.begin() + req->fruInventoryOffset,
               fruCache.begin() + req->fruInventoryOffset + fromFRUByteLen,
@@ -347,7 +348,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_REQ_DATA_LEN_INVALID;
     }
 
-    auto req = static_cast<WriteFRUDataReq *>(request);
+    auto req = static_cast<WriteFRUDataReq*>(request);
     size_t writeLen = *dataLen - 3;
     *dataLen = 0; // default to 0 in case of an error
 
@@ -370,7 +371,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     if (fruCache.size() >= sizeof(FRUHeader))
     {
 
-        FRUHeader *header = reinterpret_cast<FRUHeader *>(fruCache.data());
+        FRUHeader* header = reinterpret_cast<FRUHeader*>(fruCache.data());
 
         int lastRecordStart = std::max(
             header->internalOffset,
@@ -393,7 +394,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
             }
         }
     }
-    uint8_t *respPtr = static_cast<uint8_t *>(response);
+    uint8_t* respPtr = static_cast<uint8_t*>(response);
     if (atEnd)
     {
         // cancel timer, we're at the end so might as well send it
@@ -419,7 +420,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
-ipmi_ret_t getFruSdrCount(size_t &count)
+ipmi_ret_t getFruSdrCount(size_t& count)
 {
     ipmi_ret_t ret = replaceCacheFru(0);
     if (ret != IPMI_CC_OK)
@@ -430,7 +431,7 @@ ipmi_ret_t getFruSdrCount(size_t &count)
     return IPMI_CC_OK;
 }
 
-ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord &resp)
+ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
 {
     ipmi_ret_t ret = replaceCacheFru(0); // this will update the hash list
     if (ret != IPMI_CC_OK)
@@ -442,8 +443,8 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord &resp)
         return IPMI_CC_INVALID_FIELD_REQUEST;
     }
     auto device = deviceHashes.begin() + index;
-    uint8_t &bus = device->second.first;
-    uint8_t &address = device->second.second;
+    uint8_t& bus = device->second.first;
+    uint8_t& address = device->second.second;
 
     ManagedObjectType frus;
 
@@ -455,14 +456,14 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord &resp)
         sdbusplus::message::message resp = dbus.call(getObjects);
         resp.read(frus);
     }
-    catch (sdbusplus::exception_t &)
+    catch (sdbusplus::exception_t&)
     {
         return IPMI_CC_RESPONSE_ERROR;
     }
-    boost::container::flat_map<std::string, DbusVariant> *fruData = nullptr;
+    boost::container::flat_map<std::string, DbusVariant>* fruData = nullptr;
     auto fru =
         std::find_if(frus.begin(), frus.end(),
-                     [bus, address, &fruData](ManagedEntry &entry) {
+                     [bus, address, &fruData](ManagedEntry& entry) {
                          auto findFruDevice =
                              entry.second.find("xyz.openbmc_project.FruDevice");
                          if (findFruDevice == entry.second.end())
@@ -553,7 +554,7 @@ ipmi_ret_t ipmiStorageReserveSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         sdrReservationID++;
     }
     *dataLen = 2;
-    auto resp = static_cast<uint8_t *>(response);
+    auto resp = static_cast<uint8_t*>(response);
     resp[0] = sdrReservationID & 0xFF;
     resp[1] = sdrReservationID >> 8;
 
@@ -575,7 +576,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     *dataLen = 0; // default to 0 in case of an error
 
     constexpr uint16_t lastRecordIndex = 0xFFFF;
-    auto req = static_cast<GetSDRReq *>(request);
+    auto req = static_cast<GetSDRReq*>(request);
 
     // reservation required for partial reads with non zero offset into
     // record
@@ -610,10 +611,10 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     uint16_t nextRecord =
         lastRecord > (req->recordID + 1) ? req->recordID + 1 : 0XFFFF;
 
-    auto responseClear = static_cast<uint8_t *>(response);
+    auto responseClear = static_cast<uint8_t*>(response);
     std::fill(responseClear, responseClear + requestedSize, 0);
 
-    auto resp = static_cast<get_sdr::GetSdrResp *>(response);
+    auto resp = static_cast<get_sdr::GetSdrResp*>(response);
     resp->next_record_id_lsb = nextRecord & 0xFF;
     resp->next_record_id_msb = nextRecord >> 8;
 
@@ -641,7 +642,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
             req->bytesToRead = sizeof(data) - req->offset;
         }
         *dataLen = req->bytesToRead + 2; // next record
-        std::memcpy(&resp->record_data, (char *)&data + req->offset,
+        std::memcpy(&resp->record_data, (char*)&data + req->offset,
                     req->bytesToRead);
         return IPMI_CC_OK;
     }
@@ -649,7 +650,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     std::string connection;
     std::string path;
     uint16_t sensorIndex = req->recordID;
-    for (const auto &sensor : sensorTree)
+    for (const auto& sensor : sensorTree)
     {
         if (sensorIndex-- == 0)
         {
@@ -797,21 +798,21 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     *dataLen =
         2 + req->bytesToRead; // bytesToRead + MSB and LSB of next record id
 
-    std::memcpy(&resp->record_data, (char *)&record + req->offset,
+    std::memcpy(&resp->record_data, (char*)&record + req->offset,
                 req->bytesToRead);
 
     return IPMI_CC_OK;
 }
 
-static int getSensorConnectionByName(std::string &name, std::string &connection,
-                                     std::string &path)
+static int getSensorConnectionByName(std::string& name, std::string& connection,
+                                     std::string& path)
 {
     if (sensorTree.empty() && !getSensorSubtree(sensorTree))
     {
         return -1;
     }
 
-    for (const auto &sensor : sensorTree)
+    for (const auto& sensor : sensorTree)
     {
         path = sensor.first;
         if (path.find(name) != std::string::npos)
@@ -823,7 +824,7 @@ static int getSensorConnectionByName(std::string &name, std::string &connection,
     return -1;
 }
 
-int getSensorValue(std::string &name, double &val)
+int getSensorValue(std::string& name, double& val)
 {
     std::string connection;
     std::string path;
@@ -847,13 +848,13 @@ int getSensorValue(std::string &name, double &val)
     {
         return ret;
     }
-    auto &valueVariant = sensorObject->second["Value"];
+    auto& valueVariant = sensorObject->second["Value"];
     val = std::visit(VariantToDoubleVisitor(), valueVariant);
 
     return 0;
 }
 
-const static boost::container::flat_map<const char *, std::string, CmpStr>
+const static boost::container::flat_map<const char*, std::string, CmpStr>
     sensorUnitStr{{{"temperature", "C"},
                    {"voltage", "V"},
                    {"current", "mA"},
@@ -861,7 +862,7 @@ const static boost::container::flat_map<const char *, std::string, CmpStr>
                    {"fan_pwm", "RPM"},
                    {"power", "W"}}};
 
-int getSensorUnit(std::string &name, std::string &unit)
+int getSensorUnit(std::string& name, std::string& unit)
 {
     std::string connection;
     std::string path;

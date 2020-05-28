@@ -1,9 +1,9 @@
 #pragma once
 
-#include <ipmid/types.hpp>
-
 #include <ipmid/api.h>
 #include <stdint.h>
+
+#include <ipmid/types.hpp>
 
 /**
  * Get SDR
