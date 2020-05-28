@@ -182,7 +182,8 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 
     switch (static_cast<LanParam>(lan_param))
     {
-        case LanParam::IP: {
+        case LanParam::IP:
+        {
             auto ethIP = ethdevice + "/" + ipmi::network::IPV4_TYPE;
             std::string ipaddress;
             auto ipObjectInfo = ipmi::network::getIPObject(
@@ -198,7 +199,8 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
         }
         break;
 
-        case LanParam::IPV6: {
+        case LanParam::IPV6:
+        {
             auto ethIP = ethdevice + "/" + ipmi::network::IPV6_TYPE;
             std::string ipaddress;
             auto ipObjectInfo = ipmi::network::getIPObject(
@@ -214,7 +216,8 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
         }
         break;
 
-        case LanParam::MAC: {
+        case LanParam::MAC:
+        {
             std::string macAddress;
             auto macObjectInfo =
                 ipmi::getDbusObject(bus, ipmi::network::MAC_INTERFACE,

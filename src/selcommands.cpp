@@ -362,13 +362,15 @@ static void logPcieErr(uint8_t* data, std::string& errLog)
         case 0xA:
             errLog = "Bus Fatal" + tmp1.str();
             break;
-        case 0xD: {
+        case 0xD:
+        {
             uint32_t venId = (uint32_t)data[1] << 8 | (uint32_t)data[2];
             tmp2 << "Vendor ID: 0x" << std::setw(4) << venId;
             errLog = tmp2.str();
         }
         break;
-        case 0xE: {
+        case 0xE:
+        {
             uint32_t devId = (uint32_t)data[1] << 8 | (uint32_t)data[2];
             tmp2 << "Device ID: 0x" << std::setw(4) << devId;
             errLog = tmp2.str();
@@ -479,7 +481,8 @@ static void logMemErr(uint8_t* dataPtr, std::string& errLog)
 
     switch ((data[1] & 0xC) >> 2)
     {
-        case 0x0: {
+        case 0x0:
+        {
 
             /* All Info Valid */
             uint8_t chnNum = (data[2] & 0x1C) >> 2;

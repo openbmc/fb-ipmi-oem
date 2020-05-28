@@ -105,8 +105,7 @@ struct frame
     uint8_t overwrite;
     time_t mtime;
     frame() : buf(NULL), pages(0), mtime(0)
-    {
-    }
+    {}
     int init(size_t size);
     int append(const char* string, int indent);
     int insert(const char* string, int indent);
