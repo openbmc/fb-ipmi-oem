@@ -138,17 +138,17 @@ enum fb_oem_qc_cmds
 
 #define BOOT_SEQ_ARRAY_SIZE 10
 
-const char *bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
+const char* bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
                          "OTHER",   "",         "",         "",
                          "",        "NET_IPV6"};
 std::map<std::string, int> bootMap = {{"USB_DEV", 0},  {"NET_IPV4", 1},
                                       {"NET_IPV6", 9}, {"SATA_HDD", 2},
                                       {"SATA_CD", 3},  {"OTHER", 4}};
 
-const char *chassisType[] = {"ORV1", "ORV2"};
-const char *mbType[] = {"SS", "DS", "TYPE3"};
-const char *riserType[] = {"NO_CARD", "2_SLOT", "3_SLOT"};
-const char *pcieType[] = {"ABSENT", "AVA1",     "AVA2", "AVA3",
+const char* chassisType[] = {"ORV1", "ORV2"};
+const char* mbType[] = {"SS", "DS", "TYPE3"};
+const char* riserType[] = {"NO_CARD", "2_SLOT", "3_SLOT"};
+const char* pcieType[] = {"ABSENT", "AVA1",     "AVA2", "AVA3",
                           "AVA4",   "Re-timer", "HBA",  "OTHER"};
 
 enum fb_ppr_sel
@@ -216,15 +216,15 @@ typedef struct
     uint8_t data[];
 } qDriveInfo_t;
 
-const char *cpuInfoKey[] = {"",     "product_name", "basic_info",
+const char* cpuInfoKey[] = {"",     "product_name", "basic_info",
                             "type", "micro_code",   "turbo_mode"};
 
-const char *dimmInfoKey[] = {
+const char* dimmInfoKey[] = {
     "",           "location",        "type",   "speed",      "part_name",
     "serial_num", "manufacturer_id", "status", "present_bit"};
 
-const char *driveInfoKey[] = {"location",   "serial_num", "model_name",
+const char* driveInfoKey[] = {"location",   "serial_num", "model_name",
                               "fw_version", "capacity",   "quantity",
                               "type",       "wwn"};
 
-const char *ctrlTypeKey[] = {"bios", "expander", "lsi"};
+const char* ctrlTypeKey[] = {"bios", "expander", "lsi"};

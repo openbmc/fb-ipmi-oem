@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-#include <ipmid/api.hpp>
-
 #include <boost/algorithm/string/join.hpp>
+#include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/timer.hpp>
 #include <storagecommands.hpp>
+
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 //----------------------------------------------------------------------
 // Platform specific functions for storing app data
@@ -41,7 +41,7 @@ static std::string byteToStr(uint8_t byte)
     return ss.str();
 }
 
-static void toHexStr(std::vector<uint8_t> &bytes, std::string &hexStr)
+static void toHexStr(std::vector<uint8_t>& bytes, std::string& hexStr)
 {
     std::stringstream stream;
     stream << std::hex << std::uppercase << std::setfill('0');
@@ -52,7 +52,7 @@ static void toHexStr(std::vector<uint8_t> &bytes, std::string &hexStr)
     hexStr = stream.str();
 }
 
-static int fromHexStr(const std::string hexStr, std::vector<uint8_t> &data)
+static int fromHexStr(const std::string hexStr, std::vector<uint8_t>& data)
 {
     for (unsigned int i = 0; i < hexStr.size(); i += 2)
     {
@@ -61,12 +61,12 @@ static int fromHexStr(const std::string hexStr, std::vector<uint8_t> &data)
             data.push_back(static_cast<uint8_t>(
                 std::stoul(hexStr.substr(i, 2), nullptr, 16)));
         }
-        catch (std::invalid_argument &e)
+        catch (std::invalid_argument& e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
         }
-        catch (std::out_of_range &e)
+        catch (std::out_of_range& e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
@@ -141,7 +141,7 @@ class SELData
         return selDataObj[KEY_SEL_COUNT];
     }
 
-    void getInfo(GetSELInfoData &info)
+    void getInfo(GetSELInfoData& info)
     {
         info.selVersion = selDataObj[KEY_SEL_VER];
         info.entries = selDataObj[KEY_SEL_COUNT];
@@ -151,7 +151,7 @@ class SELData
         info.operationSupport = selDataObj[KEY_OPER_SUPP];
     }
 
-    int getEntry(uint32_t index, std::string &rawStr)
+    int getEntry(uint32_t index, std::string& rawStr)
     {
         std::stringstream ss;
         ss << std::hex;
@@ -206,12 +206,12 @@ std::vector<std::string> nmDomName = {
     "High Power I/O subsystem", "Unknown"};
 
 /* Default log message for unknown type */
-static void logDefault(uint8_t *data, std::string &errLog)
+static void logDefault(uint8_t* data, std::string& errLog)
 {
     errLog = "Unknown";
 }
 
-static void logSysEvent(uint8_t *data, std::string &errLog)
+static void logSysEvent(uint8_t* data, std::string& errLog)
 {
     if (data[0] == 0xE5)
     {
@@ -245,7 +245,7 @@ static void logSysEvent(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logThermalEvent(uint8_t *data, std::string &errLog)
+static void logThermalEvent(uint8_t* data, std::string& errLog)
 {
     if (data[0] == 0x1)
     {
@@ -257,7 +257,7 @@ static void logThermalEvent(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logCritIrq(uint8_t *data, std::string &errLog)
+static void logCritIrq(uint8_t* data, std::string& errLog)
 {
 
     if (data[0] == 0x0)
@@ -276,7 +276,7 @@ static void logCritIrq(uint8_t *data, std::string &errLog)
     /* TODO: Call add_cri_sel for CRITICAL_IRQ */
 }
 
-static void logPostErr(uint8_t *data, std::string &errLog)
+static void logPostErr(uint8_t* data, std::string& errLog)
 {
 
     if ((data[0] & 0x0F) == 0x0)
@@ -315,7 +315,7 @@ static void logPostErr(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logMchChkErr(uint8_t *data, std::string &errLog)
+static void logMchChkErr(uint8_t* data, std::string& errLog)
 {
     /* TODO: Call add_cri_sel for CRITICAL_IRQ */
     if ((data[0] & 0x0F) == 0x0B)
@@ -336,7 +336,7 @@ static void logMchChkErr(uint8_t *data, std::string &errLog)
               std::to_string(data[2] & 0x1F);
 }
 
-static void logPcieErr(uint8_t *data, std::string &errLog)
+static void logPcieErr(uint8_t* data, std::string& errLog)
 {
     std::stringstream tmp1, tmp2;
     tmp1 << std::hex << std::uppercase << std::setfill('0');
@@ -386,7 +386,7 @@ static void logPcieErr(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logIioErr(uint8_t *data, std::string &errLog)
+static void logIioErr(uint8_t* data, std::string& errLog)
 {
     std::vector<std::string> tmpStr = {
         "IRP0", "IRP1", " IIO-Core", "VT-d", "Intel Quick Data",
@@ -412,11 +412,11 @@ static void logIioErr(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logMemErr(uint8_t *dataPtr, std::string &errLog)
+static void logMemErr(uint8_t* dataPtr, std::string& errLog)
 {
     uint8_t snrType = dataPtr[0];
     uint8_t snrNum = dataPtr[1];
-    uint8_t *data = &(dataPtr[3]);
+    uint8_t* data = &(dataPtr[3]);
 
     /* TODO: add pal_add_cri_sel */
 
@@ -528,7 +528,7 @@ static void logMemErr(uint8_t *dataPtr, std::string &errLog)
     }
 }
 
-static void logPwrErr(uint8_t *data, std::string &errLog)
+static void logPwrErr(uint8_t* data, std::string& errLog)
 {
 
     if (data[0] == 0x1)
@@ -549,7 +549,7 @@ static void logPwrErr(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logCatErr(uint8_t *data, std::string &errLog)
+static void logCatErr(uint8_t* data, std::string& errLog)
 {
 
     if (data[0] == 0x0)
@@ -570,7 +570,7 @@ static void logCatErr(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logDimmHot(uint8_t *data, std::string &errLog)
+static void logDimmHot(uint8_t* data, std::string& errLog)
 {
     if ((data[0] << 16 | data[1] << 8 | data[2]) == 0x01FFFF)
     {
@@ -584,7 +584,7 @@ static void logDimmHot(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logSwNMI(uint8_t *data, std::string &errLog)
+static void logSwNMI(uint8_t* data, std::string& errLog)
 {
     if ((data[0] << 16 | data[1] << 8 | data[2]) == 0x03FFFF)
     {
@@ -596,7 +596,7 @@ static void logSwNMI(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logCPUThermalSts(uint8_t *data, std::string &errLog)
+static void logCPUThermalSts(uint8_t* data, std::string& errLog)
 {
     switch (data[0])
     {
@@ -614,7 +614,7 @@ static void logCPUThermalSts(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logMEPwrState(uint8_t *data, std::string &errLog)
+static void logMEPwrState(uint8_t* data, std::string& errLog)
 {
     switch (data[0])
     {
@@ -630,7 +630,7 @@ static void logMEPwrState(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logSPSFwHealth(uint8_t *data, std::string &errLog)
+static void logSPSFwHealth(uint8_t* data, std::string& errLog)
 {
     if ((data[0] & 0x0F) == 0x00)
     {
@@ -675,7 +675,7 @@ static void logSPSFwHealth(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logNmExcA(uint8_t *data, std::string &errLog)
+static void logNmExcA(uint8_t* data, std::string& errLog)
 {
     /*NM4.0 #550710, Revision 1.95, and turn to p.155*/
     if (data[0] == 0xA8)
@@ -688,7 +688,7 @@ static void logNmExcA(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logPCHThermal(uint8_t *data, std::string &errLog)
+static void logPCHThermal(uint8_t* data, std::string& errLog)
 {
     const std::vector<std::string> thresEvtName = {"Lower Non-critical",
                                                    "Unknown",
@@ -716,7 +716,7 @@ static void logPCHThermal(uint8_t *data, std::string &errLog)
               " C, thresh_val: " + std::to_string(data[2]) + " C";
 }
 
-static void logNmHealth(uint8_t *data, std::string &errLog)
+static void logNmHealth(uint8_t* data, std::string& errLog)
 {
     std::vector<std::string> nmErrType = {
         "Unknown",
@@ -754,7 +754,7 @@ static void logNmHealth(uint8_t *data, std::string &errLog)
               byteToStr(data[2]);
 }
 
-static void logNmCap(uint8_t *data, std::string &errLog)
+static void logNmCap(uint8_t* data, std::string& errLog)
 {
 
     const std::vector<std::string> nmCapStsStr = {"Not Available", "Available"};
@@ -771,7 +771,7 @@ static void logNmCap(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logNmThreshold(uint8_t *data, std::string &errLog)
+static void logNmThreshold(uint8_t* data, std::string& errLog)
 {
     uint8_t thresNum = (data[0] & 0x3);
     uint8_t domIdx = (data[1] & 0xf);
@@ -785,7 +785,7 @@ static void logNmThreshold(uint8_t *data, std::string &errLog)
              ", PolicyID:0x" + byteToStr(polId);
 }
 
-static void logPwrThreshold(uint8_t *data, std::string &errLog)
+static void logPwrThreshold(uint8_t* data, std::string& errLog)
 {
     if (data[0] == 0x00)
     {
@@ -801,7 +801,7 @@ static void logPwrThreshold(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logMSMI(uint8_t *data, std::string &errLog)
+static void logMSMI(uint8_t* data, std::string& errLog)
 {
 
     if (data[0] == 0x0)
@@ -818,7 +818,7 @@ static void logMSMI(uint8_t *data, std::string &errLog)
     }
 }
 
-static void logHprWarn(uint8_t *data, std::string &errLog)
+static void logHprWarn(uint8_t* data, std::string& errLog)
 {
     if (data[2] == 0x01)
     {
@@ -839,7 +839,7 @@ static void logHprWarn(uint8_t *data, std::string &errLog)
 
 static const boost::container::flat_map<
     uint8_t,
-    std::pair<std::string, std::function<void(uint8_t *, std::string &)>>>
+    std::pair<std::string, std::function<void(uint8_t*, std::string&)>>>
     sensorNameTable = {{0xE9, {"SYSTEM_EVENT", logSysEvent}},
                        {0x7D, {"THERM_THRESH_EVT", logThermalEvent}},
                        {0xAA, {"BUTTON", logDefault}},
@@ -870,7 +870,7 @@ static const boost::container::flat_map<
                        {0xE7, {"MSMI", logMSMI}},
                        {0xC5, {"HPR_WARNING", logHprWarn}}};
 
-static void parseSelHelper(StdSELEntry *data, std::string &errStr)
+static void parseSelHelper(StdSELEntry* data, std::string& errStr)
 {
 
     /* Check if sensor type is OS_BOOT (0x1f) */
@@ -928,7 +928,7 @@ static void parseSelHelper(StdSELEntry *data, std::string &errStr)
     }
 }
 
-static void parseStdSel(StdSELEntry *data, std::string &errStr)
+static void parseStdSel(StdSELEntry* data, std::string& errStr)
 {
     std::stringstream tmpStream;
     tmpStream << std::hex << std::uppercase;
@@ -1007,7 +1007,7 @@ static void parseStdSel(StdSELEntry *data, std::string &errStr)
     return;
 }
 
-static void parseOemSel(TsOemSELEntry *data, std::string &errStr)
+static void parseOemSel(TsOemSELEntry* data, std::string& errStr)
 {
     std::stringstream tmpStream;
     tmpStream << std::hex << std::uppercase << std::setfill('0');
@@ -1048,9 +1048,9 @@ static void parseOemSel(TsOemSELEntry *data, std::string &errStr)
     return;
 }
 
-static void parseOemUnifiedSel(NtsOemSELEntry *data, std::string &errStr)
+static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
 {
-    uint8_t *ptr = data->oemData;
+    uint8_t* ptr = data->oemData;
     int genInfo = ptr[0];
     int errType = genInfo & 0x0f;
     std::vector<std::string> dimmEvent = {
@@ -1103,14 +1103,14 @@ static void parseOemUnifiedSel(NtsOemSELEntry *data, std::string &errStr)
     return;
 }
 
-static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
+static void parseSelData(std::vector<uint8_t>& reqData, std::string& msgLog)
 {
 
     /* Get record type */
     int recType = reqData[2];
     std::string errType, errLog;
 
-    uint8_t *ptr = NULL;
+    uint8_t* ptr = NULL;
 
     std::stringstream recTypeStream;
     recTypeStream << std::hex << std::uppercase << std::setfill('0')
@@ -1120,7 +1120,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
 
     if (recType == stdErrType)
     {
-        StdSELEntry *data = reinterpret_cast<StdSELEntry *>(&reqData[0]);
+        StdSELEntry* data = reinterpret_cast<StdSELEntry*>(&reqData[0]);
         std::string sensorName;
 
         errType = stdErr;
@@ -1141,7 +1141,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
             }
         }
 
-        std::tm *ts = localtime((time_t *)(&(data->timeStamp)));
+        std::tm* ts = localtime((time_t*)(&(data->timeStamp)));
         std::string timeStr = std::asctime(ts);
 
         parseStdSel(data, errLog);
@@ -1162,7 +1162,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
     else if ((recType >= oemTSErrTypeMin) && (recType <= oemTSErrTypeMax))
     {
         /* timestamped OEM SEL records */
-        TsOemSELEntry *data = reinterpret_cast<TsOemSELEntry *>(&reqData[0]);
+        TsOemSELEntry* data = reinterpret_cast<TsOemSELEntry*>(&reqData[0]);
         ptr = data->mfrId;
         std::vector<uint8_t> mfrIdData(ptr, ptr + 3);
         std::string mfrIdStr;
@@ -1173,7 +1173,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
         std::string oemDataStr;
         toHexStr(oemData, oemDataStr);
 
-        std::tm *ts = localtime((time_t *)(&(data->timeStamp)));
+        std::tm* ts = localtime((time_t*)(&(data->timeStamp)));
         std::string timeStr = std::asctime(ts);
 
         errType = oemTSErr;
@@ -1185,7 +1185,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
     }
     else if (recType == fbUniErrType)
     {
-        NtsOemSELEntry *data = reinterpret_cast<NtsOemSELEntry *>(&reqData[0]);
+        NtsOemSELEntry* data = reinterpret_cast<NtsOemSELEntry*>(&reqData[0]);
         errType = fbUniSELErr;
         parseOemUnifiedSel(data, errLog);
         msgLog += errType + " (0x" + recTypeStream.str() + "), " + errLog;
@@ -1193,7 +1193,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
     else if ((recType >= oemNTSErrTypeMin) && (recType <= oemNTSErrTypeMax))
     {
         /* Non timestamped OEM SEL records */
-        NtsOemSELEntry *data = reinterpret_cast<NtsOemSELEntry *>(&reqData[0]);
+        NtsOemSELEntry* data = reinterpret_cast<NtsOemSELEntry*>(&reqData[0]);
         errType = oemNTSErr;
 
         ptr = data->oemData;
@@ -1201,7 +1201,7 @@ static void parseSelData(std::vector<uint8_t> &reqData, std::string &msgLog)
         std::string oemDataStr;
         toHexStr(oemData, oemDataStr);
 
-        parseOemSel((TsOemSELEntry *)data, errLog);
+        parseOemSel((TsOemSELEntry*)data, errLog);
         msgLog += errType + " (0x" + recTypeStream.str() + "), OEM Data: (" +
                   oemDataStr + ") " + errLog;
     }
@@ -1251,8 +1251,8 @@ ipmi::RspType<uint16_t, std::vector<uint8_t>>
         return ipmi::responseReqDataLenInvalid();
     }
 
-    fb_oem::ipmi::sel::GetSELEntryRequest *reqData =
-        reinterpret_cast<fb_oem::ipmi::sel::GetSELEntryRequest *>(&data[0]);
+    fb_oem::ipmi::sel::GetSELEntryRequest* reqData =
+        reinterpret_cast<fb_oem::ipmi::sel::GetSELEntryRequest*>(&data[0]);
 
     if (reqData->reservID != 0)
     {
@@ -1370,7 +1370,7 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(std::vector<uint8_t> data)
 }
 
 ipmi::RspType<uint8_t> ipmiStorageClearSEL(uint16_t reservationID,
-                                           const std::array<uint8_t, 3> &clr,
+                                           const std::array<uint8_t, 3>& clr,
                                            uint8_t eraseOperation)
 {
     if (!checkSELReservation(reservationID))
