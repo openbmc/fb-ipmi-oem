@@ -15,8 +15,9 @@
  */
 
 #pragma once
-#include <iostream>
 #include <sdbusplus/bus.hpp>
+
+#include <iostream>
 
 static constexpr bool debug = false;
 
