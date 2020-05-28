@@ -16,20 +16,21 @@
  */
 
 #include "xyz/openbmc_project/Common/error.hpp"
-#include <ipmid/api.hpp>
 
-#include <nlohmann/json.hpp>
-#include <array>
 #include <commandutils.hpp>
-#include <cstring>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <fstream>
-#include <oemcommands.hpp>
+#include <ipmid/api.hpp>
 #include <ipmid/utils.hpp>
+#include <nlohmann/json.hpp>
+#include <oemcommands.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
+
+#include <array>
+#include <cstring>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -44,15 +45,15 @@ static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 
-int plat_udbg_get_post_desc(uint8_t, uint8_t *, uint8_t, uint8_t *, uint8_t *,
-                            uint8_t *);
-int plat_udbg_get_gpio_desc(uint8_t, uint8_t *, uint8_t *, uint8_t *, uint8_t *,
-                            uint8_t *);
-ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t *, uint8_t *,
-                                    uint8_t *);
-ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t *,
-                                   uint8_t *);
-int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t> &, std::vector<uint8_t> &);
+int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
+                            uint8_t*);
+int plat_udbg_get_gpio_desc(uint8_t, uint8_t*, uint8_t*, uint8_t*, uint8_t*,
+                            uint8_t*);
+ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t*, uint8_t*,
+                                    uint8_t*);
+ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t*,
+                                   uint8_t*);
+int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t>&, std::vector<uint8_t>&);
 
 nlohmann::json oemData __attribute__((init_priority(101)));
 
@@ -84,15 +85,15 @@ constexpr auto IPV6_PREFIX = "fe80";
 constexpr auto IP_INTERFACE = "xyz.openbmc_project.Network.IP";
 constexpr auto MAC_INTERFACE = "xyz.openbmc_project.Network.MACAddress";
 
-bool isLinkLocalIP(const std::string &address)
+bool isLinkLocalIP(const std::string& address)
 {
     return address.find(IPV4_PREFIX) == 0 || address.find(IPV6_PREFIX) == 0;
 }
 
-DbusObjectInfo getIPObject(sdbusplus::bus::bus &bus,
-                           const std::string &interface,
-                           const std::string &serviceRoot,
-                           const std::string &match)
+DbusObjectInfo getIPObject(sdbusplus::bus::bus& bus,
+                           const std::string& interface,
+                           const std::string& serviceRoot,
+                           const std::string& match)
 {
     auto objectTree = getAllDbusObjects(bus, serviceRoot, interface, match);
 
@@ -104,7 +105,7 @@ DbusObjectInfo getIPObject(sdbusplus::bus::bus &bus,
 
     DbusObjectInfo objectInfo;
 
-    for (auto &object : objectTree)
+    for (auto& object : objectTree)
     {
         auto variant =
             ipmi::getDbusProperty(bus, object.second.begin()->first,
@@ -139,7 +140,7 @@ void flushOemData()
     return;
 }
 
-std::string bytesToStr(uint8_t *byte, int len)
+std::string bytesToStr(uint8_t* byte, int len)
 {
     std::stringstream ss;
     int i;
@@ -153,7 +154,7 @@ std::string bytesToStr(uint8_t *byte, int len)
     return ss.str();
 }
 
-int strToBytes(std::string &str, uint8_t *data)
+int strToBytes(std::string& str, uint8_t* data)
 {
     std::string sstr;
     int i;
@@ -166,7 +167,7 @@ int strToBytes(std::string &str, uint8_t *data)
     return i;
 }
 
-ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
+ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 {
     ipmi_ret_t rc = IPMI_CC_OK;
     sdbusplus::bus::bus bus(ipmid_get_sd_bus_connection());
@@ -236,7 +237,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char *data)
 }
 
 // return code: 0 successful
-int8_t getFruData(std::string &data, std::string &name)
+int8_t getFruData(std::string& data, std::string& name)
 {
     std::string objpath = "/xyz/openbmc_project/FruDevice";
     std::string intf = "xyz.openbmc_project.FruDeviceManager";
@@ -250,7 +251,7 @@ int8_t getFruData(std::string &data, std::string &name)
         return -1;
     }
 
-    for (const auto &item : valueTree)
+    for (const auto& item : valueTree)
     {
         auto interface = item.second.find("xyz.openbmc_project.FruDevice");
         if (interface == item.second.end())
@@ -267,7 +268,7 @@ int8_t getFruData(std::string &data, std::string &name)
         try
         {
             Value variant = property->second;
-            std::string &result = std::get<std::string>(variant);
+            std::string& result = std::get<std::string>(variant);
             if (result.size() > maxFRUStringLength)
             {
                 phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -277,7 +278,7 @@ int8_t getFruData(std::string &data, std::string &name)
             data = result;
             return 0;
         }
-        catch (std::bad_variant_access &e)
+        catch (std::bad_variant_access& e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
@@ -303,8 +304,8 @@ ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                   ipmi_data_len_t data_len,
                                   ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t num_frames = 3;
 
     std::memcpy(res, req, SIZE_IANA_ID); // IANA ID
@@ -323,8 +324,8 @@ ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                   ipmi_data_len_t data_len,
                                   ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t num_updates = 3;
     *data_len = 4;
 
@@ -347,8 +348,8 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                  ipmi_data_len_t data_len,
                                  ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t index = 0;
     uint8_t next = 0;
     uint8_t end = 0;
@@ -387,8 +388,8 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                  ipmi_data_len_t data_len,
                                  ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     uint8_t index = 0;
     uint8_t next = 0;
@@ -428,8 +429,8 @@ ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                   ipmi_data_len_t data_len,
                                   ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t frame;
     uint8_t page;
     uint8_t next;
@@ -468,8 +469,8 @@ ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                   ipmi_data_len_t data_len,
                                   ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     uint8_t panel;
     uint8_t operation;
@@ -496,7 +497,7 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                               ipmi_request_t request, ipmi_response_t response,
                               ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
     uint8_t index = req[0];
     uint8_t type = req[1];
@@ -529,8 +530,8 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                              ipmi_request_t request, ipmi_response_t response,
                              ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     /* TODO: Needs to implement this after GPIO implementation */
     *data_len = 0;
@@ -539,7 +540,7 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 }
 
 /* Helper functions to set boot order */
-void setBootOrder(uint8_t *data)
+void setBootOrder(uint8_t* data)
 {
     nlohmann::json bootMode;
     uint8_t mode = data[0];
@@ -571,7 +572,7 @@ ipmi_ret_t ipmiOemSetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t len = *data_len;
 
     *data_len = 0;
@@ -595,7 +596,7 @@ ipmi_ret_t ipmiOemGetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t mode = 0;
     int i;
 
@@ -647,7 +648,7 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                     ipmi_data_len_t data_len,
                                     ipmi_context_t context)
 {
-    machineConfigInfo_t *req = reinterpret_cast<machineConfigInfo_t *>(request);
+    machineConfigInfo_t* req = reinterpret_cast<machineConfigInfo_t*>(request);
     uint8_t len = *data_len;
 
     *data_len = 0;
@@ -659,13 +660,13 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_REQ_DATA_LEN_INVALID;
     }
 
-    if (req->chassis_type >= sizeof(chassisType) / sizeof(uint8_t *))
+    if (req->chassis_type >= sizeof(chassisType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_CHAS_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_CHAS_TYPE] =
             chassisType[req->chassis_type];
 
-    if (req->mb_type >= sizeof(mbType) / sizeof(uint8_t *))
+    if (req->mb_type >= sizeof(mbType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_MB_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_MB_TYPE] = mbType[req->mb_type];
@@ -675,7 +676,7 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     oemData[KEY_MC_CONFIG][KEY_MC_HDD35_CNT] = req->hdd35_cnt;
     oemData[KEY_MC_CONFIG][KEY_MC_HDD25_CNT] = req->hdd25_cnt;
 
-    if (req->riser_type >= sizeof(riserType) / sizeof(uint8_t *))
+    if (req->riser_type >= sizeof(riserType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_RSR_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_RSR_TYPE] = riserType[req->riser_type];
@@ -691,25 +692,25 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     if (req->pcie_card_loc & BIT_3)
         oemData[KEY_MC_CONFIG][KEY_MC_PCIE_LOC][i++] = "SLOT4";
 
-    if (req->slot1_pcie_type >= sizeof(pcieType) / sizeof(uint8_t *))
+    if (req->slot1_pcie_type >= sizeof(pcieType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT1_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT1_TYPE] =
             pcieType[req->slot1_pcie_type];
 
-    if (req->slot2_pcie_type >= sizeof(pcieType) / sizeof(uint8_t *))
+    if (req->slot2_pcie_type >= sizeof(pcieType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT2_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT2_TYPE] =
             pcieType[req->slot2_pcie_type];
 
-    if (req->slot3_pcie_type >= sizeof(pcieType) / sizeof(uint8_t *))
+    if (req->slot3_pcie_type >= sizeof(pcieType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT3_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT3_TYPE] =
             pcieType[req->slot3_pcie_type];
 
-    if (req->slot4_pcie_type >= sizeof(pcieType) / sizeof(uint8_t *))
+    if (req->slot4_pcie_type >= sizeof(pcieType) / sizeof(uint8_t*))
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT4_TYPE] = "UNKNOWN";
     else
         oemData[KEY_MC_CONFIG][KEY_MC_SLOT4_TYPE] =
@@ -776,7 +777,7 @@ ipmi_ret_t ipmiOemSetPPINInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                               ipmi_request_t request, ipmi_response_t response,
                               ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
     std::string ppinStr;
     int len;
 
@@ -828,7 +829,7 @@ ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                          ipmi_request_t request, ipmi_response_t response,
                          ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t pprCnt, pprAct, pprIndex;
     uint8_t selParam = req[0];
     uint8_t len = *data_len;
@@ -918,8 +919,8 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                          ipmi_request_t request, ipmi_response_t response,
                          ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    uint8_t *req = reinterpret_cast<uint8_t *>(request);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t pprCnt, pprIndex;
     uint8_t selParam = req[0];
     std::stringstream ss;
@@ -1030,8 +1031,8 @@ ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    qProcInfo_t *req = reinterpret_cast<qProcInfo_t *>(request);
-    uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t *);
+    qProcInfo_t* req = reinterpret_cast<qProcInfo_t*>(request);
+    uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
     uint8_t len = *data_len;
@@ -1088,9 +1089,9 @@ ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    qProcInfo_t *req = reinterpret_cast<qProcInfo_t *>(request);
-    uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t *);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    qProcInfo_t* req = reinterpret_cast<qProcInfo_t*>(request);
+    uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     std::stringstream ss;
     std::string str;
 
@@ -1182,8 +1183,8 @@ ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    qDimmInfo_t *req = reinterpret_cast<qDimmInfo_t *>(request);
-    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t *);
+    qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(request);
+    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
     uint8_t len = *data_len;
@@ -1275,9 +1276,9 @@ ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
-    qDimmInfo_t *req = reinterpret_cast<qDimmInfo_t *>(request);
-    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t *);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(request);
+    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     std::stringstream ss;
     std::string str;
 
@@ -1389,8 +1390,8 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                 ipmi_data_len_t data_len,
                                 ipmi_context_t context)
 {
-    qDriveInfo_t *req = reinterpret_cast<qDriveInfo_t *>(request);
-    uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t *);
+    qDriveInfo_t* req = reinterpret_cast<qDriveInfo_t*>(request);
+    uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t*);
     uint8_t ctrlType = req->hddCtrlType & 0x0f;
     std::stringstream ss;
     std::string str;
@@ -1451,9 +1452,9 @@ ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                 ipmi_data_len_t data_len,
                                 ipmi_context_t context)
 {
-    qDriveInfo_t *req = reinterpret_cast<qDriveInfo_t *>(request);
-    uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t *);
-    uint8_t *res = reinterpret_cast<uint8_t *>(response);
+    qDriveInfo_t* req = reinterpret_cast<qDriveInfo_t*>(request);
+    uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t*);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t ctrlType = req->hddCtrlType & 0x0f;
     std::stringstream ss;
     std::string str;
@@ -1493,7 +1494,7 @@ ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
 /* Helper function for sending DCMI commands to ME and getting response back */
 ipmi::RspType<std::vector<uint8_t>> sendDCMICmd(uint8_t cmd,
-                                                std::vector<uint8_t> &cmdData)
+                                                std::vector<uint8_t>& cmdData)
 {
     std::vector<uint8_t> respData;
 
