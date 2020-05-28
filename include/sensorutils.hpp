@@ -18,9 +18,10 @@
 #pragma once
 #include <ipmid/api.h>
 
+#include <phosphor-logging/log.hpp>
+
 #include <cmath>
 #include <iostream>
-#include <phosphor-logging/log.hpp>
 
 namespace ipmi
 {
@@ -63,9 +64,9 @@ using SensorSubTree = boost::container::flat_map<
     boost::container::flat_map<std::string, std::vector<std::string>>,
     CmpStrVersion>;
 
-inline static bool getSensorSubtree(SensorSubTree &subtree)
+inline static bool getSensorSubtree(SensorSubTree& subtree)
 {
-    sd_bus *bus = NULL;
+    sd_bus* bus = NULL;
     int ret = sd_bus_default_system(&bus);
     if (ret < 0)
     {
@@ -81,7 +82,7 @@ inline static bool getSensorSubtree(SensorSubTree &subtree)
                              "/xyz/openbmc_project/object_mapper",
                              "xyz.openbmc_project.ObjectMapper", "GetSubTree");
     static constexpr const auto depth = 2;
-    static constexpr std::array<const char *, 3> interfaces = {
+    static constexpr std::array<const char*, 3> interfaces = {
         "xyz.openbmc_project.Sensor.Value",
         "xyz.openbmc_project.Sensor.Threshold.Warning",
         "xyz.openbmc_project.Sensor.Threshold.Critical"};
@@ -93,7 +94,7 @@ inline static bool getSensorSubtree(SensorSubTree &subtree)
         subtree.clear();
         mapperReply.read(subtree);
     }
-    catch (sdbusplus::exception_t &e)
+    catch (sdbusplus::exception_t& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
         return false;
@@ -104,20 +105,20 @@ inline static bool getSensorSubtree(SensorSubTree &subtree)
 // Specify the comparison required to sort and find char* map objects
 struct CmpStr
 {
-    bool operator()(const char *a, const char *b) const
+    bool operator()(const char* a, const char* b) const
     {
         return std::strcmp(a, b) < 0;
     }
 };
 
-const static boost::container::flat_map<const char *, SensorUnits, CmpStr>
+const static boost::container::flat_map<const char*, SensorUnits, CmpStr>
     sensorUnits{{{"temperature", SensorUnits::degreesC},
                  {"voltage", SensorUnits::volts},
                  {"current", SensorUnits::amps},
                  {"fan_tach", SensorUnits::rpm},
                  {"power", SensorUnits::watts}}};
 
-const static boost::container::flat_map<const char *, SensorTypeCodes, CmpStr>
+const static boost::container::flat_map<const char*, SensorTypeCodes, CmpStr>
     sensorTypes{{{"temperature", SensorTypeCodes::temperature},
                  {"voltage", SensorTypeCodes::voltage},
                  {"current", SensorTypeCodes::current},
@@ -125,7 +126,7 @@ const static boost::container::flat_map<const char *, SensorTypeCodes, CmpStr>
                  {"fan_pwm", SensorTypeCodes::fan},
                  {"power", SensorTypeCodes::other}}};
 
-inline static std::string getSensorTypeStringFromPath(const std::string &path)
+inline static std::string getSensorTypeStringFromPath(const std::string& path)
 {
     // get sensor type string from path, path is defined as
     // /xyz/openbmc_project/sensors/<type>/label
@@ -144,7 +145,7 @@ inline static std::string getSensorTypeStringFromPath(const std::string &path)
     return path.substr(typeStart, typeEnd - typeStart);
 }
 
-inline static uint8_t getSensorTypeFromPath(const std::string &path)
+inline static uint8_t getSensorTypeFromPath(const std::string& path)
 {
     uint8_t sensorType = 0;
     std::string type = getSensorTypeStringFromPath(path);
@@ -157,16 +158,16 @@ inline static uint8_t getSensorTypeFromPath(const std::string &path)
     return sensorType;
 }
 
-inline static uint8_t getSensorEventTypeFromPath(const std::string &path)
+inline static uint8_t getSensorEventTypeFromPath(const std::string& path)
 {
     // TODO: Add support for additional reading types as needed
     return 0x1; // reading type = threshold
 }
 
 static inline bool getSensorAttributes(const double max, const double min,
-                                       int16_t &mValue, int8_t &rExp,
-                                       int16_t &bValue, int8_t &bExp,
-                                       bool &bSigned)
+                                       int16_t& mValue, int8_t& rExp,
+                                       int16_t& bValue, int8_t& bExp,
+                                       bool& bSigned)
 {
     // computing y = (10^rRexp) * (Mx + (B*(10^Bexp)))
     // check for 0, assume always positive
