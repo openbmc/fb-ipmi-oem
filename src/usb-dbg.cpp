@@ -15,19 +15,20 @@
  */
 
 #include <host-ipmid/ipmid-api.h>
-#include <nlohmann/json.hpp>
-#include <ipmid/api.hpp>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
+#include <appcommands.hpp>
+#include <ipmid/api.hpp>
+#include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/asio/connection.hpp>
-#include <appcommands.hpp>
+
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 namespace ipmi
 {
@@ -64,14 +65,14 @@ namespace ipmi
  * debug card */
 #define PHASE_ANY 0xff
 
-ipmi_ret_t getNetworkData(uint8_t lan_param, char *data);
-int8_t getFruData(std::string &serial, std::string &name);
+ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
+int8_t getFruData(std::string& serial, std::string& name);
 
 /* Declare storage functions used here */
 namespace storage
 {
-int getSensorValue(std::string &, double &);
-int getSensorUnit(std::string &, std::string &);
+int getSensorValue(std::string&, double&);
+int getSensorUnit(std::string&, std::string&);
 } // namespace storage
 
 static constexpr bool DEBUG = false;
@@ -95,7 +96,7 @@ struct frame
     char title[32];
     size_t max_size;
     size_t max_page;
-    char *buf;
+    char* buf;
     uint16_t idx_head, idx_tail;
     uint8_t line_per_page;
     uint8_t line_width;
@@ -107,12 +108,12 @@ struct frame
     {
     }
     int init(size_t size);
-    int append(const char *string, int indent);
-    int insert(const char *string, int indent);
-    int getPage(int page, char *page_buf, size_t page_buf_size);
+    int append(const char* string, int indent);
+    int insert(const char* string, int indent);
+    int getPage(int page, char* page_buf, size_t page_buf_size);
     int isFull();
     int isEscSeq(char chr);
-    int parse(char *buf, size_t buf_size, const char *input, int indent);
+    int parse(char* buf, size_t buf_size, const char* input, int indent);
 };
 
 struct frame frame_info;
@@ -216,11 +217,11 @@ int frame::init(size_t size)
 }
 
 // return 0 on seccuess
-int frame::append(const char *string, int indent)
+int frame::append(const char* string, int indent)
 {
     const size_t buf_size = 64;
     char lbuf[buf_size];
-    char *ptr;
+    char* ptr;
     int ret;
 
     ret = parse(lbuf, buf_size, string, indent);
@@ -259,11 +260,11 @@ int frame::append(const char *string, int indent)
 }
 
 // return 0 on seccuess
-int frame::insert(const char *string, int indent)
+int frame::insert(const char* string, int indent)
 {
     const size_t buf_size = 128;
     char lbuf[buf_size];
-    char *ptr;
+    char* ptr;
     int ret;
     int i;
 
@@ -303,7 +304,7 @@ int frame::insert(const char *string, int indent)
 }
 
 // return page size
-int frame::getPage(int page, char *page_buf, size_t page_buf_size)
+int frame::getPage(int page, char* page_buf, size_t page_buf_size)
 {
     int ret;
     uint16_t line = 0;
@@ -386,7 +387,7 @@ int frame::isEscSeq(char chr)
 }
 
 // return 0 on success
-int frame::parse(char *lbuf, size_t buf_size, const char *input, int indent)
+int frame::parse(char* lbuf, size_t buf_size, const char* input, int indent)
 {
     uint8_t pos, esc;
     int i;
@@ -453,9 +454,9 @@ int frame::parse(char *lbuf, size_t buf_size, const char *input, int indent)
     return 0;
 }
 
-static int chk_cri_sel_update(uint8_t *cri_sel_up)
+static int chk_cri_sel_update(uint8_t* cri_sel_up)
 {
-    FILE *fp;
+    FILE* fp;
     struct stat file_stat;
     uint8_t pos = plat_get_fru_sel();
     static uint8_t pre_pos = 0xff;
@@ -489,13 +490,13 @@ static int chk_cri_sel_update(uint8_t *cri_sel_up)
     return 0;
 }
 
-int plat_udbg_get_frame_info(uint8_t *num)
+int plat_udbg_get_frame_info(uint8_t* num)
 {
     *num = 3;
     return 0;
 }
 
-int plat_udbg_get_updated_frames(uint8_t *count, uint8_t *buffer)
+int plat_udbg_get_updated_frames(uint8_t* count, uint8_t* buffer)
 {
     uint8_t cri_sel_up = 0;
     uint8_t info_page_up = 1;
@@ -524,8 +525,8 @@ int plat_udbg_get_updated_frames(uint8_t *count, uint8_t *buffer)
     return 0;
 }
 
-int plat_udbg_get_post_desc(uint8_t index, uint8_t *next, uint8_t phase,
-                            uint8_t *end, uint8_t *length, uint8_t *buffer)
+int plat_udbg_get_post_desc(uint8_t index, uint8_t* next, uint8_t phase,
+                            uint8_t* end, uint8_t* length, uint8_t* buffer)
 {
     nlohmann::json postObj;
     std::string postCode;
@@ -605,8 +606,8 @@ int plat_udbg_get_post_desc(uint8_t index, uint8_t *next, uint8_t phase,
     return -1;
 }
 
-int plat_udbg_get_gpio_desc(uint8_t index, uint8_t *next, uint8_t *level,
-                            uint8_t *def, uint8_t *length, uint8_t *buffer)
+int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
+                            uint8_t* def, uint8_t* length, uint8_t* buffer)
 {
     nlohmann::json gpioObj;
     std::string gpioPin;
@@ -678,14 +679,14 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t *next, uint8_t *level,
     return -1;
 }
 
-static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t *next,
-                            uint8_t *count, uint8_t *buffer)
+static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t* next,
+                            uint8_t* count, uint8_t* buffer)
 {
     int len;
     int ret;
     char line_buff[FRAME_PAGE_BUF_SIZE], *fptr;
-    const char *ptr;
-    FILE *fp;
+    const char* ptr;
+    FILE* fp;
     struct stat file_stat;
     uint8_t pos = plat_get_fru_sel();
     static uint8_t pre_pos = FRU_ALL;
@@ -748,7 +749,7 @@ static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t *next,
         return -1;
     }
 
-    ret = frame_sel.getPage(page, (char *)buffer, FRAME_PAGE_BUF_SIZE);
+    ret = frame_sel.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
     if (ret < 0)
     {
         *count = 0;
@@ -765,8 +766,8 @@ static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t *next,
     return 0;
 }
 
-static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
-                               uint8_t *count, uint8_t *buffer)
+static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
+                               uint8_t* count, uint8_t* buffer)
 {
     int ret;
     double fvalue;
@@ -798,7 +799,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
         }
 
         /* Get sensors values for all critical sensors */
-        for (auto &j : senObj.items())
+        for (auto& j : senObj.items())
         {
             std::string senName = j.key();
             auto val = j.value();
@@ -844,7 +845,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
         return -1;
     }
 
-    ret = frame_snr.getPage(page, (char *)buffer, FRAME_PAGE_BUF_SIZE);
+    ret = frame_snr.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
     if (ret < 0)
     {
         *count = 0;
@@ -861,7 +862,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t *next,
     return 0;
 }
 
-static int getBiosVer(std::string &ver)
+static int getBiosVer(std::string& ver)
 {
     nlohmann::json appObj;
 
@@ -880,8 +881,8 @@ static int getBiosVer(std::string &ver)
     return -1;
 }
 
-int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t> &cmdData,
-              std::vector<uint8_t> &respData)
+int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
+              std::vector<uint8_t>& respData)
 {
     auto bus = getSdBus();
 
@@ -928,7 +929,7 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t> &cmdData,
     return 0;
 }
 
-static int getMeStatus(std::string &status)
+static int getMeStatus(std::string& status)
 {
     uint8_t cmd = 0x01;   // Get Device id command
     uint8_t netFn = 0x06; // Netfn for APP
@@ -971,12 +972,12 @@ static int getMeStatus(std::string &status)
     return 0;
 }
 
-static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
-                              uint8_t *count, uint8_t *buffer)
+static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
+                              uint8_t* count, uint8_t* buffer)
 {
     char line_buff[1000], *pres_dev = line_buff;
     uint8_t pos = plat_get_fru_sel();
-    const char *delim = "\n";
+    const char* delim = "\n";
     int ret;
     std::string serialName = "BOARD_SERIAL_NUMBER";
     std::string partName = "BOARD_PART_NUMBER";
@@ -1074,7 +1075,7 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
         return -1;
     }
 
-    ret = frame_info.getPage(page, (char *)buffer, FRAME_PAGE_BUF_SIZE);
+    ret = frame_info.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
     if (ret < 0)
     {
         *count = 0;
@@ -1091,8 +1092,8 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t *next,
     return 0;
 }
 
-int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t *next,
-                             uint8_t *count, uint8_t *buffer)
+int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
+                             uint8_t* count, uint8_t* buffer)
 {
     switch (frame)
     {
@@ -1231,7 +1232,7 @@ static uint8_t panel_power_policy(uint8_t item)
 }
 
 int plat_udbg_control_panel(uint8_t panel, uint8_t operation, uint8_t item,
-                            uint8_t *count, uint8_t *buffer)
+                            uint8_t* count, uint8_t* buffer)
 {
     if (panel > panelNum || panel < PANEL_MAIN)
         return IPMI_CC_PARM_OUT_OF_RANGE;
