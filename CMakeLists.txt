@@ -60,10 +60,17 @@ endif ()
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+SET(tempVar "")
+
+if(BIC)
+   SET(tempVar "src/biccommands.cpp")
+endif()
+
 add_library (zfboemcmds
              SHARED src/oemcommands.cpp src/appcommands.cpp
              src/storagecommands.cpp src/usb-dbg.cpp
-             src/selcommands.cpp src/transportcommands.cpp)
+             src/selcommands.cpp src/transportcommands.cpp ${tempVar})
+
 set_target_properties (zfboemcmds PROPERTIES VERSION "0.1.0")
 set_target_properties (zfboemcmds PROPERTIES SOVERSION "0")
 target_link_libraries (zfboemcmds sdbusplus)
