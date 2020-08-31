@@ -23,6 +23,7 @@
 #include <phosphor-logging/log.hpp>
 
 #include <vector>
+#include <variant>
 #include <iostream>
 
 namespace ipmi
@@ -65,6 +66,48 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
                                  res->cc, res->payload);
 }
 
+//----------------------------------------------------------------------
+// ipmiOemPostCodeHandler (CMD_OEM_BIC_POST_BUFFER_INFO)
+// This Function will handle BIC incomming postcode from multi-host for
+// netfn=0x38 and cmd=0x08 send the response back to the sender.
+//----------------------------------------------------------------------
+
+ipmi::RspType<std::array<uint8_t, 3>, uint8_t>
+    ipmiOemPostCodeHandler(ipmi::Context::ptr ctx, std::array<uint8_t, 3> iana,
+                           uint8_t interface, uint8_t data)
+{
+    // creating bus connection
+    auto conn = getSdBus();
+
+    try
+    {
+        // storing post code as varaint
+        std::variant<uint64_t> postCode = static_cast<uint64_t>(data);
+
+        // creating dbus objects for 1 to N process
+        std::string dbusObjStr = dbusObj + std::to_string((ctx->hostIdx + 1));
+
+        // creating method call to update postd value
+        auto method = conn->new_method_call(
+            "xyz.openbmc_project.State.Boot.Raw", dbusObjStr.c_str(),
+            "org.freedesktop.DBus.Properties", "Set");
+
+        // Adding paramters to method call
+        method.append(dbusService, "Value", postCode);
+
+        // Invoke method call function
+        auto reply = conn->call(method);
+    }
+    catch (std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "post code handler error\n");
+    }
+
+    // sending the response with headers
+    return ipmi::responseSuccess(iana, interface);
+}
+
 static void registerBICFunctions(void)
 {
 
@@ -74,6 +117,9 @@ static void registerBICFunctions(void)
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
                           cmdOemBicInfo, ipmi::Privilege::User,
                           ipmiOemBicHandler);
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+                          cmdOemSendPostBufferToBMC, ipmi::Privilege::User,
+                          ipmiOemPostCodeHandler);
     return;
 }
 
