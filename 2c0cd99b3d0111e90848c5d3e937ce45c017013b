@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0ce7be3_ddbb78e5",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-04T18:30:30Z",
+      "side": 1,
+      "message": "Per the design, I would expect the service name to be Raw\u003cN\u003e (and object path to be raw\u003cN\u003e per my comments).  I don\u0027t understand why it is \"Raw\" and \"raw1\" here.",
+      "range": {
+        "startLine": 83,
+        "startChar": 40,
+        "endLine": 84,
+        "endChar": 78
+      },
+      "revId": "2c0cd99b3d0111e90848c5d3e937ce45c017013b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "009022c2_e4e2f121",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-04T18:30:30Z",
+      "side": 1,
+      "message": "I\u0027ve left a comment in the design document but I don\u0027t think this method should be called \u0027ReadPostCode\u0027 because it is the wrong verb tense.",
+      "range": {
+        "startLine": 86,
+        "startChar": 40,
+        "endLine": 89,
+        "endChar": 52
+      },
+      "revId": "2c0cd99b3d0111e90848c5d3e937ce45c017013b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b933d761_57de81d8",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-09-04T18:30:30Z",
+      "side": 1,
+      "message": "As I mentioned in the design, I do not think this is necessary.\n\nAre we certain that \"channelIdx\" \u003d\u003d \"host ordinal number\"?  How?",
+      "revId": "2c0cd99b3d0111e90848c5d3e937ce45c017013b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
