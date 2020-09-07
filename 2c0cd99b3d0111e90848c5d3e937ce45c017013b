@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b96ddfd9_bc72cfe8",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2020-09-07T16:16:31Z",
+      "side": 1,
+      "message": "The postd deamon has single service \"xyz.openbmc_project.State.Boot.Raw\". it will be Boot.Raw. \nwe can have multiple objects raw\u003c1..N\u003e. Will update this",
+      "parentUuid": "a0ce7be3_ddbb78e5",
+      "range": {
+        "startLine": 83,
+        "startChar": 40,
+        "endLine": 84,
+        "endChar": 78
+      },
+      "revId": "2c0cd99b3d0111e90848c5d3e937ce45c017013b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "009022c2_e4e2f121",
         "filename": "src/biccommands.cpp",
         "patchSetId": 2
