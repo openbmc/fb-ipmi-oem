@@ -22,6 +22,30 @@
       "revId": "65e04d18d9d3ce1b9509e94afa7a2c7422c0c72e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0565d8da_e2564241",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2020-10-23T15:00:11Z",
+      "side": 1,
+      "message": "Yes. We need this variant to update the values in the dbus. \nI have Verified without variant, it is not updating values in the dbus.",
+      "parentUuid": "833f897d_bbd49ce2",
+      "range": {
+        "startLine": 84,
+        "startChar": 9,
+        "endLine": 84,
+        "endChar": 16
+      },
+      "revId": "65e04d18d9d3ce1b9509e94afa7a2c7422c0c72e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }
