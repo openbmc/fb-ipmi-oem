@@ -39,6 +39,13 @@ struct GetSDRReq
     uint8_t bytesToRead;
 };
 
+struct GetFRUAreaResp
+{
+    uint8_t inventorySizeLSB;
+    uint8_t inventorySizeMSB;
+    uint8_t accessType;
+};
+
 struct GetFRUAreaReq
 {
     uint8_t fruDeviceID;

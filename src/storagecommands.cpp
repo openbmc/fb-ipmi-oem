@@ -885,8 +885,48 @@ int getSensorUnit(std::string& name, std::string& unit)
         return -1;
 }
 
+ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+                                        ipmi_request_t request,
+                                        ipmi_response_t response,
+                                        ipmi_data_len_t dataLen,
+                                        ipmi_context_t context)
+{
+    if (*dataLen != 1)
+    {
+        *dataLen = 0;
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+    }
+    *dataLen = 0; // default to 0 in case of an error
+
+    uint8_t reqDev = *(static_cast<uint8_t*>(request));
+    if (reqDev == 0xFF)
+    {
+        return IPMI_CC_INVALID_FIELD_REQUEST;
+    }
+    ipmi_ret_t status = replaceCacheFru(reqDev);
+
+    if (status != IPMI_CC_OK)
+    {
+        return status;
+    }
+
+    GetFRUAreaResp* respPtr = static_cast<GetFRUAreaResp*>(response);
+    respPtr->inventorySizeLSB = fruCache.size() & 0xFF;
+    respPtr->inventorySizeMSB = fruCache.size() >> 8;
+    respPtr->accessType = static_cast<uint8_t>(GetFRUAreaAccessType::byte);
+
+    *dataLen = sizeof(GetFRUAreaResp);
+    return IPMI_CC_OK;
+}
+
 void registerStorageFunctions()
 {
+    // <Get FRU Inventory Area Info>
+    ipmiPrintAndRegister(
+        NETFUN_STORAGE,
+        static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdGetFRUInvAreaInfo),
+        NULL, ipmiStorageGetFRUInvAreaInfo, PRIVILEGE_OPERATOR);
+
     // <READ FRU Data>
     ipmiPrintAndRegister(
         NETFUN_STORAGE,
