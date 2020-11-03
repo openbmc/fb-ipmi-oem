@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "447c7ee6_24aab90b",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1000271
+      },
+      "writtenOn": "2020-11-03T19:53:19Z",
+      "side": 1,
+      "message": "Why is this a shared pointer and also why to use asio here. you can simply use get default bus",
+      "range": {
+        "startLine": 81,
+        "startChar": 9,
+        "endLine": 81,
+        "endChar": 19
+      },
+      "revId": "65e04d18d9d3ce1b9509e94afa7a2c7422c0c72e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "833f897d_bbd49ce2",
         "filename": "src/biccommands.cpp",
         "patchSetId": 3
@@ -42,6 +65,52 @@
         "startChar": 9,
         "endLine": 84,
         "endChar": 16
+      },
+      "revId": "65e04d18d9d3ce1b9509e94afa7a2c7422c0c72e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dddcd71e_faba7b25",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000271
+      },
+      "writtenOn": "2020-11-03T19:53:19Z",
+      "side": 1,
+      "message": "Please define this as a const variable",
+      "range": {
+        "startLine": 87,
+        "startChar": 27,
+        "endLine": 87,
+        "endChar": 62
+      },
+      "revId": "65e04d18d9d3ce1b9509e94afa7a2c7422c0c72e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4aa11841_66471d7c",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000271
+      },
+      "writtenOn": "2020-11-03T19:53:19Z",
+      "side": 1,
+      "message": "Please avoid hard code value in functional code",
+      "range": {
+        "startLine": 96,
+        "startChar": 19,
+        "endLine": 96,
+        "endChar": 53
       },
       "revId": "65e04d18d9d3ce1b9509e94afa7a2c7422c0c72e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
