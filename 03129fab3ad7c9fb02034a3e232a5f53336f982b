@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "68044a09_eb5b892e",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2020-11-18T17:11:09Z",
+      "side": 1,
+      "message": "We can use the following declarations which are equivalent to #define in C.\n1. const std::string dbusObj(\"/xyz/openbmc_project/state/boot/raw\") \n2. const std::string dbusObj \u003d \"/xyz/openbmc_project/state/boot/raw\". \n\nconstexpr std::string constString \u003d \"constString\" - This expression is not allowed in C++.\nconstexpr char constString[] \u003d \"constString\" - This is allowed in C++.\n\n\nCould you please suggest to use here the correct declarations.",
+      "parentUuid": "56066b00_6e9aadb4",
+      "range": {
+        "startLine": 87,
+        "startChar": 32,
+        "endLine": 87,
+        "endChar": 70
+      },
+      "revId": "03129fab3ad7c9fb02034a3e232a5f53336f982b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2dea21c0_d84c607c",
         "filename": "src/biccommands.cpp",
         "patchSetId": 4
