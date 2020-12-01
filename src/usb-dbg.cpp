@@ -880,6 +880,61 @@ static int getBiosVer(std::string& ver)
     return -1;
 }
 
+int sendBicCmd(uint8_t netFn, uint8_t cmd, uint8_t bicAddr,
+               std::vector<uint8_t>& cmdData, std::vector<uint8_t>& respData)
+{
+
+    static constexpr uint8_t lun = 0;
+
+    auto bus = getSdBus();
+
+    if (DEBUG)
+    {
+        std::cout << "BIC NetFn:cmd:Addr" << (int)netFn << ":" << (int)cmd
+                  << ":" << (int)bicAddr << "\n";
+        std::cout << "BIC req data: ";
+        for (int i = 0; i < cmdData.size(); i++)
+        {
+            printf("  0x%x :", cmdData.at(i));
+        }
+        printf("\n");
+        std::cout.flush();
+    }
+
+    auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
+                                       "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
+                                       "org.openbmc.Ipmb", "sendRequest");
+    method.append(bicAddr, netFn, lun, cmd, cmdData);
+
+    auto reply = bus->call(method);
+    if (reply.is_method_error())
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Error reading from BIC");
+        return -1;
+    }
+
+    IpmbMethodType resp;
+    reply.read(resp);
+
+    respData =
+        std::move(std::get<std::remove_reference_t<decltype(respData)>>(resp));
+
+    if (DEBUG)
+    {
+        std::cout << "BIC resp data: ";
+
+        for (int i = 0; i < respData.size(); i++)
+        {
+            printf("  0x%x :", respData.at(i));
+        }
+    }
+    printf("\n");
+    std::cout.flush();
+
+    return 0;
+}
+
 int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
               std::vector<uint8_t>& respData)
 {
