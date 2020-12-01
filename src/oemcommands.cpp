@@ -25,6 +25,9 @@
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
 
+#include <ipmid/api.hpp>
+#include <ipmid/api-types.hpp>
+
 #include <array>
 #include <cstring>
 #include <fstream>
@@ -44,6 +47,7 @@ using namespace phosphor::logging;
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
+constexpr uint8_t cmdSetSystemGuid = 0xEF;
 
 int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
@@ -54,6 +58,9 @@ ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t*, uint8_t*,
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t*,
                                    uint8_t*);
 int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t>&, std::vector<uint8_t>&);
+
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
 
 nlohmann::json oemData __attribute__((init_priority(101)));
 
@@ -857,6 +864,29 @@ static int setGUID(off_t offset, uint8_t* guid)
 //----------------------------------------------------------------------
 // Set System GUID (CMD_OEM_SET_SYSTEM_GUID)
 //----------------------------------------------------------------------
+#if 1
+ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx, uint8_t cmdReq,
+                                     std::vector<uint8_t> reqData)
+{
+    std::vector<uint8_t> respData;
+
+    if (reqData.size() != GUID_SIZE) // 16bytes
+    {
+
+        return ipmi::responseReqDataLenInvalid();
+    }
+
+    auto ptrReqData = reqData.insert(reqData.begin(), reqData.size());
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+        return ipmi::responseUnspecifiedError();
+
+    return ipmi::responseSuccess();
+}
+
+#else
 ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                 ipmi_request_t request,
                                 ipmi_response_t response,
@@ -879,6 +909,7 @@ ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     }
     return IPMI_CC_OK;
 }
+#endif
 
 //----------------------------------------------------------------------
 // Set Bios Flash Info (CMD_OEM_SET_BIOS_FLASH_INFO)
@@ -1664,9 +1695,17 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_PPIN_INFO, NULL,
                          ipmiOemSetPPINInfo,
                          PRIVILEGE_USER); // Set PPIN Info
+#if BIC_ENABLED
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          ipmi::cmdSetSystemGuid, ipmi::Privilege::User,
+                          ipmiOemSetSystemGuid);
+#else
+
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_SYSTEM_GUID, NULL,
                          ipmiOemSetSystemGuid,
                          PRIVILEGE_USER); // Set System GUID
+#endif
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_ADR_TRIGGER, NULL,
                          ipmiOemSetAdrTrigger,
                          PRIVILEGE_USER); // Set ADR Trigger
