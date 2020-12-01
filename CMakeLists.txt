@@ -86,3 +86,8 @@ set (CONFIG_FILES post_desc.json gpio_desc.json cri_sensors.json)
 
 install (TARGETS zfboemcmds DESTINATION lib/ipmid-providers)
 install (FILES ${CONFIG_FILES} DESTINATION ${PACKAGE_DIR})
+
+if(BIC)
+set (CONFIG_FILES_YV2 yosemitev2/gpio_desc.json)
+install (FILES ${CONFIG_FILES_YV2} DESTINATION ${PACKAGE_DIR})
+endif()
