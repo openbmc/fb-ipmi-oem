@@ -25,6 +25,8 @@
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
+#include <ipmid/api.hpp>
+#include <ipmid/api-types.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -45,6 +47,9 @@ static constexpr const char* FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
 static uint8_t globEna = 0x09;
 static SysInfoParam sysInfoParams;
 nlohmann::json appData __attribute__((init_priority(101)));
+
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
 
 void printGUID(uint8_t* guid, off_t offset)
 {
@@ -200,6 +205,22 @@ ipmi_ret_t ipmiAppClearMsgFlags(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get System GUID (CMD_APP_GET_SYS_GUID)
 //----------------------------------------------------------------------
+#if BIC_ENABLED
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiAppGetSysGUID(ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
+
+{
+    std::vector<uint8_t> respData;
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+        return ipmi::responseUnspecifiedError();
+
+    return ipmi::responseSuccess(respData);
+}
+
+#else
 ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                              ipmi_request_t request, ipmi_response_t response,
                              ipmi_data_len_t data_len, ipmi_context_t context)
@@ -212,6 +233,8 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     *data_len = GUID_SIZE;
     return IPMI_CC_OK;
 }
+
+#endif
 
 //----------------------------------------------------------------------
 // Platform specific functions for storing app data
@@ -442,9 +465,15 @@ void registerAPPFunctions()
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_CLEAR_MESSAGE_FLAGS, NULL,
                          ipmiAppClearMsgFlags,
                          PRIVILEGE_USER); // Clear Message flags
+#if BIC_ENABLED
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnApp,
+                          ipmi::app::cmdGetSystemGuid, ipmi::Privilege::User,
+                          ipmiAppGetSysGUID);
+#else
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SYS_GUID, NULL,
                          ipmiAppGetSysGUID,
                          PRIVILEGE_USER); // Get System GUID
+#endif
     ipmiPrintAndRegister(NETFUN_APP, CMD_APP_SET_SYS_INFO_PARAMS, NULL,
                          ipmiAppSetSysInfoParams,
                          PRIVILEGE_USER); // Set Sys Info Params
