@@ -65,6 +65,7 @@ SET(bicFile "")
 
 if(BIC)
    SET(bicFile "src/biccommands.cpp")
+   add_definitions (-DBIC_ENABLED)
 endif()
 
 add_library (zfboemcmds
