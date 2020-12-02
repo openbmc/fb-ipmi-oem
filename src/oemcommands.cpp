@@ -24,6 +24,7 @@
 #include <oemcommands.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <array>
 #include <cstring>
@@ -578,6 +579,9 @@ ipmi_ret_t ipmiOemSetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
+    printf(" Set Boot ORder \n");
+    std::cout.flush();
+
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t len = *data_len;
 
@@ -602,6 +606,9 @@ ipmi_ret_t ipmiOemGetBootOrder(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
+    printf(" Get Boot Order \n");
+    std::cout.flush();
+
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t mode = 0;
     int i;
