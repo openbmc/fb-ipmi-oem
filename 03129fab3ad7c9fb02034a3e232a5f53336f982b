@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "b30ff7d1_4e512ffa",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000559
+      },
+      "writtenOn": "2020-12-10T16:31:46Z",
+      "side": 1,
+      "message": "If only one postcode at a time, can the parameter be just \"uint8_t data\" ?",
+      "parentUuid": "4868ecc3_4278e505",
+      "range": {
+        "startLine": 84,
+        "startChar": 60,
+        "endLine": 84,
+        "endChar": 70
+      },
+      "revId": "03129fab3ad7c9fb02034a3e232a5f53336f982b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aea1641e_d640a122",
         "filename": "src/biccommands.cpp",
         "patchSetId": 4
