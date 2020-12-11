@@ -477,7 +477,7 @@ static void logMemErr(uint8_t* dataPtr, std::string& errLog)
     /* TODO: Verify these bits */
     std::string cpuStr = "CPU# " + std::to_string((data[2] & 0xE0) >> 5);
     std::string chStr = "CHN# " + std::to_string((data[2] & 0x18) >> 3);
-    std::string dimmStr = "DIMM# " + std::to_string(data[2] & 0x7);
+    std::string dimmStr = "DIMM#" + std::to_string(data[2] & 0x7);
 
     switch ((data[1] & 0xC) >> 2)
     {
@@ -928,6 +928,56 @@ static void parseSelHelper(StdSELEntry* data, std::string& errStr)
     }
 }
 
+static void parseDimmPhyloc(StdSELEntry* data, std::string& errStr)
+{
+    // Log when " All info available"
+    uint8_t chNum = (data->eventData3 & 0x18) >> 3;
+    uint8_t dimmNum = data->eventData3 & 0x7;
+    uint8_t rankNum = data->eventData2 & 0x03;
+    uint8_t nodeNum = (data->eventData3 & 0xE0) >> 5;
+
+    if (chNum == 3 && dimmNum == 0)
+    {
+        errStr += " Node: " + std::to_string(nodeNum) + "," +
+                  " Card: " + std::to_string(chNum) + "," +
+                  " Module: " + std::to_string(dimmNum) + "," +
+                  " Rank Number: " + std::to_string(rankNum) + "," +
+                  "  Location: DIMM A0";
+    }
+    else if (chNum == 2 && dimmNum == 0)
+    {
+        errStr += " Node: " + std::to_string(nodeNum) + "," +
+                  " Card: " + std::to_string(chNum) + "," +
+                  " Module: " + std::to_string(dimmNum) + "," +
+                  " Rank Number: " + std::to_string(rankNum) + "," +
+                  " Location: DIMM B0";
+    }
+    else if (chNum == 4 && dimmNum == 0)
+    {
+        errStr += " Node: " + std::to_string(nodeNum) + "," +
+                  " Card: " + std::to_string(chNum) + "," +
+                  " Module: " + std::to_string(dimmNum) + "," +
+                  " Rank Number: " + std::to_string(rankNum) + "," +
+                  " Location: DIMM C0 ";
+    }
+    else if (chNum == 5 && dimmNum == 0)
+    {
+        errStr += " Node: " + std::to_string(nodeNum) + "," +
+                  " Card: " + std::to_string(chNum) + "," +
+                  " Module: " + std::to_string(dimmNum) + "," +
+                  " Rank Number: " + std::to_string(rankNum) + "," +
+                  " Location: DIMM D0";
+    }
+    else
+    {
+        errStr += " Node: " + std::to_string(nodeNum) + "," +
+                  " Card: " + std::to_string(chNum) + "," +
+                  " Module: " + std::to_string(dimmNum) + "," +
+                  " Rank Number: " + std::to_string(rankNum) + "," +
+                  " Location: DIMM Unknow";
+    }
+}
+
 static void parseStdSel(StdSELEntry* data, std::string& errStr)
 {
     std::stringstream tmpStream;
@@ -943,11 +993,13 @@ static void parseStdSel(StdSELEntry* data, std::string& errStr)
                     errStr = "Correctable";
                     tmpStream << "DIMM" << std::setw(2) << std::setfill('0')
                               << data->eventData3 << " ECC err";
+                    parseDimmPhyloc(data, errStr);
                     break;
                 case 0x01:
                     errStr = "Uncorrectable";
                     tmpStream << "DIMM" << std::setw(2) << std::setfill('0')
                               << data->eventData3 << " UECC err";
+                    parseDimmPhyloc(data, errStr);
                     break;
                 case 0x02:
                     errStr = "Parity";
@@ -1103,7 +1155,8 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
     return;
 }
 
-static void parseSelData(std::vector<uint8_t>& reqData, std::string& msgLog)
+static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
+                         std::string& msgLog)
 {
 
     /* Get record type */
@@ -1116,7 +1169,7 @@ static void parseSelData(std::vector<uint8_t>& reqData, std::string& msgLog)
     recTypeStream << std::hex << std::uppercase << std::setfill('0')
                   << std::setw(2) << recType;
 
-    msgLog = "SEL Entry: FRU: 1, Record: ";
+    msgLog = "SEL Entry: FRU: " + std::to_string(fruId) + ", Record: ";
 
     if (recType == stdErrType)
     {
@@ -1331,7 +1384,8 @@ ipmi::RspType<uint16_t, std::vector<uint8_t>>
     }
 }
 
-ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(std::vector<uint8_t> data)
+ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
+                                               std::vector<uint8_t> data)
 {
     /* Per the IPMI spec, need to cancel any reservation when a
      * SEL entry is added
@@ -1347,7 +1401,7 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(std::vector<uint8_t> data)
     toHexStr(data, ipmiRaw);
 
     /* Parse sel data and get an error log to be filed */
-    fb_oem::ipmi::sel::parseSelData(data, logErr);
+    fb_oem::ipmi::sel::parseSelData((ctx->hostIdx + 1), data, logErr);
 
     static const std::string openBMCMessageRegistryVersion("0.1");
     std::string messageID =
