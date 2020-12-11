@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "d07f3486_1c089a46",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2020-12-11T15:15:49Z",
+      "side": 1,
+      "message": "yes. Updated with uint8_t.",
+      "parentUuid": "b30ff7d1_4e512ffa",
+      "range": {
+        "startLine": 84,
+        "startChar": 60,
+        "endLine": 84,
+        "endChar": 70
+      },
+      "revId": "03129fab3ad7c9fb02034a3e232a5f53336f982b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aea1641e_d640a122",
         "filename": "src/biccommands.cpp",
         "patchSetId": 4
