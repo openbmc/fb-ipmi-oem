@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4f6f9b86_7ed55fd8",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:17:20Z",
+      "side": 1,
+      "message": "data is a uint8_t, so this comparison is checking against zero.\n\nNever use NULL in C++ code.  Use nullptr.  This is a good example why.  You would have gotten a compile error here instead.",
+      "revId": "eef32f33b7da3d7053b0cd8061bcf5623bdbb4c5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b6d9159_4aa00f28",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2020-12-11T23:17:20Z",
+      "side": 1,
+      "message": "You won\u0027t get is_method_error in any case.  You might get an exception on line 113.",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 32
+      },
+      "revId": "eef32f33b7da3d7053b0cd8061bcf5623bdbb4c5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
