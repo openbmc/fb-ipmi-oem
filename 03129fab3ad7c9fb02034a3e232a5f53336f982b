@@ -215,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "d782b88d_46c8c4be",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000271
+      },
+      "writtenOn": "2020-12-17T20:42:10Z",
+      "side": 1,
+      "message": "you can use constexpr char* as used everywhere in code.",
+      "parentUuid": "68044a09_eb5b892e",
+      "range": {
+        "startLine": 87,
+        "startChar": 32,
+        "endLine": 87,
+        "endChar": 70
+      },
+      "revId": "03129fab3ad7c9fb02034a3e232a5f53336f982b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2dea21c0_d84c607c",
         "filename": "src/biccommands.cpp",
         "patchSetId": 4
