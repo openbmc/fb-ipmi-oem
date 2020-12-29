@@ -263,6 +263,30 @@
     },
     {
       "key": {
+        "uuid": "5ecbd71d_fc1d1f8d",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2020-12-29T08:09:47Z",
+      "side": 1,
+      "message": "In this line kept as std::string for simple string concatenation with hostIdx.",
+      "parentUuid": "11047a07_c1418191",
+      "range": {
+        "startLine": 87,
+        "startChar": 32,
+        "endLine": 87,
+        "endChar": 70
+      },
+      "revId": "03129fab3ad7c9fb02034a3e232a5f53336f982b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2dea21c0_d84c607c",
         "filename": "src/biccommands.cpp",
         "patchSetId": 4
@@ -298,6 +322,30 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "2dea21c0_d84c607c",
+      "range": {
+        "startLine": 90,
+        "startChar": 37,
+        "endLine": 90,
+        "endChar": 71
+      },
+      "revId": "03129fab3ad7c9fb02034a3e232a5f53336f982b",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a41e1bc4_cf327eb4",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2020-12-29T08:09:47Z",
+      "side": 1,
+      "message": "Updated with constexpr char* instead of std::string.",
+      "parentUuid": "acb6bf86_9accde5d",
       "range": {
         "startLine": 90,
         "startChar": 37,
