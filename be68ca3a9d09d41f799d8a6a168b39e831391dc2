@@ -1,0 +1,187 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17d6cb8e_1b431ade",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "I don\u0027t know why this is called \u0027oneTimePath\u0027 because it isn\u0027t always that.",
+      "range": {
+        "startLine": 588,
+        "startChar": 30,
+        "endLine": 588,
+        "endChar": 41
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79257d74_79ad5f0a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Why is this capitalized?",
+      "range": {
+        "startLine": 589,
+        "startChar": 30,
+        "endLine": 589,
+        "endChar": 44
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32c144c6_eb38920f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Thank you for moving the configuration to the \u0027settings\u0027 service.  I much prefer that implementation rather than this IPMI-specific file.\n\nWhy do we still need the code from line 625-633?  Can\u0027t we just store entirely in the settings service now rather than using this OEM file for this data?",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd535dc3_756bbc11",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Why are you using string comparison for a number?",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7582af8d_b2e30c84",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Don\u0027t you need to confirm that hostIdx \u003c INSTANCES?\n\nDo we even need INSTANCES to be an integer?  Can we use the same OBMC_HOST_INSTANCES variable we use elsewhere?",
+      "range": {
+        "startLine": 666,
+        "startChar": 0,
+        "endLine": 669,
+        "endChar": 5
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7e2ca0b_dea41b23",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Why is this capitalized?",
+      "range": {
+        "startLine": 672,
+        "startChar": 16,
+        "endLine": 672,
+        "endChar": 30
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27c10dbd_3d485c5f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 694,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "I\u0027m having trouble reading this code, but I think you\u0027re resetting the \"one-time\" setting?  Two suggestions:\n\n- Please move to the end after setBootOrder because if setBootOrder is unsuccessful we don\u0027t want to clear the one-time.\n\n- Please check the logic because I don\u0027t think it is correct.  My reading is that the logic is currently \"if one time is not enabled, set one time enabled for *next* call\" but I think it should be \"if one time *is* enabled, clear it\".",
+      "range": {
+        "startLine": 690,
+        "startChar": 0,
+        "endLine": 694,
+        "endChar": 5
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e058fbe7_772c9169",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Why look in the \u0027oemData\u0027 anymore?",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a8cc7fa_8db15666",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 1887,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-11T22:59:10Z",
+      "side": 1,
+      "message": "Why were these removed from the \u0027PrintAndRegister\u0027 calls above?",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
