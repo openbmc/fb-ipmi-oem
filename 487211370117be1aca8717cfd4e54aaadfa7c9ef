@@ -22,6 +22,30 @@
       "revId": "487211370117be1aca8717cfd4e54aaadfa7c9ef",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97bb9044_b2de009a",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1000538
+      },
+      "writtenOn": "2021-01-13T09:42:40Z",
+      "side": 1,
+      "message": "Understood. Removed debug print which is not necessary for logging.",
+      "parentUuid": "8dc7037a_96bede81",
+      "range": {
+        "startLine": 893,
+        "startChar": 0,
+        "endLine": 901,
+        "endChar": 26
+      },
+      "revId": "487211370117be1aca8717cfd4e54aaadfa7c9ef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }
