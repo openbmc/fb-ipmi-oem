@@ -131,6 +131,24 @@
     },
     {
       "key": {
+        "uuid": "459aad08_7f519402",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-19T22:05:46Z",
+      "side": 1,
+      "message": "Why can\u0027t \"remaining boot order\" be stored in dbus objects?  Is this a problem where the dbus object hasn\u0027t been properly defined?  Can\u0027t we make proposals to get this cleaned up then?  I\u0027d like to not have this magic OEM file because it means you cannot use Redfish to configure it (for example).",
+      "parentUuid": "ad4576a4_beb0147e",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fd535dc3_756bbc11",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
