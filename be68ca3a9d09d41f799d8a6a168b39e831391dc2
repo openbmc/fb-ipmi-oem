@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "36a03a13_58719a80",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "17d6cb8e_1b431ade",
+      "range": {
+        "startLine": 588,
+        "startChar": 30,
+        "endLine": 588,
+        "endChar": 41
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79257d74_79ad5f0a",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
@@ -36,6 +60,30 @@
       "writtenOn": "2021-01-11T22:59:10Z",
       "side": 1,
       "message": "Why is this capitalized?",
+      "range": {
+        "startLine": 589,
+        "startChar": 30,
+        "endLine": 589,
+        "endChar": 44
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b97324ed_f88aae70",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "I will update this.",
+      "parentUuid": "79257d74_79ad5f0a",
       "range": {
         "startLine": 589,
         "startChar": 30,
@@ -65,6 +113,24 @@
     },
     {
       "key": {
+        "uuid": "ad4576a4_beb0147e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "We can set/get Boot Mode and Boot Source in settings service, but remaining boot order cannot be stored in dbus objects, so we are storing those boot order in oemData.",
+      "parentUuid": "32c144c6_eb38920f",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fd535dc3_756bbc11",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "10f35425_41c5c4e2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "I will update this.",
+      "parentUuid": "fd535dc3_756bbc11",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7582af8d_b2e30c84",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
@@ -93,6 +177,30 @@
       "writtenOn": "2021-01-11T22:59:10Z",
       "side": 1,
       "message": "Don\u0027t you need to confirm that hostIdx \u003c INSTANCES?\n\nDo we even need INSTANCES to be an integer?  Can we use the same OBMC_HOST_INSTANCES variable we use elsewhere?",
+      "range": {
+        "startLine": 666,
+        "startChar": 0,
+        "endLine": 669,
+        "endChar": 5
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8553897_d8a24802",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "Yes, I will add the condition to confirm the INSTANCES.\nOBMC_HOST_INSTANCES is passed as arguments in Cmakelists from bb file.",
+      "parentUuid": "7582af8d_b2e30c84",
       "range": {
         "startLine": 666,
         "startChar": 0,
@@ -128,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "b0e18c4e_031dcfab",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f7e2ca0b_dea41b23",
+      "range": {
+        "startLine": 672,
+        "startChar": 16,
+        "endLine": 672,
+        "endChar": 30
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27c10dbd_3d485c5f",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
@@ -139,6 +271,30 @@
       "writtenOn": "2021-01-11T22:59:10Z",
       "side": 1,
       "message": "I\u0027m having trouble reading this code, but I think you\u0027re resetting the \"one-time\" setting?  Two suggestions:\n\n- Please move to the end after setBootOrder because if setBootOrder is unsuccessful we don\u0027t want to clear the one-time.\n\n- Please check the logic because I don\u0027t think it is correct.  My reading is that the logic is currently \"if one time is not enabled, set one time enabled for *next* call\" but I think it should be \"if one time *is* enabled, clear it\".",
+      "range": {
+        "startLine": 690,
+        "startChar": 0,
+        "endLine": 694,
+        "endChar": 5
+      },
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f61ac825_bceeb869",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 694,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "Sure, I will update this.",
+      "parentUuid": "27c10dbd_3d485c5f",
       "range": {
         "startLine": 690,
         "startChar": 0,
@@ -168,6 +324,24 @@
     },
     {
       "key": {
+        "uuid": "fd446e71_1f8e7fa8",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "We can set/get Boot Mode and Boot Source in settings service, but remaining boot order cannot be stored in dbus objects, so we are storing those boot order in oemData.",
+      "parentUuid": "e058fbe7_772c9169",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5a8cc7fa_8db15666",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
@@ -179,6 +353,24 @@
       "writtenOn": "2021-01-11T22:59:10Z",
       "side": 1,
       "message": "Why were these removed from the \u0027PrintAndRegister\u0027 calls above?",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0a127e2_21d00f11",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 1887,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-19T08:10:41Z",
+      "side": 1,
+      "message": "I changed PrintAndRegister to new registerhandler to manage the optional parameter like hostIdx to get the host option.",
+      "parentUuid": "5a8cc7fa_8db15666",
       "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
