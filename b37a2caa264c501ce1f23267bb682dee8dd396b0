@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e9ae8fee_dff2ee91",
+        "filename": "CMakeLists.txt",
+        "patchSetId": 18
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-22T11:00:39Z",
+      "side": 1,
+      "message": "Sure, I will update this.",
+      "parentUuid": "e8f5ef4c_48a6602e",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 7
+      },
+      "revId": "b37a2caa264c501ce1f23267bb682dee8dd396b0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c22315bb_1fad8b1b",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 18
@@ -36,6 +60,24 @@
       "writtenOn": "2021-01-19T22:05:46Z",
       "side": 1,
       "message": "\"max host?\"\n\nIsn\u0027t INSTANCES a #define created by cmake in a header file?  If it is a #define it can be passed as a literal integer and remove the string-conversion.\n\nI\u0027m not sure we should have an INSTANCES configuration like this anyhow though.",
+      "revId": "b37a2caa264c501ce1f23267bb682dee8dd396b0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5411618_507bdb3d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-22T11:00:39Z",
+      "side": 1,
+      "message": "I will update this.",
+      "parentUuid": "c22315bb_1fad8b1b",
       "revId": "b37a2caa264c501ce1f23267bb682dee8dd396b0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -56,6 +98,24 @@
       "revId": "b37a2caa264c501ce1f23267bb682dee8dd396b0",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d581159_e76844c6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 18
+      },
+      "lineNbr": 688,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-22T11:00:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "293d2ce9_957ab971",
+      "revId": "b37a2caa264c501ce1f23267bb682dee8dd396b0",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }

@@ -149,6 +149,24 @@
     },
     {
       "key": {
+        "uuid": "fabac749_e9278171",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-01-22T11:00:39Z",
+      "side": 1,
+      "message": "From my understanding, there is limitation in dbus-interfaces, so I have updated 2 data values. If there is dbus-interfaces available, we can add it in there. Please provide your suggestions on this.\n\nhttps://github.com/openbmc/phosphor-dbus-interfaces/tree/master/xyz/openbmc_project/Control/Boot",
+      "parentUuid": "459aad08_7f519402",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fd535dc3_756bbc11",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
