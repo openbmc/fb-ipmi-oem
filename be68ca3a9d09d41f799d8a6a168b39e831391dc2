@@ -167,6 +167,24 @@
     },
     {
       "key": {
+        "uuid": "4dc0bda8_744b4eb5",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 17
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-01-29T17:54:24Z",
+      "side": 1,
+      "message": "If we have functionality that isn\u0027t covered by dbus-interfaces, we should be proposing enhancements to cover our functionality.",
+      "parentUuid": "fabac749_e9278171",
+      "revId": "be68ca3a9d09d41f799d8a6a168b39e831391dc2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fd535dc3_756bbc11",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 17
