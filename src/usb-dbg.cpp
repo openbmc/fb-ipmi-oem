@@ -218,7 +218,6 @@ static uint8_t plat_get_fru_sel()
     {
         std::cerr << "Error reading host switch position" << std::endl;
     }
-
 #else
     // For Tiogapass it just return 1, can modify to support more platform
     return 1;
