@@ -38,16 +38,20 @@
 #include <vector>
 
 #define SIZE_IANA_ID 3
+#define HAND_SWI_BMC 5
 
 namespace ipmi
 {
 
 using namespace phosphor::logging;
 
+size_t get_selector_switch();
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 constexpr uint8_t cmdSetSystemGuid = 0xEF;
+constexpr const char* multiHost = "multihost";
+constexpr const char* singleHost = "singlehost";
 
 int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
@@ -249,11 +253,43 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
     return rc;
 }
 
+std::string findPlatform()
+{
+    std::string platform;
+    if (INSTANCES == "0")
+    {
+        platform = singleHost;
+    }
+    else
+    {
+        platform = multiHost;
+    }
+    return platform;
+}
+
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
-    std::string objpath = "/xyz/openbmc_project/FruDevice";
-    std::string intf = "xyz.openbmc_project.FruDeviceManager";
+    size_t position;
+    std::string objpath;
+    std::string intf;
+    std::string bus = "BUS";
+    std::string get;
+    std::string platform = findPlatform();
+    if (platform == multiHost)
+    {
+        position = get_selector_switch();
+    }
+    if (platform == singleHost || position == HAND_SWI_BMC)
+    {
+        objpath = "/xyz/openbmc_project/FruDevice";
+        intf = "xyz.openbmc_project.FruDeviceManager";
+    }
+    else
+    {
+        objpath = "/xyz/openbmc_project/Ipmb/FruDevice";
+        intf = "xyz.openbmc_project.Ipmb.FruDeviceManager";
+    }
     std::string service = getService(dbus, intf, objpath);
     ObjectValueTree valueTree = getManagedObjects(dbus, service, "/");
     if (valueTree.empty())
@@ -266,18 +302,41 @@ int8_t getFruData(std::string& data, std::string& name)
 
     for (const auto& item : valueTree)
     {
-        auto interface = item.second.find("xyz.openbmc_project.FruDevice");
+        auto interface =
+            item.second.find("xyz.openbmc_project.FruDeviceManager");
+        if (platform == singleHost || position == HAND_SWI_BMC)
+        {
+            interface = item.second.find("xyz.openbmc_project.FruDevice");
+        }
+        else if (platform == multiHost)
+        {
+            interface = item.second.find("xyz.openbmc_project.Ipmb.FruDevice");
+        }
         if (interface == item.second.end())
         {
             continue;
         }
-
+        if (position != HAND_SWI_BMC && platform == multiHost)
+        {
+            uint16_t update = 0;
+            update = position - 1;
+            auto search = interface->second.find(bus.c_str());
+            if (search == interface->second.end())
+            {
+                continue;
+            }
+            Value variant = search->second;
+            uint32_t result = std::get<uint32_t>(variant);
+            if (update != result)
+            {
+                continue;
+            }
+        }
         auto property = interface->second.find(name.c_str());
         if (property == interface->second.end())
         {
             continue;
         }
-
         try
         {
             Value variant = property->second;
@@ -1375,6 +1434,7 @@ ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
+
 ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
@@ -1729,6 +1789,7 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DIMM_INFO, NULL,
                          ipmiOemQGetDimmInfo,
                          PRIVILEGE_USER); // Get Dimm Info
+
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DRIVE_INFO, NULL,
                          ipmiOemQSetDriveInfo,
                          PRIVILEGE_USER); // Set Drive Info
