@@ -77,6 +77,12 @@ else()
    add_definitions (-DINSTANCES="0")
 endif()
 
+if(HOST_INSTANCES)
+   add_definitions (-DINSTANCES="${HOST_INSTANCES}")
+else()
+   add_definitions (-DINSTANCES="0")
+endif()
+     
 set_target_properties (zfboemcmds PROPERTIES VERSION "0.1.0")
 set_target_properties (zfboemcmds PROPERTIES SOVERSION "0")
 target_link_libraries (zfboemcmds sdbusplus)
