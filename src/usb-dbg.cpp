@@ -76,7 +76,7 @@ int getSensorUnit(std::string&, std::string&);
 } // namespace storage
 
 static constexpr bool DEBUG = false;
-static const uint8_t meAddress = 1;
+static uint8_t meAddress = 1;
 static constexpr uint8_t lun = 0;
 
 using IpmbMethodType =
@@ -957,12 +957,16 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     return 0;
 }
 
-static int getMeStatus(std::string& status)
+static int getMeStatus(std::string& status, uint8_t pos)
 {
     uint8_t cmd = 0x01;   // Get Device id command
     uint8_t netFn = 0x06; // Netfn for APP
     std::shared_ptr<sdbusplus::asio::connection> bus = getSdBus();
     std::vector<uint8_t> cmdData;
+
+#if BIC_ENABLED
+    meAddress = ((pos - 1) << 2);
+#endif
 
     auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
                                        "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
@@ -1070,7 +1074,7 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
 
         // ME status
         std::string meStatus;
-        if (getMeStatus(meStatus) != 0)
+        if (getMeStatus(meStatus, pos) != 0)
         {
             phosphor::logging::log<phosphor::logging::level::WARNING>(
                 "Reading ME status failed");

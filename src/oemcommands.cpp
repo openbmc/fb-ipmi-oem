@@ -48,6 +48,8 @@ static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 constexpr uint8_t cmdSetSystemGuid = 0xEF;
+constexpr uint8_t cmdSetQDimmInfo = 0x12;
+constexpr uint8_t cmdGetQDimmInfo = 0x14;
 
 int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
@@ -266,7 +268,12 @@ int8_t getFruData(std::string& data, std::string& name)
 
     for (const auto& item : valueTree)
     {
+#if BIC_ENBALED
+        auto interface = item.second.find("xyz.openbmc_project.Ipmb.FruDevice");
+#else
         auto interface = item.second.find("xyz.openbmc_project.FruDevice");
+#endif
+
         if (interface == item.second.end())
         {
             continue;
@@ -1375,6 +1382,41 @@ ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
+
+#if BIC_ENABLED
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemQGetDimmInfo(ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
+{
+    uint8_t* data = &reqData[0];
+    qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(data);
+    uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
+    // uint8_t* res = reinterpret_cast<uint8_t*>(response);
+    std::vector<uint8_t> response;
+    uint8_t* res;
+    std::stringstream ss;
+    std::string str;
+
+    uint8_t host = (uint8_t)ctx->hostIdx + 1;
+
+    ss << std::hex;
+    ss << std::setw(2) << std::setfill('0') << (int)req->dimmIndex;
+
+    if (oemData[KEY_Q_DIMM_INFO + std::to_string(host)].find(ss.str()) ==
+        oemData[KEY_Q_DIMM_INFO + std::to_string(host)].end())
+        return ipmi::responseReqDataLenInvalid();
+
+    if (oemData[KEY_Q_DIMM_INFO + std::to_string(host)][ss.str()].find(
+            dimmInfoKey[req->paramSel]) ==
+        oemData[KEY_Q_DIMM_INFO + std::to_string(host)][ss.str()].end())
+        return ipmi::responseReqDataLenInvalid();
+
+    str = oemData[KEY_Q_DIMM_INFO + std::to_string(host)][ss.str()]
+                 [dimmInfoKey[req->paramSel]];
+    strToBytes(str, res);
+
+    return ipmi::responseSuccess(response);
+}
+#else
 ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                                ipmi_request_t request, ipmi_response_t response,
                                ipmi_data_len_t data_len, ipmi_context_t context)
@@ -1411,6 +1453,7 @@ ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
     return IPMI_CC_OK;
 }
+#endif
 
 //----------------------------------------------------------------------
 // Set Drive Info (CMD_OEM_Q_SET_DRIVE_INFO)
@@ -1723,12 +1766,18 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_PROC_INFO, NULL,
                          ipmiOemQGetProcInfo,
                          PRIVILEGE_USER); // Get Proc Info
+#if BIC_ENABLED
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
+                          ipmi::cmdGetQDimmInfo, ipmi::Privilege::User,
+                          ipmiOemQGetDimmInfo);
+#else
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DIMM_INFO, NULL,
                          ipmiOemQSetDimmInfo,
                          PRIVILEGE_USER); // Set Dimm Info
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DIMM_INFO, NULL,
                          ipmiOemQGetDimmInfo,
                          PRIVILEGE_USER); // Get Dimm Info
+#endif
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DRIVE_INFO, NULL,
                          ipmiOemQSetDriveInfo,
                          PRIVILEGE_USER); // Set Drive Info
