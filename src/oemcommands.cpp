@@ -46,6 +46,7 @@ namespace ipmi
 
 using namespace phosphor::logging;
 
+size_t get_selector_switch();
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
@@ -340,8 +341,25 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
-    std::string objpath = "/xyz/openbmc_project/FruDevice";
-    std::string intf = "xyz.openbmc_project.FruDeviceManager";
+    size_t position;
+    std::string objpath;
+    std::string intf;
+    std::string bus = "BUS";
+    std::string platform = findPlatform();
+    if (platform == MULTI_HOST)
+    {
+        position = get_selector_switch();
+    }
+    if (platform == SINGLE_HOST || position == BMC_POSITION)
+    {
+        objpath = "/xyz/openbmc_project/FruDevice";
+        intf = "xyz.openbmc_project.FruDeviceManager";
+    }
+    else
+    {
+        objpath = "/xyz/openbmc_project/Ipmb/FruDevice";
+        intf = "xyz.openbmc_project.Ipmb.FruDeviceManager";
+    }
     std::string service = getService(dbus, intf, objpath);
     ObjectValueTree valueTree = getManagedObjects(dbus, service, "/");
     if (valueTree.empty())
@@ -354,12 +372,36 @@ int8_t getFruData(std::string& data, std::string& name)
 
     for (const auto& item : valueTree)
     {
-        auto interface = item.second.find("xyz.openbmc_project.FruDevice");
+        auto interface =
+            item.second.find("xyz.openbmc_project.FruDeviceManager");
+        if (platform == SINGLE_HOST || position == BMC_POSITION)
+        {
+            interface = item.second.find("xyz.openbmc_project.FruDevice");
+        }
+        else if (platform == MULTI_HOST)
+        {
+            interface = item.second.find("xyz.openbmc_project.Ipmb.FruDevice");
+        }
         if (interface == item.second.end())
         {
             continue;
         }
-
+        if (position != BMC_POSITION && platform == MULTI_HOST)
+        {
+            uint16_t update = 0;
+            update = position - 1;
+            auto search = interface->second.find(bus.c_str());
+            if (search == interface->second.end())
+            {
+                continue;
+            }
+            Value variant = search->second;
+            uint32_t result = std::get<uint32_t>(variant);
+            if (update != result)
+            {
+                continue;
+            }
+        }
         auto property = interface->second.find(name.c_str());
         if (property == interface->second.end())
         {
