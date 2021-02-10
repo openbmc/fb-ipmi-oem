@@ -52,6 +52,7 @@ namespace ipmi
 #define FRAME_PAGE_BUF_SIZE 256
 #define FRU_ALL 0
 #define MAX_VALUE_LEN 64
+#define HAND_SW_BMC 5
 
 #define DEBUG_GPIO_KEY "GpioDesc"
 #define GPIO_ARRAY_SIZE 4
@@ -177,8 +178,51 @@ static int panelNum = (sizeof(panels) / sizeof(struct ctrl_panel)) - 1;
  * it returns FRU_ALL. Note, if in err, it returns FRU_ALL */
 static uint8_t plat_get_fru_sel()
 {
+
+#if BIC_ENBALED
+    uint16_t pos;
+    static boost::asio::io_context io;
+    auto conn = std::make_shared<sdbusplus::asio::connection>(io);
+
+    try
+    {
+
+        auto method = conn->new_method_call(
+            "xyz.openbmc_project.Chassis.Buttons",
+            "/xyz/openbmc_project/Chassis/Buttons/Selector0",
+            "org.freedesktop.DBus.Properties", "Get");
+
+        method.append("xyz.openbmc_project.Chassis.Buttons.Selector",
+                      "Position");
+
+        auto reply = conn->call(method);
+        if (reply.is_method_error())
+        {
+
+            return -1;
+        }
+
+        std::variant<uint16_t> resp;
+        reply.read(resp);
+
+        pos = std::get<uint16_t>(resp);
+
+        if (pos == HAND_SW_BMC)
+        {
+            return FRU_ALL;
+        }
+
+        return pos;
+    }
+    catch (...)
+    {
+        std::cerr << "Error reading host switch position" << std::endl;
+    }
+
+#else
     // For Tiogapass it just return 1, can modify to support more platform
     return 1;
+#endif
 }
 
 // return 0 on seccuess
@@ -802,6 +846,11 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
         {
             std::string senName = j.key();
             auto val = j.value();
+
+            if (senName[0] == '_')
+            {
+                senName = std::to_string(pos) + senName;
+            }
 
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
