@@ -1,0 +1,47 @@
+{
+	"_SOC_Temp":
+	{
+		"short_name": "SOC_TEMP:"
+	},
+	"_VCCIN_VR_Temp":
+	{
+		"short_name": "SOC_VR_TEMP:"
+	},
+	"_VCCIN_VR_Pout":
+	{
+		"short_name": "SOC_VR_PWR:"
+	},
+	"_SOC_DIMMA0_Temp":
+	{
+		"short_name": "DIMMA0_TEMP:"
+	},
+	"_SOC_DIMMA1_Temp":
+	{
+		"short_name": "DIMMA1_TEMP:",
+		"precision": 1
+	},
+	"_SOC_DIMMB0_Temp":
+	{
+		"short_name": "DIMMB0_TEMP:"
+	},
+	"_SOC_DIMMB1_Temp":
+	{
+		"short_name": "DIMMB1_TEMP:"
+	},
+	"_SOC_DIMMD0_Temp":
+	{
+		"short_name": "DIMMD0_TEMP:"
+	},
+	"_SOC_DIMMD1_Temp":
+	{
+		"short_name": "DIMMD1_TEMP:"
+	},
+	"_SOC_DIMME0_Temp":
+	{
+		"short_name": "DIMME0_TEMP:"
+	},
+	"_SOC_DIMME1_Temp":
+	{
+		"short_name": "DIMME1_TEMP:"
+	}
+}
