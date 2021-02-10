@@ -23,7 +23,7 @@
 #include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
-#include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/asio/property.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -52,6 +52,7 @@ namespace ipmi
 #define FRAME_PAGE_BUF_SIZE 256
 #define FRU_ALL 0
 #define MAX_VALUE_LEN 64
+#define HAND_SW_BMC 5
 
 #define DEBUG_GPIO_KEY "GpioDesc"
 #define GPIO_ARRAY_SIZE 4
@@ -171,14 +172,69 @@ static struct ctrl_panel panels[] = {
     },
 };
 
+template <class Handler>
+void async_get(Handler&& handler)
+{
+    const std::string service = "xyz.openbmc_project.Chassis.Buttons";
+    const std::string path = "/xyz/openbmc_project/Chassis/Buttons/Selector0";
+    const std::string interface =
+        "xyz.openbmc_project.Chassis.Buttons.Selector";
+    const std::string name = "Position";
+
+    boost::asio::io_context io;
+    auto conn2 = std::make_shared<sdbusplus::asio::connection>(io);
+    sdbusplus::asio::connection& conn = *conn2;
+
+    sdbusplus::asio::getProperty<uint16_t>(conn, service, path, interface, name,
+                                           std::forward<Handler>(handler));
+}
+
+auto getFailed()
+{
+    return [](boost::system::error_code error) {
+        std::cerr << "error_code" << error << "\n";
+    };
+}
+
 static int panelNum = (sizeof(panels) / sizeof(struct ctrl_panel)) - 1;
 
 /* Returns the FRU the hand-switch is switched to. If it is switched to BMC
  * it returns FRU_ALL. Note, if in err, it returns FRU_ALL */
 static uint8_t plat_get_fru_sel()
 {
+
+#if BIC_ENBALED
+    uint16_t pos;
+    try
+    {
+
+        async_get([&](boost::system::error_code ec, uint16_t value) {
+            if (ec)
+            {
+
+                getFailed();
+
+                return;
+            }
+            pos = value;
+        });
+
+        if (pos == HAND_SW_BMC)
+        {
+            return FRU_ALL;
+        }
+
+        return pos;
+    }
+    catch (...)
+    {
+        std::cerr << "Error reading host switch position" << std::endl;
+    }
+
+#else
     // For Tiogapass it just return 1, can modify to support more platform
     return 1;
+#endif
 }
 
 // return 0 on seccuess
@@ -770,6 +826,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
 {
     int ret;
     double fvalue;
+    uint16_t pos;
 
     if (page == 1)
     {
@@ -802,6 +859,11 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
         {
             std::string senName = j.key();
             auto val = j.value();
+
+            if (senName[0] == '_')
+            {
+                senName = std::to_string(pos) + senName;
+            }
 
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
