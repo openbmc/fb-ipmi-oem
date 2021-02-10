@@ -24,6 +24,7 @@
 #include <commandutils.hpp>
 #include <nlohmann/json.hpp>
 #include <oemcommands.hpp>
+#include <appcommands.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
 
@@ -335,6 +336,20 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
             rc = IPMI_CC_PARM_OUT_OF_RANGE;
     }
     return rc;
+}
+
+std::string findPlatform()
+{
+    std::string platform;
+    if (INSTANCES == "0")
+    {
+        platform = SINGLE_HOST;
+    }
+    else
+    {
+        platform = MULTI_HOST;
+    }
+    return platform;
 }
 
 // return code: 0 successful
