@@ -47,6 +47,8 @@ enum fb_app_cmds
 #define JSON_APP_DATA_FILE "/etc/appData.json"
 #define KEY_SYSFW_VER "sysfw_ver_server"
 #define KEY_BIOS_BOOT_LEN "bios_boot_list_len"
+#define SINGLE_HOST "singleHost"
+#define MULTI_HOST "multihost"
 
 // System Info Parameters (IPMI/Table 22-16c)
 enum SysInfoParams

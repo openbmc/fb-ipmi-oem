@@ -50,6 +50,8 @@ static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 constexpr uint8_t cmdSetSystemGuid = 0xEF;
+constexpr const char* multiHost = "multihost";
+constexpr const char* singleHost = "singlehost";
 
 int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
@@ -335,6 +337,20 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
             rc = IPMI_CC_PARM_OUT_OF_RANGE;
     }
     return rc;
+}
+
+std::string findPlatform()
+{
+    std::string platform;
+    if (INSTANCES == "0")
+    {
+        platform = singleHost;
+    }
+    else
+    {
+        platform = multiHost;
+    }
+    return platform;
 }
 
 // return code: 0 successful
