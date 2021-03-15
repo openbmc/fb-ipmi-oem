@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab8daa1_044cf0e7",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-03-15T13:21:49Z",
+      "side": 1,
+      "message": "Why aren\u0027t you just initializing \u0027defaultVal\u0027 to the array?  The copy seems like wasted effort.\n\nIf you do need a copy, use a std::algorithm and not your own for-loop.",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 194,
+        "endChar": 5
+      },
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d59b157_d8c5eb5b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-03-15T13:21:49Z",
+      "side": 1,
+      "message": "This code also seems... odd.  Why are you making a map of identical elements (all defaultVal) only to pick it back apart with a find based on the host id?\n\nWhat if bootVal.find(num) returns nothing?",
+      "range": {
+        "startLine": 195,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 33
+      },
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c3cf33d_f14ae243",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-03-15T13:21:49Z",
+      "side": 1,
+      "message": "This is doing C-string comparison, which will never be true.\n\nI don\u0027t think this is correct for the case where you\u0027re handling a single-host system (like Tiogapass) anyhow because the single instance should be 0, right?",
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
