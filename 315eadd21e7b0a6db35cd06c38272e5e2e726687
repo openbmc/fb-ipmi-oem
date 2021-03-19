@@ -128,6 +128,24 @@
       "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae2251ee_a632e073",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-03-19T12:15:57Z",
+      "side": 1,
+      "message": "Sorry if what I was asking in that earlier comment was unclear. Previously you had an INSTANCES variable, which was a count. Now it is a list of present hosts. \n\nFor single host systems, the instance id is 0.\nFor multi host systems, the instance ids start at 1.",
+      "parentUuid": "2b72a4c2_d26a0bbc",
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }
