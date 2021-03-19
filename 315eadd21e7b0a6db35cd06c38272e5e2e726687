@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "716cf826_1486c151",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-19T09:25:56Z",
+      "side": 1,
+      "message": "I have removed the map, since bootval is similar for all the key.",
+      "parentUuid": "fab8daa1_044cf0e7",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 194,
+        "endChar": 5
+      },
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5d59b157_d8c5eb5b",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 24
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "02f68e0d_1fe43869",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-19T09:25:56Z",
+      "side": 1,
+      "message": "I have removed the map, since bootval is similar for all the key.\nIf the INSTANCES is not present it will return -1. Therefore, the condition will not satisfied in get/set boot order func and it will show \"Invalid command\".",
+      "parentUuid": "5d59b157_d8c5eb5b",
+      "range": {
+        "startLine": 195,
+        "startChar": 0,
+        "endLine": 202,
+        "endChar": 33
+      },
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5c3cf33d_f14ae243",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 24
@@ -59,6 +107,24 @@
       "writtenOn": "2021-03-15T13:21:49Z",
       "side": 1,
       "message": "This is doing C-string comparison, which will never be true.\n\nI don\u0027t think this is correct for the case where you\u0027re handling a single-host system (like Tiogapass) anyhow because the single instance should be 0, right?",
+      "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b72a4c2_d26a0bbc",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-19T09:25:56Z",
+      "side": 1,
+      "message": "If OBMC_HOST_INSTANCES is not present, then it will assign INSTANCES to 1 and \"/xyz/openbmc_project/control/host0/boot\" objpath will be used.\n\nBased on your below comment, INSTANCES was changed to 1, since single host system will have 1 INSTANCES.\nPlease confirm the INSTANCES value for single host system.\n\nhttps://gerrit.openbmc-project.xyz/c/openbmc/fb-ipmi-oem/+/38614/18/CMakeLists.txt#79",
+      "parentUuid": "5c3cf33d_f14ae243",
       "revId": "315eadd21e7b0a6db35cd06c38272e5e2e726687",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
