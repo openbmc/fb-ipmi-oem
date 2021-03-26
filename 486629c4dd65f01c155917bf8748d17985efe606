@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "478cb300_2ae8a383",
+        "filename": "CMakeLists.txt",
+        "patchSetId": 25
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92742999_79703755",
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5852fd69_4a6cb77f",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 25
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "78110e10_d4f0aad1",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5852fd69_4a6cb77f",
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "398787a8_0186a3a1",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 25
@@ -47,6 +83,30 @@
       "writtenOn": "2021-03-19T12:48:25Z",
       "side": 1,
       "message": "This does not work because it finds \u00275\u0027 in a list \u002715 16 17\u0027.\nAlso it does not work because INSTANCES is a space delimited list, so in \u00271 2 3\u0027 results in: find(\"1\") \u003d 0, find(\"2\") \u003d 2, find(\"3\") \u003d 4.\n\nThe most efficient approach here would be to make a function that splits the INSTANCES string and turns it into a std::vector\u003csize_t\u003e.  Then you would write this function like:\n\n  static const auto hosts \u003d instances_function();\n  auto found \u003d std::lower_bound(std::begin(hosts), std::end(hosts), id);\n\n  if ((found \u003d\u003d std::end(hosts)) || (*found !\u003d id))\n      throw std::out_of_range;\n\n  return std::distance(std::begin(hosts), found);",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 31
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd738f87_92fcb3d2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Thanks for your suggestion, I will update this.",
+      "parentUuid": "398787a8_0186a3a1",
       "range": {
         "startLine": 183,
         "startChar": 0,
@@ -76,6 +136,24 @@
     },
     {
       "key": {
+        "uuid": "8bc83cad_2b334675",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 660,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01574c67_dc469e58",
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e09cf52_9990a40c",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 25
@@ -96,6 +174,30 @@
       "revId": "486629c4dd65f01c155917bf8748d17985efe606",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a39bf27_d0fc02ae",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e09cf52_9990a40c",
+      "range": {
+        "startLine": 669,
+        "startChar": 0,
+        "endLine": 672,
+        "endChar": 5
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     },
     {
       "key": {
@@ -122,6 +224,30 @@
     },
     {
       "key": {
+        "uuid": "586ea15c_3eba6da5",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58e98475_8209a691",
+      "range": {
+        "startLine": 674,
+        "startChar": 4,
+        "endLine": 674,
+        "endChar": 7
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c190559e_d9923af2",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 25
@@ -133,6 +259,30 @@
       "writtenOn": "2021-03-19T12:48:25Z",
       "side": 1,
       "message": "Why do we have this special case?  Why do the call to \u0027findHost\u0027 if we are in the single-host configuration?",
+      "range": {
+        "startLine": 679,
+        "startChar": 0,
+        "endLine": 686,
+        "endChar": 9
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51d6799c_780c68e0",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "I updated in the latest code, please verify it.",
+      "parentUuid": "c190559e_d9923af2",
       "range": {
         "startLine": 679,
         "startChar": 0,
@@ -168,6 +318,30 @@
     },
     {
       "key": {
+        "uuid": "b0f8171e_10ca50c2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Thanks for your suggestion, I updated in the code. Please verify it.",
+      "parentUuid": "32842a41_a1834ed0",
+      "range": {
+        "startLine": 688,
+        "startChar": 0,
+        "endLine": 693,
+        "endChar": 5
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3973fad4_0045989b",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 25
@@ -182,6 +356,24 @@
       "revId": "486629c4dd65f01c155917bf8748d17985efe606",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2b9897e_80ade32f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3973fad4_0045989b",
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     },
     {
       "key": {
@@ -208,6 +400,30 @@
     },
     {
       "key": {
+        "uuid": "5750eefa_d25ea755",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7ffe8cb_7a73a655",
+      "range": {
+        "startLine": 699,
+        "startChar": 42,
+        "endLine": 699,
+        "endChar": 51
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0041b35a_d3c5cf23",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 25
@@ -228,6 +444,30 @@
       "revId": "486629c4dd65f01c155917bf8748d17985efe606",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "501b0ebd_195ddf4d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-03-26T12:07:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0041b35a_d3c5cf23",
+      "range": {
+        "startLine": 718,
+        "startChar": 0,
+        "endLine": 741,
+        "endChar": 62
+      },
+      "revId": "486629c4dd65f01c155917bf8748d17985efe606",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }
