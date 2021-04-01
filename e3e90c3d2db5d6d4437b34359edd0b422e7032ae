@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f199846_41738535",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-01T16:20:13Z",
+      "side": 1,
+      "message": "Why is there a global variable now?  I think you intended this to be inside findHost function?",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b1bd7de_2591b788",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-01T16:20:13Z",
+      "side": 1,
+      "message": "This works ok.  I don\u0027t particularly like stringstream because it isn\u0027t especially efficient.  It would be better to have used \u0027find\u0027 and \u0027substr\u0027 on the original string to create the segments.",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d802366_ddd96783",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-01T16:20:13Z",
+      "side": 1,
+      "message": "One of the comments I made before is that this should be a \u0027static const vector\u003cstring\u003e\u0027 created by calling a function.  The issue here is that you\u0027re having to rebuild the string and split it out each time this function is called.",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "505b9124_24805fd6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-01T16:20:13Z",
+      "side": 1,
+      "message": "The function returns \u0027size_t\u0027 which is unsigned.  \n\nI would rather not use return-code patterns but throw an exception for an exceptional case (or use std::optional).  I\u0027ve mentioned this on an earlier review at the place this function is called:\n\n\u003e With your current implementation, you cannot have this condition.\n\u003e The proposal I made throws instead on error.  You might need to change this to a catch.  Alternatively you could use a std::optional return from your findHost function (instead of throwing).",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07df7acf_24bf0e29",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-01T16:20:13Z",
+      "side": 1,
+      "message": "Please do not use global variables for these.  Return them from the function (or pass l-value references into the function as output parameters).  You could have the function return a \u0027std::tuple\u003csize_t, string, string\u003e\u0027.",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 211,
+        "endChar": 71
+      },
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
