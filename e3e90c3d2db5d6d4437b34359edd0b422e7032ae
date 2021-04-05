@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "419566de_608705b1",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-05T15:36:24Z",
+      "side": 1,
+      "message": "It is removed in updated patchset.",
+      "parentUuid": "8f199846_41738535",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b1bd7de_2591b788",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 27
@@ -33,6 +51,24 @@
       "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91619f67_d82b20dc",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-05T15:36:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b1bd7de_2591b788",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "4ebff90e_d4f64202",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-05T15:36:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d802366_ddd96783",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "505b9124_24805fd6",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 27
@@ -64,6 +118,24 @@
       "writtenOn": "2021-04-01T16:20:13Z",
       "side": 1,
       "message": "The function returns \u0027size_t\u0027 which is unsigned.  \n\nI would rather not use return-code patterns but throw an exception for an exceptional case (or use std::optional).  I\u0027ve mentioned this on an earlier review at the place this function is called:\n\n\u003e With your current implementation, you cannot have this condition.\n\u003e The proposal I made throws instead on error.  You might need to change this to a catch.  Alternatively you could use a std::optional return from your findHost function (instead of throwing).",
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c9dc2a0_29297045",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-05T15:36:24Z",
+      "side": 1,
+      "message": "Sorry for making delay, now I think I understood this part and updated the patchset with std::optional. Please review it.",
+      "parentUuid": "505b9124_24805fd6",
       "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
@@ -90,6 +162,30 @@
       "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b93190c_d473a389",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 27
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-05T15:36:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07df7acf_24bf0e29",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 211,
+        "endChar": 71
+      },
+      "revId": "e3e90c3d2db5d6d4437b34359edd0b422e7032ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }
