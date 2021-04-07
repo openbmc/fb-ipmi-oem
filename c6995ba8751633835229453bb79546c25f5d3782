@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f2f9d127_7895ec1a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-07T18:53:17Z",
+      "side": 1,
+      "message": "std::make_tuple(std::move(bootObjPath), std::move(hostName))\n\n1. Why doesn\u0027t make_tuple need \u0027std::\u0027?  Seems someone polluted the namespace with a \u0027using namespace std;\u0027?\n\n2. Add \u0027std::move\u0027 to the strings because you are done with them at the point you are \u0027moving\u0027 them into the tuple.",
+      "range": {
+        "startLine": 227,
+        "startChar": 22,
+        "endLine": 227,
+        "endChar": 43
+      },
+      "revId": "c6995ba8751633835229453bb79546c25f5d3782",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "982e5375_cfe2abbc",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-07T18:53:17Z",
+      "side": 1,
+      "message": "A slightly more efficient approach is:\n\nstd::string [hostName, bootObjPath] \u003d ipmi::boot::objPath(*hostId);\n\n(ie. construct in place rather than copying indirectly with the tie).",
+      "range": {
+        "startLine": 719,
+        "startChar": 4,
+        "endLine": 719,
+        "endChar": 38
+      },
+      "revId": "c6995ba8751633835229453bb79546c25f5d3782",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83d294a0_bbf16285",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-07T18:53:17Z",
+      "side": 1,
+      "message": "Also use construct in place here.",
+      "revId": "c6995ba8751633835229453bb79546c25f5d3782",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
