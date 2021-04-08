@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aae23e19_e4b0290b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-08T11:06:08Z",
+      "side": 1,
+      "message": "I missed std::make_tuple while updating, Thanks for pointing it out.\nUpdated the patchset with std::move.",
+      "parentUuid": "f2f9d127_7895ec1a",
+      "range": {
+        "startLine": 227,
+        "startChar": 22,
+        "endLine": 227,
+        "endChar": 43
+      },
+      "revId": "c6995ba8751633835229453bb79546c25f5d3782",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "982e5375_cfe2abbc",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 28
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "54c2b420_058be069",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-08T11:06:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "982e5375_cfe2abbc",
+      "range": {
+        "startLine": 719,
+        "startChar": 4,
+        "endLine": 719,
+        "endChar": 38
+      },
+      "revId": "c6995ba8751633835229453bb79546c25f5d3782",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "83d294a0_bbf16285",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 28
@@ -62,6 +110,24 @@
       "revId": "c6995ba8751633835229453bb79546c25f5d3782",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04455153_8696700d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 28
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-04-08T11:06:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83d294a0_bbf16285",
+      "revId": "c6995ba8751633835229453bb79546c25f5d3782",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": false
     }
   ]
 }
