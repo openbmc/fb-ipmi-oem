@@ -86,7 +86,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t>
         using postcode_t = std::tuple<uint64_t, std::vector<uint8_t>>;
 
         uint64_t primaryPostCode = static_cast<uint64_t>(data);
-        postcode_t postCode = std::make_tuple(primaryPostCode, {});
+        auto postCode = postcode_t(primaryPostCode, {});
 
         // creating dbus objects for 1 to N process
         std::string dbusObjStr = dbusObj + std::to_string((ctx->hostIdx + 1));
@@ -97,7 +97,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t>
             "org.freedesktop.DBus.Properties", "Set");
 
         // Adding paramters to method call
-        method.append(dbusService, "Value", std::variant<postcode_t> postCode);
+        method.append(dbusService, "Value", std::variant<postcode_t>(postCode));
 
         // Invoke method call function
         auto reply = conn->call(method);
