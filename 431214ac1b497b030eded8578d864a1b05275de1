@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3fefdf2_db4df035",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-16T11:45:53Z",
+      "side": 1,
+      "message": "This change seems unnecessary.  Isn\u0027t the only necessary change on line 100?",
+      "revId": "431214ac1b497b030eded8578d864a1b05275de1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
