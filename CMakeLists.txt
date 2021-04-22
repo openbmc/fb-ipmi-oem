@@ -61,17 +61,15 @@ endif ()
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-SET(bicFile "")
-
 if(BIC)
-   SET(bicFile "src/biccommands.cpp")
    add_definitions (-DBIC_ENABLED)
 endif()
 
 add_library (zfboemcmds
              SHARED src/oemcommands.cpp src/appcommands.cpp
              src/storagecommands.cpp src/usb-dbg.cpp
-             src/selcommands.cpp src/transportcommands.cpp ${bicFile})
+             src/selcommands.cpp src/transportcommands.cpp
+             src/biccommands.cpp)
 
 if(HOST_INSTANCES)
    add_definitions (-DINSTANCES="${HOST_INSTANCES}")

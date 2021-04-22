@@ -31,7 +31,9 @@ namespace ipmi
 
 using namespace phosphor::logging;
 
+#ifdef BIC_ENABLED
 static void registerBICFunctions() __attribute__((constructor));
+#endif
 
 extern message::Response::ptr executeIpmiCommand(message::Request::ptr);
 
