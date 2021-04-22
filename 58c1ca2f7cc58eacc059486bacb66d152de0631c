@@ -1,0 +1,8 @@
+Ok-To-Test+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Thu, 22 Apr 2021 17:59:01 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/fb-ipmi-oem/+/42564
+Project: openbmc/fb-ipmi-oem
+Branch: refs/heads/master
