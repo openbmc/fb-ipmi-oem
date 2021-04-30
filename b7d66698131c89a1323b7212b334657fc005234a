@@ -1,0 +1,227 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4faf0647_28418e2d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "What is \"frame support\"?  Can we get a better explanation of this?",
+      "range": {
+        "startLine": 7,
+        "startChar": 39,
+        "endLine": 7,
+        "endChar": 52
+      },
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9edfda2_776abc42",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "enabled is spelled wrong, so I\u0027m not sure how this code was tested.",
+      "range": {
+        "startLine": 271,
+        "startChar": 0,
+        "endLine": 271,
+        "endChar": 15
+      },
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa451366_8d3a195f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "Please eliminate the #ifdef here.  Can we just search for both in the list?",
+      "range": {
+        "startLine": 271,
+        "startChar": 0,
+        "endLine": 275,
+        "endChar": 6
+      },
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c9bfaa5_22cc7303",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1386,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "Please remove the ifdef.  I want to start reducing the BIC #ifdefs because we don\u0027t get it tested in CI and we end up with compile errors.",
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a789a3b_0c55c6a9",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1391,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "auto.  (Don\u0027t repeat yourself).\n\nYou probably could use auto elsewhere as well.",
+      "range": {
+        "startLine": 1391,
+        "startChar": 4,
+        "endLine": 1391,
+        "endChar": 16
+      },
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f384a75_d94c993c",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1392,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "This math is not obvious.  Why are you dividing a struct by a uint8_t pointer?  Please comment why if you are doing the right thing.  Why wouldn\u0027t it just be a sizeof(void*) if you want to use a pointer?",
+      "range": {
+        "startLine": 1392,
+        "startChar": 4,
+        "endLine": 1392,
+        "endChar": 62
+      },
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9dcdb06_efe1014f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1393,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "Why is this commented out?",
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa69c829_e0e380b2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1415,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "It is not possible that you ran this code.  It will segv immediately.\n\n`res` is uninitialized which means it is pointing somewhere randomly and likely zero.",
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2da751e_f4412990",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1769,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "I am ok with an #ifdef for different function registration.",
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "caad22b8_7ab0b0b1",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "Why is this a global?  Please refactor the code rather than just remove const.\n\n(global constants are fine, global variables are not)",
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6045efef_b3fb34d4",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T12:11:13Z",
+      "side": 1,
+      "message": "Can we make this non-ifdef\u0027d somehow?",
+      "range": {
+        "startLine": 967,
+        "startChar": 0,
+        "endLine": 969,
+        "endChar": 6
+      },
+      "revId": "b7d66698131c89a1323b7212b334657fc005234a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
