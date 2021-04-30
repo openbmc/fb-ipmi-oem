@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50fd1f9a_ae09b754",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T13:18:47Z",
+      "side": 1,
+      "message": "\u0027async_get\u0027 is a pretty generic name for a function in a library, considering what this code does.  Please name it in a useful way.",
+      "revId": "87ddedfb8d97ff875ea7175bfd23046511e63af1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6326d55c_1f62131c",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T13:18:47Z",
+      "side": 1,
+      "message": "Why is it \"selector0\"?  Can we get a more descriptive name than that?",
+      "range": {
+        "startLine": 179,
+        "startChar": 67,
+        "endLine": 179,
+        "endChar": 76
+      },
+      "revId": "87ddedfb8d97ff875ea7175bfd23046511e63af1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da3c72c9_33b731ff",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T13:18:47Z",
+      "side": 1,
+      "message": "Can we rewrite this in a way which uses the selector if it exists and defaults to 1 otherwise?  (To eliminate the #ifdef).",
+      "range": {
+        "startLine": 203,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 1
+      },
+      "revId": "87ddedfb8d97ff875ea7175bfd23046511e63af1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28be954a_0347ff67",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 829,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2021-04-30T13:18:47Z",
+      "side": 1,
+      "message": "You are using an undefined and uninitialized variable on line 865.  Something is missing.",
+      "revId": "87ddedfb8d97ff875ea7175bfd23046511e63af1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
