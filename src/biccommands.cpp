@@ -58,7 +58,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
 
     // creating ipmi message request for calling executeIpmiCommand function
     auto req = std::make_shared<ipmi::message::Request>(
-        ctx, std::forward<std::vector<uint8_t>>(data));
+        ctx, SecureBuffer{std::move(data)});
 
     // Calling executeIpmiCommand request function
     res = ipmi::executeIpmiCommand(req);
