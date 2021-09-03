@@ -47,7 +47,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
               uint8_t, ipmi::message::Payload>
     ipmiOemBicHandler(ipmi::Context::ptr ctx, std::array<uint8_t, 3> iana,
                       uint8_t interface, uint2_t lun, uint6_t netFnReq,
-                      uint8_t cmdReq, std::vector<uint8_t> data)
+                      uint8_t cmdReq, SecureBuffer data)
 {
 
     ipmi::message::Response::ptr res;
@@ -57,8 +57,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
     ctx->cmd = cmdReq;
 
     // creating ipmi message request for calling executeIpmiCommand function
-    auto req = std::make_shared<ipmi::message::Request>(
-        ctx, std::forward<std::vector<uint8_t>>(data));
+    auto req = std::make_shared<ipmi::message::Request>(ctx, std::move(data));
 
     // Calling executeIpmiCommand request function
     res = ipmi::executeIpmiCommand(req);
