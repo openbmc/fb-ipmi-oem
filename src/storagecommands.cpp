@@ -106,7 +106,7 @@ static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
             auto reply = dbus.call(managedObj);
             reply.read(managedObjects);
         }
-        catch (sdbusplus::exception_t&)
+        catch (const sdbusplus::exception_t&)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(
                 "Error getting managed objects from connection",
@@ -142,7 +142,7 @@ bool writeFru()
     {
         sdbusplus::message::message writeFruResp = dbus.call(writeFru);
     }
-    catch (sdbusplus::exception_t&)
+    catch (const sdbusplus::exception_t&)
     {
         // todo: log sel?
         phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -185,7 +185,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         sdbusplus::message::message resp = dbus.call(getObjects);
         resp.read(frus);
     }
-    catch (sdbusplus::exception_t&)
+    catch (const sdbusplus::exception_t&)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "replaceCacheFru: error getting managed objects");
@@ -269,7 +269,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         sdbusplus::message::message getRawResp = dbus.call(getRawFru);
         getRawResp.read(fruCache);
     }
-    catch (sdbusplus::exception_t&)
+    catch (const sdbusplus::exception_t&)
     {
         lastDevId = 0xFF;
         cacheBus = 0xFF;
@@ -456,7 +456,7 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
         sdbusplus::message::message resp = dbus.call(getObjects);
         resp.read(frus);
     }
-    catch (sdbusplus::exception_t&)
+    catch (const sdbusplus::exception_t&)
     {
         return IPMI_CC_RESPONSE_ERROR;
     }

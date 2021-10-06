@@ -61,12 +61,12 @@ static int fromHexStr(const std::string hexStr, std::vector<uint8_t>& data)
             data.push_back(static_cast<uint8_t>(
                 std::stoul(hexStr.substr(i, 2), nullptr, 16)));
         }
-        catch (std::invalid_argument& e)
+        catch (const std::invalid_argument& e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
         }
-        catch (std::out_of_range& e)
+        catch (const std::out_of_range& e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;

@@ -379,7 +379,7 @@ int8_t getFruData(std::string& data, std::string& name)
             data = result;
             return 0;
         }
-        catch (std::bad_variant_access& e)
+        catch (const std::bad_variant_access& e)
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
             return -1;
