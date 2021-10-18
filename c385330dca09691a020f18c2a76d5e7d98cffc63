@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11c8deac_743de0db",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2021-10-18T12:30:41Z",
+      "side": 1,
+      "message": "change name as BMC_POSITION. the value is 0 based on latest host selector design.",
+      "revId": "c385330dca09691a020f18c2a76d5e7d98cffc63",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7178d4b1_7e24c214",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2021-10-18T12:30:41Z",
+      "side": 1,
+      "message": "it is better to move the type definitions and prototype declarations to respective header file",
+      "revId": "c385330dca09691a020f18c2a76d5e7d98cffc63",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70b23349_fafc04f2",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2021-10-18T12:30:41Z",
+      "side": 1,
+      "message": "change the name to HostSelector",
+      "range": {
+        "startLine": 79,
+        "startChar": 63,
+        "endLine": 79,
+        "endChar": 72
+      },
+      "revId": "c385330dca09691a020f18c2a76d5e7d98cffc63",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd52b90c_695bd684",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2021-10-18T12:30:41Z",
+      "side": 1,
+      "message": "change name to HostSelector which is the new dbus interface name.",
+      "range": {
+        "startLine": 80,
+        "startChar": 59,
+        "endLine": 80,
+        "endChar": 66
+      },
+      "revId": "c385330dca09691a020f18c2a76d5e7d98cffc63",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
