@@ -16,6 +16,86 @@
       "revId": "9dd8ba19b891cb1c1e974623a94b73f24cbd4903",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40e78101_af9b6cb3",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-18T12:45:05Z",
+      "side": 1,
+      "message": "This is already declared in usb-dbg.cpp file. Please declare in any one file.",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 48
+      },
+      "revId": "9dd8ba19b891cb1c1e974623a94b73f24cbd4903",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fce06241_9fe50632",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1437,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-18T12:45:05Z",
+      "side": 1,
+      "message": "Extra line",
+      "revId": "9dd8ba19b891cb1c1e974623a94b73f24cbd4903",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cac9f85_37a2dc3a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1792,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-18T12:45:05Z",
+      "side": 1,
+      "message": "Extra line",
+      "revId": "9dd8ba19b891cb1c1e974623a94b73f24cbd4903",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a94c378_d0f23c4a",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-18T12:45:05Z",
+      "side": 1,
+      "message": "Define common functions and variable one patch and rebase to the new patch. So it wont duplicate variables.",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "9dd8ba19b891cb1c1e974623a94b73f24cbd4903",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
     }
   ]
 }
