@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50861a25_d4e8692f",
+        "filename": "CMakeLists.txt",
+        "patchSetId": 7
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-29T06:50:23Z",
+      "side": 1,
+      "message": "Remove this extra space",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 5
+      },
+      "revId": "c71cbc4024362d7638065f662fe1991782c044a7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c421909_8bcfc7a6",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1072,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-29T06:50:23Z",
+      "side": 1,
+      "message": "please prefer to declare variables where they\u0027re used.",
+      "range": {
+        "startLine": 1072,
+        "startChar": 4,
+        "endLine": 1072,
+        "endChar": 21
+      },
+      "revId": "c71cbc4024362d7638065f662fe1991782c044a7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efcc33fe_36e843e8",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2021-10-29T06:50:23Z",
+      "side": 1,
+      "message": "Magic Number",
+      "range": {
+        "startLine": 1086,
+        "startChar": 54,
+        "endLine": 1086,
+        "endChar": 55
+      },
+      "revId": "c71cbc4024362d7638065f662fe1991782c044a7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4",
+      "unresolved": true
+    }
+  ]
+}
