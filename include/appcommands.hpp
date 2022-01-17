@@ -43,10 +43,17 @@ enum fb_app_cmds
 #define SIZE_BIOS_RSTR_DFLT_SETTING 1
 #define SIZE_LAST_BOOT_TIME 4
 #define SIZE_PCIE_PORT_CONFIG 2
+#define BMC_POSITION 0
+#define MAX_BUF 150
+#define DIMM_TYPE1 0xce
+#define DIMM_TYPE2 0xad
+#define DIMM_TYPE3 0x2c
 
 #define JSON_APP_DATA_FILE "/etc/appData.json"
 #define KEY_SYSFW_VER "sysfw_ver_server"
 #define KEY_BIOS_BOOT_LEN "bios_boot_list_len"
+#define SINGLE_HOST "singleHost"
+#define MULTI_HOST "multihost"
 
 // System Info Parameters (IPMI/Table 22-16c)
 enum SysInfoParams
