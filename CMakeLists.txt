@@ -87,7 +87,7 @@ target_link_libraries (zfboemcmds ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries (zfboemcmds phosphor_logging)
 
 set (PACKAGE_DIR /usr/share/lcd-debug/)
-set (CONFIG_FILES post_desc.json gpio_desc.json cri_sensors.json)
+set (CONFIG_FILES post_desc.json gpio_desc.json cri_sensors.json yosemitev2/cri_sensors.json)
 
 install (TARGETS zfboemcmds DESTINATION lib/ipmid-providers)
 install (FILES ${CONFIG_FILES} DESTINATION ${PACKAGE_DIR})
