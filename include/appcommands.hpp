@@ -43,6 +43,9 @@ enum fb_app_cmds
 #define SIZE_BIOS_RSTR_DFLT_SETTING 1
 #define SIZE_LAST_BOOT_TIME 4
 #define SIZE_PCIE_PORT_CONFIG 2
+#define DIMM_TYPE_1 206
+#define DIMM_TYPE_2 173
+#define DIMM_TYPE_3 44
 
 #define JSON_APP_DATA_FILE "/etc/appData.json"
 #define KEY_SYSFW_VER "sysfw_ver_server"
