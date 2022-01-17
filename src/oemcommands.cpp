@@ -337,6 +337,20 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
     return rc;
 }
 
+bool isMultiHostPlatform()
+{
+    bool platform;
+    if (INSTANCES == "0")
+    {
+        platform = false;
+    }
+    else
+    {
+        platform = true;
+    }
+    return platform;
+}
+
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
