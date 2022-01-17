@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "038fee88_9865eda9",
+        "filename": "CMakeLists.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-01-17T09:45:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8001569f_6a682754",
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b2ecf9fa_aea3553b",
@@ -31,6 +49,24 @@
       "writtenOn": "2022-01-17T09:09:25Z",
       "side": 1,
       "message": "Why only Host 1 and 4?",
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afb53b10_d5dceb09",
+        "filename": "include/appcommands.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-01-17T09:45:10Z",
+      "side": 1,
+      "message": "for condition checking purpose only I mentioned here these two macros.",
+      "parentUuid": "b2ecf9fa_aea3553b",
       "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -52,6 +88,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "55257bec_7e05bd00",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-01-17T09:45:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1d479e48_82d14212",
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9db74583_f6ffe0a7",
@@ -65,6 +119,30 @@
       "writtenOn": "2022-01-17T08:23:58Z",
       "side": 1,
       "message": "pos can be size_t ?",
+      "range": {
+        "startLine": 213,
+        "startChar": 12,
+        "endLine": 213,
+        "endChar": 30
+      },
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d9e858c_d59706b6",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-01-17T09:45:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9db74583_f6ffe0a7",
       "range": {
         "startLine": 213,
         "startChar": 12,
@@ -98,6 +176,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "15d04678_fa6d5bae",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-01-17T09:45:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "198628b1_92b0ade5",
+      "range": {
+        "startLine": 229,
+        "startChar": 11,
+        "endLine": 229,
+        "endChar": 14
+      },
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cfccadc8_218a5f25",
@@ -111,6 +213,30 @@
       "writtenOn": "2022-01-17T08:23:58Z",
       "side": 1,
       "message": "this can also be size_t ?",
+      "range": {
+        "startLine": 821,
+        "startChar": 4,
+        "endLine": 821,
+        "endChar": 12
+      },
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3479b01b_b09d1a09",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 821,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-01-17T09:45:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cfccadc8_218a5f25",
       "range": {
         "startLine": 821,
         "startChar": 4,
