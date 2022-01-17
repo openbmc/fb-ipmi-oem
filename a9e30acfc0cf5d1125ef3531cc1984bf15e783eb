@@ -3,6 +3,57 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8001569f_6a682754",
+        "filename": "CMakeLists.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2022-01-17T09:09:25Z",
+      "side": 1,
+      "message": "2 files in the same name but in different directory. Do we need to have appropriate name for the file?",
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2ecf9fa_aea3553b",
+        "filename": "include/appcommands.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2022-01-17T09:09:25Z",
+      "side": 1,
+      "message": "Why only Host 1 and 4?",
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d479e48_82d14212",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2022-01-17T09:09:25Z",
+      "side": 1,
+      "message": "Can we have the name as get_selector_position ?",
+      "revId": "a9e30acfc0cf5d1125ef3531cc1984bf15e783eb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9db74583_f6ffe0a7",
         "filename": "src/usb-dbg.cpp",
         "patchSetId": 1
