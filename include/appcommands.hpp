@@ -46,6 +46,9 @@ enum fb_app_cmds
 #define BMC_POSITION 0
 #define HOST_ONE 1
 #define HOST_FOUR 4
+#define DIMM_TYPE_1 206
+#define DIMM_TYPE_2 173
+#define DIMM_TYPE_3 44
 
 #define JSON_APP_DATA_FILE "/etc/appData.json"
 #define KEY_SYSFW_VER "sysfw_ver_server"
