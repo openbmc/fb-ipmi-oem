@@ -69,7 +69,8 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
 int8_t getFruData(std::string& serial, std::string& name);
-
+void sys_config(std::vector<std::string>& data, size_t pos);
+void proc_info(std::string& result, size_t pos);
 std::string findPlatform();
 
 /* Declare Host Selector interface and path */
@@ -267,7 +268,7 @@ int frame::init(size_t size)
 // return 0 on seccuess
 int frame::append(const char* string, int indent)
 {
-    const size_t buf_size = 64;
+    const size_t buf_size = 128;
     char lbuf[buf_size];
     char* ptr;
     int ret;
@@ -1012,17 +1013,23 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     return 0;
 }
 
-static int getMeStatus(std::string& status)
+static int getMeStatus(std::string& status, size_t pos)
 {
     uint8_t cmd = 0x01;   // Get Device id command
     uint8_t netFn = 0x06; // Netfn for APP
     std::shared_ptr<sdbusplus::asio::connection> bus = getSdBus();
     std::vector<uint8_t> cmdData;
+    uint8_t meAddr = meAddress;
+    bool platform = isMultiHostPlatform();
+    if (platform == true)
+    {
+        meAddr = ((pos - 1) << 2);
+    }
 
     auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
                                        "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
                                        "org.openbmc.Ipmb", "sendRequest");
-    method.append(meAddress, netFn, lun, cmd, cmdData);
+    method.append(meAddr, netFn, lun, cmd, cmdData);
 
     auto reply = bus->call(method);
     if (reply.is_method_error())
@@ -1066,6 +1073,8 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
     std::string partName = "BOARD_PART_NUMBER";
     std::string verDel = "VERSION=";
     std::string verPath = "/etc/os-release";
+    size_t hostPosition = getSelectorPosition(ipmi::selector::name);
+    size_t maxPos = getSelectorPosition(ipmi::selector::maxName);
 
     if (page == 1)
     {
@@ -1075,20 +1084,33 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
         frame_info.init(FRAME_BUFF_SIZE);
         snprintf(frame_info.title, 32, "SYS_Info");
 
-        // FRU TBD:
-        std::string data;
-        frame_info.append("SN:", 0);
-        if (getFruData(data, serialName) != 0)
+        if (hostPosition == BMC_POSITION)
         {
-            data = "Not Found";
+            frame_info.append("FRU:spb", 0);
         }
-        frame_info.append(data.c_str(), 1);
-        frame_info.append("PN:", 0);
-        if (getFruData(data, partName) != 0)
+        else if (hostPosition != BMC_POSITION && hostPosition <= maxPos)
         {
-            data = "Not Found";
+            std::string data = "FRU:slot" + std::to_string(hostPosition);
+            frame_info.append(data.c_str(), 0);
         }
-        frame_info.append(data.c_str(), 1);
+
+        // FRU
+        if (hostPosition != BMC_POSITION)
+        {
+            std::string data;
+            frame_info.append("SN:", 0);
+            if (getFruData(data, serialName) != 0)
+            {
+                data = "Not Found";
+            }
+            frame_info.append(data.c_str(), 1);
+            frame_info.append("PN:", 0);
+            if (getFruData(data, partName) != 0)
+            {
+                data = "Not Found";
+            }
+            frame_info.append(data.c_str(), 1);
+        }
 
         // LAN
         getNetworkData(3, line_buff);
@@ -1115,24 +1137,27 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
             }
         }
 
-        // BIOS ver
-        std::string biosVer;
-        if (getBiosVer(biosVer) == 0)
+        if (hostPosition != BMC_POSITION)
         {
-            frame_info.append("BIOS_FW_ver:", 0);
-            frame_info.append(biosVer.c_str(), 1);
-        }
+            // BIOS ver
+            std::string biosVer;
+            if (getBiosVer(biosVer) == 0)
+            {
+                frame_info.append("BIOS_FW_ver:", 0);
+                frame_info.append(biosVer.c_str(), 1);
+            }
 
-        // ME status
-        std::string meStatus;
-        if (getMeStatus(meStatus) != 0)
-        {
-            phosphor::logging::log<phosphor::logging::level::WARNING>(
-                "Reading ME status failed");
-            meStatus = "unknown";
+            // ME status
+            std::string meStatus;
+            if (getMeStatus(meStatus, pos) != 0)
+            {
+                phosphor::logging::log<phosphor::logging::level::WARNING>(
+                    "Reading ME status failed");
+                meStatus = "unknown";
+            }
+            frame_info.append("ME_status:", 0);
+            frame_info.append(meStatus.c_str(), 1);
         }
-        frame_info.append("ME_status:", 0);
-        frame_info.append(meStatus.c_str(), 1);
 
         /* TBD: Board ID needs implementation */
         // Board ID
@@ -1148,8 +1173,24 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
         frame_info.append("MCU_ver:", 0);
         frame_info.append(ESC_MCU_RUN_VER, 1);
 
-        // TBD:
         // Sys config present device
+        if (hostPosition != BMC_POSITION)
+        {
+            frame_info.append("Sys Conf. info:", 0);
+
+            std::string result;
+            proc_info(result, pos);
+            frame_info.append(result.c_str(), 1);
+
+            // Dimm info
+            std::vector<std::string> data;
+            sys_config(data, pos);
+
+            for (auto& info : data)
+            {
+                frame_info.append(info.c_str(), 1);
+            }
+        }
 
     } // End of update frame
 
