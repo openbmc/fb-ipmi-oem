@@ -102,6 +102,8 @@ enum fb_oem_qc_cmds
 #define BIT_2 0x04
 #define BIT_3 0x08
 
+#define KEY_PROC_NAME "product_name"
+#define KEY_BASIC_INFO "basic_info"
 #define DIMM_TYPE "type"
 #define DIMM_SPEED "speed"
 #define JSON_DIMM_TYPE_FILE "/usr/share/lcd-debug/dimm_type.json"
