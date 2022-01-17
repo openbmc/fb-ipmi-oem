@@ -24,6 +24,8 @@
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/asio/property.hpp>
+#include <ipmid/utils.hpp>
 
 #include <fstream>
 #include <iomanip>
