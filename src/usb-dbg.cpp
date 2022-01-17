@@ -24,8 +24,6 @@
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/asio/connection.hpp>
-#include <sdbusplus/asio/property.hpp>
-#include <ipmid/utils.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -69,18 +67,8 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
 int8_t getFruData(std::string& serial, std::string& name);
-
-std::string findPlatform();
-
-/* Declare Host Selector interface and path */
-namespace selector
-{
-const std::string path = "/xyz/openbmc_project/Chassis/Buttons/HostSelector";
-const std::string interface =
-    "xyz.openbmc_project.Chassis.HostSelector.Selector";
-const std::string name = "Position";
-const std::string maxName = "MaxPosition";
-} // namespace selector
+void sys_config(std::vector<std::string>& data, size_t pos);
+void proc_info(std::string& result, size_t pos);
 
 /* Declare storage functions used here */
 namespace storage
@@ -185,49 +173,14 @@ static struct ctrl_panel panels[] = {
     },
 };
 
-size_t getSelectorPosition(std::string name)
-{
-    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-    std::string service =
-        getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
-    Value variant =
-        getDbusProperty(*dbus, service, ipmi::selector::path,
-                        ipmi::selector::interface, ipmi::selector::name);
-    size_t result = std::get<size_t>(variant);
-    return result;
-}
-
 static int panelNum = (sizeof(panels) / sizeof(struct ctrl_panel)) - 1;
 
 /* Returns the FRU the hand-switch is switched to. If it is switched to BMC
  * it returns FRU_ALL. Note, if in err, it returns FRU_ALL */
-static size_t plat_get_fru_sel()
+static uint8_t plat_get_fru_sel()
 {
-    size_t position;
-    std::string platform = findPlatform();
-
-    if (platform == MULTI_HOST)
-    {
-        try
-        {
-            size_t hostPosition = getSelectorPosition(ipmi::selector::name);
-            position = hostPosition;
-            if (position == BMC_POSITION)
-            {
-                return FRU_ALL;
-            }
-        }
-        catch (...)
-        {
-            std::cout << "Error while reading the position..." << std::endl;
-        }
-    }
-    else
-    {
-        // For Tiogapass it just return 1, can modify to support more platform
-        position = 1;
-    }
-    return position;
+    // For Tiogapass it just return 1, can modify to support more platform
+    return 1;
 }
 
 // return 0 on seccuess
@@ -267,7 +220,7 @@ int frame::init(size_t size)
 // return 0 on seccuess
 int frame::append(const char* string, int indent)
 {
-    const size_t buf_size = 64;
+    const size_t buf_size = 128;
     char lbuf[buf_size];
     char* ptr;
     int ret;
@@ -506,7 +459,7 @@ static int chk_cri_sel_update(uint8_t* cri_sel_up)
 {
     FILE* fp;
     struct stat file_stat;
-    size_t pos = plat_get_fru_sel();
+    uint8_t pos = plat_get_fru_sel();
     static uint8_t pre_pos = 0xff;
 
     fp = fopen("/mnt/data/cri_sel", "r");
@@ -736,7 +689,7 @@ static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t* next,
     const char* ptr;
     FILE* fp;
     struct stat file_stat;
-    size_t pos = plat_get_fru_sel();
+    uint8_t pos = plat_get_fru_sel();
     static uint8_t pre_pos = FRU_ALL;
     bool pos_changed = pre_pos != pos;
 
@@ -819,7 +772,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
 {
     int ret;
     double fvalue;
-    size_t pos = plat_get_fru_sel();
+    uint8_t pos = plat_get_fru_sel();
 
     if (page == 1)
     {
@@ -852,11 +805,6 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
         {
             std::string senName = j.key();
             auto val = j.value();
-
-            if (senName[0] == '_')
-            {
-                senName = std::to_string(pos) + senName;
-            }
 
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
@@ -1012,17 +960,23 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     return 0;
 }
 
-static int getMeStatus(std::string& status)
+static int getMeStatus(std::string& status, size_t pos)
 {
     uint8_t cmd = 0x01;   // Get Device id command
     uint8_t netFn = 0x06; // Netfn for APP
     std::shared_ptr<sdbusplus::asio::connection> bus = getSdBus();
     std::vector<uint8_t> cmdData;
+    uint8_t meAddr = meAddress;
+    bool platform = isMultiHostPlatform();
+    if (platform == true)
+    {
+        meAddr = ((pos - 1) << 2);
+    }
 
     auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
                                        "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
                                        "org.openbmc.Ipmb", "sendRequest");
-    method.append(meAddress, netFn, lun, cmd, cmdData);
+    method.append(meAddr, netFn, lun, cmd, cmdData);
 
     auto reply = bus->call(method);
     if (reply.is_method_error())
@@ -1059,13 +1013,15 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
                               uint8_t* count, uint8_t* buffer)
 {
     char line_buff[1000], *pres_dev = line_buff;
-    size_t pos = plat_get_fru_sel();
+    uint8_t pos = plat_get_fru_sel();
     const char* delim = "\n";
     int ret;
     std::string serialName = "BOARD_SERIAL_NUMBER";
     std::string partName = "BOARD_PART_NUMBER";
     std::string verDel = "VERSION=";
     std::string verPath = "/etc/os-release";
+    size_t hostPosition = getSelectorPosition(ipmi::selector::name);
+    size_t maxPos = getSelectorPosition(ipmi::selector::maxName);
 
     if (page == 1)
     {
@@ -1075,20 +1031,33 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
         frame_info.init(FRAME_BUFF_SIZE);
         snprintf(frame_info.title, 32, "SYS_Info");
 
-        // FRU TBD:
-        std::string data;
-        frame_info.append("SN:", 0);
-        if (getFruData(data, serialName) != 0)
+        if (hostPosition == BMC_POSITION)
         {
-            data = "Not Found";
+            frame_info.append("FRU:spb", 0);
         }
-        frame_info.append(data.c_str(), 1);
-        frame_info.append("PN:", 0);
-        if (getFruData(data, partName) != 0)
+        else if (hostPosition != BMC_POSITION && hostPosition <= maxPos)
         {
-            data = "Not Found";
+            std::string data = "FRU:slot" + std::to_string(hostPosition);
+            frame_info.append(data.c_str(), 0);
         }
-        frame_info.append(data.c_str(), 1);
+
+        // FRU
+        if (hostPosition != BMC_POSITION)
+        {
+            std::string data;
+            frame_info.append("SN:", 0);
+            if (getFruData(data, serialName) != 0)
+            {
+                data = "Not Found";
+            }
+            frame_info.append(data.c_str(), 1);
+            frame_info.append("PN:", 0);
+            if (getFruData(data, partName) != 0)
+            {
+                data = "Not Found";
+            }
+            frame_info.append(data.c_str(), 1);
+        }
 
         // LAN
         getNetworkData(3, line_buff);
@@ -1115,24 +1084,27 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
             }
         }
 
-        // BIOS ver
-        std::string biosVer;
-        if (getBiosVer(biosVer) == 0)
+        if (hostPosition != BMC_POSITION)
         {
-            frame_info.append("BIOS_FW_ver:", 0);
-            frame_info.append(biosVer.c_str(), 1);
-        }
+            // BIOS ver
+            std::string biosVer;
+            if (getBiosVer(biosVer) == 0)
+            {
+                frame_info.append("BIOS_FW_ver:", 0);
+                frame_info.append(biosVer.c_str(), 1);
+            }
 
-        // ME status
-        std::string meStatus;
-        if (getMeStatus(meStatus) != 0)
-        {
-            phosphor::logging::log<phosphor::logging::level::WARNING>(
-                "Reading ME status failed");
-            meStatus = "unknown";
+            // ME status
+            std::string meStatus;
+            if (getMeStatus(meStatus, pos) != 0)
+            {
+                phosphor::logging::log<phosphor::logging::level::WARNING>(
+                    "Reading ME status failed");
+                meStatus = "unknown";
+            }
+            frame_info.append("ME_status:", 0);
+            frame_info.append(meStatus.c_str(), 1);
         }
-        frame_info.append("ME_status:", 0);
-        frame_info.append(meStatus.c_str(), 1);
 
         /* TBD: Board ID needs implementation */
         // Board ID
@@ -1148,8 +1120,24 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
         frame_info.append("MCU_ver:", 0);
         frame_info.append(ESC_MCU_RUN_VER, 1);
 
-        // TBD:
         // Sys config present device
+        if (hostPosition != BMC_POSITION)
+        {
+            frame_info.append("Sys Conf. info:", 0);
+
+            std::string result;
+            proc_info(result, pos);
+            frame_info.append(result.c_str(), 1);
+
+            // Dimm info
+            std::vector<std::string> data;
+            sys_config(data, pos);
+
+            for (auto& info : data)
+            {
+                frame_info.append(info.c_str(), 1);
+            }
+        }
 
     } // End of update frame
 
@@ -1209,7 +1197,7 @@ static uint8_t panel_boot_order(uint8_t item)
 {
     int i;
     unsigned char buff[MAX_VALUE_LEN], pickup, len;
-    size_t pos = plat_get_fru_sel();
+    uint8_t pos = plat_get_fru_sel();
 
     /* To be implemented */
     /*
@@ -1286,7 +1274,7 @@ static uint8_t panel_power_policy(uint8_t item)
 {
     uint8_t buff[32] = {0};
     uint8_t res_len;
-    size_t pos = plat_get_fru_sel();
+    uint8_t pos = plat_get_fru_sel();
     uint8_t policy;
     //  uint8_t pwr_policy_item_map[3] = {POWER_CFG_ON, POWER_CFG_LPS,
     //  POWER_CFG_OFF};
