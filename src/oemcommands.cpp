@@ -488,8 +488,6 @@ void sysConfig(std::vector<std::string>& data, size_t pos)
             result = dualInlineMem + "/" + typeName + "/" +
                      std::to_string(speed) + "MHz" + "/" +
                      std::to_string(dimmSize) + "GB";
-            std::cout << "Result :" << result << std::endl;
-            std::cout.flush();
             data.push_back(result);
         }
     }
@@ -497,6 +495,40 @@ void sysConfig(std::vector<std::string>& data, size_t pos)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "DIMM information not available\n");
+    }
+}
+
+void procInfo(std::string& result, size_t pos)
+{
+    std::vector<char> data;
+    uint8_t res[MAX_BUF];
+    std::string procIndex = "00";
+    std::string procInfo = KEY_Q_PROC_INFO + std::to_string(pos);
+    try
+    {
+        std::string procName = oemData[procInfo][procIndex][KEY_PROC_NAME];
+        std::string basicInfo = oemData[procInfo][procIndex][KEY_BASIC_INFO];
+
+        // Processor Product Name
+        strToBytes(procName, res);
+        data.assign(reinterpret_cast<char*>(&res),
+                    reinterpret_cast<char*>(&res) + sizeof(res));
+
+        std::string s(data.begin(), data.end());
+        auto productName = ipmi::boot::instances(s);
+
+        // Processor core and frequency
+        strToBytes(basicInfo, res);
+        uint16_t coreNum = res[0];
+        double procFrequency = (float)(res[4] << 8 | res[3]) / 1000;
+
+        result = "CPU:" + productName[2] + "/" + std::to_string(procFrequency) +
+                 "GHz" + "/" + std::to_string(coreNum) + "c";
+    }
+    catch (...)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Processor information not available\n");
     }
 }
 
@@ -727,7 +759,6 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 
     return IPMI_CC_OK;
 }
-
 //----------------------------------------------------------------------
 // Get Board ID (CMD_OEM_GET_BOARD_ID)
 //----------------------------------------------------------------------
@@ -1406,37 +1437,40 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 // Byte 5 – Processor frequency in MHz (MSB)
 // Byte 6..7 – Revision
 //
-ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
-                               ipmi_response_t, ipmi_data_len_t data_len,
-                               ipmi_context_t)
+
+ipmi::RspType<> ipmiOemQSetProcInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t,
+                                    uint8_t, uint8_t procIndex,
+                                    uint8_t paramSel,
+                                    std::vector<uint8_t> request)
 {
-    qProcInfo_t* req = reinterpret_cast<qProcInfo_t*>(request);
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
-    uint8_t len = *data_len;
+    uint8_t len = request.size();
 
-    *data_len = 0;
+    auto hostId = ipmi::boot::findHost(ctx->hostIdx);
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
 
+    std::string procInfo = KEY_Q_PROC_INFO + std::to_string(*hostId);
     /* check for requested data params */
-    if (len < 5 || req->paramSel < 1 || req->paramSel >= numParam)
+    if (len < 5 || paramSel < 1 || paramSel >= numParam)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::responseParmOutOfRange();
     }
-
-    len = len - 5; // Get Actual data length
-
     ss << std::hex;
-    ss << std::setw(2) << std::setfill('0') << (int)req->procIndex;
-    oemData[KEY_Q_PROC_INFO][ss.str()][KEY_PROC_INDEX] = req->procIndex;
-
-    str = bytesToStr(req->data, len);
-    oemData[KEY_Q_PROC_INFO][ss.str()][cpuInfoKey[req->paramSel]] = str.c_str();
+    ss << std::setw(2) << std::setfill('0') << (int)procIndex;
+    oemData[procInfo][ss.str()][KEY_PROC_INDEX] = procIndex;
+    str = bytesToStr(request.data(), len);
+    oemData[procInfo][ss.str()][cpuInfoKey[paramSel]] = str.c_str();
     flushOemData();
-
-    return IPMI_CC_OK;
+    return ipmi::responseSuccess();
 }
 
 //----------------------------------------------------------------------
@@ -1464,41 +1498,42 @@ ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 // Byte 5 – Processor frequency in MHz (MSB)
 // Byte 6..7 – Revision
 //
-ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
-                               ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t)
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemQGetProcInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t,
+                        uint8_t procIndex, uint8_t paramSel)
 {
-    qProcInfo_t* req = reinterpret_cast<qProcInfo_t*>(request);
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
-    uint8_t* res = reinterpret_cast<uint8_t*>(response);
     std::stringstream ss;
     std::string str;
+    uint8_t res[MAX_BUF];
 
-    *data_len = 0;
+    auto hostId = ipmi::boot::findHost(ctx->hostIdx);
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
 
-    /* check for requested data params */
-    if (req->paramSel < 1 || req->paramSel >= numParam)
+    std::string procInfo = KEY_Q_PROC_INFO + std::to_string(*hostId);
+    if (paramSel < 1 || paramSel >= numParam)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::responseParmOutOfRange();
     }
-
     ss << std::hex;
-    ss << std::setw(2) << std::setfill('0') << (int)req->procIndex;
-
-    if (oemData[KEY_Q_PROC_INFO].find(ss.str()) ==
-        oemData[KEY_Q_PROC_INFO].end())
-        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
-
-    if (oemData[KEY_Q_PROC_INFO][ss.str()].find(cpuInfoKey[req->paramSel]) ==
-        oemData[KEY_Q_PROC_INFO][ss.str()].end())
-        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
-
-    str = oemData[KEY_Q_PROC_INFO][ss.str()][cpuInfoKey[req->paramSel]];
-    *data_len = strToBytes(str, res);
-
-    return IPMI_CC_OK;
+    ss << std::setw(2) << std::setfill('0') << (int)procIndex;
+    if (oemData[procInfo].find(ss.str()) == oemData[procInfo].end())
+        return ipmi::responseCommandNotAvailable();
+    if (oemData[procInfo][ss.str()].find(cpuInfoKey[paramSel]) ==
+        oemData[procInfo][ss.str()].end())
+        return ipmi::responseCommandNotAvailable();
+    str = oemData[procInfo][ss.str()][cpuInfoKey[paramSel]];
+    int dataLen = strToBytes(str, res);
+    std::vector<uint8_t> response(&res[0], &res[dataLen]);
+    return ipmi::responseSuccess(response);
 }
 
 //----------------------------------------------------------------------
@@ -1994,12 +2029,12 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_PPR, NULL, ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
     /* FB OEM QC Commands */
-    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_PROC_INFO, NULL,
-                         ipmiOemQSetProcInfo,
-                         PRIVILEGE_USER); // Set Proc Info
-    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_PROC_INFO, NULL,
-                         ipmiOemQGetProcInfo,
-                         PRIVILEGE_USER); // Get Proc Info
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
+                          CMD_OEM_Q_SET_PROC_INFO, ipmi::Privilege::User,
+                          ipmiOemQSetProcInfo); // Set Proc Info
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
+                          CMD_OEM_Q_GET_PROC_INFO, ipmi::Privilege::User,
+                          ipmiOemQGetProcInfo); // Get Proc Info
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
                           ipmi::cmdSetQDimmInfo, ipmi::Privilege::User,
                           ipmiOemQSetDimmInfo); // Set Dimm Info
