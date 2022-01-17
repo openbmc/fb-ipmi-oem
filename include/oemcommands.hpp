@@ -110,6 +110,8 @@ constexpr uint8_t cmdSetQDimmInfo = 0x12;
 constexpr uint8_t cmdGetQDimmInfo = 0x13;
 } // namespace ipmi
 
+#define KEY_PROC_NAME "product_name"
+#define KEY_BASIC_INFO "basic_info"
 #define JSON_OEM_DATA_FILE "/etc/oemData.json"
 #define KEY_PPIN_INFO "mb_cpu_ppin"
 #define KEY_MC_CONFIG "mb_machine_config"
