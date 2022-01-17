@@ -24,6 +24,8 @@
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/asio/connection.hpp>
+#include <sdbusplus/asio/property.hpp>
+#include <ipmid/utils.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -67,6 +69,18 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
 int8_t getFruData(std::string& serial, std::string& name);
+
+std::string findPlatform();
+
+/* Declare Host Selector interface and path */
+namespace selector
+{
+const std::string path = "/xyz/openbmc_project/Chassis/Buttons/HostSelector";
+const std::string interface =
+    "xyz.openbmc_project.Chassis.HostSelector.Selector";
+const std::string name = "Position";
+const std::string maxName = "MaxPosition";
+} // namespace selector
 
 /* Declare storage functions used here */
 namespace storage
@@ -171,14 +185,49 @@ static struct ctrl_panel panels[] = {
     },
 };
 
+size_t getSelectorPosition(std::string name)
+{
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string service =
+        getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
+    Value variant =
+        getDbusProperty(*dbus, service, ipmi::selector::path,
+                        ipmi::selector::interface, ipmi::selector::name);
+    size_t result = std::get<size_t>(variant);
+    return result;
+}
+
 static int panelNum = (sizeof(panels) / sizeof(struct ctrl_panel)) - 1;
 
 /* Returns the FRU the hand-switch is switched to. If it is switched to BMC
  * it returns FRU_ALL. Note, if in err, it returns FRU_ALL */
-static uint8_t plat_get_fru_sel()
+static size_t plat_get_fru_sel()
 {
-    // For Tiogapass it just return 1, can modify to support more platform
-    return 1;
+    size_t position;
+    std::string platform = findPlatform();
+
+    if (platform == MULTI_HOST)
+    {
+        try
+        {
+            size_t hostPosition = getSelectorPosition(ipmi::selector::name);
+            position = hostPosition;
+            if (position == BMC_POSITION)
+            {
+                return FRU_ALL;
+            }
+        }
+        catch (...)
+        {
+            std::cout << "Error while reading the position..." << std::endl;
+        }
+    }
+    else
+    {
+        // For Tiogapass it just return 1, can modify to support more platform
+        position = 1;
+    }
+    return position;
 }
 
 // return 0 on seccuess
@@ -457,7 +506,7 @@ static int chk_cri_sel_update(uint8_t* cri_sel_up)
 {
     FILE* fp;
     struct stat file_stat;
-    uint8_t pos = plat_get_fru_sel();
+    size_t pos = plat_get_fru_sel();
     static uint8_t pre_pos = 0xff;
 
     fp = fopen("/mnt/data/cri_sel", "r");
@@ -687,7 +736,7 @@ static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t* next,
     const char* ptr;
     FILE* fp;
     struct stat file_stat;
-    uint8_t pos = plat_get_fru_sel();
+    size_t pos = plat_get_fru_sel();
     static uint8_t pre_pos = FRU_ALL;
     bool pos_changed = pre_pos != pos;
 
@@ -770,6 +819,7 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
 {
     int ret;
     double fvalue;
+    size_t pos = plat_get_fru_sel();
 
     if (page == 1)
     {
@@ -802,6 +852,11 @@ static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
         {
             std::string senName = j.key();
             auto val = j.value();
+
+            if (senName[0] == '_')
+            {
+                senName = std::to_string(pos) + senName;
+            }
 
             if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
             {
@@ -1004,7 +1059,7 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
                               uint8_t* count, uint8_t* buffer)
 {
     char line_buff[1000], *pres_dev = line_buff;
-    uint8_t pos = plat_get_fru_sel();
+    size_t pos = plat_get_fru_sel();
     const char* delim = "\n";
     int ret;
     std::string serialName = "BOARD_SERIAL_NUMBER";
@@ -1154,7 +1209,7 @@ static uint8_t panel_boot_order(uint8_t item)
 {
     int i;
     unsigned char buff[MAX_VALUE_LEN], pickup, len;
-    uint8_t pos = plat_get_fru_sel();
+    size_t pos = plat_get_fru_sel();
 
     /* To be implemented */
     /*
@@ -1231,7 +1286,7 @@ static uint8_t panel_power_policy(uint8_t item)
 {
     uint8_t buff[32] = {0};
     uint8_t res_len;
-    uint8_t pos = plat_get_fru_sel();
+    size_t pos = plat_get_fru_sel();
     uint8_t policy;
     //  uint8_t pwr_policy_item_map[3] = {POWER_CFG_ON, POWER_CFG_LPS,
     //  POWER_CFG_OFF};
