@@ -194,22 +194,6 @@ typedef struct
 typedef struct
 {
     uint8_t mfrId[3];
-    uint8_t procIndex;
-    uint8_t paramSel;
-    uint8_t data[];
-} qProcInfo_t;
-
-typedef struct
-{
-    uint8_t mfrId[3];
-    uint8_t dimmIndex;
-    uint8_t paramSel;
-    uint8_t data[];
-} qDimmInfo_t;
-
-typedef struct
-{
-    uint8_t mfrId[3];
     uint8_t hddCtrlType;
     uint8_t hddIndex;
     uint8_t paramSel;
