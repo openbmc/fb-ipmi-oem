@@ -67,6 +67,8 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
 int8_t getFruData(std::string& serial, std::string& name);
+int8_t sys_config(std::string& data, size_t pos);
+int8_t proc_info(std::string& result, size_t pos);
 
 /* Declare storage functions used here */
 namespace storage
@@ -218,7 +220,7 @@ int frame::init(size_t size)
 // return 0 on seccuess
 int frame::append(const char* string, int indent)
 {
-    const size_t buf_size = 64;
+    const size_t buf_size = 128;
     char lbuf[buf_size];
     char* ptr;
     int ret;
@@ -957,17 +959,23 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     return 0;
 }
 
-static int getMeStatus(std::string& status)
+static int getMeStatus(std::string& status, size_t pos)
 {
     uint8_t cmd = 0x01;   // Get Device id command
     uint8_t netFn = 0x06; // Netfn for APP
     std::shared_ptr<sdbusplus::asio::connection> bus = getSdBus();
     std::vector<uint8_t> cmdData;
+    uint8_t meAddr = meAddress;
+    std::string platform = findPlatform();
+    if (platform == MULTI_HOST)
+    {
+        meAddr = ((pos - 1) << 2);
+    }
 
     auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
                                        "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
                                        "org.openbmc.Ipmb", "sendRequest");
-    method.append(meAddress, netFn, lun, cmd, cmdData);
+    method.append(meAddr, netFn, lun, cmd, cmdData);
 
     auto reply = bus->call(method);
     if (reply.is_method_error())
@@ -1011,6 +1019,7 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
     std::string partName = "BOARD_PART_NUMBER";
     std::string verDel = "VERSION=";
     std::string verPath = "/etc/os-release";
+    size_t hostPosition = get_selector_position();
 
     if (page == 1)
     {
@@ -1019,6 +1028,17 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
         // initialize and clear frame
         frame_info.init(FRAME_BUFF_SIZE);
         snprintf(frame_info.title, 32, "SYS_Info");
+
+        if (hostPosition == BMC_POSITION)
+        {
+            frame_info.append("FRU:spb", 0);
+        }
+        else if (hostPosition >= HOST_ONE && hostPosition <= HOST_FOUR)
+        {
+            std::string data;
+            data = "FRU:slot" + std::to_string(hostPosition);
+            frame_info.append(data.c_str(), 0);
+        }
 
         // FRU TBD:
         std::string data;
@@ -1060,24 +1080,27 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
             }
         }
 
-        // BIOS ver
-        std::string biosVer;
-        if (getBiosVer(biosVer) == 0)
+        if (hostPosition != BMC_POSITION)
         {
-            frame_info.append("BIOS_FW_ver:", 0);
-            frame_info.append(biosVer.c_str(), 1);
-        }
+            // BIOS ver
+            std::string biosVer;
+            if (getBiosVer(biosVer) == 0)
+            {
+                frame_info.append("BIOS_FW_ver:", 0);
+                frame_info.append(biosVer.c_str(), 1);
+            }
 
-        // ME status
-        std::string meStatus;
-        if (getMeStatus(meStatus) != 0)
-        {
-            phosphor::logging::log<phosphor::logging::level::WARNING>(
-                "Reading ME status failed");
-            meStatus = "unknown";
+            // ME status
+            std::string meStatus;
+            if (getMeStatus(meStatus, pos) != 0)
+            {
+                phosphor::logging::log<phosphor::logging::level::WARNING>(
+                    "Reading ME status failed");
+                meStatus = "unknown";
+            }
+            frame_info.append("ME_status:", 0);
+            frame_info.append(meStatus.c_str(), 1);
         }
-        frame_info.append("ME_status:", 0);
-        frame_info.append(meStatus.c_str(), 1);
 
         /* TBD: Board ID needs implementation */
         // Board ID
@@ -1095,6 +1118,26 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
 
         // TBD:
         // Sys config present device
+	if (hostPosition != BMC_POSITION)
+        {
+            frame_info.append("Sys Conf. info:", 0);
+
+            // processor info
+            std::string result;
+            if (proc_info(result, pos) != 0)
+            {
+                result = "Not found";
+            }
+            frame_info.append(result.c_str(), 1);
+
+            // Dimm info
+            std::string data;
+            if (sys_config(data, pos) != 0)
+            {
+                data = "Not found";
+            }
+            frame_info.append(data.c_str(), 1);
+        }
 
     } // End of update frame
 
