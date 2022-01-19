@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "beb24f9a_9b97948a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "Please explain with more details.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 29
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "feaf1b7e_c42b11e6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "update can be directly initialized ?\nuint16_t update \u003d position - 1;",
+      "range": {
+        "startLine": 407,
+        "startChar": 12,
+        "endLine": 408,
+        "endChar": 34
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4afa83f0_6b1b5341",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "update is uint16_t and result is uint32_t. Please use the correct data type.",
+      "range": {
+        "startLine": 416,
+        "startChar": 16,
+        "endLine": 416,
+        "endChar": 33
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "61a8374a_298972cb",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "case-sensitive.",
+      "range": {
+        "startLine": 496,
+        "startChar": 44,
+        "endLine": 496,
+        "endChar": 48
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8eb92fbc_ca7e8c68",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "case-sensitive.",
+      "range": {
+        "startLine": 497,
+        "startChar": 16,
+        "endLine": 497,
+        "endChar": 20
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d07f6f1_9303aab6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1470,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "you can use size of mfrId here instead of hardcoding value.",
+      "range": {
+        "startLine": 1470,
+        "startChar": 28,
+        "endLine": 1470,
+        "endChar": 29
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ea6b869_03f0d4d2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1543,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "Same as above.",
+      "range": {
+        "startLine": 1543,
+        "startChar": 28,
+        "endLine": 1543,
+        "endChar": 29
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "179c4ff3_3435b49c",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1093,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-01-19T05:51:12Z",
+      "side": 1,
+      "message": "initialize variable where it is being used.",
+      "range": {
+        "startLine": 1092,
+        "startChar": 12,
+        "endLine": 1093,
+        "endChar": 61
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
