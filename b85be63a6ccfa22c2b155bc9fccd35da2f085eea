@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d713ee87_32af09d7",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-01-19T06:02:58Z",
+      "side": 1,
+      "message": "Please follow Camel Case for variable and function names",
+      "range": {
+        "startLine": 187,
+        "startChar": 7,
+        "endLine": 187,
+        "endChar": 29
+      },
+      "revId": "b85be63a6ccfa22c2b155bc9fccd35da2f085eea",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82f920d0_648b3fde",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-01-19T06:02:58Z",
+      "side": 1,
+      "message": "Camel Case",
+      "revId": "b85be63a6ccfa22c2b155bc9fccd35da2f085eea",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30bc1c0c_b28ceb8b",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-01-19T06:02:58Z",
+      "side": 1,
+      "message": "Variable name should be meaningful.",
+      "range": {
+        "startLine": 205,
+        "startChar": 11,
+        "endLine": 205,
+        "endChar": 14
+      },
+      "revId": "b85be63a6ccfa22c2b155bc9fccd35da2f085eea",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7af91769_cc24fdf6",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-01-19T06:02:58Z",
+      "side": 1,
+      "message": "Variable name should be meaningful",
+      "range": {
+        "startLine": 857,
+        "startChar": 16,
+        "endLine": 857,
+        "endChar": 23
+      },
+      "revId": "b85be63a6ccfa22c2b155bc9fccd35da2f085eea",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
