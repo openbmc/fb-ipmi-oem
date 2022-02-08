@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b5c1e09_a1080dfa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "beb24f9a_9b97948a",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 29
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "52c14928_ac3f3048",
@@ -41,6 +65,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f45dbfe_3de66da3",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "52c14928_ac3f3048",
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "08403388_79b24f6a",
@@ -54,6 +96,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "What is this interface?  It isn\u0027t documented in phosphor-dbus-interfaces.",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 377,
+        "endChar": 5
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0dff521_2b469e02",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "This Interface is not documented yet, Still in WIP patch.\nhttps://gerrit.openbmc-project.xyz/c/openbmc/entity-manager/+/39593",
+      "parentUuid": "08403388_79b24f6a",
       "range": {
         "startLine": 368,
         "startChar": 0,
@@ -87,6 +153,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "adcd2fab_0879171b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "feaf1b7e_c42b11e6",
+      "range": {
+        "startLine": 407,
+        "startChar": 12,
+        "endLine": 408,
+        "endChar": 34
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4afa83f0_6b1b5341",
@@ -100,6 +190,30 @@
       "writtenOn": "2022-01-19T05:51:12Z",
       "side": 1,
       "message": "update is uint16_t and result is uint32_t. Please use the correct data type.",
+      "range": {
+        "startLine": 416,
+        "startChar": 16,
+        "endLine": 416,
+        "endChar": 33
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d718d8ac_fdd47c52",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4afa83f0_6b1b5341",
       "range": {
         "startLine": 416,
         "startChar": 16,
@@ -133,6 +247,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "764a6339_7e251e7b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c71ee722_9092fc90",
+      "range": {
+        "startLine": 405,
+        "startChar": 0,
+        "endLine": 420,
+        "endChar": 9
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed8f13bd_1142e64a",
@@ -146,6 +284,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "Please don\u0027t use return codes.  Maybe return an empty string on error?",
+      "range": {
+        "startLine": 449,
+        "startChar": 0,
+        "endLine": 450,
+        "endChar": 6
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9a85bc8_fc811f89",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ed8f13bd_1142e64a",
       "range": {
         "startLine": 449,
         "startChar": 0,
@@ -179,6 +341,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c574a95_f9d24939",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e8649b28_f0191cbe",
+      "range": {
+        "startLine": 452,
+        "startChar": 0,
+        "endLine": 453,
+        "endChar": 18
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1da538d0_c1e128cf",
@@ -192,6 +378,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "\"pro\"?",
+      "range": {
+        "startLine": 454,
+        "startChar": 10,
+        "endLine": 454,
+        "endChar": 13
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f1cfc8f_fa2e9202",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Which is i\u0027m using in this function below line No:468, Okay I\u0027ll change as per the flow.",
+      "parentUuid": "1da538d0_c1e128cf",
       "range": {
         "startLine": 454,
         "startChar": 10,
@@ -225,6 +435,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc377211_bc4a840e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Okay, I\u0027ll make it in c++.",
+      "parentUuid": "fffb1c5d_57a13eac",
+      "range": {
+        "startLine": 464,
+        "startChar": 0,
+        "endLine": 467,
+        "endChar": 9
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c70a3f46_1321abb5",
@@ -238,6 +472,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "Let\u0027s not use C string parsing functions.",
+      "range": {
+        "startLine": 468,
+        "startChar": 0,
+        "endLine": 470,
+        "endChar": 32
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce14ee6a_5c2012e9",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 470,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "c70a3f46_1321abb5",
       "range": {
         "startLine": 468,
         "startChar": 0,
@@ -271,6 +529,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3aa5fa34_98e6047b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "1ade7bea_ecbda685",
+      "range": {
+        "startLine": 474,
+        "startChar": 12,
+        "endLine": 474,
+        "endChar": 16
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f36f3dbc_c15b4105",
@@ -284,6 +566,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "I\u0027d like some better documentation on what is going on here.",
+      "range": {
+        "startLine": 475,
+        "startChar": 27,
+        "endLine": 475,
+        "endChar": 34
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd5bf2b2_662799ec",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "// Set Proc Info (CMD_OEM_Q_SET_PROC_INFO)\n//----------------------------------------------------------------------\n//\"Request:\n// Byte 1:3 – Manufacturer ID – XXYYZZ h, LSB first\n// Byte 4 – Processor Index, 0 base\n// Byte 5 – Parameter Selector\n// Byte 6..N – Configuration parameter data (see below for Parameters\n// of Processor Information)\n// Response:\n// Byte 1 – Completion code\n//\n// Parameter#1: (Processor Product Name)\n//\n// Byte 1..48 –Product name(ASCII code)\n// Ex. Intel(R) Xeon(R) CPU E5-2685 v3 @ 2.60GHz\n//\n// Param#2: Processor Basic Information\n// Byte 1 – Core Number\n// Byte 2 – Thread Number (LSB)\n// Byte 3 – Thread Number (MSB)\n// Byte 4 – Processor frequency in MHz (LSB)\n// Byte 5 – Processor frequency in MHz (MSB)\n// Byte 6..7 – Revision\n//",
+      "parentUuid": "f36f3dbc_c15b4105",
       "range": {
         "startLine": 475,
         "startChar": 27,
@@ -311,6 +617,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9012cb2_8bb3d60b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 476,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.I will update.",
+      "parentUuid": "22e625cc_b5715948",
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e2173864_68115e17",
@@ -324,6 +648,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "We\u0027re using a stringstream to ... print a floating point?  There should be a more straight-forward way to do that.",
+      "range": {
+        "startLine": 478,
+        "startChar": 0,
+        "endLine": 480,
+        "endChar": 37
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c39cc57_8adcde1d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.I will update.",
+      "parentUuid": "e2173864_68115e17",
       "range": {
         "startLine": 478,
         "startChar": 0,
@@ -353,6 +701,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c09a512a_ba393dbe",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "In /etc/oemData.json, If any one of the Host details are not populate in oemData.json it leads to runtime error and if particular details are empty or null in oemData.json that leads also an error. Those cases will be handle in that catch block.",
+      "parentUuid": "c141d5ba_761d84e1",
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "90384e51_6bac23cb",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 10
@@ -364,6 +730,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "Avoid return codes please.",
+      "range": {
+        "startLine": 494,
+        "startChar": 0,
+        "endLine": 494,
+        "endChar": 6
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da890f9b_ab0d6d80",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "90384e51_6bac23cb",
       "range": {
         "startLine": 494,
         "startChar": 0,
@@ -397,6 +787,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "46986528_25909422",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "61a8374a_298972cb",
+      "range": {
+        "startLine": 496,
+        "startChar": 44,
+        "endLine": 496,
+        "endChar": 48
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8eb92fbc_ca7e8c68",
@@ -410,6 +824,30 @@
       "writtenOn": "2022-01-19T05:51:12Z",
       "side": 1,
       "message": "case-sensitive.",
+      "range": {
+        "startLine": 497,
+        "startChar": 16,
+        "endLine": 497,
+        "endChar": 20
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc81348a_83d6e47c",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "8eb92fbc_ca7e8c68",
       "range": {
         "startLine": 497,
         "startChar": 16,
@@ -443,6 +881,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a63dc81_f6062e85",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Yes, for code similarity i\u0027m using those fix-width, as well in ipmiOemSetDimmInfo function.",
+      "parentUuid": "7fd41a57_d7f1174e",
+      "range": {
+        "startLine": 504,
+        "startChar": 0,
+        "endLine": 508,
+        "endChar": 46
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c181b0d4_bcb5debf",
@@ -456,6 +918,24 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "Are you sure this catch can even do anything?  From `[info]`?  Typically subscript operations are NOT bounds checked but `at` operations are.  Please confirm the bounds checking is even working how you intend here.",
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2bf6d82a_06805865",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "c181b0d4_bcb5debf",
       "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -483,6 +963,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "59f100bd_a3e616d7",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack",
+      "parentUuid": "e672639c_614f667b",
+      "range": {
+        "startLine": 776,
+        "startChar": 4,
+        "endLine": 776,
+        "endChar": 25
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a5657793_e561bc5f",
@@ -496,6 +1000,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "I don\u0027t really understand why we\u0027re switching to a vector here.  Doesn\u0027t the IPMI code handle automatic parsing if we pass in a tuple-type of some sort here?  Can\u0027t we get the IPMI code to split the request out into mfgId/procIndex/paramSel directly?",
+      "range": {
+        "startLine": 1459,
+        "startChar": 36,
+        "endLine": 1459,
+        "endChar": 64
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b57d8382_5ab379d6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1459,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "The reason for changing the request into vector is already other handlers are follow the same way, So I just want to follow the same format and  also the IPMI code doesn\u0027t automatically handle the parsing, So I thought that this is easy way to parse the mfgId/procIndex/paramSel directly.\n\nRef:\nhttps://github.com/openbmc/fb-ipmi-oem/blob/master/src/oemcommands.cpp#L695",
+      "parentUuid": "a5657793_e561bc5f",
       "range": {
         "startLine": 1459,
         "startChar": 36,
@@ -552,6 +1080,54 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac64b425_9f4e6df1",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1470,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1d07f6f1_9303aab6",
+      "range": {
+        "startLine": 1470,
+        "startChar": 28,
+        "endLine": 1470,
+        "endChar": 29
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5baf5152_86b8551d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1470,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "4f75e991_52ade003",
+      "range": {
+        "startLine": 1470,
+        "startChar": 9,
+        "endLine": 1470,
+        "endChar": 16
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d5abd86b_6d6fa47f",
@@ -569,6 +1145,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1714790e_92a7d4a8",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1472,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "d5abd86b_6d6fa47f",
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bac1426d_0bd22a8d",
@@ -582,6 +1176,30 @@
       "writtenOn": "2022-01-31T22:50:45Z",
       "side": 1,
       "message": "auto",
+      "range": {
+        "startLine": 1475,
+        "startChar": 0,
+        "endLine": 1475,
+        "endChar": 25
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4372018_ee79bad3",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1475,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "bac1426d_0bd22a8d",
       "range": {
         "startLine": 1475,
         "startChar": 0,
@@ -615,6 +1233,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "df50e704_83c004d1",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "7214feb6_56327d0e",
+      "range": {
+        "startLine": 1532,
+        "startChar": 48,
+        "endLine": 1532,
+        "endChar": 76
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ea6b869_03f0d4d2",
@@ -638,6 +1280,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "45eee607_333360f4",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1543,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2ea6b869_03f0d4d2",
+      "range": {
+        "startLine": 1543,
+        "startChar": 28,
+        "endLine": 1543,
+        "endChar": 29
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "179c4ff3_3435b49c",
@@ -651,6 +1317,30 @@
       "writtenOn": "2022-01-19T05:51:12Z",
       "side": 1,
       "message": "initialize variable where it is being used.",
+      "range": {
+        "startLine": 1092,
+        "startChar": 12,
+        "endLine": 1093,
+        "endChar": 61
+      },
+      "revId": "c6017b397f6cca6eeb60839b03b89cfe8f3be1c7",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "32687519_2dda60b6",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1093,
+      "author": {
+        "id": 1001338
+      },
+      "writtenOn": "2022-02-08T13:19:48Z",
+      "side": 1,
+      "message": "ack.",
+      "parentUuid": "179c4ff3_3435b49c",
       "range": {
         "startLine": 1092,
         "startChar": 12,
