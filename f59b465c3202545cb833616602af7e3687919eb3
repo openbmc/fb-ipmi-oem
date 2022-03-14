@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "013b1619_8c4267cf",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "change this method name as isMultiHostPlatform() and return the result as bool.",
+      "range": {
+        "startLine": 341,
+        "startChar": 12,
+        "endLine": 341,
+        "endChar": 24
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2103223c_0387ce6c",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "move these macros and struct type definitions to new header file \ninclude/usb-dbg.hpp",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 7
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5025014e_ca7d92e4",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "please move the struct and enum type definitions to include/usb-dbg.hpp file.",
+      "range": {
+        "startLine": 99,
+        "startChar": 8,
+        "endLine": 99,
+        "endChar": 14
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f412b40_b4fe6ab0",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "The property name need not to be passed as parameter as it is only one property.\nyou can define it as constexpr and use in the getDbusProperty call.",
+      "range": {
+        "startLine": 188,
+        "startChar": 39,
+        "endLine": 188,
+        "endChar": 43
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36ddf47b_7c7ad09e",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "initialize this as size_tposition \u003d 1 (single host pos) so that we can avoid additional else case and directly return position if not multihost.",
+      "range": {
+        "startLine": 206,
+        "startChar": 11,
+        "endLine": 206,
+        "endChar": 19
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b0eded6_286aab3a",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "can this method renamed to isMultiHostPlatform() and return bool(true for multihost and false for single host). so that we can avoid string comparisons below.",
+      "range": {
+        "startLine": 207,
+        "startChar": 27,
+        "endLine": 207,
+        "endChar": 39
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d0bb42e_92393f3b",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1001093
+      },
+      "writtenOn": "2022-03-14T15:11:29Z",
+      "side": 1,
+      "message": "change the error message as \"Error reading host selector position\"",
+      "range": {
+        "startLine": 222,
+        "startChar": 31,
+        "endLine": 222,
+        "endChar": 32
+      },
+      "revId": "f59b465c3202545cb833616602af7e3687919eb3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
