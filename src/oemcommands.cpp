@@ -18,6 +18,7 @@
 #include "xyz/openbmc_project/Common/error.hpp"
 #include <xyz/openbmc_project/Control/Boot/Mode/server.hpp>
 #include <xyz/openbmc_project/Control/Boot/Source/server.hpp>
+#include <xyz/openbmc_project/Control/Boot/Type/server.hpp>
 
 #include <ipmid/api.hpp>
 #include <ipmid/utils.hpp>
@@ -160,6 +161,9 @@ std::map<IpmiValue, Source::Sources> sourceIpmiToDbus = {
 std::map<IpmiValue, Mode::Modes> modeIpmiToDbus = {
     {0x06, Mode::Modes::Setup}, {0x00, Mode::Modes::Regular}};
 
+std::map<IpmiValue, Type::Types> typeIpmiToDbus = {{0x00, Type::Types::Legacy},
+                                                   {0x01, Type::Types::EFI}};
+
 std::map<Source::Sources, IpmiValue> sourceDbusToIpmi = {
     {Source::Sources::Default, 0x0f},
     {Source::Sources::RemovableMedia, 0x00},
@@ -170,11 +174,16 @@ std::map<Source::Sources, IpmiValue> sourceDbusToIpmi = {
 std::map<Mode::Modes, IpmiValue> modeDbusToIpmi = {
     {Mode::Modes::Setup, 0x06}, {Mode::Modes::Regular, 0x00}};
 
+std::map<Type::Types, IpmiValue> typeDbusToIpmi = {{Type::Types::Legacy, 0x00},
+                                                   {Type::Types::EFI, 0x01}};
+
 static constexpr auto bootModeIntf = "xyz.openbmc_project.Control.Boot.Mode";
 static constexpr auto bootSourceIntf =
     "xyz.openbmc_project.Control.Boot.Source";
+static constexpr auto bootTypeIntf = "xyz.openbmc_project.Control.Boot.Type";
 static constexpr auto bootSourceProp = "BootSource";
 static constexpr auto bootModeProp = "BootMode";
+static constexpr auto bootTypeProp = "BootType";
 
 auto instances(std::string s)
 {
@@ -648,7 +657,9 @@ void setBootOrder(std::string bootObjPath, uint8_t* data,
     std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
 
     // SETTING BOOT MODE PROPERTY
-    auto bootValue = ipmi::boot::modeIpmiToDbus.find((data[0]));
+    uint8_t bootModeBit = data[0] & 0x06;
+    auto bootValue = ipmi::boot::modeIpmiToDbus.find(bootModeBit);
+
     std::string bootOption =
         ipmi::boot::Mode::convertModesToString((bootValue->second));
 
@@ -665,6 +676,18 @@ void setBootOrder(std::string bootObjPath, uint8_t* data,
     service = getService(*dbus, ipmi::boot::bootSourceIntf, bootObjPath);
     setDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootSourceIntf,
                     ipmi::boot::bootSourceProp, bootSource);
+
+    // SETTING BOOT TYPE PROPERTY
+
+    uint8_t bootTypeBit = data[0] & 0x01;
+    auto bootTypeVal = ipmi::boot::typeIpmiToDbus.find(bootTypeBit);
+    std::string bootType =
+        ipmi::boot::Type::convertTypesToString((bootTypeVal->second));
+
+    service = getService(*dbus, ipmi::boot::bootTypeIntf, bootObjPath);
+
+    setDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootTypeIntf,
+                    ipmi::boot::bootTypeProp, bootType);
 
     nlohmann::json bootMode;
     uint8_t mode = data[0];
@@ -728,7 +751,6 @@ ipmi::RspType<std::vector<uint8_t>>
 ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     ipmiOemGetBootOrder(ipmi::Context::ptr ctx)
 {
-    uint8_t bootOption, bootOrder;
     uint8_t bootSeq[SIZE_BOOT_ORDER];
     uint8_t mode = 0;
 
@@ -755,7 +777,7 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     auto bootMode = ipmi::boot::Mode::convertModesFromString(
         std::get<std::string>(variant));
 
-    bootOption = ipmi::boot::modeDbusToIpmi.at(bootMode);
+    uint8_t bootOption = ipmi::boot::modeDbusToIpmi.at(bootMode);
 
     // GETTING PROPERTY OF SOURCE INTERFACE
 
@@ -766,7 +788,20 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     auto bootSource = ipmi::boot::Source::convertSourcesFromString(
         std::get<std::string>(variant));
 
-    bootOrder = ipmi::boot::sourceDbusToIpmi.at(bootSource);
+    uint8_t bootOrder = ipmi::boot::sourceDbusToIpmi.at(bootSource);
+
+    // GETTING PROPERTY OF TYPE INTERFACE
+
+    service = getService(*dbus, ipmi::boot::bootTypeIntf, bootObjPath);
+    variant =
+        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootTypeIntf,
+                        ipmi::boot::bootTypeProp);
+    auto bootType = ipmi::boot::Type::convertTypesFromString(
+        std::get<std::string>(variant));
+
+    uint8_t bootTypeVal = ipmi::boot::typeDbusToIpmi.at(bootType);
+
+    uint8_t bootVal = bootOption | bootTypeVal;
 
     if (oemData.find(hostName) == oemData.end())
     {
@@ -802,7 +837,7 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
         }
     }
 
-    return ipmi::responseSuccess(bootOption, bootOrder, bootSeq[2], bootSeq[3],
+    return ipmi::responseSuccess(bootVal, bootOrder, bootSeq[2], bootSeq[3],
                                  bootSeq[4], bootSeq[5]);
 }
 // Set Machine Config Info (CMD_OEM_SET_MACHINE_CONFIG_INFO)
