@@ -363,51 +363,53 @@ bool isMultiHostPlatform()
 }
 
 // return code: 0 successful
-int8_t getFruData(std::string& data, std::string& name)
+
+int8_t getFruData(std::string& data, std::string& name, size_t pos)
 {
-    std::string objpath = "/xyz/openbmc_project/FruDevice";
-    std::string intf = "xyz.openbmc_project.FruDeviceManager";
-    std::string service = getService(dbus, intf, objpath);
-    ObjectValueTree valueTree = getManagedObjects(dbus, service, "/");
-    if (valueTree.empty())
+    static constexpr const auto depth = 0;
+    std::vector<std::string> paths;
+    std::string intf = "xyz.openbmc_project.Inventory.Decorator.Asset";
+    std::string twinlakeInventoryPath =
+        "/xyz/openbmc_project/inventory/system/board/Twin_Lake_" +
+        std::to_string(pos);
+
+    sd_bus* bus = NULL;
+    int ret = sd_bus_default_system(&bus);
+    if (ret < 0)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
-            "No object implements interface",
-            phosphor::logging::entry("INTF=%s", intf.c_str()));
+            "Failed to connect to system bus",
+            phosphor::logging::entry("ERRNO=0x%X", -ret));
+        sd_bus_unref(bus);
         return -1;
     }
 
-    for (const auto& item : valueTree)
+    sdbusplus::bus::bus dbus(bus);
+    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                                           "/xyz/openbmc_project/object_mapper",
+                                           "xyz.openbmc_project.ObjectMapper",
+                                           "GetSubTreePaths");
+
+    static constexpr std::array<const char*, 1> interface = {
+        "xyz.openbmc_project.Inventory.Decorator.Asset"};
+
+    mapperCall.append("/xyz/openbmc_project/inventory/", depth, interface);
+
+    auto reply = dbus.call(mapperCall);
+
+    reply.read(paths);
+
+    for (const auto& path : paths)
     {
-        auto interface = item.second.find("xyz.openbmc_project.FruDevice");
-        if (interface == item.second.end())
+        if (path == twinlakeInventoryPath)
         {
-            continue;
-        }
-
-        auto property = interface->second.find(name.c_str());
-        if (property == interface->second.end())
-        {
-            continue;
-        }
-
-        try
-        {
-            Value variant = property->second;
-            std::string& result = std::get<std::string>(variant);
-            if (result.size() > maxFRUStringLength)
-            {
-                phosphor::logging::log<phosphor::logging::level::ERR>(
-                    "FRU serial number exceed maximum length");
-                return -1;
-            }
+            std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+            std::string service = getService(*dbus, intf, path);
+            auto Value =
+                ipmi::getDbusProperty(*dbus, service, path, intf, name);
+            std::string result = std::get<std::string>(Value);
             data = result;
             return 0;
-        }
-        catch (const std::bad_variant_access& e)
-        {
-            phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-            return -1;
         }
     }
     return -1;
