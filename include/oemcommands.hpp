@@ -99,6 +99,7 @@ enum fb_oem_qc_cmds
 #define BIT_1 0x02
 #define BIT_2 0x04
 #define BIT_3 0x08
+#define BMC_POSITION 0
 
 #define JSON_OEM_DATA_FILE "/etc/oemData.json"
 #define KEY_PPIN_INFO "mb_cpu_ppin"
