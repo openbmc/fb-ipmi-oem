@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7934727f_2e312bb9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-06T15:43:04Z",
+      "side": 1,
+      "message": "There are 3 different commits named exactly the same.  Please find better descriptions of them.\n\nDo not \u0027continue\u0027 a title onto a second line.  If it goes past 72 characters your title is too long.",
+      "revId": "48c16ef2dfaae3830efcbc54f62c57552e835b78",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9229389_622a33d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-06T15:43:04Z",
+      "side": 1,
+      "message": "I can accept if we want to refactor the FruDevice support with another commit, but we shouldn\u0027t consider this work done until we\u0027ve moved away from using undocumented DBus interfaces.",
+      "revId": "48c16ef2dfaae3830efcbc54f62c57552e835b78",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18bcf2fd_c21acaf2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-06T15:43:04Z",
+      "side": 1,
+      "message": "Can we please do something to not read FruDevice objects directly?  This information should be modeled in proper Inventory.Items.  If the information isn\u0027t there then we haven\u0027t set up EntityManager JSON correctly.",
+      "range": {
+        "startLine": 367,
+        "startChar": 0,
+        "endLine": 376,
+        "endChar": 5
+      },
+      "revId": "48c16ef2dfaae3830efcbc54f62c57552e835b78",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
