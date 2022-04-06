@@ -67,6 +67,7 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
 int8_t getFruData(std::string& serial, std::string& name);
+void sys_config(std::vector<std::string>& data, size_t pos);
 
 /* Declare storage functions used here */
 namespace storage
@@ -1093,8 +1094,17 @@ static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
         frame_info.append("MCU_ver:", 0);
         frame_info.append(ESC_MCU_RUN_VER, 1);
 
-        // TBD:
         // Sys config present device
+        if (hostPosition != BMC_POSITION)
+        {
+            // Dimm info
+            std::vector<std::string> data;
+            sys_config(data, pos);
+            for (auto& info : data)
+            {
+                frame_info.append(info.c_str(), 1);
+            }
+        }
 
     } // End of update frame
 
