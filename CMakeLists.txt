@@ -93,6 +93,6 @@ install (TARGETS zfboemcmds DESTINATION lib/ipmid-providers)
 install (FILES ${CONFIG_FILES} DESTINATION ${PACKAGE_DIR})
 
 if(BIC)
-set (CONFIG_FILES_YV2 yosemitev2/gpio_desc.json yosemitev2/cri_sensors.json)
-install (FILES ${CONFIG_FILES_YV2} DESTINATION ${PACKAGE_DIR})
+   set (CONFIG_FILES_YV2 yosemitev2/gpio_desc.json yosemitev2/cri_sensors.json)
+   install (FILES ${CONFIG_FILES_YV2} DESTINATION ${PACKAGE_DIR})
 endif()
