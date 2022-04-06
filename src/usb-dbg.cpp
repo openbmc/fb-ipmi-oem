@@ -21,6 +21,7 @@ namespace ipmi
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
 int8_t getFruData(std::string& serial, std::string& name);
+int8_t sysConfig(std::vector<std::string>& data, size_t pos);
 
 bool isMultiHostPlatform();
 
@@ -122,7 +123,7 @@ int frame::init(size_t size)
 // return 0 on seccuess
 int frame::append(const char* string, int indent)
 {
-    const size_t buf_size = 64;
+    const size_t buf_size = 128;
     char lbuf[buf_size];
     char* ptr;
     int ret;
@@ -1028,8 +1029,19 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         frame_info.append("MCU_ver:", 0);
         frame_info.append(ESC_MCU_RUN_VER, 1);
 
-        // TBD:
         // Sys config present device
+        if (hostPosition != BMC_POSITION)
+        {
+            frame_info.append("Sys Conf. info:", 0);
+
+            // Dimm info
+            std::vector<std::string> data;
+            sysConfig(data, pos);
+            for (auto& info : data)
+            {
+                frame_info.append(info.c_str(), 1);
+            }
+        }
 
     } // End of update frame
 
