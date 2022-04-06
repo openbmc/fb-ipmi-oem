@@ -90,6 +90,7 @@ enum fb_oem_qc_cmds
 };
 
 #define BMC_POS 0
+#define MAX_BUF 150
 #define SIZE_CPU_PPIN 8
 #define SIZE_BOOT_ORDER 6
 #define BOOT_MODE_UEFI 0x01
@@ -101,6 +102,9 @@ enum fb_oem_qc_cmds
 #define BIT_2 0x04
 #define BIT_3 0x08
 
+#define DIMM_TYPE "type"
+#define DIMM_SPEED "speed"
+#define JSON_DIMM_TYPE_FILE "/usr/share/lcd-debug/dimm_type.json
 #define JSON_OEM_DATA_FILE "/etc/oemData.json"
 #define KEY_PPIN_INFO "mb_cpu_ppin"
 #define KEY_MC_CONFIG "mb_machine_config"
@@ -145,6 +149,9 @@ const char* bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
 std::map<std::string, int> bootMap = {{"USB_DEV", 0},  {"NET_IPV4", 1},
                                       {"NET_IPV6", 9}, {"SATA_HDD", 2},
                                       {"SATA_CD", 3},  {"OTHER", 4}};
+
+std::map<size_t, std::string> dimmVenMap = {
+    {0xce, "Samsung"}, {0xad, "Hynix"}, {0x2c, "Micron"}};
 
 const char* chassisType[] = {"ORV1", "ORV2"};
 const char* mbType[] = {"SS", "DS", "TYPE3"};
