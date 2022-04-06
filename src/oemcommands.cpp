@@ -47,6 +47,7 @@ namespace ipmi
 
 using namespace phosphor::logging;
 
+size_t getSelectorPosition();
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
@@ -365,50 +366,81 @@ bool isMultiHostPlatform()
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
-    std::string objpath = "/xyz/openbmc_project/FruDevice";
-    std::string intf = "xyz.openbmc_project.FruDeviceManager";
-    std::string service = getService(dbus, intf, objpath);
-    ObjectValueTree valueTree = getManagedObjects(dbus, service, "/");
-    if (valueTree.empty())
+    size_t pos;
+    static constexpr const auto depth = 0;
+    std::vector<std::string> paths;
+    std::string machinePath;
+    std::string baseBoard = "Baseboard";
+
+    bool platform = isMultiHostPlatform();
+    if (platform == true)
+    {
+        pos = getSelectorPosition();
+    }
+
+    sd_bus* bus = NULL;
+    int ret = sd_bus_default_system(&bus);
+    if (ret < 0)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
-            "No object implements interface",
-            phosphor::logging::entry("INTF=%s", intf.c_str()));
+            "Failed to connect to system bus",
+            phosphor::logging::entry("ERRNO=0x%X", -ret));
+        sd_bus_unref(bus);
+        return -1;
+    }
+    sdbusplus::bus::bus dbus(bus);
+    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                                           "/xyz/openbmc_project/object_mapper",
+                                           "xyz.openbmc_project.ObjectMapper",
+                                           "GetSubTreePaths");
+    static constexpr std::array<const char*, 1> interface = {
+        "xyz.openbmc_project.Inventory.Decorator.Asset"};
+    mapperCall.append("/xyz/openbmc_project/inventory/", depth, interface);
+
+    try
+    {
+        auto reply = dbus.call(mapperCall);
+        reply.read(paths);
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
         return -1;
     }
 
-    for (const auto& item : valueTree)
+    for (const auto& path : paths)
     {
-        auto interface = item.second.find("xyz.openbmc_project.FruDevice");
-        if (interface == item.second.end())
+        if (platform == true)
         {
-            continue;
-        }
-
-        auto property = interface->second.find(name.c_str());
-        if (property == interface->second.end())
-        {
-            continue;
-        }
-
-        try
-        {
-            Value variant = property->second;
-            std::string& result = std::get<std::string>(variant);
-            if (result.size() > maxFRUStringLength)
+            if (pos == BMC_POS)
             {
-                phosphor::logging::log<phosphor::logging::level::ERR>(
-                    "FRU serial number exceed maximum length");
-                return -1;
+                machinePath = baseBoard;
             }
-            data = result;
-            return 0;
+            else
+            {
+                machinePath = "_" + std::to_string(pos);
+            }
         }
-        catch (const std::bad_variant_access& e)
+        else
         {
-            phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-            return -1;
+            machinePath = baseBoard;
         }
+
+        auto found = path.find(machinePath);
+        if (found == -1)
+        {
+            continue;
+        }
+
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+        std::string service = getService(
+            *dbus, "xyz.openbmc_project.Inventory.Decorator.Asset", path);
+
+        auto Value = ipmi::getDbusProperty(
+            *dbus, service, path,
+            "xyz.openbmc_project.Inventory.Decorator.Asset", name);
+        data = std::get<std::string>(Value);
+        return 0;
     }
     return -1;
 }

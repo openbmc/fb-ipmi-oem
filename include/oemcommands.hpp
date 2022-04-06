@@ -89,6 +89,7 @@ enum fb_oem_qc_cmds
     CMD_OEM_Q_GET_DRIVE_INFO = 0x15,
 };
 
+#define BMC_POS 0
 #define SIZE_CPU_PPIN 8
 #define SIZE_BOOT_ORDER 6
 #define BOOT_MODE_UEFI 0x01
