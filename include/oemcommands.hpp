@@ -89,6 +89,10 @@ enum fb_oem_qc_cmds
     CMD_OEM_Q_GET_DRIVE_INFO = 0x15,
 };
 
+#define DIMM_TYPE_SAMSUNG 0xce
+#define DIMM_TYPE_HYNIX 0xad
+#define DIMM_TYPE_MICRON 0x2c
+#define MAX_BUF 150
 #define SIZE_CPU_PPIN 8
 #define SIZE_BOOT_ORDER 6
 #define BOOT_MODE_UEFI 0x01
@@ -100,6 +104,12 @@ enum fb_oem_qc_cmds
 #define BIT_2 0x04
 #define BIT_3 0x08
 #define BMC_POSITION 0
+
+namespace ipmi
+{
+constexpr uint8_t cmdSetQDimmInfo = 0x12;
+constexpr uint8_t cmdGetQDimmInfo = 0x13;
+} // namespace ipmi
 
 #define JSON_OEM_DATA_FILE "/etc/oemData.json"
 #define KEY_PPIN_INFO "mb_cpu_ppin"
@@ -145,6 +155,10 @@ const char* bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
 std::map<std::string, int> bootMap = {{"USB_DEV", 0},  {"NET_IPV4", 1},
                                       {"NET_IPV6", 9}, {"SATA_HDD", 2},
                                       {"SATA_CD", 3},  {"OTHER", 4}};
+
+std::map<uint8_t, std::string> dimmMap = {
+    {0, "MEMA0"}, {1, "MEMA1"}, {2, "MEMB0"}, {3, "MEMB1"},
+    {4, "MEMD0"}, {5, "MEMD1"}, {6, "MEME0"}, {7, "MEME1"}};
 
 const char* chassisType[] = {"ORV1", "ORV2"};
 const char* mbType[] = {"SS", "DS", "TYPE3"};
@@ -221,8 +235,8 @@ const char* cpuInfoKey[] = {"",     "product_name", "basic_info",
                             "type", "micro_code",   "turbo_mode"};
 
 const char* dimmInfoKey[] = {
-    "",           "location",        "type",   "speed",      "part_name",
-    "serial_num", "manufacturer_id", "status", "present_bit"};
+    "",           "location",        "type",   "speed",       "part_name",
+    "serial_num", "manufacturer_id", "status", "present_bit", "dimmType"};
 
 const char* driveInfoKey[] = {"location",   "serial_num", "model_name",
                               "fw_version", "capacity",   "quantity",

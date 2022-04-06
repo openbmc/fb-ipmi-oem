@@ -445,6 +445,66 @@ int8_t getFruData(std::string& data, std::string& name)
     return -1;
 }
 
+void sys_config(std::vector<std::string>& data, size_t pos)
+{
+    std::string result, typeName;
+    uint8_t res[MAX_BUF];
+    char proc[MAX_BUF];
+    std::string dimmInfo = KEY_Q_DIMM_INFO + std::to_string(pos);
+    std::vector<std::string> dimm_info_key{"00", "01", "02", "03",
+                                           "04", "05", "06", "07"};
+    try
+    {
+        for (auto& info : dimm_info_key)
+        {
+            std::string speedSize = oemData[dimmInfo][info][dimmInfoKey[3]];
+            int dataLength = strToBytes(speedSize, res);
+            size_t speed = (res[1] << 8 | res[0]);
+            size_t dimmSize = ((res[3] << 8 | res[2]) / 1000);
+
+            uint8_t index = oemData[dimmInfo][info][KEY_DIMM_INDEX];
+            std::string type = oemData[dimmInfo][info][dimmInfoKey[2]];
+            std::string dualInlineMem = oemData[dimmInfo][info][dimmInfoKey[9]];
+            strToBytes(type, res);
+            size_t dimmType = res[0];
+
+            if (dataLength == NULL)
+            {
+                continue;
+            }
+
+            switch (dimmType)
+            {
+                case DIMM_TYPE_SAMSUNG:
+                    typeName = "Samsung";
+                    break;
+                case DIMM_TYPE_HYNIX:
+                    typeName = "Hynix";
+                    break;
+                case DIMM_TYPE_MICRON:
+                    typeName = "Micron";
+                    break;
+                default:
+                    typeName = "unknown";
+                    break;
+            }
+            result = dualInlineMem + "/" + typeName + "/" +
+                     std::to_string(speed) + "MHz" + "/" +
+                     std::to_string(dimmSize) + "GB";
+            data.push_back(result);
+        }
+        return;
+    }
+    catch (...)
+    {
+        std::cerr << "Dimm info not available for host_" + std::to_string(pos)
+                  << std::endl;
+        result = "Dimm not found";
+        data.push_back(result);
+        return;
+    }
+}
+
 typedef struct
 {
     uint8_t cur_power_state;
@@ -1491,38 +1551,43 @@ ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
-ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi::RspType<> ipmiOemQSetDimmInfo(ipmi::Context::ptr ctx,
+                                    std::vector<uint8_t> reqData)
 {
-    qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(request);
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
-    uint8_t len = *data_len;
+    uint8_t len = reqData.size();
+    uint8_t mfrId[3];
+    memcpy(&mfrId, &reqData[2], 3);
+    uint8_t dimmIndex = reqData[3];
+    uint8_t paramSel = reqData[4];
+    std::string dimmType = dimmMap[dimmIndex];
 
-    *data_len = 0;
-
+    auto hostId = ipmi::boot::findHost(ctx->hostIdx);
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
+    std::string dimmInfo = KEY_Q_DIMM_INFO + std::to_string(*hostId);
     /* check for requested data params */
-    if (len < 5 || req->paramSel < 1 || req->paramSel >= numParam)
+    if (len < 5 || paramSel < 1 || paramSel >= numParam)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::responseParmOutOfRange();
     }
-
     len = len - 5; // Get Actual data length
-
     ss << std::hex;
-    ss << std::setw(2) << std::setfill('0') << (int)req->dimmIndex;
-    oemData[KEY_Q_DIMM_INFO][ss.str()][KEY_DIMM_INDEX] = req->dimmIndex;
-
-    str = bytesToStr(req->data, len);
-    oemData[KEY_Q_DIMM_INFO][ss.str()][dimmInfoKey[req->paramSel]] =
-        str.c_str();
+    ss << std::setw(2) << std::setfill('0') << (int)dimmIndex;
+    oemData[dimmInfo][ss.str()][KEY_DIMM_INDEX] = dimmIndex;
+    oemData[dimmInfo][ss.str()][dimmInfoKey[9]] = dimmType;
+    str = bytesToStr(reqData.data() + 5, len);
+    oemData[dimmInfo][ss.str()][dimmInfoKey[paramSel]] = str.c_str();
     flushOemData();
-
-    return IPMI_CC_OK;
+    return ipmi::responseSuccess();
 }
 
 //----------------------------------------------------------------------
@@ -1584,41 +1649,47 @@ ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
-ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemQGetDimmInfo(ipmi::Context::ptr ctx, std::vector<uint8_t> request)
 {
-    qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(request);
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
-    uint8_t* res = reinterpret_cast<uint8_t*>(response);
+    uint8_t res[MAX_BUF];
     std::stringstream ss;
     std::string str;
+    uint8_t mfrId[3];
+    memcpy(&mfrId, &request[2], 3);
+    uint8_t dimmIndex = request[3];
+    uint8_t paramSel = request[4];
+    std::string dimmType = dimmMap[dimmIndex];
 
-    *data_len = 0;
-
+    auto hostId = ipmi::boot::findHost(ctx->hostIdx);
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
+    std::string dimmInfo = KEY_Q_DIMM_INFO + std::to_string(*hostId);
     /* check for requested data params */
-    if (req->paramSel < 1 || req->paramSel >= numParam)
+    if (paramSel < 1 || paramSel >= numParam)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::responseParmOutOfRange();
     }
-
     ss << std::hex;
-    ss << std::setw(2) << std::setfill('0') << (int)req->dimmIndex;
+    ss << std::setw(2) << std::setfill('0') << (int)dimmIndex;
+    oemData[dimmInfo][ss.str()][dimmInfoKey[9]] = dimmType;
 
-    if (oemData[KEY_Q_DIMM_INFO].find(ss.str()) ==
-        oemData[KEY_Q_DIMM_INFO].end())
-        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
-
-    if (oemData[KEY_Q_DIMM_INFO][ss.str()].find(dimmInfoKey[req->paramSel]) ==
-        oemData[KEY_Q_DIMM_INFO][ss.str()].end())
-        return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
-
-    str = oemData[KEY_Q_DIMM_INFO][ss.str()][dimmInfoKey[req->paramSel]];
-    *data_len = strToBytes(str, res);
-
-    return IPMI_CC_OK;
+    if (oemData[dimmInfo].find(ss.str()) == oemData[dimmInfo].end())
+        return ipmi::responseCommandNotAvailable();
+    if (oemData[dimmInfo][ss.str()].find(dimmInfoKey[paramSel]) ==
+        oemData[dimmInfo][ss.str()].end())
+        return ipmi::responseCommandNotAvailable();
+    str = oemData[dimmInfo][ss.str()][dimmInfoKey[paramSel]];
+    int data_length = strToBytes(str, res);
+    std::vector<uint8_t> response(&res[0], &res[data_length]);
+    return ipmi::responseSuccess(response);
 }
 
 //----------------------------------------------------------------------
@@ -1926,12 +1997,12 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_PROC_INFO, NULL,
                          ipmiOemQGetProcInfo,
                          PRIVILEGE_USER); // Get Proc Info
-    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DIMM_INFO, NULL,
-                         ipmiOemQSetDimmInfo,
-                         PRIVILEGE_USER); // Set Dimm Info
-    ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DIMM_INFO, NULL,
-                         ipmiOemQGetDimmInfo,
-                         PRIVILEGE_USER); // Get Dimm Info
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
+                          ipmi::cmdSetQDimmInfo, ipmi::Privilege::User,
+                          ipmiOemQSetDimmInfo); // Set Dimm Info
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
+                          ipmi::cmdGetQDimmInfo, ipmi::Privilege::User,
+                          ipmiOemQGetDimmInfo); // Get Dimm Info
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_SET_DRIVE_INFO, NULL,
                          ipmiOemQSetDriveInfo,
                          PRIVILEGE_USER); // Set Drive Info
