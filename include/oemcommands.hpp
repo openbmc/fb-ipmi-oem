@@ -89,6 +89,10 @@ enum fb_oem_qc_cmds
     CMD_OEM_Q_GET_DRIVE_INFO = 0x15,
 };
 
+#define DIMM_TYPE1 0xce
+#define DIMM_TYPE2 0xad
+#define DIMM_TYPE3 0x2c
+#define MAX_BUF 150
 #define SIZE_CPU_PPIN 8
 #define SIZE_BOOT_ORDER 6
 #define BOOT_MODE_UEFI 0x01
@@ -99,6 +103,12 @@ enum fb_oem_qc_cmds
 #define BIT_1 0x02
 #define BIT_2 0x04
 #define BIT_3 0x08
+
+namespace ipmi
+{
+constexpr uint8_t cmdSetQDimmInfo = 0x12;
+constexpr uint8_t cmdGetQDimmInfo = 0x13;
+} // namespace ipmi
 
 #define JSON_OEM_DATA_FILE "/etc/oemData.json"
 #define KEY_PPIN_INFO "mb_cpu_ppin"
