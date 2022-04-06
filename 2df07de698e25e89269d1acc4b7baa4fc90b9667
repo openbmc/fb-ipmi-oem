@@ -16,6 +16,57 @@
       "message": "Hi Patrick/Amithash,\n\nCould you please provide your suggestions on this patch.\n\nThanks",
       "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68939a15_4866e616",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-06T15:50:30Z",
+      "side": 1,
+      "message": "Will merge after Ack of refactor ask.",
+      "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2598b1ae_5e11c0d2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-06T15:50:30Z",
+      "side": 1,
+      "message": "Please refactor all of these to use `sdbusplus::message::convert_to_string(...)` in a follow up commit.  We shouldn\u0027t use these `convert...ToString` functions.",
+      "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0da57ab9_d709244e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-04-06T15:50:30Z",
+      "side": 1,
+      "message": "It is unfortunate that the phosphor-host-ipmid function here isn\u0027t templated property so that we could use the enums directly.  sdbusplus has automatic conversions for the enum types.",
+      "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
