@@ -46,6 +46,7 @@ namespace ipmi
 
 using namespace phosphor::logging;
 
+size_t getSelectorPosition();
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
@@ -354,8 +355,25 @@ bool isMultiHostPlatform()
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
-    std::string objpath = "/xyz/openbmc_project/FruDevice";
-    std::string intf = "xyz.openbmc_project.FruDeviceManager";
+    size_t position;
+    std::string objpath;
+    std::string intf;
+    std::string bus = "BUS";
+    bool platform = isMultiHostPlatform();
+    if (platform == true)
+    {
+        position = getSelectorPosition();
+    }
+    if (platform == false || position == BMC_POSITION)
+    {
+        objpath = "/xyz/openbmc_project/FruDevice";
+        intf = "xyz.openbmc_project.FruDeviceManager";
+    }
+    else
+    {
+        objpath = "/xyz/openbmc_project/Ipmb/FruDevice";
+        intf = "xyz.openbmc_project.Ipmb.FruDeviceManager";
+    }
     std::string service = getService(dbus, intf, objpath);
     ObjectValueTree valueTree = getManagedObjects(dbus, service, "/");
     if (valueTree.empty())
@@ -365,21 +383,46 @@ int8_t getFruData(std::string& data, std::string& name)
             phosphor::logging::entry("INTF=%s", intf.c_str()));
         return -1;
     }
-
     for (const auto& item : valueTree)
     {
-        auto interface = item.second.find("xyz.openbmc_project.FruDevice");
+        auto interface =
+            item.second.find("xyz.openbmc_project.FruDeviceManager");
+        if (platform == false || position == BMC_POSITION)
+        {
+            interface = item.second.find("xyz.openbmc_project.FruDevice");
+        }
+        else if (platform == true)
+        {
+            interface = item.second.find("xyz.openbmc_project.Ipmb.FruDevice");
+        }
         if (interface == item.second.end())
         {
             continue;
         }
-
+        // Check for multi-host platform.
+        if (position != BMC_POSITION && platform == true)
+        {
+            size_t update = 0;
+            update = position - 1;
+            auto search = interface->second.find(bus.c_str());
+            if (search == interface->second.end())
+            {
+                continue;
+            }
+            Value variant = search->second;
+            size_t result = std::get<size_t>(variant);
+            if (update != result)
+            {
+                continue;
+            }
+        }
+        // check for property for fru device PN and SN, if property is found
+        // then it will proceed.
         auto property = interface->second.find(name.c_str());
         if (property == interface->second.end())
         {
             continue;
         }
-
         try
         {
             Value variant = property->second;
