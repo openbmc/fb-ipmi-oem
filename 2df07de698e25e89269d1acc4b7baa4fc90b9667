@@ -52,6 +52,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "900bb4ad_d820619a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-04-07T13:22:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2598b1ae_5e11c0d2",
+      "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0da57ab9_d709244e",
@@ -65,6 +83,24 @@
       "writtenOn": "2022-04-06T15:50:30Z",
       "side": 1,
       "message": "It is unfortunate that the phosphor-host-ipmid function here isn\u0027t templated property so that we could use the enums directly.  sdbusplus has automatic conversions for the enum types.",
+      "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2e7a04f_55fd7666",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-04-07T13:22:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0da57ab9_d709244e",
       "revId": "2df07de698e25e89269d1acc4b7baa4fc90b9667",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
