@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "f929774a_35020e4a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-04-07T03:37:12Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "7934727f_2e312bb9",
+      "revId": "48c16ef2dfaae3830efcbc54f62c57552e835b78",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "d9229389_622a33d9",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 4
@@ -48,6 +66,30 @@
       "writtenOn": "2022-04-06T15:43:04Z",
       "side": 1,
       "message": "Can we please do something to not read FruDevice objects directly?  This information should be modeled in proper Inventory.Items.  If the information isn\u0027t there then we haven\u0027t set up EntityManager JSON correctly.",
+      "range": {
+        "startLine": 367,
+        "startChar": 0,
+        "endLine": 376,
+        "endChar": 5
+      },
+      "revId": "48c16ef2dfaae3830efcbc54f62c57552e835b78",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b504dd06_b5a3ddaf",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-04-07T03:37:12Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "18bcf2fd_c21acaf2",
       "range": {
         "startLine": 367,
         "startChar": 0,
