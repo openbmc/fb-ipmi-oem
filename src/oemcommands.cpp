@@ -146,36 +146,38 @@ DbusObjectInfo getIPObject(sdbusplus::bus::bus& bus,
 
 namespace boot
 {
+using BootSource =
+    sdbusplus::xyz::openbmc_project::Control::Boot::server::Source::Sources;
+using BootMode =
+    sdbusplus::xyz::openbmc_project::Control::Boot::server::Mode::Modes;
+using BootType =
+    sdbusplus::xyz::openbmc_project::Control::Boot::server::Type::Types;
 
-using namespace sdbusplus::xyz::openbmc_project::Control::Boot::server;
 using IpmiValue = uint8_t;
 
-std::map<IpmiValue, Source::Sources> sourceIpmiToDbus = {
-    {0x0f, Source::Sources::Default},
-    {0x00, Source::Sources::RemovableMedia},
-    {0x01, Source::Sources::Network},
-    {0x02, Source::Sources::Disk},
-    {0x03, Source::Sources::ExternalMedia},
-    {0x09, Source::Sources::Network}};
+std::map<IpmiValue, BootSource> sourceIpmiToDbus = {
+    {0x0f, BootSource::Default},       {0x00, BootSource::RemovableMedia},
+    {0x01, BootSource::Network},       {0x02, BootSource::Disk},
+    {0x03, BootSource::ExternalMedia}, {0x09, BootSource::Network}};
 
-std::map<IpmiValue, Mode::Modes> modeIpmiToDbus = {
-    {0x06, Mode::Modes::Setup}, {0x00, Mode::Modes::Regular}};
+std::map<IpmiValue, BootMode> modeIpmiToDbus = {{0x06, BootMode::Setup},
+                                                {0x00, BootMode::Regular}};
 
-std::map<IpmiValue, Type::Types> typeIpmiToDbus = {{0x00, Type::Types::Legacy},
-                                                   {0x01, Type::Types::EFI}};
+std::map<IpmiValue, BootType> typeIpmiToDbus = {{0x00, BootType::Legacy},
+                                                {0x01, BootType::EFI}};
 
-std::map<Source::Sources, IpmiValue> sourceDbusToIpmi = {
-    {Source::Sources::Default, 0x0f},
-    {Source::Sources::RemovableMedia, 0x00},
-    {Source::Sources::Network, 0x01},
-    {Source::Sources::Disk, 0x02},
-    {Source::Sources::ExternalMedia, 0x03}};
+std::map<std::optional<BootSource>, IpmiValue> sourceDbusToIpmi = {
+    {BootSource::Default, 0x0f},
+    {BootSource::RemovableMedia, 0x00},
+    {BootSource::Network, 0x01},
+    {BootSource::Disk, 0x02},
+    {BootSource::ExternalMedia, 0x03}};
 
-std::map<Mode::Modes, IpmiValue> modeDbusToIpmi = {
-    {Mode::Modes::Setup, 0x06}, {Mode::Modes::Regular, 0x00}};
+std::map<std::optional<BootMode>, IpmiValue> modeDbusToIpmi = {
+    {BootMode::Setup, 0x06}, {BootMode::Regular, 0x00}};
 
-std::map<Type::Types, IpmiValue> typeDbusToIpmi = {{Type::Types::Legacy, 0x00},
-                                                   {Type::Types::EFI, 0x01}};
+std::map<std::optional<BootType>, IpmiValue> typeDbusToIpmi = {
+    {BootType::Legacy, 0x00}, {BootType::EFI, 0x01}};
 
 static constexpr auto bootModeIntf = "xyz.openbmc_project.Control.Boot.Mode";
 static constexpr auto bootSourceIntf =
@@ -667,15 +669,14 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 void setBootOrder(std::string bootObjPath, uint8_t* data,
                   std::string bootOrderKey)
 {
-
     std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
 
     // SETTING BOOT MODE PROPERTY
     uint8_t bootModeBit = data[0] & 0x06;
-    auto bootValue = ipmi::boot::modeIpmiToDbus.find(bootModeBit);
+    auto bootValue = ipmi::boot::modeIpmiToDbus.at(bootModeBit);
 
     std::string bootOption =
-        ipmi::boot::Mode::convertModesToString((bootValue->second));
+        sdbusplus::message::convert_to_string<boot::BootMode>(bootValue);
 
     std::string service =
         getService(*dbus, ipmi::boot::bootModeIntf, bootObjPath);
@@ -683,20 +684,20 @@ void setBootOrder(std::string bootObjPath, uint8_t* data,
                     ipmi::boot::bootModeProp, bootOption);
 
     // SETTING BOOT SOURCE PROPERTY
-    auto bootOrder = ipmi::boot::sourceIpmiToDbus.find((data[1]));
+    auto bootOrder = ipmi::boot::sourceIpmiToDbus.at(data[1]);
     std::string bootSource =
-        ipmi::boot::Source::convertSourcesToString((bootOrder->second));
+        sdbusplus::message::convert_to_string<boot::BootSource>(bootOrder);
 
     service = getService(*dbus, ipmi::boot::bootSourceIntf, bootObjPath);
     setDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootSourceIntf,
                     ipmi::boot::bootSourceProp, bootSource);
 
     // SETTING BOOT TYPE PROPERTY
-
     uint8_t bootTypeBit = data[0] & 0x01;
-    auto bootTypeVal = ipmi::boot::typeIpmiToDbus.find(bootTypeBit);
+    auto bootTypeVal = ipmi::boot::typeIpmiToDbus.at(bootTypeBit);
+
     std::string bootType =
-        ipmi::boot::Type::convertTypesToString((bootTypeVal->second));
+        sdbusplus::message::convert_to_string<boot::BootType>(bootTypeVal);
 
     service = getService(*dbus, ipmi::boot::bootTypeIntf, bootObjPath);
 
@@ -778,9 +779,9 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     }
     auto [bootObjPath, hostName] = ipmi::boot::objPath(*hostId);
 
-    // GETTING PROPERTY OF MODE INTERFACE
-
     std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+
+    // GETTING PROPERTY OF MODE INTERFACE
 
     std::string service =
         getService(*dbus, ipmi::boot::bootModeIntf, bootObjPath);
@@ -788,7 +789,7 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
         getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootModeIntf,
                         ipmi::boot::bootModeProp);
 
-    auto bootMode = ipmi::boot::Mode::convertModesFromString(
+    auto bootMode = sdbusplus::message::convert_from_string<boot::BootMode>(
         std::get<std::string>(variant));
 
     uint8_t bootOption = ipmi::boot::modeDbusToIpmi.at(bootMode);
@@ -799,7 +800,8 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     variant =
         getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootSourceIntf,
                         ipmi::boot::bootSourceProp);
-    auto bootSource = ipmi::boot::Source::convertSourcesFromString(
+
+    auto bootSource = sdbusplus::message::convert_from_string<boot::BootSource>(
         std::get<std::string>(variant));
 
     uint8_t bootOrder = ipmi::boot::sourceDbusToIpmi.at(bootSource);
@@ -810,7 +812,8 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     variant =
         getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootTypeIntf,
                         ipmi::boot::bootTypeProp);
-    auto bootType = ipmi::boot::Type::convertTypesFromString(
+
+    auto bootType = sdbusplus::message::convert_from_string<boot::BootType>(
         std::get<std::string>(variant));
 
     uint8_t bootTypeVal = ipmi::boot::typeDbusToIpmi.at(bootType);
