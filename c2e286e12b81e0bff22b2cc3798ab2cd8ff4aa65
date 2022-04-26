@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a102d9d8_0c63567f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-04-26T17:29:34Z",
+      "side": 1,
+      "message": "I have a few suggestions on how to enable the code to scale beyond just YV2 plus provide clarity to things like dimm vendors.",
+      "revId": "c2e286e12b81e0bff22b2cc3798ab2cd8ff4aa65",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02ed8035_78d26a8e",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-04-26T17:29:34Z",
+      "side": 1,
+      "message": "Instead of just labeling the DIMM types generically (as 1, 2, 3), it would be better to label the DIMM types since these align with real vendor names.  For instance, DIMM_TYPE1 might better be labeled as DIMM_TYPE_SAMSUNG.  In the event a vendor can have multiple types, it might be better to use DIMM_TYPE_SAMSUNG_CE.",
+      "range": {
+        "startLine": 92,
+        "startChar": 8,
+        "endLine": 92,
+        "endChar": 18
+      },
+      "revId": "c2e286e12b81e0bff22b2cc3798ab2cd8ff4aa65",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d723d34e_09f8bfd0",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-04-26T17:29:34Z",
+      "side": 1,
+      "message": "Would recommend building a table of the names and indexes to ensure this code scales.  On other systems, MEMxx names are different and map to slots which may not be at the same index.  Placement of the table should be in the platform specific code so the common code can just use the table to build these strings.",
+      "revId": "c2e286e12b81e0bff22b2cc3798ab2cd8ff4aa65",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a15a5f20_3c37eeea",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-04-26T17:29:34Z",
+      "side": 1,
+      "message": "While not part of this patch, we should remove this commented out code as a separate patch.  It should not have been merged.",
+      "revId": "c2e286e12b81e0bff22b2cc3798ab2cd8ff4aa65",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
