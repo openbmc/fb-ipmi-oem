@@ -46,6 +46,11 @@ endif
 
 root_inc = include_directories('.', 'include')
 
+generate_whitelist_script = files('generate_whitelist_create.sh')
+ipmi_whitelist_conf = files('ipmi-whitelist.conf')
+
+ipmiwhitelist = run_command('bash', generate_whitelist_script, ipmi_whitelist_conf)
+
 # Dependencies
 phosphor_logging_dep = dependency('phosphor-logging')
 sdbusplus_dep = dependency('sdbusplus', required : false, include_type: 'system')
@@ -72,6 +77,8 @@ zfboemcmds_lib = library(
   'src/selcommands.cpp',
   'src/transportcommands.cpp',
   'src/biccommands.cpp',
+  'ipmiwhitelist.cpp',
+  'src/whitelist-filter.cpp',
   implicit_include_directories: false,
   dependencies: zfboemcmds_pre,
   version: meson.project_version(),
