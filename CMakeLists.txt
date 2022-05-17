@@ -65,11 +65,16 @@ if(BIC)
    add_definitions (-DBIC_ENABLED)
 endif()
 
+add_custom_command(OUTPUT src/ipmi-whitelist.cpp
+                  COMMAND ./generate-whitelist.sh ipmi-whitelist.conf > src/ipmi-whitelist.cpp
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_library (zfboemcmds
              SHARED src/oemcommands.cpp src/appcommands.cpp
              src/storagecommands.cpp src/usb-dbg.cpp
              src/selcommands.cpp src/transportcommands.cpp
-             src/biccommands.cpp)
+             src/biccommands.cpp src/whitelist-filter.cpp
+             src/ipmi-whitelist.cpp)
 
 if(HOST_INSTANCES)
    add_definitions (-DINSTANCES="${HOST_INSTANCES}")
