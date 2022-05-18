@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f79ff06d_f947138d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T14:52:46Z",
+      "side": 1,
+      "message": "Doesn\u0027t this break Tiogapass?\n\nIt doesn\u0027t seem like we should be searching for a particular string like this.  Is there anything else we can use to key off of to know which is the compute board?",
+      "range": {
+        "startLine": 372,
+        "startChar": 0,
+        "endLine": 374,
+        "endChar": 28
+      },
+      "revId": "b512e225da56aaccb208d09763ce6a6174d73d8e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57b87b3b_9007885e",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T14:52:46Z",
+      "side": 1,
+      "message": "This also seems to break tiogapass.",
+      "revId": "b512e225da56aaccb208d09763ce6a6174d73d8e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
