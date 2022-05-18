@@ -1,0 +1,250 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "935dd0b5_6bc424fe",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "Consistent naming please (procInfo?).",
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9a8c7d0_45f13938",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "How about some enumerations instead of magics?",
+      "range": {
+        "startLine": 486,
+        "startChar": 71,
+        "endLine": 486,
+        "endChar": 72
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c323ad51_ff9d9f50",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "I don\u0027t really like this function as it encourages very C-like patterns.  Would be good to queue up a refactoring of this whole file in the future.",
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "506e2734_8f5ccb07",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "Why didn\u0027t we put it directly into the `proc` array?",
+      "range": {
+        "startLine": 490,
+        "startChar": 29,
+        "endLine": 491,
+        "endChar": 39
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cf5a252_1344cba4",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "This variable naming is sloppy.",
+      "range": {
+        "startLine": 492,
+        "startChar": 0,
+        "endLine": 493,
+        "endChar": 56
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28973b46_17136117",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "\u0027proFreq\u0027?",
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "63e69ba4_83521293",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "I\u0027d prefer we don\u0027t have this return in here.  I don\u0027t want to say there is a hard rule that we only return once in a function, but that would certainly be the typical expectation unless there is some if-condition (or else-condition or catch-clause) that makes it clear why we are exiting the function now.",
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7dc9c268_b413d0c2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "Do we have any desire to log the exception we encountered?",
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9752a4a7_f774f3a6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "phosphor-logging?",
+      "range": {
+        "startLine": 504,
+        "startChar": 0,
+        "endLine": 506,
+        "endChar": 31
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6442dfb_76829c0a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 1433,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "Use the IPMI automatic parsing.",
+      "range": {
+        "startLine": 1433,
+        "startChar": 36,
+        "endLine": 1433,
+        "endChar": 64
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a03cd823_ec11cc42",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 1494,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "automatic parsing please.",
+      "range": {
+        "startLine": 1494,
+        "startChar": 48,
+        "endLine": 1494,
+        "endChar": 76
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9e6a848a_e5dcd514",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 24
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:16:55Z",
+      "side": 1,
+      "message": "We should fix up the name on both of these to follow the camelCase pattern used elsewhere.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 48
+      },
+      "revId": "db66ab48fab58b9242ab0def016ee9dba539f4e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
