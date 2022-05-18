@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19f3d162_c1701ff3",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "Please add a map for these.",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 29
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c024713d_22873582",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "Don\u0027t we have some common place to put these?  It seems very unusual to have some stray IPMI command numbers sprinkled in the middle of this file.",
+      "range": {
+        "startLine": 107,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 19
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54ae6c61_c22df2b1",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "This is likely very particular to Yv2.  How do we extend the names for other systems?",
+      "range": {
+        "startLine": 157,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 60
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c62fd60b_6d3dfa4f",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "Is this name used elsewhere already?  Why are they inconsistently named (ie. dimmType vs dimm_type)?",
+      "range": {
+        "startLine": 238,
+        "startChar": 63,
+        "endLine": 238,
+        "endChar": 71
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "86492919_69383df8",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "Why are you comparing a length with NULL?  (You should never see \u0027NULL\u0027 in C++ code anyhow, but nullptr).",
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17ae4c9a_f8c0481d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "Can we use phosphor-logging please?",
+      "range": {
+        "startLine": 470,
+        "startChar": 0,
+        "endLine": 471,
+        "endChar": 31
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26feb251_24b9f4d8",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 1552,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "I\u0027m almost certain there is a way to specify the parameters in here so that the IPMI code will automatically parse out fields into parameters for us.  Can we please refactor this accordingly for at least mfgId, dimmIndex, paramSel?",
+      "range": {
+        "startLine": 1552,
+        "startChar": 36,
+        "endLine": 1552,
+        "endChar": 64
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c1d3935_78e80174",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 1650,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-05-18T15:04:37Z",
+      "side": 1,
+      "message": "Same automatic parsing here please.",
+      "range": {
+        "startLine": 1650,
+        "startChar": 48,
+        "endLine": 1650,
+        "endChar": 76
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
