@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa8748ff_e3445c16",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-05-25T11:04:10Z",
+      "side": 1,
+      "message": "I\u0027ll come up with a new approach for this implementation for both TP and YV2. Thanks.",
+      "parentUuid": "f79ff06d_f947138d",
+      "range": {
+        "startLine": 372,
+        "startChar": 0,
+        "endLine": 374,
+        "endChar": 28
+      },
+      "revId": "b512e225da56aaccb208d09763ce6a6174d73d8e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "57b87b3b_9007885e",
@@ -37,6 +61,24 @@
       "writtenOn": "2022-05-18T14:52:46Z",
       "side": 1,
       "message": "This also seems to break tiogapass.",
+      "revId": "b512e225da56aaccb208d09763ce6a6174d73d8e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71044ab5_fab41ff3",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-05-25T11:04:10Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "57b87b3b_9007885e",
       "revId": "b512e225da56aaccb208d09763ce6a6174d73d8e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
