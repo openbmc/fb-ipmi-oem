@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "af85109e_b7798b4f",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "19f3d162_c1701ff3",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 29
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c024713d_22873582",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-05-18T15:04:37Z",
       "side": 1,
       "message": "Don\u0027t we have some common place to put these?  It seems very unusual to have some stray IPMI command numbers sprinkled in the middle of this file.",
+      "range": {
+        "startLine": 107,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 19
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c619a4c_0b56c739",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c024713d_22873582",
       "range": {
         "startLine": 107,
         "startChar": 0,
@@ -93,6 +141,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a00e0397_23ec87f8",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c62fd60b_6d3dfa4f",
+      "range": {
+        "startLine": 238,
+        "startChar": 63,
+        "endLine": 238,
+        "endChar": 71
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "86492919_69383df8",
@@ -110,6 +182,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0934d172_f2f44c56",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "86492919_69383df8",
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "17ae4c9a_f8c0481d",
@@ -123,6 +213,30 @@
       "writtenOn": "2022-05-18T15:04:37Z",
       "side": 1,
       "message": "Can we use phosphor-logging please?",
+      "range": {
+        "startLine": 470,
+        "startChar": 0,
+        "endLine": 471,
+        "endChar": 31
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "476c55a5_57ed634f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "17ae4c9a_f8c0481d",
       "range": {
         "startLine": 470,
         "startChar": 0,
@@ -156,6 +270,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "981294bb_39ee9868",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 1552,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "26feb251_24b9f4d8",
+      "range": {
+        "startLine": 1552,
+        "startChar": 36,
+        "endLine": 1552,
+        "endChar": 64
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8c1d3935_78e80174",
@@ -169,6 +307,30 @@
       "writtenOn": "2022-05-18T15:04:37Z",
       "side": 1,
       "message": "Same automatic parsing here please.",
+      "range": {
+        "startLine": 1650,
+        "startChar": 48,
+        "endLine": 1650,
+        "endChar": 76
+      },
+      "revId": "9728c6140267cbc78389e8841d916e145ead3352",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ebf007a_88de5d3d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 1650,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-06-08T12:08:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8c1d3935_78e80174",
       "range": {
         "startLine": 1650,
         "startChar": 48,
