@@ -114,7 +114,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t>
     }
 }
 
-static void registerBICFunctions(void)
+[[maybe_unused]] static void registerBICFunctions(void)
 {
 
     phosphor::logging::log<phosphor::logging::level::INFO>(

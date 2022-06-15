@@ -132,7 +132,6 @@ int frame::append(const char* string, int indent)
     if (ret < 0)
         return ret;
 
-    int len = strlen(string);
     for (ptr = lbuf; *ptr != '\0'; ptr++)
     {
         if (isFull())
@@ -220,7 +219,7 @@ int frame::getPage(int page, char* page_buf, size_t page_buf_size)
     if (page > pages || page < 1)
         return -1;
 
-    if (page_buf == NULL || page_buf_size < 0)
+    if (page_buf == NULL || page_buf_size == 0)
         return -1;
 
     ret = snprintf(page_buf, 17, "%-10s %02d/%02d", title, page, pages);
@@ -293,7 +292,7 @@ int frame::isEscSeq(char chr)
 int frame::parse(char* lbuf, size_t buf_size, const char* input, int indent)
 {
     uint8_t pos, esc;
-    int i;
+    size_t i;
     const char *in, *end;
 
     if (buf == NULL || input == NULL)
@@ -582,12 +581,12 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
     return -1;
 }
 
-static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t* next,
+static int udbg_get_cri_sel(uint8_t, uint8_t page, uint8_t* next,
                             uint8_t* count, uint8_t* buffer)
 {
     int len;
     int ret;
-    char line_buff[FRAME_PAGE_BUF_SIZE], *fptr;
+    char line_buff[FRAME_PAGE_BUF_SIZE];
     const char* ptr;
     FILE* fp;
     struct stat file_stat;
@@ -669,7 +668,7 @@ static int udbg_get_cri_sel(uint8_t frame, uint8_t page, uint8_t* next,
     return 0;
 }
 
-static int udbg_get_cri_sensor(uint8_t frame, uint8_t page, uint8_t* next,
+static int udbg_get_cri_sensor(uint8_t, uint8_t page, uint8_t* next,
                                uint8_t* count, uint8_t* buffer)
 {
     int ret;
@@ -910,12 +909,12 @@ static int getMeStatus(std::string& status)
     return 0;
 }
 
-static int udbg_get_info_page(uint8_t frame, uint8_t page, uint8_t* next,
+static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
                               uint8_t* count, uint8_t* buffer)
 {
-    char line_buff[1000], *pres_dev = line_buff;
-    size_t pos = plat_get_fru_sel();
-    const char* delim = "\n";
+    char line_buff[1000];
+    [[maybe_unused]] char* pres_dev = line_buff;
+    [[maybe_unused]] size_t pos = plat_get_fru_sel();
     int ret;
     std::string serialName = "BOARD_SERIAL_NUMBER";
     std::string partName = "BOARD_PART_NUMBER";
@@ -1060,112 +1059,118 @@ static uint8_t panel_main(uint8_t item)
     }
 }
 
-static uint8_t panel_boot_order(uint8_t item)
+static uint8_t panel_boot_order(uint8_t)
 {
+    /* To be implemented */
+#if 0
     int i;
     unsigned char buff[MAX_VALUE_LEN], pickup, len;
     size_t pos = plat_get_fru_sel();
+    if (pos != FRU_ALL && pal_get_boot_order(pos, buff, buff, &len) == 0)
+    {
+        if (item > 0 && item < SIZE_BOOT_ORDER)
+        {
+            pickup = buff[item];
+            while (item > 1)
+            {
+                buff[item] = buff[item - 1];
+                item--;
+            }
+            buff[item] = pickup;
+            buff[0] |= 0x80;
+            pal_set_boot_order(pos, buff, buff, &len);
 
-    /* To be implemented */
-    /*
-  if (pos != FRU_ALL && pal_get_boot_order(pos, buff, buff, &len) == 0)
-  {
-  if (item > 0 && item < SIZE_BOOT_ORDER)
-  {
-  pickup = buff[item];
-  while (item > 1)
-  {
-    buff[item] = buff[item -1];
-    item--;
-  }
-  buff[item] = pickup;
-  buff[0] |= 0x80;
-  pal_set_boot_order(pos, buff, buff, &len);
+            // refresh items
+            return panels[PANEL_BOOT_ORDER].select(0);
+        }
 
-  // refresh items
-  return panels[PANEL_BOOT_ORDER].select(0);
-  }
+        // '*': boot flags valid, BIOS has not yet read
+        snprintf(panels[PANEL_BOOT_ORDER].item_str[0], 32, "Boot Order%c",
+                 (buff[0] & 0x80) ? '*' : '\0');
 
-  // '*': boot flags valid, BIOS has not yet read
-  snprintf(panels[PANEL_BOOT_ORDER].item_str[0], 32,
-  "Boot Order%c", (buff[0] & 0x80)?'*':'\0');
+        for (i = 1; i < SIZE_BOOT_ORDER; i++)
+        {
+            switch (buff[i])
+            {
+                case 0x0:
+                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
+                             " USB device");
+                    break;
+                case 0x1:
+                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
+                             " Network v4");
+                    break;
+                case (0x1 | 0x8):
+                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
+                             " Network v6");
+                    break;
+                case 0x2:
+                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
+                             " SATA HDD");
+                    break;
+                case 0x3:
+                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
+                             " SATA-CDROM");
+                    break;
+                case 0x4:
+                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
+                             " Other");
+                    break;
+                default:
+                    panels[PANEL_BOOT_ORDER].item_str[i][0] = '\0';
+                    break;
+            }
+        }
 
-  for (i = 1; i < SIZE_BOOT_ORDER; i++)
-  {
-  switch (buff[i])
-  {
-    case 0x0:
-      snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-        " USB device");
-      break;
-    case 0x1:
-      snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-        " Network v4");
-      break;
-    case (0x1 | 0x8):
-      snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-        " Network v6");
-      break;
-    case 0x2:
-      snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-        " SATA HDD");
-      break;
-    case 0x3:
-      snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-        " SATA-CDROM");
-      break;
-    case 0x4:
-      snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-        " Other");
-      break;
-    default:
-      panels[PANEL_BOOT_ORDER].item_str[i][0] = '\0';
-      break;
-  }
-  }
+        // remove empty items
+        for (i--;
+             (strlen(panels[PANEL_BOOT_ORDER].item_str[i]) == 0) && (i > 0);
+             i--)
+            ;
 
-  // remove empty items
-  for (i--; (strlen(panels[PANEL_BOOT_ORDER].item_str[i]) == 0) && (i > 0); i--)
-  ;
-
-  panels[PANEL_BOOT_ORDER].item_num = i;
-  } else
-  {
-  panels[PANEL_BOOT_ORDER].item_num = 0;
-  }
-            */
+        panels[PANEL_BOOT_ORDER].item_num = i;
+    }
+    else
+    {
+        panels[PANEL_BOOT_ORDER].item_num = 0;
+    }
+#endif
     return PANEL_BOOT_ORDER;
 }
 
-static uint8_t panel_power_policy(uint8_t item)
+static uint8_t panel_power_policy(uint8_t)
 {
+/* To be cleaned */
+#if 0
     uint8_t buff[32] = {0};
     uint8_t res_len;
     size_t pos = plat_get_fru_sel();
     uint8_t policy;
-    //  uint8_t pwr_policy_item_map[3] = {POWER_CFG_ON, POWER_CFG_LPS,
-    //  POWER_CFG_OFF};
+    uint8_t pwr_policy_item_map[3] = {POWER_CFG_ON, POWER_CFG_LPS,
+                                      POWER_CFG_OFF};
 
-    /* To be cleaned */
-    /*
-  if (pos != FRU_ALL) {
-  if (item > 0 && item <= sizeof(pwr_policy_item_map)) {
-  policy = pwr_policy_item_map[item - 1];
-  pal_set_power_restore_policy(pos, &policy, NULL);
-  }
-  pal_get_chassis_status(pos, NULL, buff, &res_len);
-  policy = (((uint8_t)buff[0]) >> 5) & 0x7;
-  snprintf(panels[PANEL_POWER_POLICY].item_str[1], 32,
-    "%cPower On", policy == POWER_CFG_ON ? '*' : ' ');
-  snprintf(panels[PANEL_POWER_POLICY].item_str[2], 32,
-    "%cLast State", policy == POWER_CFG_LPS ? '*' : ' ');
-  snprintf(panels[PANEL_POWER_POLICY].item_str[3], 32,
-    "%cPower Off", policy == POWER_CFG_OFF ? '*' : ' ');
-  panels[PANEL_POWER_POLICY].item_num = 3;
-  } else {
-  panels[PANEL_POWER_POLICY].item_num = 0;
-  }
-    */
+    if (pos != FRU_ALL)
+    {
+        if (item > 0 && item <= sizeof(pwr_policy_item_map))
+        {
+            policy = pwr_policy_item_map[item - 1];
+            pal_set_power_restore_policy(pos, &policy, NULL);
+        }
+        pal_get_chassis_status(pos, NULL, buff, &res_len);
+        policy = (((uint8_t)buff[0]) >> 5) & 0x7;
+        snprintf(panels[PANEL_POWER_POLICY].item_str[1], 32, "%cPower On",
+                 policy == POWER_CFG_ON ? '*' : ' ');
+        snprintf(panels[PANEL_POWER_POLICY].item_str[2], 32, "%cLast State",
+                 policy == POWER_CFG_LPS ? '*' : ' ');
+        snprintf(panels[PANEL_POWER_POLICY].item_str[3], 32, "%cPower Off",
+                 policy == POWER_CFG_OFF ? '*' : ' ');
+        panels[PANEL_POWER_POLICY].item_num = 3;
+    }
+    else
+    {
+        panels[PANEL_POWER_POLICY].item_num = 0;
+    }
+#endif
     return PANEL_POWER_POLICY;
 }
 

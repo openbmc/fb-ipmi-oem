@@ -158,7 +158,7 @@ inline static uint8_t getSensorTypeFromPath(const std::string& path)
     return sensorType;
 }
 
-inline static uint8_t getSensorEventTypeFromPath(const std::string& path)
+inline static uint8_t getSensorEventTypeFromPath(const std::string&)
 {
     // TODO: Add support for additional reading types as needed
     return 0x1; // reading type = threshold

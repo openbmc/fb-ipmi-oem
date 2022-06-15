@@ -46,11 +46,10 @@ enum
 //----------------------------------------------------------------------
 // Get SoL Config (IPMI/Section 26.3) (CMD_TRANSPORT_GET_SOL_CONFIG)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiTransGetSolConfig(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiTransGetSolConfig(ipmi_netfn_t, ipmi_cmd_t,
                                  ipmi_request_t request,
                                  ipmi_response_t response,
-                                 ipmi_data_len_t data_len,
-                                 ipmi_context_t context)
+                                 ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
