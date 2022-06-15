@@ -54,7 +54,7 @@ int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
 void printGUID(uint8_t* guid, off_t offset)
 {
     std::cout << "Read GUID from offset : " << offset << " :\n";
-    for (int i = 0; i < GUID_SIZE; i++)
+    for (size_t i = 0; i < GUID_SIZE; i++)
     {
         int data = guid[i];
         std::cout << std::hex << data << " ";
@@ -112,9 +112,9 @@ int getSystemGUID(uint8_t* guid)
 //----------------------------------------------------------------------
 // Get Self Test Results (IPMI/Section 20.4) (CMD_APP_GET_SELFTEST_RESULTS)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppGetSTResults(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiAppGetSTResults(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                               ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
@@ -130,9 +130,9 @@ ipmi_ret_t ipmiAppGetSTResults(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Manufacturing Test On (IPMI/Section 20.5) (CMD_APP_MFR_TEST_ON)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                            ipmi_request_t request, ipmi_response_t response,
-                            ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                            ipmi_response_t, ipmi_data_len_t data_len,
+                            ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     std::string mfrTest = "sled-cycle";
@@ -156,11 +156,9 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set Global Enables (CMD_APP_SET_GLOBAL_ENABLES)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppSetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                   ipmi_request_t request,
-                                   ipmi_response_t response,
-                                   ipmi_data_len_t data_len,
-                                   ipmi_context_t context)
+ipmi_ret_t ipmiAppSetGlobalEnables(ipmi_netfn_t, ipmi_cmd_t,
+                                   ipmi_request_t request, ipmi_response_t,
+                                   ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
@@ -173,11 +171,9 @@ ipmi_ret_t ipmiAppSetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Global Enables (CMD_APP_GET_GLOBAL_ENABLES)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppGetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                   ipmi_request_t request,
+ipmi_ret_t ipmiAppGetGlobalEnables(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
                                    ipmi_response_t response,
-                                   ipmi_data_len_t data_len,
-                                   ipmi_context_t context)
+                                   ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
@@ -190,11 +186,9 @@ ipmi_ret_t ipmiAppGetGlobalEnables(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Clear Message flags (IPMI/Section 22.3) (CMD_APP_CLEAR_MESSAGE_FLAGS)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppClearMsgFlags(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                ipmi_request_t request,
-                                ipmi_response_t response,
-                                ipmi_data_len_t data_len,
-                                ipmi_context_t context)
+ipmi_ret_t ipmiAppClearMsgFlags(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                                ipmi_response_t, ipmi_data_len_t data_len,
+                                ipmi_context_t)
 {
     // Do Nothing and just return success
     *data_len = 0;
@@ -221,9 +215,9 @@ ipmi::RspType<std::vector<uint8_t>>
 }
 
 #else
-ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                             ipmi_request_t request, ipmi_response_t response,
-                             ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                             ipmi_response_t response, ipmi_data_len_t data_len,
+                             ipmi_context_t)
 {
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
     if (getSystemGUID(res))
@@ -290,11 +284,9 @@ static int platGetSysFWVer(uint8_t* ver)
 //----------------------------------------------------------------------
 // Set Sys Info Params (IPMI/Sec 22.14a) (CMD_APP_SET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                   ipmi_request_t request,
-                                   ipmi_response_t response,
-                                   ipmi_data_len_t data_len,
-                                   ipmi_context_t context)
+ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t, ipmi_cmd_t,
+                                   ipmi_request_t request, ipmi_response_t,
+                                   ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
@@ -364,17 +356,16 @@ ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Sys Info Params (IPMI/Sec 22.14b) (CMD_APP_GET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppGetSysInfoParams(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiAppGetSysInfoParams(ipmi_netfn_t, ipmi_cmd_t,
                                    ipmi_request_t request,
                                    ipmi_response_t response,
-                                   ipmi_data_len_t data_len,
-                                   ipmi_context_t context)
+                                   ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     uint8_t param = req[1];
-    uint8_t len;
+    int len;
 
     *res++ = 1; // Parameter revision
     *data_len = 1;

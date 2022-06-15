@@ -1,0 +1,6 @@
+option('tests', type: 'feature', description: 'Build tests')
+option('bic', type: 'feature', description: 'Enable bic handlers')
+option(
+  'host-instances',
+  type: 'string',
+  description: 'Host Instances')

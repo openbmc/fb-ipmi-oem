@@ -206,7 +206,7 @@ std::vector<std::string> nmDomName = {
     "High Power I/O subsystem", "Unknown"};
 
 /* Default log message for unknown type */
-static void logDefault(uint8_t* data, std::string& errLog)
+static void logDefault(uint8_t*, std::string& errLog)
 {
     errLog = "Unknown";
 }
@@ -412,7 +412,7 @@ static void logIioErr(uint8_t* data, std::string& errLog)
     }
 }
 
-static void logMemErr(uint8_t* dataPtr, std::string& errLog)
+[[maybe_unused]] static void logMemErr(uint8_t* dataPtr, std::string& errLog)
 {
     uint8_t snrType = dataPtr[0];
     uint8_t snrNum = dataPtr[1];
@@ -485,8 +485,8 @@ static void logMemErr(uint8_t* dataPtr, std::string& errLog)
         {
 
             /* All Info Valid */
-            uint8_t chnNum = (data[2] & 0x1C) >> 2;
-            uint8_t dimmNum = data[2] & 0x3;
+            [[maybe_unused]] uint8_t chnNum = (data[2] & 0x1C) >> 2;
+            [[maybe_unused]] uint8_t dimmNum = data[2] & 0x3;
 
             /* TODO: If critical SEL logging is available, do it */
             if (snrType == 0x0C)
@@ -1194,7 +1194,8 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
             }
         }
 
-        std::tm* ts = localtime((time_t*)(&(data->timeStamp)));
+        uint32_t timeStamp = data->timeStamp;
+        std::tm* ts = localtime(reinterpret_cast<time_t*>(&timeStamp));
         std::string timeStr = std::asctime(ts);
 
         parseStdSel(data, errLog);
@@ -1226,7 +1227,8 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
         std::string oemDataStr;
         toHexStr(oemData, oemDataStr);
 
-        std::tm* ts = localtime((time_t*)(&(data->timeStamp)));
+        uint32_t timeStamp = data->timeStamp;
+        std::tm* ts = localtime(reinterpret_cast<time_t*>(&timeStamp));
         std::string timeStr = std::asctime(ts);
 
         errType = oemTSErr;
@@ -1484,7 +1486,7 @@ ipmi::RspType<uint32_t> ipmiStorageGetSELTime()
     return ipmi::responseSuccess(selTime.tv_sec);
 }
 
-ipmi::RspType<> ipmiStorageSetSELTime(uint32_t selTime)
+ipmi::RspType<> ipmiStorageSetSELTime(uint32_t)
 {
     // Set SEL Time is not supported
     return ipmi::responseInvalidCommand();

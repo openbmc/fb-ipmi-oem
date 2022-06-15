@@ -269,7 +269,7 @@ std::string bytesToStr(uint8_t* byte, int len)
 int strToBytes(std::string& str, uint8_t* data)
 {
     std::string sstr;
-    int i;
+    size_t i;
 
     for (i = 0; i < (str.length()) / 2; i++)
     {
@@ -424,11 +424,10 @@ typedef struct
 //----------------------------------------------------------------------
 // Get Debug Frame Info
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t, ipmi_cmd_t,
                                   ipmi_request_t request,
                                   ipmi_response_t response,
-                                  ipmi_data_len_t data_len,
-                                  ipmi_context_t context)
+                                  ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -444,11 +443,10 @@ ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Debug Updated Frames
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t, ipmi_cmd_t,
                                   ipmi_request_t request,
                                   ipmi_response_t response,
-                                  ipmi_data_len_t data_len,
-                                  ipmi_context_t context)
+                                  ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -468,11 +466,10 @@ ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Debug POST Description
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t, ipmi_cmd_t,
                                  ipmi_request_t request,
                                  ipmi_response_t response,
-                                 ipmi_data_len_t data_len,
-                                 ipmi_context_t context)
+                                 ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -508,11 +505,10 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Debug GPIO Description
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t, ipmi_cmd_t,
                                  ipmi_request_t request,
                                  ipmi_response_t response,
-                                 ipmi_data_len_t data_len,
-                                 ipmi_context_t context)
+                                 ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -549,11 +545,10 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Debug Frame Data
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t, ipmi_cmd_t,
                                   ipmi_request_t request,
                                   ipmi_response_t response,
-                                  ipmi_data_len_t data_len,
-                                  ipmi_context_t context)
+                                  ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -565,8 +560,6 @@ ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
     frame = req[3];
     page = req[4];
-    int fr = frame;
-    int pg = page;
 
     ret = plat_udbg_get_frame_data(frame, page, &next, &count, &res[7]);
     if (ret)
@@ -589,11 +582,10 @@ ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Debug Control Panel
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t, ipmi_cmd_t,
                                   ipmi_request_t request,
                                   ipmi_response_t response,
-                                  ipmi_data_len_t data_len,
-                                  ipmi_context_t context)
+                                  ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -619,9 +611,9 @@ ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set Dimm Info (CMD_OEM_SET_DIMM_INFO)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                              ipmi_request_t request, ipmi_response_t response,
-                              ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                              ipmi_response_t, ipmi_data_len_t data_len,
+                              ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
@@ -652,13 +644,10 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get Board ID (CMD_OEM_GET_BOARD_ID)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                             ipmi_request_t request, ipmi_response_t response,
-                             ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                             ipmi_response_t, ipmi_data_len_t data_len,
+                             ipmi_context_t)
 {
-    uint8_t* req = reinterpret_cast<uint8_t*>(request);
-    uint8_t* res = reinterpret_cast<uint8_t*>(response);
-
     /* TODO: Needs to implement this after GPIO implementation */
     *data_len = 0;
 
@@ -824,8 +813,12 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     {
         /* Return default boot order 0100090203ff */
         uint8_t defaultBoot[SIZE_BOOT_ORDER] = {
-            BOOT_MODE_UEFI,      bootMap["USB_DEV"], bootMap["NET_IPV6"],
-            bootMap["SATA_HDD"], bootMap["SATA_CD"], 0xff};
+            BOOT_MODE_UEFI,
+            static_cast<uint8_t>(bootMap["USB_DEV"]),
+            static_cast<uint8_t>(bootMap["NET_IPV6"]),
+            static_cast<uint8_t>(bootMap["SATA_HDD"]),
+            static_cast<uint8_t>(bootMap["SATA_CD"]),
+            0xff};
 
         memcpy(bootSeq, defaultBoot, SIZE_BOOT_ORDER);
         phosphor::logging::log<phosphor::logging::level::INFO>(
@@ -859,11 +852,9 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
 }
 // Set Machine Config Info (CMD_OEM_SET_MACHINE_CONFIG_INFO)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                    ipmi_request_t request,
-                                    ipmi_response_t response,
-                                    ipmi_data_len_t data_len,
-                                    ipmi_context_t context)
+ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t, ipmi_cmd_t,
+                                    ipmi_request_t request, ipmi_response_t,
+                                    ipmi_data_len_t data_len, ipmi_context_t)
 {
     machineConfigInfo_t* req = reinterpret_cast<machineConfigInfo_t*>(request);
     uint8_t len = *data_len;
@@ -943,9 +934,9 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set POST start (CMD_OEM_SET_POST_START)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetPostStart(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemSetPostStart(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                               ipmi_response_t, ipmi_data_len_t data_len,
+                               ipmi_context_t)
 {
     phosphor::logging::log<phosphor::logging::level::INFO>("POST Start Event");
 
@@ -957,9 +948,9 @@ ipmi_ret_t ipmiOemSetPostStart(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set POST End (CMD_OEM_SET_POST_END)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetPostEnd(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                             ipmi_request_t request, ipmi_response_t response,
-                             ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemSetPostEnd(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                             ipmi_response_t, ipmi_data_len_t data_len,
+                             ipmi_context_t)
 {
     struct timespec ts;
 
@@ -990,9 +981,9 @@ ipmi_ret_t ipmiOemSetPostEnd(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //
 // Response:
 // Byte 1 – Completion Code
-ipmi_ret_t ipmiOemSetPPINInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                              ipmi_request_t request, ipmi_response_t response,
-                              ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemSetPPINInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                              ipmi_response_t, ipmi_data_len_t data_len,
+                              ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     std::string ppinStr;
@@ -1014,11 +1005,9 @@ ipmi_ret_t ipmiOemSetPPINInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set ADR Trigger (CMD_OEM_SET_ADR_TRIGGER)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                ipmi_request_t request,
-                                ipmi_response_t response,
-                                ipmi_data_len_t data_len,
-                                ipmi_context_t context)
+ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                                ipmi_response_t, ipmi_data_len_t data_len,
+                                ipmi_context_t)
 {
     /* Do nothing, return success */
     *data_len = 0;
@@ -1026,7 +1015,7 @@ ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 }
 
 // Helper function to set guid at offset in EEPROM
-static int setGUID(off_t offset, uint8_t* guid)
+[[maybe_unused]] static int setGUID(off_t offset, uint8_t* guid)
 {
     int fd = -1;
     ssize_t len;
@@ -1069,7 +1058,7 @@ static int setGUID(off_t offset, uint8_t* guid)
 // Set System GUID (CMD_OEM_SET_SYSTEM_GUID)
 //----------------------------------------------------------------------
 #if BIC_ENABLED
-ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx, uint8_t cmdReq,
+ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx, uint8_t,
                                      std::vector<uint8_t> reqData)
 {
     std::vector<uint8_t> respData;
@@ -1079,8 +1068,6 @@ ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx, uint8_t cmdReq,
 
         return ipmi::responseReqDataLenInvalid();
     }
-
-    auto ptrReqData = reqData.insert(reqData.begin(), reqData.size());
 
     uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
 
@@ -1118,11 +1105,9 @@ ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set Bios Flash Info (CMD_OEM_SET_BIOS_FLASH_INFO)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                   ipmi_request_t request,
-                                   ipmi_response_t response,
-                                   ipmi_data_len_t data_len,
-                                   ipmi_context_t context)
+ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
+                                   ipmi_response_t, ipmi_data_len_t data_len,
+                                   ipmi_context_t)
 {
     /* Do nothing, return success */
     *data_len = 0;
@@ -1132,9 +1117,9 @@ ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Set PPR (CMD_OEM_SET_PPR)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                         ipmi_request_t request, ipmi_response_t response,
-                         ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                         ipmi_response_t, ipmi_data_len_t data_len,
+                         ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t pprCnt, pprAct, pprIndex;
@@ -1222,9 +1207,9 @@ ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //----------------------------------------------------------------------
 // Get PPR (CMD_OEM_GET_PPR)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                         ipmi_request_t request, ipmi_response_t response,
-                         ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                         ipmi_response_t response, ipmi_data_len_t data_len,
+                         ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -1334,9 +1319,9 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 5 – Processor frequency in MHz (MSB)
 // Byte 6..7 – Revision
 //
-ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                               ipmi_response_t, ipmi_data_len_t data_len,
+                               ipmi_context_t)
 {
     qProcInfo_t* req = reinterpret_cast<qProcInfo_t*>(request);
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
@@ -1392,9 +1377,9 @@ ipmi_ret_t ipmiOemQSetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 5 – Processor frequency in MHz (MSB)
 // Byte 6..7 – Revision
 //
-ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                               ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t)
 {
     qProcInfo_t* req = reinterpret_cast<qProcInfo_t*>(request);
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
@@ -1486,9 +1471,9 @@ ipmi_ret_t ipmiOemQGetProcInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
-ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                               ipmi_response_t, ipmi_data_len_t data_len,
+                               ipmi_context_t)
 {
     qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(request);
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
@@ -1579,9 +1564,9 @@ ipmi_ret_t ipmiOemQSetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
-ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                               ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                               ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t)
 {
     qDimmInfo_t* req = reinterpret_cast<qDimmInfo_t*>(request);
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
@@ -1691,11 +1676,9 @@ ipmi_ret_t ipmiOemQGetDimmInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 //  Param#7 (HDD WWN)
 //  Data 1...8: HDD World Wide Name, LSB
 //
-ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                ipmi_request_t request,
-                                ipmi_response_t response,
-                                ipmi_data_len_t data_len,
-                                ipmi_context_t context)
+ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
+                                ipmi_request_t request, ipmi_response_t,
+                                ipmi_data_len_t data_len, ipmi_context_t)
 {
     qDriveInfo_t* req = reinterpret_cast<qDriveInfo_t*>(request);
     uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t*);
@@ -1753,11 +1736,10 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 // Byte 2..N – Configuration parameter data (see Table_1415h Parameters of HDD
 // Information)
 //
-ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
                                 ipmi_request_t request,
                                 ipmi_response_t response,
-                                ipmi_data_len_t data_len,
-                                ipmi_context_t context)
+                                ipmi_data_len_t data_len, ipmi_context_t)
 {
     qDriveInfo_t* req = reinterpret_cast<qDriveInfo_t*>(request);
     uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t*);
