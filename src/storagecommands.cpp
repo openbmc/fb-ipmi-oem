@@ -196,7 +196,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
 
     // hash the object paths to create unique device id's. increment on
     // collision
-    std::hash<std::string> hasher;
+    [[maybe_unused]] std::hash<std::string> hasher;
     for (const auto& fru : frus)
     {
         auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
@@ -281,11 +281,10 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     return IPMI_CC_OK;
 }
 
-ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t, ipmi_cmd_t,
                                   ipmi_request_t request,
                                   ipmi_response_t response,
-                                  ipmi_data_len_t dataLen,
-                                  ipmi_context_t context)
+                                  ipmi_data_len_t dataLen, ipmi_context_t)
 {
     if (*dataLen != 4)
     {
@@ -333,11 +332,10 @@ ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     return IPMI_CC_OK;
 }
 
-ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t, ipmi_cmd_t,
                                    ipmi_request_t request,
                                    ipmi_response_t response,
-                                   ipmi_data_len_t dataLen,
-                                   ipmi_context_t context)
+                                   ipmi_data_len_t dataLen, ipmi_context_t)
 {
     if (*dataLen < 4 ||
         *dataLen >=
@@ -357,7 +355,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     {
         return status;
     }
-    int lastWriteAddr = req->fruInventoryOffset + writeLen;
+    size_t lastWriteAddr = req->fruInventoryOffset + writeLen;
     if (fruCache.size() < lastWriteAddr)
     {
         fruCache.resize(req->fruInventoryOffset + writeLen);
@@ -373,7 +371,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
         FRUHeader* header = reinterpret_cast<FRUHeader*>(fruCache.data());
 
-        int lastRecordStart = std::max(
+        size_t lastRecordStart = std::max(
             header->internalOffset,
             std::max(header->chassisOffset,
                      std::max(header->boardOffset, header->productOffset)));
@@ -535,10 +533,8 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
 }
 
 ipmi_ret_t ipmiStorageReserveSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                 ipmi_request_t request,
-                                 ipmi_response_t response,
-                                 ipmi_data_len_t dataLen,
-                                 ipmi_context_t context)
+                                 ipmi_request_t, ipmi_response_t response,
+                                 ipmi_data_len_t dataLen, ipmi_context_t)
 {
     printCommand(+netfn, +cmd);
 
@@ -563,7 +559,7 @@ ipmi_ret_t ipmiStorageReserveSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
 ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
                              ipmi_request_t request, ipmi_response_t response,
-                             ipmi_data_len_t dataLen, ipmi_context_t context)
+                             ipmi_data_len_t dataLen, ipmi_context_t)
 {
     printCommand(+netfn, +cmd);
 
@@ -608,8 +604,9 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_INVALID_FIELD_REQUEST;
     }
 
-    uint16_t nextRecord =
-        lastRecord > (req->recordID + 1) ? req->recordID + 1 : 0XFFFF;
+    uint16_t nextRecord = lastRecord > static_cast<size_t>(req->recordID + 1)
+                              ? req->recordID + 1
+                              : 0XFFFF;
 
     auto responseClear = static_cast<uint8_t*>(response);
     std::fill(responseClear, responseClear + requestedSize, 0);
@@ -670,7 +667,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_RESPONSE_ERROR;
     }
     uint8_t sensornumber = (req->recordID & 0xFF);
-    get_sdr::SensorDataFullRecord record = {0};
+    get_sdr::SensorDataFullRecord record = {};
 
     record.header.record_id_msb = req->recordID << 8;
     record.header.record_id_lsb = req->recordID & 0xFF;
@@ -885,11 +882,10 @@ int getSensorUnit(std::string& name, std::string& unit)
         return -1;
 }
 
-ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(ipmi_netfn_t, ipmi_cmd_t,
                                         ipmi_request_t request,
                                         ipmi_response_t response,
-                                        ipmi_data_len_t dataLen,
-                                        ipmi_context_t context)
+                                        ipmi_data_len_t dataLen, ipmi_context_t)
 {
     if (*dataLen != 1)
     {
