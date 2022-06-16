@@ -71,6 +71,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09172ca3_98e97cff",
+        "filename": "include/usb-dbg.hpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2022-06-16T21:47:13Z",
+      "side": 1,
+      "message": "Thanks for the fix in https://gerrit.openbmc.org/c/openbmc/fb-ipmi-oem/+/54652.\n\nDidn\u0027t realize that I didn\u0027t include the meson change. Updated it.",
+      "parentUuid": "e318ea99_3d80fd19",
+      "revId": "055d67953bee180919d14875ccc54f24d7d13af6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9f59a875_1bd3cbc3",
