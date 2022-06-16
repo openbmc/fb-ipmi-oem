@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e318ea99_3d80fd19",
+        "filename": "include/usb-dbg.hpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-16T18:12:28Z",
+      "side": 1,
+      "message": "I think the cmake build has been broken for a while and we just didn\u0027t notice.\n\n```\n[ 62%] Performing configure step for \u0027host-ipmid\u0027\n/bin/sh: 1: ./bootstrap.sh: not found\ngmake[2]: *** [CMakeFiles/host-ipmid.dir/build.make:92: /data0/jenkins/workspace/ci-repository/openbmc/fb-ipmi-oem/phosphor-host-ipmid/src/host-ipmid-stamp/host-ipmid-configure] Error 127\ngmake[1]: *** [CMakeFiles/Makefile2:83: CMakeFiles/host-ipmid.dir/all] Error 2\ngmake: *** [Makefile:91: all] Error 2\n```",
+      "parentUuid": "f8863fe3_f1e9b1ee",
+      "revId": "055d67953bee180919d14875ccc54f24d7d13af6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9f59a875_1bd3cbc3",
         "filename": "src/biccommands.cpp",
         "patchSetId": 7
