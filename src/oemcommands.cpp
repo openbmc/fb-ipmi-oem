@@ -427,7 +427,7 @@ int8_t getFruData(std::string& data, std::string& name)
         }
 
         auto found = path.find(machinePath);
-        if (found == -1)
+        if (found == std::string::npos)
         {
             continue;
         }
