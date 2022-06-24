@@ -136,21 +136,26 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     std::string mfrTest = "sled-cycle";
+    ipmi_ret_t rc = IPMI_CC_OK;
 
     if (!memcmp(req, mfrTest.data(), mfrTest.length()) &&
         (*data_len == mfrTest.length()))
     {
         /* sled-cycle the BMC */
-        system("/usr/sbin/power-util sled-cycle");
+        auto ret = system("/usr/sbin/power-util sled-cycle");
+        if (ret)
+        {
+            rc = IPMI_CC_UNSPECIFIED_ERROR;
+        }
     }
     else
     {
-        return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+        rc = IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
     }
 
     *data_len = 0;
 
-    return IPMI_CC_OK;
+    return rc;
 }
 
 //----------------------------------------------------------------------
