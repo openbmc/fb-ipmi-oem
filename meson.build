@@ -74,5 +74,6 @@ zfboemcmds_lib = shared_module(
   'src/biccommands.cpp',
   implicit_include_directories: false,
   dependencies: zfboemcmds_pre,
+  version: meson.project_version(),
   install: true,
   install_dir: get_option('libdir') / 'ipmid-providers')
