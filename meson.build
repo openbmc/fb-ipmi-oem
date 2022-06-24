@@ -63,7 +63,7 @@ zfboemcmds_pre = declare_dependency(
     userlayer_dep,
   ])
 
-zfboemcmds_lib = shared_module(
+zfboemcmds_lib = library(
   'zfboemcmds',
   'src/oemcommands.cpp',
   'src/appcommands.cpp',
@@ -74,5 +74,7 @@ zfboemcmds_lib = shared_module(
   'src/biccommands.cpp',
   implicit_include_directories: false,
   dependencies: zfboemcmds_pre,
+  version: meson.project_version(),
+  override_options: ['b_lundef=false'],
   install: true,
   install_dir: get_option('libdir') / 'ipmid-providers')
