@@ -15,6 +15,9 @@
  */
 
 #include <usb-dbg.hpp>
+#include "config.h"
+
+std::string hostInstances = INSTANCES;
 
 namespace ipmi
 {
@@ -943,7 +946,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
             hostPosition = getSelectorPosition();
         }
 
-        if (hostPosition == BMC_POSITION || INSTANCES == "0")
+        if (hostPosition == BMC_POSITION || hostInstances == "0")
         {
             frame_info.append("FRU:spb", 0);
         }

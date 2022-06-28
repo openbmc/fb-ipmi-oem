@@ -39,6 +39,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "config.h"
 
 #define SIZE_IANA_ID 3
 
@@ -188,6 +189,8 @@ static constexpr auto bootSourceProp = "BootSource";
 static constexpr auto bootModeProp = "BootMode";
 static constexpr auto bootTypeProp = "BootType";
 
+std::string hostInstances = INSTANCES;
+
 auto instances(std::string s)
 {
     std::string delimiter = " ";
@@ -208,16 +211,15 @@ auto instances(std::string s)
 
 std::optional<size_t> findHost(size_t id)
 {
-    std::string str = INSTANCES;
     size_t hostId;
 
-    if (INSTANCES == "0")
+    if (hostInstances == "0")
     {
         hostId = id;
     }
     else
     {
-        static const auto hosts = instances(str);
+        static const auto hosts = instances(hostInstances);
         std::string num = std::to_string(id + 1);
         auto instance = std::lower_bound(hosts.begin(), hosts.end(), num);
 
@@ -352,7 +354,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 bool isMultiHostPlatform()
 {
     bool platform;
-    if (INSTANCES == "0")
+    if (ipmi::boot::hostInstances == "0")
     {
         platform = false;
     }
