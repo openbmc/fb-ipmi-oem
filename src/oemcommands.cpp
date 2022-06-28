@@ -188,49 +188,6 @@ static constexpr auto bootSourceProp = "BootSource";
 static constexpr auto bootModeProp = "BootMode";
 static constexpr auto bootTypeProp = "BootType";
 
-auto instances(std::string s)
-{
-    std::string delimiter = " ";
-    size_t pos = 0;
-    std::string token;
-    std::vector<std::string> host;
-
-    while ((pos = s.find(delimiter)) != std::string::npos)
-    {
-        token = s.substr(0, pos);
-        host.push_back(token);
-        s.erase(0, pos + delimiter.length());
-    }
-    host.push_back(s);
-
-    return host;
-}
-
-std::optional<size_t> findHost(size_t id)
-{
-    std::string str = INSTANCES;
-    size_t hostId;
-
-    if (INSTANCES == "0")
-    {
-        hostId = id;
-    }
-    else
-    {
-        static const auto hosts = instances(str);
-        std::string num = std::to_string(id + 1);
-        auto instance = std::lower_bound(hosts.begin(), hosts.end(), num);
-
-        if ((instance == hosts.end()) || (*instance != num))
-        {
-            return std::nullopt;
-        }
-        hostId = id + 1;
-    }
-
-    return hostId;
-}
-
 std::tuple<std::string, std::string> objPath(size_t id)
 {
     std::string hostName = "host" + std::to_string(id);
@@ -352,7 +309,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 bool isMultiHostPlatform()
 {
     bool platform;
-    if (INSTANCES == "0")
+    if (hostInstances == 0)
     {
         platform = false;
     }
@@ -767,7 +724,7 @@ ipmi::RspType<std::vector<uint8_t>>
     }
 
     std::copy(std::begin(data), std::end(data), bootSeq);
-    std::optional<size_t> hostId = ipmi::boot::findHost(ctx->hostIdx);
+    std::optional<size_t> hostId = findHost(ctx->hostIdx);
 
     if (!hostId)
     {
@@ -791,7 +748,7 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     uint8_t bootSeq[SIZE_BOOT_ORDER];
     uint8_t mode = 0;
 
-    std::optional<size_t> hostId = ipmi::boot::findHost(ctx->hostIdx);
+    std::optional<size_t> hostId = findHost(ctx->hostIdx);
 
     if (!hostId)
     {
