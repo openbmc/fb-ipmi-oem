@@ -18,8 +18,46 @@
 #include <sdbusplus/bus.hpp>
 
 #include <iostream>
+#include "config.h"
 
+inline std::string hostInstances = INSTANCES;
 static constexpr bool debug = false;
+
+static void instances(std::string s, std::vector<std::string>& host)
+{
+    size_t pos = 0;
+
+    while ((pos = s.find(" ")) != std::string::npos)
+    {
+        host.push_back(s.substr(0, pos));
+        s.erase(0, pos + 1);
+    }
+    host.push_back(s);
+}
+
+inline std::optional<size_t> findHost(size_t id)
+{
+    size_t hostId;
+    std::vector<std::string> hosts = {};
+
+    if (hostInstances == "0")
+    {
+        hostId = id;
+    }
+    else
+    {
+        instances(hostInstances, hosts);
+        std::string num = std::to_string(id + 1);
+        auto instance = std::lower_bound(hosts.begin(), hosts.end(), num);
+
+        if ((instance == hosts.end()) || (*instance != num))
+        {
+            return std::nullopt;
+        }
+        hostId = id + 1;
+    }
+    return hostId;
+}
 
 inline static void printRegistration(unsigned int netfn, unsigned int cmd)
 {
