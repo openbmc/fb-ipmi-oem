@@ -1,0 +1,112 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9380e0b_ab91e3ed",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-28T11:30:16Z",
+      "side": 1,
+      "message": "I think this code is probably ok to merge as is, but I think there is some refactoring we could do to clean up this whole process quite a bit...",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "688834b7_4d04ba66",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-28T11:30:16Z",
+      "side": 1,
+      "message": "static constexpr?",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1424cc22_cc6ea76b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-28T11:30:16Z",
+      "side": 1,
+      "message": "Should this be a constexpr function?",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15fe1784_01144713",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-28T11:30:16Z",
+      "side": 1,
+      "message": "Can/should this be a vector\u003csize_t\u003e?",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98176998_d2d977bc",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-28T11:30:16Z",
+      "side": 1,
+      "message": "constexpr?",
+      "range": {
+        "startLine": 222,
+        "startChar": 15,
+        "endLine": 222,
+        "endChar": 20
+      },
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47f0e72e_fdb727e9",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-28T11:30:16Z",
+      "side": 1,
+      "message": "Can we move the \u0027findHosts\u0027 support into a shared utility rather than doing string comparisons in multiple files?",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
