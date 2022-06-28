@@ -18,8 +18,50 @@
 #include <sdbusplus/bus.hpp>
 
 #include <iostream>
+#include "config.h"
 
 static constexpr bool debug = false;
+
+static void instances(std::string s, std::vector<std::string>& host)
+{
+    size_t pos = 0;
+
+    while ((pos = s.find(" ")) != std::string::npos)
+    {
+        host.push_back(s.substr(0, pos));
+        s.erase(0, pos + 1);
+    }
+    host.push_back(s);
+}
+
+inline std::optional<size_t> findHost(size_t id)
+{
+    std::vector<std::string> hosts = {};
+
+    if (hostInstances == "0")
+    {
+        return id;
+    }
+
+    instances(hostInstances, hosts);
+
+    std::sort(hosts.begin(), hosts.end());
+
+    /*  ctx host ID for host 1 is 0, host 2 is 1 ... host N is N-1
+     *  Therefore, host Index is incremented to 1 to map with the dbus
+     *  object path created.
+     */
+    std::string num = std::to_string(id + 1);
+
+    auto instance = std::lower_bound(hosts.begin(), hosts.end(), num);
+
+    if (instance != std::end(hosts))
+    {
+        return id + 1;
+    }
+
+    return std::nullopt;
+}
 
 inline static void printRegistration(unsigned int netfn, unsigned int cmd)
 {
