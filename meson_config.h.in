@@ -1,0 +1,3 @@
+#pragma once
+
+inline static const std::string hostInstances = @INSTANCES@;

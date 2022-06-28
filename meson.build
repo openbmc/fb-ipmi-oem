@@ -30,11 +30,12 @@ if get_option('host-instances') != ''
   host_instances = get_option('host-instances')
 endif
 
-add_project_arguments(
-  cpp.get_supported_arguments([
-    '-DINSTANCES=' + host_instances,
-  ]),
-  language : 'cpp')
+conf_data = configuration_data()
+conf_data.set_quoted('INSTANCES',host_instances)
+
+configure_file(input: 'meson_config.h.in',
+               output: 'config.h',
+               configuration: conf_data)
 
 if not get_option('bic').disabled()
   add_project_arguments(
