@@ -102,6 +102,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d2f850f0_11918929",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 1601,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-29T11:51:25Z",
+      "side": 1,
+      "message": "Please take a look at `ipmiSetSensorReading` and `ipmiSenGetSensorReading` in phosphor-host-ipmid/dbus-sdr/sensorcommands.cpp for an example of what I\u0027m talking about.  Both of these functions use automatic parsing and automatic formulation of the response.",
+      "parentUuid": "33355452_52553197",
+      "range": {
+        "startLine": 1599,
+        "startChar": 0,
+        "endLine": 1601,
+        "endChar": 70
+      },
+      "revId": "c8568ac0f15af0e940e4ce6795df6ee5a00e4479",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "06b53257_a130a9c8",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 20
