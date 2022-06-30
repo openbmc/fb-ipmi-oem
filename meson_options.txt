@@ -4,3 +4,7 @@ option(
   'host-instances',
   type: 'string',
   description: 'Host Instances')
+option(
+  'machine',
+  type: 'string',
+  description: 'Machine')

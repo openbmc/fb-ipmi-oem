@@ -78,3 +78,17 @@ zfboemcmds_lib = library(
   override_options: ['b_lundef=false'],
   install: true,
   install_dir: get_option('libdir') / 'ipmid-providers')
+
+if get_option('machine') != ''
+  configfile = [
+        'cri_sensors.json',
+        'gpio_desc.json',
+        'post_desc.json'
+   ]
+   foreach c : configfile
+      file = join_paths(get_option('machine'), c)
+      install_data(
+         sources : file,
+         install_dir : get_option('datadir') / 'lcd-debug' )
+   endforeach
+endif
