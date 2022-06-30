@@ -78,3 +78,23 @@ zfboemcmds_lib = library(
   override_options: ['b_lundef=false'],
   install: true,
   install_dir: get_option('libdir') / 'ipmid-providers')
+
+opt = get_option('machine')
+if opt == 'yosemitev2'
+     configfile = [
+          'yosemitev2/cri_sensors.json',
+          'yosemitev2/gpio_desc.json'
+     ]
+     foreach c : configfile
+         install_data(sources : c, install_dir :get_option('datadir') / 'lcd-debug' )
+     endforeach
+else
+       configfile = [
+          'tiogapass/cri_sensors.json',
+          'tiogapass/gpio_desc.json',
+          'tiogapass/post_desc.json'
+     ]
+     foreach c : configfile
+         install_data(sources : c, install_dir :get_option('datadir') / 'lcd-debug' )
+     endforeach
+endif
