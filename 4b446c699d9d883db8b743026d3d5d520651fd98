@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "15a94f8b_1a075801",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-01T08:30:43Z",
+      "side": 1,
+      "message": "INSTANCES is a macro definition, so it cannot be able to declare as static constexpr.\n\n| ./config.h:8:19: note: in definition of macro \u0027INSTANCES\u0027\n|     8 | #define INSTANCES \"1 2 3 4\"\n|       |                   ^~~~~~~~~",
+      "parentUuid": "688834b7_4d04ba66",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1424cc22_cc6ea76b",
@@ -52,6 +70,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "34170bb2_77a6a9cc",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-01T08:30:43Z",
+      "side": 1,
+      "message": "When this function is declared as constexpr, all variables inside this function is expected to be constexpr and CI issues \"non-literal type\" occurs.",
+      "parentUuid": "1424cc22_cc6ea76b",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "15fe1784_01144713",
@@ -65,6 +101,24 @@
       "writtenOn": "2022-06-28T11:30:16Z",
       "side": 1,
       "message": "Can/should this be a vector\u003csize_t\u003e?",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe026573_c4053662",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-01T08:30:43Z",
+      "side": 1,
+      "message": "Since substr() return a string type, vector of size_t cannot be declared for \"host\" variable.",
+      "parentUuid": "15fe1784_01144713",
       "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -92,6 +146,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d7a60e5c_e7e95cd3",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-01T08:30:43Z",
+      "side": 1,
+      "message": "hostInstances is not a constexpr variable. Therefore, not able to define as constexpr for \"hosts\" variable.",
+      "parentUuid": "98176998_d2d977bc",
+      "range": {
+        "startLine": 222,
+        "startChar": 15,
+        "endLine": 222,
+        "endChar": 20
+      },
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "47f0e72e_fdb727e9",
@@ -105,6 +183,24 @@
       "writtenOn": "2022-06-28T11:30:16Z",
       "side": 1,
       "message": "Can we move the \u0027findHosts\u0027 support into a shared utility rather than doing string comparisons in multiple files?",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a562be25_15c0c7c8",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-01T08:30:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47f0e72e_fdb727e9",
       "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
