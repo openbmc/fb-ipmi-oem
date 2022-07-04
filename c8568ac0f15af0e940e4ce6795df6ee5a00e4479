@@ -124,6 +124,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4ad560a_68d74557",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 1601,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-04T11:04:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2f850f0_11918929",
+      "range": {
+        "startLine": 1599,
+        "startChar": 0,
+        "endLine": 1601,
+        "endChar": 70
+      },
+      "revId": "c8568ac0f15af0e940e4ce6795df6ee5a00e4479",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06b53257_a130a9c8",
@@ -137,6 +161,30 @@
       "writtenOn": "2022-06-22T12:35:44Z",
       "side": 1,
       "message": "parsing is still unresolved.",
+      "range": {
+        "startLine": 1698,
+        "startChar": 48,
+        "endLine": 1700,
+        "endChar": 70
+      },
+      "revId": "c8568ac0f15af0e940e4ce6795df6ee5a00e4479",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ee787f02_057ee539",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 20
+      },
+      "lineNbr": 1700,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-04T11:04:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06b53257_a130a9c8",
       "range": {
         "startLine": 1698,
         "startChar": 48,
