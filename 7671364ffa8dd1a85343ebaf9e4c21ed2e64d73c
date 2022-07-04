@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b1fb0cd_389fbc29",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-07-04T20:58:20Z",
+      "side": 1,
+      "message": "A few issues still need clarification in this latest patchset.  Thanks!",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "612c0e63_5970f2de",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-07-04T20:58:20Z",
+      "side": 1,
+      "message": "Is there a specific reason why 150 was chosen?  Would like to understand the logic as 150 seems an odd choice for a max buffer size.",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3fb30248_a10ec0da",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 481,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-07-04T20:58:20Z",
+      "side": 1,
+      "message": "Is there a way to push this to the platform config as different platforms will have different numbers of DIMMs which may not be numbered in the same way.  I would prefer this not be hard-coded when we will need to extend this to other platforms.",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9316fc0_45695cb2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-07-04T20:58:20Z",
+      "side": 1,
+      "message": "Technically, isn\u0027t some of the DIMM information available when data.push_back(result) is executed above?  Thus, it would be good to report some DIMM data is available if at least some of the DIMM data has been processed prior to an exception as opposed to logging an error that DIMM information not available.  Thus, if an error occurred on say the 3rd or 4th DIMM, it would still be helpful to attempt to continue for other DIMMs and report just the DIMM that caused the failure as having no DIMM information available.",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "34653f6e_abb82fbb",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-07-04T20:58:20Z",
+      "side": 1,
+      "message": "Is there a need to do this test twice here and not combine the code under a single if statement?",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
