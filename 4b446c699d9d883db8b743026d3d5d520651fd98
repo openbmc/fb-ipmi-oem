@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b43ea9aa_91319a8a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-07-05T12:07:50Z",
+      "side": 1,
+      "message": "So fix that in config.h?\n\nThere is an issue of us passing it along as a compiler option instead of using meson to create a real header file.",
+      "parentUuid": "15a94f8b_1a075801",
+      "revId": "4b446c699d9d883db8b743026d3d5d520651fd98",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1424cc22_cc6ea76b",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 1
