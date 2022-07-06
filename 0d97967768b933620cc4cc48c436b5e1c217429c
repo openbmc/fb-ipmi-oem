@@ -33,6 +33,24 @@
       "message": "Looks good to me.",
       "revId": "0d97967768b933620cc4cc48c436b5e1c217429c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "541645d2_9d1fd5ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-06T13:22:31Z",
+      "side": 1,
+      "message": "actually for coping machine-specific config file from meson is not coping properly.\nin existing fb-ipmi-oem (CMAKE) it would be like,\nif(BIC)\n               {\n                     set (CONFIG_FILES_YV2 yosemitev2/gpio_desc.json yosemitev2/cri_sensors.json)\n                     install (FILES ${CONFIG_FILES_YV2} DESTINATION ${PACKAGE_DIR})\n               }\nfor the same thing can\u0027t able to achieve in meson, that\u0027s why I removed here and added those files in yocto machine-layer.               \nand you suggested getting a machine from Inventory.Decorator.Compatible exposed by EM, am working on that too, if it is okay I\u0027ll proceed the same like to change those configs to yocto-machine-layer.",
+      "parentUuid": "66e91f09_9b8c4a97",
+      "revId": "0d97967768b933620cc4cc48c436b5e1c217429c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
