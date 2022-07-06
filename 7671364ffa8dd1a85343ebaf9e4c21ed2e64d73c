@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "06a3581c_442e89ac",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-06T12:02:02Z",
+      "side": 1,
+      "message": "There is no specific reason for bus size as 150, based on the requirement will change in next patch set thanks.",
+      "parentUuid": "612c0e63_5970f2de",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3fb30248_a10ec0da",
@@ -48,6 +66,24 @@
       "writtenOn": "2022-07-04T20:58:20Z",
       "side": 1,
       "message": "Is there a way to push this to the platform config as different platforms will have different numbers of DIMMs which may not be numbered in the same way.  I would prefer this not be hard-coded when we will need to extend this to other platforms.",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2234256_6a4cce8e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 481,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-06T12:02:02Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3fb30248_a10ec0da",
       "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -82,6 +118,24 @@
       "writtenOn": "2022-07-04T20:58:20Z",
       "side": 1,
       "message": "Is there a need to do this test twice here and not combine the code under a single if statement?",
+      "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd1360b2_571e7f85",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 25
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-06T12:02:02Z",
+      "side": 1,
+      "message": "yes correct, i\u0027ll update that too.",
+      "parentUuid": "34653f6e_abb82fbb",
       "revId": "7671364ffa8dd1a85343ebaf9e4c21ed2e64d73c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
