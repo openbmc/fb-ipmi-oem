@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2bbca6e6_ddab498a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-07-07T16:45:09Z",
+      "side": 1,
+      "message": "Community suggested to create custom filter for this instead modifying existing implementation in IPMI repository. We can add/modify any filters based on our platforms in future also without any dependency. \n\nThis is the suggestion got from the community and that\u0027s why created custom filter.\n\nhttps://lists.ozlabs.org/pipermail/openbmc/2022-May/030394.html",
+      "parentUuid": "fc52fe8a_edd4fa5d",
+      "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b367411e_e1045929",
@@ -48,6 +66,24 @@
       "writtenOn": "2022-07-07T12:52:00Z",
       "side": 1,
       "message": "Why not use RestrictionMode::interface directly?",
+      "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e06d79fd_514155c2",
+        "filename": "src/whitelist-filter.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-07-07T16:45:09Z",
+      "side": 1,
+      "message": "Ack. I used as similar to the IPMI implementation. I will check and use RestrictionMode::interface directly.",
+      "parentUuid": "b367411e_e1045929",
       "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
