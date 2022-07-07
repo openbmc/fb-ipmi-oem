@@ -51,6 +51,24 @@
       "parentUuid": "66e91f09_9b8c4a97",
       "revId": "0d97967768b933620cc4cc48c436b5e1c217429c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "500d2ec7_e12bf5db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-07-07T12:54:56Z",
+      "side": 1,
+      "message": "\u003e for the same thing can\u0027t able to achieve in meson, that\u0027s why I removed here and added those files in yocto machine-layer.               \n\nCan you expand on this?  I don\u0027t know why we cannot have conditional installs in meson.  You can also have a `machine` meson_option that selects which subdirectory we are installing from.\n\n\u003e if it is okay I\u0027ll proceed the same like to change those configs to yocto-machine-layer.\n\nI don\u0027t understand this sentence.  Can you restate what you intend to do?",
+      "parentUuid": "541645d2_9d1fd5ec",
+      "revId": "0d97967768b933620cc4cc48c436b5e1c217429c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
