@@ -16,6 +16,40 @@
       "message": "Looks good to me.",
       "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc52fe8a_edd4fa5d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-07-07T12:52:00Z",
+      "side": 1,
+      "message": "It seems a little perplexing that we have to copy large pieces of code from the original IPMI repository.  Isn\u0027t there some way to reuse the upstream IPMI code while supplying a different list?  What are the changes we are making here?  How do we identify those and maintain the rest?",
+      "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b367411e_e1045929",
+        "filename": "src/whitelist-filter.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-07-07T12:52:00Z",
+      "side": 1,
+      "message": "Why not use RestrictionMode::interface directly?",
+      "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
