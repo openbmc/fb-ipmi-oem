@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9fb36a09_46355cf4",
+        "filename": "include/commandutils.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-07T14:03:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c080b46_17a31f8b",
+      "revId": "5bdb3fa1fe82cda5585dd735d6a198a7fc5b97e4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e16706dc_d5081776",
@@ -52,6 +70,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "55cac052_247668e3",
+        "filename": "include/commandutils.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-07T14:03:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e16706dc_d5081776",
+      "revId": "5bdb3fa1fe82cda5585dd735d6a198a7fc5b97e4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d38e0e73_feef0e85",
@@ -65,6 +101,24 @@
       "writtenOn": "2022-07-05T12:07:50Z",
       "side": 1,
       "message": "Can you convert this whole function to use early return?\n\nif (hostInstances) \u003d\u003d \"0\" {\n   return id;\n}\n\n...\n\nif (instance !\u003d std::end(hosts)) {\n    return id + 1;\n}\n\n...\n\nreturn std::nullopt;",
+      "revId": "5bdb3fa1fe82cda5585dd735d6a198a7fc5b97e4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cba2764b_067482db",
+        "filename": "include/commandutils.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-07T14:03:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d38e0e73_feef0e85",
       "revId": "5bdb3fa1fe82cda5585dd735d6a198a7fc5b97e4",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
