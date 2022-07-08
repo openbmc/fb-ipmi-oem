@@ -71,6 +71,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9665a1c_4b4f098b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-07-08T16:54:59Z",
+      "side": 1,
+      "message": "No. We have to create a custom filter. For creating custom filter, we need that code framework(Same as IPMI). I referred the below intel-ipmi-oem. They created custom filter with same code as like IPMI. So, I just followed as like intel-ipmi-oem.\n\nhttps://github.com/openbmc/intel-ipmi-oem/blob/master/src/whitelist-filter.cpp\n\n\nHow do we identify which pieces you\u0027ve modified and how to do we keep it maintained?\n\nI Agree, It\u0027s not easy to identify modified code and maintain. It will not show the code diff as new file was created. \n\nIntel is maintaining similar filter code in intel-ipmi-oem.\n\nwe have to compare the files with IPMI repository files to identify the changes. I have modified the below functions in whitelist-filter.cpp\n\nfilterMessage, postInit and cacheRestrictionMode.",
+      "parentUuid": "807c7895_0873b254",
+      "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b367411e_e1045929",
