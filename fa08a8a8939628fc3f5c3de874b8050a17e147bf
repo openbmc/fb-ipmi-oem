@@ -16,6 +16,24 @@
       "message": "Did you intentionally add a second S-o-b?  Looks like maybe something changed in your git config.",
       "revId": "fa08a8a8939628fc3f5c3de874b8050a17e147bf",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1c088f0_bb54fe0c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 31
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-07-12T06:33:53Z",
+      "side": 1,
+      "message": "sorry, it has been added mistakenly.",
+      "parentUuid": "22b09470_df55e48e",
+      "revId": "fa08a8a8939628fc3f5c3de874b8050a17e147bf",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
