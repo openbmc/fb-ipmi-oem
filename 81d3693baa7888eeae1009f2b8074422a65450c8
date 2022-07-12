@@ -16,6 +16,24 @@
       "message": "I\u0027m slightly surprised this works.  What does this look like when there are multiple instances?  We have an int 0 in one case and a string \"1 2 3 4\" in another case?  How is that possible?\n\nI see throughout the code you are now doing comparisons against 0.  If hostInstances is a string, doesn\u0027t this become effectively a comparison against NULL?  I\u0027m surprised we didn\u0027t get compiler warnings for using an integer for pointer comparison.  Even without a compiler warning, I think we should do something to clean this up because it is non-obvious.",
       "revId": "81d3693baa7888eeae1009f2b8074422a65450c8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1969ca01_77135075",
+        "filename": "meson_config.h.in",
+        "patchSetId": 7
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000869
+      },
+      "writtenOn": "2022-07-12T12:16:11Z",
+      "side": 1,
+      "message": "I have changed INSTANCES to string. Now both \u00270\u0027 and \u00271 2 3 4\u0027 will be used as string.",
+      "parentUuid": "dc3697e4_0b6c151f",
+      "revId": "81d3693baa7888eeae1009f2b8074422a65450c8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
