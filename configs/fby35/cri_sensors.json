@@ -1,0 +1,42 @@
+{
+        "_HSC_Temp":
+        {
+                "short_name": "HSC_TEMP:"
+        },
+        "_INLET_Temp":
+        {
+                "short_name": "MB_INLET_TEMP:"
+        },
+        "_VCCIN_VR_Pout":
+        {
+                "short_name": "VCCIN_VR_POUT:"
+        },
+        "_VCCIN_VR_Temp":
+        {
+                "short_name": "VCCIN_VR_TEMP:"
+        },
+        "_DIMMA0_Temp":
+        {
+                "short_name": "DIMMA_TEMP:"
+        },
+        "_DIMMC0_Temp":
+        {
+                "short_name": "DIMMC_TEMP:"
+        },
+        "_DIMMD0_Temp":
+        {
+                "short_name": "DIMMD_TEMP:"
+        },
+        "_DIMME0_Temp":
+        {
+                "short_name": "DIMME_TEMP:"
+        },
+        "_DIMMG0_Temp":
+        {
+                "short_name": "DIMMG_TEMP:"
+        },
+        "_DIMMH0_Temp":
+        {
+                "short_name": "DIMMH_TEMP:"
+        }
+}
