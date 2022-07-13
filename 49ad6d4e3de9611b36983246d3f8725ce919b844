@@ -16,6 +16,23 @@
       "message": "@Michael, can you confirm your concerns have been resolved?",
       "revId": "49ad6d4e3de9611b36983246d3f8725ce919b844",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "457d37d0_a216a4cc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 31
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-07-13T15:27:39Z",
+      "side": 1,
+      "message": "Looks good to me.",
+      "revId": "49ad6d4e3de9611b36983246d3f8725ce919b844",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
