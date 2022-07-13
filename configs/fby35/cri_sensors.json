@@ -1,0 +1,34 @@
+{
+        "_VCCIN_VR_Temp":
+        {
+                "short_name": "SOC_VR_TEMP:"
+        },
+        "_VCCIN_VR_Pout":
+        {
+                "short_name": "SOC_VR_PWR:"
+        },
+        "_SOC_DIMMA_Temp":
+        {
+                "short_name": "DIMMA_TEMP:"
+        },
+        "_SOC_DIMMC_Temp":
+        {
+                "short_name": "DIMMC_TEMP:"
+        },
+        "_SOC_DIMMD_Temp":
+        {
+                "short_name": "DIMMD_TEMP:"
+        },
+        "_SOC_DIMME_Temp":
+        {
+                "short_name": "DIMME_TEMP:"
+        },
+        "_SOC_DIMMG_Temp":
+        {
+                "short_name": "DIMMG_TEMP:"
+        },
+        "_SOC_DIMMH_Temp":
+        {
+                "short_name": "DIMMH_TEMP:"
+        }
+}
