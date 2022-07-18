@@ -1585,7 +1585,7 @@ ipmi::RspType<> ipmiOemQSetDimmInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t,
     uint8_t len = request.size();
     std::string dimmType;
     readDimmType(dimmType, dimmIndex);
-    auto hostId = ipmi::boot::findHost(ctx->hostIdx);
+    auto hostId = findHost(ctx->hostIdx);
     if (!hostId)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -1680,7 +1680,7 @@ ipmi::RspType<std::vector<uint8_t>>
     std::string str;
     std::string dimmType;
     readDimmType(dimmType, dimmIndex);
-    auto hostId = ipmi::boot::findHost(ctx->hostIdx);
+    auto hostId = findHost(ctx->hostIdx);
     if (!hostId)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
