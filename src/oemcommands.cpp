@@ -50,7 +50,7 @@ using namespace phosphor::logging;
 
 size_t getSelectorPosition();
 static void registerOEMFunctions() __attribute__((constructor));
-sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
+sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
 constexpr uint8_t cmdSetSystemGuid = 0xEF;
 
@@ -111,8 +111,7 @@ bool isLinkLocalIP(const std::string& address)
     return address.find(IPV4_PREFIX) == 0 || address.find(IPV6_PREFIX) == 0;
 }
 
-DbusObjectInfo getIPObject(sdbusplus::bus::bus& bus,
-                           const std::string& interface,
+DbusObjectInfo getIPObject(sdbusplus::bus_t& bus, const std::string& interface,
                            const std::string& serviceRoot,
                            const std::string& match)
 {
@@ -268,7 +267,7 @@ int readDimmType(std::string& data, uint8_t param)
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 {
     ipmi_ret_t rc = IPMI_CC_OK;
-    sdbusplus::bus::bus bus(ipmid_get_sd_bus_connection());
+    sdbusplus::bus_t bus(ipmid_get_sd_bus_connection());
 
     const std::string ethdevice = "eth0";
 
@@ -373,7 +372,7 @@ int8_t getFruData(std::string& data, std::string& name)
         sd_bus_unref(bus);
         return -1;
     }
-    sdbusplus::bus::bus dbus(bus);
+    sdbusplus::bus_t dbus(bus);
     auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
                                            "/xyz/openbmc_project/object_mapper",
                                            "xyz.openbmc_project.ObjectMapper",

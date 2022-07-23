@@ -76,7 +76,7 @@ inline static bool getSensorSubtree(SensorSubTree& subtree)
         sd_bus_unref(bus);
         return false;
     }
-    sdbusplus::bus::bus dbus(bus);
+    sdbusplus::bus_t dbus(bus);
     auto mapperCall =
         dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
                              "/xyz/openbmc_project/object_mapper",

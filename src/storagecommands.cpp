@@ -73,7 +73,7 @@ std::unique_ptr<phosphor::Timer> cacheTimer = nullptr;
 // collision to verify our dev-id
 boost::container::flat_map<uint8_t, std::pair<uint8_t, uint8_t>> deviceHashes;
 
-static sdbusplus::bus::bus dbus(ipmid_get_sd_bus_connection());
+static sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
 
 static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
                          SensorMap& sensorMap)
@@ -134,13 +134,13 @@ static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
 
 bool writeFru()
 {
-    sdbusplus::message::message writeFru = dbus.new_method_call(
+    sdbusplus::message_t writeFru = dbus.new_method_call(
         fruDeviceServiceName, "/xyz/openbmc_project/FruDevice",
         "xyz.openbmc_project.FruDeviceManager", "WriteFru");
     writeFru.append(cacheBus, cacheAddr, fruCache);
     try
     {
-        sdbusplus::message::message writeFruResp = dbus.call(writeFru);
+        sdbusplus::message_t writeFruResp = dbus.call(writeFru);
     }
     catch (const sdbusplus::exception_t&)
     {
@@ -176,13 +176,13 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         writeFru();
     }
 
-    sdbusplus::message::message getObjects = dbus.new_method_call(
+    sdbusplus::message_t getObjects = dbus.new_method_call(
         fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
         "GetManagedObjects");
     ManagedObjectType frus;
     try
     {
-        sdbusplus::message::message resp = dbus.call(getObjects);
+        sdbusplus::message_t resp = dbus.call(getObjects);
         resp.read(frus);
     }
     catch (const sdbusplus::exception_t&)
@@ -258,7 +258,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     }
 
     fruCache.clear();
-    sdbusplus::message::message getRawFru = dbus.new_method_call(
+    sdbusplus::message_t getRawFru = dbus.new_method_call(
         fruDeviceServiceName, "/xyz/openbmc_project/FruDevice",
         "xyz.openbmc_project.FruDeviceManager", "GetRawFru");
     cacheBus = deviceFind->second.first;
@@ -266,7 +266,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     getRawFru.append(cacheBus, cacheAddr);
     try
     {
-        sdbusplus::message::message getRawResp = dbus.call(getRawFru);
+        sdbusplus::message_t getRawResp = dbus.call(getRawFru);
         getRawResp.read(fruCache);
     }
     catch (const sdbusplus::exception_t&)
@@ -446,12 +446,12 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
 
     ManagedObjectType frus;
 
-    sdbusplus::message::message getObjects = dbus.new_method_call(
+    sdbusplus::message_t getObjects = dbus.new_method_call(
         fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
         "GetManagedObjects");
     try
     {
-        sdbusplus::message::message resp = dbus.call(getObjects);
+        sdbusplus::message_t resp = dbus.call(getObjects);
         resp.read(frus);
     }
     catch (const sdbusplus::exception_t&)
