@@ -25,6 +25,8 @@ add_project_arguments(
   ]),
   language : 'cpp')
 
+fs = import('fs')
+
 host_instances = '0'
 if get_option('host-instances') != ''
   host_instances = get_option('host-instances')
@@ -87,9 +89,14 @@ if get_option('machine') != ''
         'post_desc.json'
    ]
    foreach c : configfile
-      file = join_paths(get_option('machine'), c)
-      install_data(
-         sources : file,
-         install_dir : get_option('datadir') / 'lcd-debug' )
+      file = join_paths('configs', get_option('machine'), c)
+      if not fs.is_file(file)
+         warning('Missing config file: ' + file)
+      else
+          install_data(
+              sources : file,
+              install_dir : get_option('datadir') / 'lcd-debug'
+          )
+      endif
    endforeach
 endif
