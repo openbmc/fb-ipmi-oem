@@ -134,6 +134,30 @@
       },
       "revId": "055d67953bee180919d14875ccc54f24d7d13af6",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c5eeb86_9ddbd7b1",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2022-08-03T03:51:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1583f5c7_60c43a9a",
+      "range": {
+        "startLine": 117,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 17
+      },
+      "revId": "055d67953bee180919d14875ccc54f24d7d13af6",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
