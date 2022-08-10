@@ -106,6 +106,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "403b03c3_4656259d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-08-10T13:32:28Z",
+      "side": 1,
+      "message": "Ack. This implementation is handled in phoshphor-host-ipmid itself.",
+      "parentUuid": "0275aa33_d7bae329",
+      "revId": "c57a5690f433723d8bc9c4423a3a34eca7161c2d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b367411e_e1045929",
