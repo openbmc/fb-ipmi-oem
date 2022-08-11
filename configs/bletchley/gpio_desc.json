@@ -1,0 +1,14 @@
+
+{
+  "GpioDesc": [
+    [ "0x00", 0, 0, "" ],
+    [ "0x10", 0, 2, "FM_DBG_RST_BTN" ],
+    [ "0x11", 0, 1, "FM_PWR_BTN" ],
+    [ "0x12", 1, 0, "SYS_PWROK" ],
+    [ "0x13", 0, 0, "RST_PLTRST" ],
+    [ "0x14", 1, 0, "DSW_PWROK" ],
+    [ "0x15", 0, 0, "FM_CATERR_MSMI" ],
+    [ "0x16", 0, 0, "FM_SLPS3" ],
+    [ "0x17", 0, 3, "FM_UART_SWITCH" ]
+  ]
+}
