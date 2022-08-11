@@ -1231,11 +1231,9 @@ ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx, uint8_t,
 }
 
 #else
-ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
-                                ipmi_request_t request,
-                                ipmi_response_t response,
-                                ipmi_data_len_t data_len,
-                                ipmi_context_t context)
+ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t, ipmi_cmd_t,
+                                ipmi_request_t request, ipmi_response_t,
+                                ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
