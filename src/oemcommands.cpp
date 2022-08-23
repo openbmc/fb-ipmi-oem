@@ -1937,20 +1937,38 @@ ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
     return IPMI_CC_OK;
 }
 
-/* Helper function for sending DCMI commands to ME and getting response back */
-ipmi::RspType<std::vector<uint8_t>> sendDCMICmd(uint8_t cmd,
-                                                std::vector<uint8_t>& cmdData)
+/* Helper function for sending DCMI commands to ME/BIC and
+ * getting response back
+ */
+ipmi::RspType<std::vector<uint8_t>>
+    sendDCMICmd([[maybe_unused]] ipmi::Context::ptr ctx,
+                [[maybe_unused]] uint8_t cmd, std::vector<uint8_t>& cmdData)
 {
     std::vector<uint8_t> respData;
+
+#if BIC_ENABLED
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, cmdData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+#else
 
     /* Add group id as first byte to request for ME command */
     cmdData.insert(cmdData.begin(), groupDCMI);
 
     if (sendMeCmd(ipmi::netFnGroup, cmd, cmdData, respData))
+    {
         return ipmi::responseUnspecifiedError();
+    }
 
     /* Remove group id as first byte as it will be added by IPMID */
     respData.erase(respData.begin());
+
+#endif
 
     return ipmi::responseSuccess(std::move(respData));
 }
@@ -1958,27 +1976,31 @@ ipmi::RspType<std::vector<uint8_t>> sendDCMICmd(uint8_t cmd,
 /* DCMI Command handellers. */
 
 ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMIGetPowerReading(std::vector<uint8_t> reqData)
+    ipmiOemDCMIGetPowerReading(ipmi::Context::ptr ctx,
+                               std::vector<uint8_t> reqData)
 {
-    return sendDCMICmd(ipmi::dcmi::cmdGetPowerReading, reqData);
+    return sendDCMICmd(ctx, ipmi::dcmi::cmdGetPowerReading, reqData);
 }
 
 ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMIGetPowerLimit(std::vector<uint8_t> reqData)
+    ipmiOemDCMIGetPowerLimit(ipmi::Context::ptr ctx,
+                             std::vector<uint8_t> reqData)
 {
-    return sendDCMICmd(ipmi::dcmi::cmdGetPowerLimit, reqData);
+    return sendDCMICmd(ctx, ipmi::dcmi::cmdGetPowerLimit, reqData);
 }
 
 ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMISetPowerLimit(std::vector<uint8_t> reqData)
+    ipmiOemDCMISetPowerLimit(ipmi::Context::ptr ctx,
+                             std::vector<uint8_t> reqData)
 {
-    return sendDCMICmd(ipmi::dcmi::cmdSetPowerLimit, reqData);
+    return sendDCMICmd(ctx, ipmi::dcmi::cmdSetPowerLimit, reqData);
 }
 
 ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMIApplyPowerLimit(std::vector<uint8_t> reqData)
+    ipmiOemDCMIApplyPowerLimit(ipmi::Context::ptr ctx,
+                               std::vector<uint8_t> reqData)
 {
-    return sendDCMICmd(ipmi::dcmi::cmdActDeactivatePwrLimit, reqData);
+    return sendDCMICmd(ctx, ipmi::dcmi::cmdActDeactivatePwrLimit, reqData);
 }
 
 static void registerOEMFunctions(void)
