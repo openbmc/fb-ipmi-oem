@@ -32,7 +32,7 @@ namespace selector
 {
 const std::string path = "/xyz/openbmc_project/Chassis/Buttons/HostSelector";
 const std::string interface =
-    "xyz.openbmc_project.Chassis.HostSelector.Selector";
+    "xyz.openbmc_project.Chassis.Buttons.HostSelector";
 const std::string propertyName = "Position";
 } // namespace selector
 
