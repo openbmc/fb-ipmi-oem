@@ -16,6 +16,7 @@
  */
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/container/flat_map.hpp>
 #include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
