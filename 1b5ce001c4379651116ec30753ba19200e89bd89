@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6af05060_f15ecaaa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-26T13:10:25Z",
+      "side": 1,
+      "message": "Hi All,\nplease review the patch and provide your suggestions.\nThanks",
+      "revId": "1b5ce001c4379651116ec30753ba19200e89bd89",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
