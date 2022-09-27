@@ -46,6 +46,30 @@
       },
       "revId": "108d31c14886ff785d8ddc72fe1d2df012e3d2fc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ad3fad7_13db62f1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-09-27T15:17:39Z",
+      "side": 1,
+      "message": "In the latest patchset, this has not been resolved.  It still shows meta-facebook instead of meta-greatlakes in the title.",
+      "parentUuid": "aab70c2b_b217016f",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 14
+      },
+      "revId": "108d31c14886ff785d8ddc72fe1d2df012e3d2fc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bd5bb139_cc7d0a63",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-09-27T15:17:39Z",
+      "side": 1,
+      "message": "Patrick\u0027s comment from an early set has not been addressed.",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e5359d6a_d27858a5",
         "filename": "configs/greatlakes/cri_sensors.json",
         "patchSetId": 7
