@@ -35,6 +35,42 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4fa86440_ad6e008a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd5bb139_cc7d0a63",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fbce4b9_8e8f7bf4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9aa7c14d_b0e38caf",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e5359d6a_d27858a5",
@@ -48,6 +84,30 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should be MB_HSC_TEMP_C",
+      "range": {
+        "startLine": 4,
+        "startChar": 1,
+        "endLine": 4,
+        "endChar": 3
+      },
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ca31dc7e_e9372df8",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e5359d6a_d27858a5",
       "range": {
         "startLine": 4,
         "startChar": 1,
@@ -77,6 +137,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cf65132c_e22adc06",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "7df65a87_cbb81fb1",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5f5138e4_ba378ccb",
         "filename": "configs/greatlakes/cri_sensors.json",
         "patchSetId": 7
@@ -88,6 +166,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should be MB_VR_VCCIN_PWR_W",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a731238d_39b5ba7d",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5f5138e4_ba378ccb",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -111,6 +207,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a6d93d50_fa246b70",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0b3962b0_d232d627",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5ddc27f1_b226f2c5",
         "filename": "configs/greatlakes/cri_sensors.json",
         "patchSetId": 7
@@ -122,6 +236,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should be MB_DIMMA0_TEMP_C",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "30585b32_6dd0bd89",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5ddc27f1_b226f2c5",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -145,6 +277,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2d2022e8_70c15090",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "11de7883_b387f582",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "15c8a042_aec3d866",
         "filename": "configs/greatlakes/cri_sensors.json",
         "patchSetId": 7
@@ -156,6 +306,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should be MB_DIMMA3_TEMP_C",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d41fa08_8f3bb080",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "15c8a042_aec3d866",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -179,6 +347,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "dede46fb_7a7e2726",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6967eea7_aa1f9f15",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2ec77c24_fc28a432",
         "filename": "configs/greatlakes/cri_sensors.json",
         "patchSetId": 7
@@ -190,6 +376,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should be MB_DIMMA6_TEMP_C",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "907a0444_f7345fb3",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "2ec77c24_fc28a432",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -213,6 +417,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "1e157dfa_884ba946",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4ac36108_f5e70448",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a52b8499_c3a99a4c",
         "filename": "configs/greatlakes/cri_sensors.json",
         "patchSetId": 7
@@ -224,6 +446,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Where are the other sensors?  Please see issue #72 for a link to the common sensor names needed for greatlakes.",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a52ae329_baa9e57e",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Hi Michel,\n         I have added some sensors in this JSON, and referred that issue #72 in this file lot of sensors are there and I can\u0027t identify the common sensor here. could you please suggest common sensors name for the great lake?",
+      "parentUuid": "a52b8499_c3a99a4c",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -245,6 +485,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1678297_f419f823",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28945942_c5086048",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6a4aa7d5_91ea0714",
@@ -258,6 +516,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Need to add comment this is UPI Phase - Start",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a08b637_e9c587cc",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6a4aa7d5_91ea0714",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -279,6 +555,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "281c042b_9911d1ff",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64a92dfa_59bb6543",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66bc2ca7_dd1f311c",
@@ -292,6 +586,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Need to add comment for SEC Phase - Start",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d84c48b_7669029d",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66bc2ca7_dd1f311c",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -313,6 +625,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b1f9b87_a375c77a",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17b66729_ed539c2f",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e8088fa9_d459f915",
@@ -326,6 +656,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Need to add comment for PEI Phase - Start",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9437cd0b_4c929665",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8088fa9_d459f915",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -347,6 +695,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a89a7a1_430b5ea3",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37af9d07_41f0e9a6",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db28fc34_e5ba8153",
@@ -360,6 +726,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should add comment for S3 Resume Error Code",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "82b52618_663bcd8e",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "db28fc34_e5ba8153",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -381,6 +765,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea9a97de_edf53cd5",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0f89e52_b4efe318",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a0f64616_c72eff74",
@@ -394,6 +796,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should add comment for Recovery Error code",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec3cc4e8_ae719ad7",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0f64616_c72eff74",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -415,6 +835,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "14789bd5_82d5247b",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1306d512_b2fd897b",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2bafcecb_3d22592f",
@@ -428,6 +866,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should add comment for MRC Phase - Start",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b774f60_bdb3cf7c",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bafcecb_3d22592f",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -449,6 +905,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "540a492e_fb3325bf",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02ec6764_402c2c7d",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e4ea215f_92f9b64d",
@@ -462,6 +936,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should add comment these post codes are for phase 2 boot",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b52ff6d_2503a437",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4ea215f_92f9b64d",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -483,6 +975,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3ad46ca_5ab9bdd6",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9956d51a_1092eff4",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d88e350_97914ff8",
@@ -496,6 +1006,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Should add comment for ACPI/ASL Phase - End",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d51424ec_b1ce7902",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d88e350_97914ff8",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -517,6 +1045,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "778edcd1_5b418389",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c80b0a5b_accc4e39",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "86d64c6b_e759eb5f",
@@ -530,6 +1076,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "0x6A \"NB_DEX_SMM_INIT\" is missing",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a1ed43d_cd597a5e",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86d64c6b_e759eb5f",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -551,6 +1115,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7127acd_c231ba3d",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32fea771_ca5ac5ae",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "230f1dc8_f5d2cb38",
@@ -564,6 +1146,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Add comment for BDS Execution",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "81f957d5_a71217ec",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "230f1dc8_f5d2cb38",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -585,6 +1185,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a5e9591_97ad921f",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d1c6984_ca9d3a26",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "70f658e0_d8262179",
@@ -602,6 +1220,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f02d629_1f9441dd",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "70f658e0_d8262179",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1e5da3e0_537d396c",
@@ -615,6 +1251,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Add comment for DXE Phase - End",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5691b26_5416f029",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e5da3e0_537d396c",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -653,6 +1307,42 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "47cdeb8b_a8723e21",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "144bb51b_4f98d8a1",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2de9d6e1_34256bb8",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32e93e8f_c1a6540c",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "52ff8c7c_36ed90a2",
@@ -666,6 +1356,24 @@
       "writtenOn": "2022-09-27T15:15:10Z",
       "side": 1,
       "message": "Add comment for SLOT Info - End",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "025c6cd9_eb763c01",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-09-28T14:15:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52ff8c7c_36ed90a2",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
