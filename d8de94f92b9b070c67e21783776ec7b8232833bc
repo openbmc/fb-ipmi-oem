@@ -470,6 +470,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fce8ef70_4ec2b223",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-09-29T16:55:59Z",
+      "side": 1,
+      "message": "Can you give more details on what you are asking for?  Some sensors such as the DIMMs have been renumbered as part of the new sensor naming spec for YV3.5/GreatLakes.  For instance, DIMMA_TEMP is now MB_DIMMA0_TEMP_C, DIMMC_TEMP is now MB_DIMMA2_TEMP_C, etc.  Are there other sensors which you do not have a mapping for?",
+      "parentUuid": "a52ae329_baa9e57e",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "28945942_c5086048",
         "filename": "configs/greatlakes/post_desc.json",
         "patchSetId": 7
