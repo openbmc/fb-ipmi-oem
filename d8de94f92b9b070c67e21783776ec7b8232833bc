@@ -118,6 +118,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4189d8bf_52493ad1",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca31dc7e_e9372df8",
+      "range": {
+        "startLine": 4,
+        "startChar": 1,
+        "endLine": 4,
+        "endChar": 3
+      },
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7df65a87_cbb81fb1",
@@ -149,6 +173,24 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "7df65a87_cbb81fb1",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9a26461_5816a710",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf65132c_e22adc06",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -188,6 +230,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "600044a5_48473d07",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a731238d_39b5ba7d",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0b3962b0_d232d627",
@@ -219,6 +279,24 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "0b3962b0_d232d627",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b99caea6_9b934da4",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a6d93d50_fa246b70",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -258,6 +336,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f907fcec_0be9d5c3",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30585b32_6dd0bd89",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "11de7883_b387f582",
@@ -289,6 +385,24 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "11de7883_b387f582",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c64ba05_4657c60a",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d2022e8_70c15090",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -328,6 +442,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4864f99a_0c353230",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d41fa08_8f3bb080",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6967eea7_aa1f9f15",
@@ -359,6 +491,24 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "6967eea7_aa1f9f15",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afc7e506_8eb74b04",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dede46fb_7a7e2726",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -398,6 +548,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9970c76_ec45b90d",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "907a0444_f7345fb3",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4ac36108_f5e70448",
@@ -429,6 +597,24 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "4ac36108_f5e70448",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d179429_1984b777",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e157dfa_884ba946",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -482,6 +668,24 @@
       "side": 1,
       "message": "Can you give more details on what you are asking for?  Some sensors such as the DIMMs have been renumbered as part of the new sensor naming spec for YV3.5/GreatLakes.  For instance, DIMMA_TEMP is now MB_DIMMA0_TEMP_C, DIMMC_TEMP is now MB_DIMMA2_TEMP_C, etc.  Are there other sensors which you do not have a mapping for?",
       "parentUuid": "a52ae329_baa9e57e",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7e5e70a6_01cd0b3c",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-03T12:49:52Z",
+      "side": 1,
+      "message": "I have mapped other sensors as well, as per the document(BIC Voltage Sensors, BIC Power Sensors as like all sensors) incase if needed other sensors we can add them in the future.",
+      "parentUuid": "fce8ef70_4ec2b223",
       "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
