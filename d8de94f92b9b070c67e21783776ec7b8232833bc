@@ -690,6 +690,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9520d80f_bcb00204",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-10-03T13:49:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e5e70a6_01cd0b3c",
+      "revId": "d8de94f92b9b070c67e21783776ec7b8232833bc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "28945942_c5086048",
