@@ -104,6 +104,24 @@
       "parentUuid": "656dcb58_cfa6a414",
       "revId": "856f82a8763a0fbecfa5adc9dc6e111d841c4872",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "387ce389_45772995",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-10-05T20:08:10Z",
+      "side": 1,
+      "message": "The comments to add the phrases was before I realized these were json files.  I was trying to keep some of the comments from our Meta codebase that were applicable, but those don\u0027t make sense in a json file as you added them.  Thus, the follow-on request was to remove them and not include any comment lines in the json file.\n\nLooking at the link you provided, I would like us to do something like that for Great Lakes so we don\u0027t lose the context around the settings.",
+      "parentUuid": "bc69ecca_779c406f",
+      "revId": "856f82a8763a0fbecfa5adc9dc6e111d841c4872",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
