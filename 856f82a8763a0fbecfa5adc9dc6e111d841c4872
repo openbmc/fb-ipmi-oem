@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "50d40d8c_19b7f775",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-05T06:34:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55e2f162_3ea8c750",
+      "revId": "856f82a8763a0fbecfa5adc9dc6e111d841c4872",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2d06a34f_a5a8d909",
@@ -35,6 +53,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a19b945_96846e47",
+        "filename": "configs/greatlakes/cri_sensors.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-05T06:34:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d06a34f_a5a8d909",
+      "revId": "856f82a8763a0fbecfa5adc9dc6e111d841c4872",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "656dcb58_cfa6a414",
@@ -48,6 +84,24 @@
       "writtenOn": "2022-10-03T13:49:18Z",
       "side": 1,
       "message": "Please remove the comment lines throughout this file.  They do not provide anything adding them to the .json file, but add clutter.",
+      "revId": "856f82a8763a0fbecfa5adc9dc6e111d841c4872",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bc69ecca_779c406f",
+        "filename": "configs/greatlakes/post_desc.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-10-05T06:34:15Z",
+      "side": 1,
+      "message": "In patchset num:7 you have given a comment that is to add (comment on each phase like \"Need to add a comment this is UPI Phase - Start\" and \"Need to add a comment this is UPI Phase - End\") that\u0027s why I did this, if it is not fine we can go with how other platforms are mentioned in fb-ipmi-oem (ex:yv2 https://github.com/openbmc/fb-ipmi-oem/blob/master/configs/yosemitev2/post_desc.json) is this fine?",
+      "parentUuid": "656dcb58_cfa6a414",
       "revId": "856f82a8763a0fbecfa5adc9dc6e111d841c4872",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
