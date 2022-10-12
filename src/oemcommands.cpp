@@ -1211,7 +1211,7 @@ ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 // Set System GUID (CMD_OEM_SET_SYSTEM_GUID)
 //----------------------------------------------------------------------
 #if BIC_ENABLED
-ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx, uint8_t,
+ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx,
                                      std::vector<uint8_t> reqData)
 {
     std::vector<uint8_t> respData;
