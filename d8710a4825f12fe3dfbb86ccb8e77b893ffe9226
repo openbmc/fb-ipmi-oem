@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45a700d0_3e1dc8c6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-10-18T10:33:51Z",
+      "side": 1,
+      "message": "The BIC sends each postcode request to BMC right ?  if it\u0027s handled all the postcodes in single request, don\u0027t we need to handle all other postcode requests ? \n\nIs there any chance to miss some postcodes if postcode generation delays or if we read, before all postcode comes ?",
+      "revId": "d8710a4825f12fe3dfbb86ccb8e77b893ffe9226",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
