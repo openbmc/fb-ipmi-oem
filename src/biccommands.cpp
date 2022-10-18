@@ -73,45 +73,47 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
 // netfn=0x38 and cmd=0x08 send the response back to the sender.
 //----------------------------------------------------------------------
 
-ipmi::RspType<std::array<uint8_t, 3>, uint8_t>
-    ipmiOemPostCodeHandler(ipmi::Context::ptr ctx, std::array<uint8_t, 3> iana,
-                           uint8_t interface, uint8_t data)
+ipmi::RspType<> ipmiOemPostCodeHandler(ipmi::Context::ptr ctx,
+                                       std::array<uint8_t, 3>, uint8_t dataLen,
+                                       std::vector<uint8_t> data)
 {
     // creating bus connection
     auto conn = getSdBus();
 
-    try
-    {
-        using postcode_t = std::tuple<uint64_t, std::vector<uint8_t>>;
+    using postcode_t = std::tuple<uint64_t, std::vector<uint8_t>>;
 
-        uint64_t primaryPostCode = static_cast<uint64_t>(data);
+    std::string dbusObjStr = dbusObj + std::to_string((ctx->hostIdx + 1));
+
+    for (unsigned int index = 0; index < dataLen; index++)
+    {
+        uint64_t primaryPostCode = static_cast<uint64_t>(data[index]);
         auto postCode = postcode_t(primaryPostCode, {});
 
-        // creating dbus objects for 1 to N process
-        std::string dbusObjStr = dbusObj + std::to_string((ctx->hostIdx + 1));
+        try
+        {
+            auto method = conn->new_method_call(
+                "xyz.openbmc_project.State.Boot.Raw", dbusObjStr.c_str(),
+                "org.freedesktop.DBus.Properties", "Set");
 
-        // creating method call to update postd value
-        auto method = conn->new_method_call(
-            "xyz.openbmc_project.State.Boot.Raw", dbusObjStr.c_str(),
-            "org.freedesktop.DBus.Properties", "Set");
+            // Adding paramters to method call
+            method.append(dbusService, "Value",
+                          std::variant<postcode_t>(postCode));
 
-        // Adding paramters to method call
-        method.append(dbusService, "Value", std::variant<postcode_t>(postCode));
+            // Invoke method call function
+            auto reply = conn->call(method);
+        }
 
-        // Invoke method call function
-        auto reply = conn->call(method);
+        catch (std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "post code handler error\n");
 
-        // sending the success response with headers
-        return ipmi::responseSuccess(iana, interface);
+            // sending the Error response
+            return ipmi::responseResponseError();
+        }
     }
-    catch (std::exception& e)
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "post code handler error\n");
 
-        // sending the Error response
-        return ipmi::responseResponseError();
-    }
+    return ipmi::responseSuccess();
 }
 
 [[maybe_unused]] static void registerBICFunctions(void)
