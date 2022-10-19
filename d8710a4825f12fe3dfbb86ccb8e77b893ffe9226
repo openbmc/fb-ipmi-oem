@@ -33,6 +33,23 @@
       "message": "The current implementation is verified with yv2 and yv35. Have you verified this patch with yv2 ? if not, request you to verify once for all multi host platforms.",
       "revId": "d8710a4825f12fe3dfbb86ccb8e77b893ffe9226",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9b74b17_9f6d4d80",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-10-19T06:20:14Z",
+      "side": 1,
+      "message": "https://www.opencompute.org/documents/facebook-twin-lakes-1s-server-spec\n\nAs per this OCP twinlake spec, Bridge IC will send one byte POST Code to BMC at a time. \n\nSo, not sure about loop added here to get all post codes at one time ?\n\nSame postcode handler is used for fby35 and greatlakes. Please confirm in those spec also.\n",
+      "revId": "d8710a4825f12fe3dfbb86ccb8e77b893ffe9226",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
