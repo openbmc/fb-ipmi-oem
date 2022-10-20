@@ -86,6 +86,24 @@
       "parentUuid": "5448b14f_dc08dcd1",
       "revId": "d8710a4825f12fe3dfbb86ccb8e77b893ffe9226",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "925548da_f0ad1871",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-10-20T09:28:17Z",
+      "side": 1,
+      "message": "We have validated the behavior on YV 3.5 system that this command handler could get all the POST code no matter BIC sends one byte at a time or an array at a time without any POST code missing.",
+      "parentUuid": "45a700d0_3e1dc8c6",
+      "revId": "d8710a4825f12fe3dfbb86ccb8e77b893ffe9226",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
