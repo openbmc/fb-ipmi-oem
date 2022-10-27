@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#define MAX_SIZE_IPMI 0xFF
 
 namespace ipmi
 {
@@ -50,6 +51,11 @@ nlohmann::json appData __attribute__((init_priority(101)));
 
 int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
                std::vector<uint8_t>&);
+
+static inline auto responseSystemInfoParamterNotSupportCommand()
+{
+    return response(IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED);
+}
 
 void printGUID(uint8_t* guid, off_t offset)
 {
@@ -247,7 +253,7 @@ void flush_app_data()
     return;
 }
 
-static int platSetSysFWVer(uint8_t* ver)
+static int platSetSysFWVer(uint8_t* ver, const std::string key)
 {
     std::stringstream ss;
     int i;
@@ -265,16 +271,21 @@ static int platSetSysFWVer(uint8_t* ver)
         ss << (char)ver[i];
     }
 
-    appData[KEY_SYSFW_VER] = ss.str();
+    appData[key] = ss.str();
     flush_app_data();
 
     return 0;
 }
 
-static int platGetSysFWVer(uint8_t* ver)
+static int platGetSysFWVer(uint8_t* ver, const std::string key)
 {
-    std::string str = appData[KEY_SYSFW_VER].get<std::string>();
-    int len;
+    int len = -1;
+
+    if (!appData.contains(std::string(key)))
+    {
+        return -1;
+    }
+    std::string str = appData[key].get<std::string>();
 
     *ver++ = 0; // byte 1: Set selector not supported
     *ver++ = 0; // byte 2: Only ASCII supported
@@ -289,16 +300,20 @@ static int platGetSysFWVer(uint8_t* ver)
 //----------------------------------------------------------------------
 // Set Sys Info Params (IPMI/Sec 22.14a) (CMD_APP_SET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t, ipmi_cmd_t,
-                                   ipmi_request_t request, ipmi_response_t,
-                                   ipmi_data_len_t data_len, ipmi_context_t)
+ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
+                                               std::vector<uint8_t> req)
 {
-    uint8_t* req = reinterpret_cast<uint8_t*>(request);
 
     uint8_t param = req[0];
-    uint8_t req_len = *data_len;
+    uint8_t req_len = req.size();
+    std::optional<size_t> hostId = findHost(ctx->hostIdx);
 
-    *data_len = 0;
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
 
     switch (param)
     {
@@ -306,10 +321,13 @@ ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t, ipmi_cmd_t,
             sysInfoParams.set_in_prog = req[1];
             break;
         case SYS_INFO_PARAM_SYSFW_VER:
+        {
             memcpy(sysInfoParams.sysfw_ver, &req[1], SIZE_SYSFW_VER);
-            if (platSetSysFWVer(sysInfoParams.sysfw_ver))
-                return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+            std::string version_key = KEY_SYSFW_VER + std::to_string(*hostId);
+            if (platSetSysFWVer(sysInfoParams.sysfw_ver, version_key))
+                return ipmi::responseSystemInfoParamterNotSupportCommand();
             break;
+        }
         case SYS_INFO_PARAM_SYS_NAME:
             memcpy(sysInfoParams.sys_name, &req[1], SIZE_SYS_NAME);
             break;
@@ -351,89 +369,100 @@ ipmi_ret_t ipmiAppSetSysInfoParams(ipmi_netfn_t, ipmi_cmd_t,
             memcpy(sysInfoParams.last_boot_time, &req[1], SIZE_LAST_BOOT_TIME);
             break;
         default:
-            return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+            return ipmi::responseSystemInfoParamterNotSupportCommand();
             break;
     }
 
-    return IPMI_CC_OK;
+    return ipmi::responseSuccess();
 }
 
 //----------------------------------------------------------------------
 // Get Sys Info Params (IPMI/Sec 22.14b) (CMD_APP_GET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiAppGetSysInfoParams(ipmi_netfn_t, ipmi_cmd_t,
-                                   ipmi_request_t request,
-                                   ipmi_response_t response,
-                                   ipmi_data_len_t data_len, ipmi_context_t)
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiAppGetSysInfoParams(ipmi::Context::ptr ctx, std::vector<uint8_t> req)
 {
-    uint8_t* req = reinterpret_cast<uint8_t*>(request);
-    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
     uint8_t param = req[1];
     int len;
+    size_t data_len = 1;
 
+    std::vector<uint8_t> respData(MAX_SIZE_IPMI);
+    uint8_t* res = respData.data();
     *res++ = 1; // Parameter revision
-    *data_len = 1;
+    std::optional<size_t> hostId = findHost(ctx->hostIdx);
+
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
 
     switch (param)
     {
         case SYS_INFO_PARAM_SET_IN_PROG:
             *res++ = sysInfoParams.set_in_prog;
-            *data_len += 1;
+            data_len += 1;
             break;
         case SYS_INFO_PARAM_SYSFW_VER:
-            if ((len = platGetSysFWVer(res)) < 0)
-                return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
-            *data_len += SIZE_SYSFW_VER;
+        {
+            std::string version_key = KEY_SYSFW_VER + std::to_string(*hostId);
+            if ((len = platGetSysFWVer(res, version_key)) < 0)
+                return ipmi::responseSystemInfoParamterNotSupportCommand();
+            data_len += SIZE_SYSFW_VER;
             break;
+        }
         case SYS_INFO_PARAM_SYS_NAME:
             memcpy(res, sysInfoParams.sys_name, SIZE_SYS_NAME);
-            *data_len += SIZE_SYS_NAME;
+            data_len += SIZE_SYS_NAME;
             break;
         case SYS_INFO_PARAM_PRI_OS_NAME:
             memcpy(res, sysInfoParams.pri_os_name, SIZE_OS_NAME);
-            *data_len += SIZE_OS_NAME;
+            data_len += SIZE_OS_NAME;
             break;
         case SYS_INFO_PARAM_PRESENT_OS_NAME:
             memcpy(res, sysInfoParams.present_os_name, SIZE_OS_NAME);
-            *data_len += SIZE_OS_NAME;
+            data_len += SIZE_OS_NAME;
             break;
         case SYS_INFO_PARAM_PRESENT_OS_VER:
             memcpy(res, sysInfoParams.present_os_ver, SIZE_OS_VER);
-            *data_len += SIZE_OS_VER;
+            data_len += SIZE_OS_VER;
             break;
         case SYS_INFO_PARAM_BMC_URL:
             memcpy(res, sysInfoParams.bmc_url, SIZE_BMC_URL);
-            *data_len += SIZE_BMC_URL;
+            data_len += SIZE_BMC_URL;
             break;
         case SYS_INFO_PARAM_OS_HV_URL:
             memcpy(res, sysInfoParams.os_hv_url, SIZE_OS_HV_URL);
-            *data_len += SIZE_OS_HV_URL;
+            data_len += SIZE_OS_HV_URL;
             break;
         case SYS_INFO_PARAM_BIOS_CURRENT_BOOT_LIST:
             len = appData[KEY_BIOS_BOOT_LEN].get<uint8_t>();
             memcpy(res, sysInfoParams.bios_current_boot_list, len);
-            *data_len += len;
+            data_len += len;
             break;
         case SYS_INFO_PARAM_BIOS_FIXED_BOOT_DEVICE:
             memcpy(res, sysInfoParams.bios_fixed_boot_device,
                    SIZE_BIOS_FIXED_BOOT_DEVICE);
-            *data_len += SIZE_BIOS_FIXED_BOOT_DEVICE;
+            data_len += SIZE_BIOS_FIXED_BOOT_DEVICE;
             break;
         case SYS_INFO_PARAM_BIOS_RSTR_DFLT_SETTING:
             memcpy(res, sysInfoParams.bios_rstr_dflt_setting,
                    SIZE_BIOS_RSTR_DFLT_SETTING);
-            *data_len += SIZE_BIOS_RSTR_DFLT_SETTING;
+            data_len += SIZE_BIOS_RSTR_DFLT_SETTING;
             break;
         case SYS_INFO_PARAM_LAST_BOOT_TIME:
             memcpy(res, sysInfoParams.last_boot_time, SIZE_LAST_BOOT_TIME);
-            *data_len += SIZE_LAST_BOOT_TIME;
+            data_len += SIZE_LAST_BOOT_TIME;
             break;
         default:
-            return IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+            return ipmi::responseSystemInfoParamterNotSupportCommand();
             break;
     }
-    return IPMI_CC_OK;
+
+    respData.resize(data_len);
+    return ipmi::responseSuccess(respData);
 }
 
 void registerAPPFunctions()
@@ -470,12 +499,13 @@ void registerAPPFunctions()
                          ipmiAppGetSysGUID,
                          PRIVILEGE_USER); // Get System GUID
 #endif
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_SET_SYS_INFO_PARAMS, NULL,
-                         ipmiAppSetSysInfoParams,
-                         PRIVILEGE_USER); // Set Sys Info Params
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SYS_INFO_PARAMS, NULL,
-                         ipmiAppGetSysInfoParams,
-                         PRIVILEGE_USER); // Get Sys Info Params
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnApp,
+                          ipmi::app::cmdSetSystemInfoParameters,
+                          ipmi::Privilege::User, ipmiAppSetSysInfoParams);
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnApp,
+                          ipmi::app::cmdGetSystemInfoParameters,
+                          ipmi::Privilege::User, ipmiAppGetSysInfoParams);
     return;
 }
 
