@@ -869,6 +869,7 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     return 0;
 }
 
+#ifdef ME_SUPPORT
 static int getMeStatus(std::string& status, size_t pos)
 {
     uint8_t cmd = 0x01;   // Get Device id command
@@ -918,6 +919,7 @@ static int getMeStatus(std::string& status, size_t pos)
 
     return 0;
 }
+#endif
 
 static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
                               uint8_t* count, uint8_t* buffer)
@@ -1005,6 +1007,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
                 frame_info.append("BIOS_FW_ver:", 0);
                 frame_info.append(biosVer.c_str(), 1);
             }
+
+#ifdef ME_SUPPORT
             // ME status
             std::string meStatus;
             if (getMeStatus(meStatus, pos) != 0)
@@ -1015,6 +1019,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
             }
             frame_info.append("ME_status:", 0);
             frame_info.append(meStatus.c_str(), 1);
+#endif
         }
 
         /* TBD: Board ID needs implementation */

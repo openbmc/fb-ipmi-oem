@@ -8,3 +8,8 @@ option(
   'machine',
   type: 'string',
   description: 'Machine')
+option(
+  'me_support',
+  type : 'boolean',
+  value : true,
+  description: 'Enable ME support')
