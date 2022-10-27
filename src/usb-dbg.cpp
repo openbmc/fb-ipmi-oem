@@ -43,6 +43,28 @@ int getSensorValue(std::string&, double&);
 int getSensorUnit(std::string&, std::string&);
 } // namespace storage
 
+size_t getMaxHostPosition()
+{
+    try
+    {
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+        std::string service =
+            getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
+        Value variant =
+            getDbusProperty(*dbus, service, ipmi::selector::path,
+                            ipmi::selector::interface, "MaxPosition");
+        size_t result = std::get<size_t>(variant);
+        return result;
+    }
+    catch(...)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Failed to get MaxPosition from DBus");
+    }
+
+    return MAX_HOST_POS;
+}
+
 size_t getSelectorPosition()
 {
     std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
@@ -952,7 +974,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         {
             frame_info.append("FRU:spb", 0);
         }
-        else if (hostPosition != BMC_POSITION && hostPosition <= MAX_HOST_POS)
+        else if (hostPosition != BMC_POSITION &&
+                 hostPosition <= getMaxHostPosition())
         {
             std::string data = "FRU:slot" + std::to_string(hostPosition);
             frame_info.append(data.c_str(), 0);
