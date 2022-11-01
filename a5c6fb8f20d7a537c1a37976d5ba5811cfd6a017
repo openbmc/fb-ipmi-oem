@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64e153ec_66fdebf2",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-01T17:14:34Z",
+      "side": 1,
+      "message": "Why\u0027d you change these?  I think the old way did some amount of automatic parsing of the message for you, didn\u0027t it?",
+      "range": {
+        "startLine": 383,
+        "startChar": 52,
+        "endLine": 386,
+        "endChar": 27
+      },
+      "revId": "a5c6fb8f20d7a537c1a37976d5ba5811cfd6a017",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6252aaec_903600e2",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-01T17:14:34Z",
+      "side": 1,
+      "message": "I really don\u0027t like the C-style behavior here.  If we\u0027re going to use vector, use vector.  Use \u0027push_back\u0027 or \u0027insert\u0027 to insert stuff into it.",
+      "range": {
+        "startLine": 388,
+        "startChar": 0,
+        "endLine": 391,
+        "endChar": 35
+      },
+      "revId": "a5c6fb8f20d7a537c1a37976d5ba5811cfd6a017",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
