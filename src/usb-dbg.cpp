@@ -795,7 +795,7 @@ static int udbg_get_cri_sensor(uint8_t, uint8_t page, uint8_t* next,
     return 0;
 }
 
-static int getBiosVer(std::string& ver)
+static int getBiosVer(std::string& ver, size_t hostPosition)
 {
     nlohmann::json appObj;
 
@@ -804,9 +804,11 @@ static int getBiosVer(std::string& ver)
     {
         file >> appObj;
         file.close();
-        if (appObj.find(KEY_SYSFW_VER) != appObj.end())
+        std::string version_key = KEY_SYSFW_VER + std::to_string(hostPosition);
+
+        if (appObj.find(version_key) != appObj.end())
         {
-            ver = appObj[KEY_SYSFW_VER].get<std::string>();
+            ver = appObj[version_key].get<std::string>();
             return 0;
         }
     }
@@ -1025,7 +1027,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         {
             // BIOS ver
             std::string biosVer;
-            if (getBiosVer(biosVer) == 0)
+            if (getBiosVer(biosVer, hostPosition) == 0)
             {
                 frame_info.append("BIOS_FW_ver:", 0);
                 frame_info.append(biosVer.c_str(), 1);
