@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0a20817_8388a0cd",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-11-08T08:52:27Z",
+      "side": 1,
+      "message": "Done. Please check it.",
+      "parentUuid": "64e153ec_66fdebf2",
+      "range": {
+        "startLine": 383,
+        "startChar": 52,
+        "endLine": 386,
+        "endChar": 27
+      },
+      "revId": "a5c6fb8f20d7a537c1a37976d5ba5811cfd6a017",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6252aaec_903600e2",
