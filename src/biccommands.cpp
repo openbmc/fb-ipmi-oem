@@ -37,6 +37,9 @@ static void registerBICFunctions() __attribute__((constructor));
 
 extern message::Response::ptr executeIpmiCommand(message::Request::ptr);
 
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
+
 //----------------------------------------------------------------------
 // ipmiOemBicHandler (IPMI/Section - ) (CMD_OEM_BIC_INFO)
 // This Function will handle BIC request for netfn=0x38 and cmd=1
@@ -45,7 +48,7 @@ extern message::Response::ptr executeIpmiCommand(message::Request::ptr);
 
 ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
               uint8_t, ipmi::message::Payload>
-    ipmiOemBicHandler(ipmi::Context::ptr ctx, std::array<uint8_t, 3> iana,
+    ipmiOemBicHandler(ipmi::Context::ptr ctx, std::array<uint8_t, 3> reqIana,
                       uint8_t interface, uint2_t lun, uint6_t netFnReq,
                       uint8_t cmdReq, SecureBuffer data)
 {
@@ -63,7 +66,7 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
     res = ipmi::executeIpmiCommand(req);
 
     // sending the response with headers and payload
-    return ipmi::responseSuccess(iana, interface, lun, ++netFnReq, cmdReq,
+    return ipmi::responseSuccess(reqIana, interface, lun, ++netFnReq, cmdReq,
                                  res->cc, res->payload);
 }
 
@@ -74,8 +77,9 @@ ipmi::RspType<std::array<uint8_t, 3>, uint8_t, uint2_t, uint6_t, uint8_t,
 //----------------------------------------------------------------------
 
 ipmi::RspType<std::array<uint8_t, 3>>
-    ipmiOemPostCodeHandler(ipmi::Context::ptr ctx, std::array<uint8_t, 3> iana,
-                           uint8_t dataLen, std::vector<uint8_t> data)
+    ipmiOemPostCodeHandler(ipmi::Context::ptr ctx,
+                           std::array<uint8_t, 3> reqIana, uint8_t dataLen,
+                           std::vector<uint8_t> data)
 {
     // creating bus connection
     auto conn = getSdBus();
@@ -113,7 +117,43 @@ ipmi::RspType<std::array<uint8_t, 3>>
         }
     }
 
-    return ipmi::responseSuccess(iana);
+    return ipmi::responseSuccess(reqIana);
+}
+
+//----------------------------------------------------------------------
+// ipmiOemGetBicGpioState (CMD_OEM_GET_BIC_GPIO_STATE)
+// This Function will handle BIC GPIO states for netfn=0x38 and cmd=0x08
+// send the response back to the sender.
+//----------------------------------------------------------------------
+
+ipmi::RspType<std::array<uint8_t, 3>, std::vector<uint8_t>>
+    ipmiOemGetBicGpioState(ipmi::Context::ptr ctx, std::vector<uint8_t> reqIana)
+{
+    std::vector<uint8_t> respData;
+
+    if (std::equal(reqIana.begin(), reqIana.end(), iana.begin()) == false)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid IANA number");
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqIana, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    std::vector<uint8_t> gpioState(respData.size() - iana.size(), 0x0);
+    std::array<uint8_t, iana.size()> respIana;
+
+    std::copy(respData.begin(), respData.begin() + iana.size(),
+              respIana.begin());
+    std::copy(respData.begin() + iana.size(), respData.end(),
+              gpioState.begin());
+
+    return ipmi::responseSuccess(respIana, gpioState);
 }
 
 [[maybe_unused]] static void registerBICFunctions(void)
@@ -123,11 +163,14 @@ ipmi::RspType<std::array<uint8_t, 3>>
         "Registering BIC commands");
 
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
-                          cmdOemBicInfo, ipmi::Privilege::User,
+                          CMD_OEM_BIC_INFO, ipmi::Privilege::User,
                           ipmiOemBicHandler);
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
-                          cmdOemSendPostBufferToBMC, ipmi::Privilege::User,
-                          ipmiOemPostCodeHandler);
+                          CMD_OEM_SEND_POST_BUFFER_TO_BMC,
+                          ipmi::Privilege::User, ipmiOemPostCodeHandler);
+    ipmi::registerHandler(ipmi::prioOemBase, ipmi::netFnOemFive,
+                          CMD_OEM_GET_BIC_GPIO_STATE, ipmi::Privilege::User,
+                          ipmiOemGetBicGpioState);
     return;
 }
 
