@@ -36,6 +36,7 @@ enum oem_usb_dbg_cmds
 // OEM Command Codes for FB 1S/2S servers
 enum fb_oem_cmds
 {
+    CMD_OEM_GET_BIC_GPIO_STATE = 0x03,
     CMD_OEM_ADD_RAS_SEL = 0x10,
     CMD_OEM_ADD_IMC_LOG = 0x11,
     CMD_OEM_SET_MAC_ADDR = 0x18,

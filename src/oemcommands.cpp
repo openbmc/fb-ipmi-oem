@@ -41,8 +41,6 @@
 #include <vector>
 #include <regex>
 
-#define SIZE_IANA_ID 3
-
 namespace ipmi
 {
 
@@ -56,6 +54,8 @@ constexpr uint8_t cmdSetSystemGuid = 0xEF;
 
 constexpr uint8_t cmdSetQDimmInfo = 0x12;
 constexpr uint8_t cmdGetQDimmInfo = 0x13;
+
+const std::vector<uint8_t> iana = {0x15, 0xA0, 0x0}; // Meta IANA
 
 int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
@@ -586,9 +586,9 @@ ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t, ipmi_cmd_t,
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
     uint8_t num_frames = 3;
 
-    std::memcpy(res, req, SIZE_IANA_ID); // IANA ID
-    res[SIZE_IANA_ID] = num_frames;
-    *data_len = SIZE_IANA_ID + 1;
+    std::memcpy(res, req, iana.size()); // IANA ID
+    res[iana.size()] = num_frames;
+    *data_len = iana.size() + 1;
 
     return IPMI_CC_OK;
 }
@@ -606,12 +606,12 @@ ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t, ipmi_cmd_t,
     uint8_t num_updates = 3;
     *data_len = 4;
 
-    std::memcpy(res, req, SIZE_IANA_ID); // IANA ID
-    res[SIZE_IANA_ID] = num_updates;
-    *data_len = SIZE_IANA_ID + num_updates + 1;
-    res[SIZE_IANA_ID + 1] = 1; // info page update
-    res[SIZE_IANA_ID + 2] = 2; // cri sel update
-    res[SIZE_IANA_ID + 3] = 3; // cri sensor update
+    std::memcpy(res, req, iana.size()); // IANA ID
+    res[iana.size()] = num_updates;
+    *data_len = iana.size() + num_updates + 1;
+    res[iana.size() + 1] = 1; // info page update
+    res[iana.size() + 2] = 2; // cri sel update
+    res[iana.size() + 3] = 3; // cri sensor update
 
     return IPMI_CC_OK;
 }
@@ -639,18 +639,18 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t, ipmi_cmd_t,
     ret = plat_udbg_get_post_desc(index, &next, phase, &end, &descLen, &res[8]);
     if (ret)
     {
-        memcpy(res, req, SIZE_IANA_ID); // IANA ID
-        *data_len = SIZE_IANA_ID;
+        memcpy(res, req, iana.size()); // IANA ID
+        *data_len = iana.size();
         return IPMI_CC_UNSPECIFIED_ERROR;
     }
 
-    memcpy(res, req, SIZE_IANA_ID); // IANA ID
+    memcpy(res, req, iana.size()); // IANA ID
     res[3] = index;
     res[4] = next;
     res[5] = phase;
     res[6] = end;
     res[7] = descLen;
-    *data_len = SIZE_IANA_ID + 5 + descLen;
+    *data_len = iana.size() + 5 + descLen;
 
     return IPMI_CC_OK;
 }
@@ -679,18 +679,18 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t, ipmi_cmd_t,
                                   &res[8]);
     if (ret)
     {
-        memcpy(res, req, SIZE_IANA_ID); // IANA ID
-        *data_len = SIZE_IANA_ID;
+        memcpy(res, req, iana.size()); // IANA ID
+        *data_len = iana.size();
         return IPMI_CC_UNSPECIFIED_ERROR;
     }
 
-    memcpy(res, req, SIZE_IANA_ID); // IANA ID
+    memcpy(res, req, iana.size()); // IANA ID
     res[3] = index;
     res[4] = next;
     res[5] = level;
     res[6] = pinDef;
     res[7] = descLen;
-    *data_len = SIZE_IANA_ID + 5 + descLen;
+    *data_len = iana.size() + 5 + descLen;
 
     return IPMI_CC_OK;
 }
@@ -717,17 +717,17 @@ ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t, ipmi_cmd_t,
     ret = plat_udbg_get_frame_data(frame, page, &next, &count, &res[7]);
     if (ret)
     {
-        memcpy(res, req, SIZE_IANA_ID); // IANA ID
-        *data_len = SIZE_IANA_ID;
+        memcpy(res, req, iana.size()); // IANA ID
+        *data_len = iana.size();
         return IPMI_CC_UNSPECIFIED_ERROR;
     }
 
-    memcpy(res, req, SIZE_IANA_ID); // IANA ID
+    memcpy(res, req, iana.size()); // IANA ID
     res[3] = frame;
     res[4] = page;
     res[5] = next;
     res[6] = count;
-    *data_len = SIZE_IANA_ID + 4 + count;
+    *data_len = iana.size() + 4 + count;
 
     return IPMI_CC_OK;
 }
@@ -755,8 +755,8 @@ ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t, ipmi_cmd_t,
 
     ret = plat_udbg_control_panel(panel, operation, item, &count, &res[3]);
 
-    std::memcpy(res, req, SIZE_IANA_ID); // IANA ID
-    *data_len = SIZE_IANA_ID + count;
+    std::memcpy(res, req, iana.size()); // IANA ID
+    *data_len = iana.size() + count;
 
     return ret;
 }
@@ -1443,6 +1443,33 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
+//----------------------------------------------------------------------
+// Get BIC GPIO State (CMD_OEM_GET_BIC_GPIO_STATE)
+//----------------------------------------------------------------------
+#if BIC_ENABLED
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGetBICGPIOState(ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
+{
+    std::vector<uint8_t> respData;
+
+    if (reqData != iana)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid IANA number");
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    return ipmi::responseSuccess(respData);
+}
+#endif
+
 /* FB OEM QC Commands */
 
 //----------------------------------------------------------------------
@@ -2074,6 +2101,12 @@ static void registerOEMFunctions(void)
                          PRIVILEGE_USER); // Set PPR
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_PPR, NULL, ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
+#if BIC_ENABLED
+
+    ipmi::registerHandler(ipmi::prioOemBase, ipmi::netFnOemFive,
+                          CMD_OEM_GET_BIC_GPIO_STATE, ipmi::Privilege::User,
+                          ipmiOemGetBICGPIOState); // Get BIC GPIO State
+#endif
     /* FB OEM QC Commands */
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
                           CMD_OEM_Q_SET_PROC_INFO, ipmi::Privilege::User,
