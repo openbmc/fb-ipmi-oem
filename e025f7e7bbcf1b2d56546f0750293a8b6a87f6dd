@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4836e3a4_a6ce5790",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2108,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-11-14T14:22:34Z",
+      "side": 1,
+      "message": "This is related to BIC. So, can this handler move to biccommands.cpp ?",
+      "range": {
+        "startLine": 2106,
+        "startChar": 4,
+        "endLine": 2108,
+        "endChar": 53
+      },
+      "revId": "e025f7e7bbcf1b2d56546f0750293a8b6a87f6dd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
