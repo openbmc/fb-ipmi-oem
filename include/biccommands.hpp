@@ -7,6 +7,9 @@ enum class fb_bic_cmds : uint8_t
     CMD_OEM_SET_HOST_POWER_STATE = 0x0C,
 };
 
+// Command for getting flash size
+constexpr uint8_t cmdOemFlashSize = 0x19;
+
 const char* dbusObj = "/xyz/openbmc_project/state/boot/raw";
 
 const char* dbusService = "xyz.openbmc_project.State.Boot.Raw";

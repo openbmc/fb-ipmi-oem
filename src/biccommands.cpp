@@ -29,6 +29,9 @@
 namespace ipmi
 {
 
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
+
 using namespace phosphor::logging;
 
 #ifdef BIC_ENABLED
@@ -204,6 +207,44 @@ ipmi::RspType<IanaType> ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
     }
 
     return ipmi::responseSuccess(reqIana);
+}
+
+//----------------------------------------------------------------------
+// ipmiOemGetBiosFlashSize (CMD_OEM_FLASH_SIZE)
+// This Function will return the bios flash size
+// netfn=0x38 and cmd=0x19 send the response back to the sender.
+//----------------------------------------------------------------------
+
+ipmi::RspType<IanaType, flashSize>
+    ipmiOemGetBiosFlashSize(ipmi::Context::ptr ctx, IanaType ianaReq,
+                            uint8_t target)
+{
+    if (iana != ianaReq)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid IANA ID length received");
+        return ipmi::responseReqDataLenInvalid();
+    }
+
+    std::vector<uint8_t> respData;
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+    std::vector<uint8_t> reqData(ianaReq.begin(), ianaReq.end());
+    reqData.emplace_back(target);
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    IanaType ianaResp;
+    std::copy_n(respData.begin(), ianaResp.size(), ianaResp.begin());
+
+    flashSize flashResp;
+    std::copy_n(respData.begin() + ianaResp.size(), flashResp.size(),
+                flashResp.begin());
+
+    // sending the success response.
+    return ipmi::responseSuccess(ianaResp, flashResp);
 }
 
 [[maybe_unused]] static void registerBICFunctions(void)
