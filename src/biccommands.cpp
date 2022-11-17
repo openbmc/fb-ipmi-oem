@@ -26,6 +26,9 @@
 #include <variant>
 #include <iostream>
 
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
+
 namespace ipmi
 {
 
@@ -116,6 +119,29 @@ ipmi::RspType<std::array<uint8_t, 3>>
     return ipmi::responseSuccess(iana);
 }
 
+//----------------------------------------------------------------------
+// ipmiOemGetBiosFlashSize (CMD_OEM_GET_FLASH_SIZE)
+// This Function will return the bios flash size
+// netfn=0x38 and cmd=0x19 send the response back to the sender.
+//----------------------------------------------------------------------
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGetBiosFlashSize(ipmi::Context::ptr ctx,
+                            std::vector<uint8_t> reqData)
+{
+    std::vector<uint8_t> respData;
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    // sending the success response.
+    return ipmi::responseSuccess(respData);
+}
+
 [[maybe_unused]] static void registerBICFunctions(void)
 {
 
@@ -128,6 +154,9 @@ ipmi::RspType<std::array<uint8_t, 3>>
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
                           cmdOemSendPostBufferToBMC, ipmi::Privilege::User,
                           ipmiOemPostCodeHandler);
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+                          cmdOemGetFlashSize, ipmi::Privilege::User,
+                          ipmiOemGetBiosFlashSize);
     return;
 }
 
