@@ -22,6 +22,11 @@
 
 static constexpr bool debug = false;
 
+using IanaType = std::array<uint8_t, 3>;
+using flashSize = std::array<uint8_t, 4>;
+
+static constexpr IanaType iana = {0x15, 0xA0, 0x0}; // Meta's IANA
+
 static void instances(std::string s, std::vector<std::string>& host)
 {
     size_t pos = 0;
