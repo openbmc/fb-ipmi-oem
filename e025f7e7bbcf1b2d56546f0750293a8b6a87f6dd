@@ -46,6 +46,30 @@
       },
       "revId": "e025f7e7bbcf1b2d56546f0750293a8b6a87f6dd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc5b4d4a_ade4e556",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2108,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-11-17T09:33:05Z",
+      "side": 1,
+      "message": "oemcommands.cpp file has oem netn 0x30, .., 0x36. Netfn 0x38 is bridge IC commands specific netfn.\n\nI think biccommands.cpp is specifically created to have bic specific commands handlers and also for easy maintenance and understanding.\n\nI suggest to move this code to biccommands.cpp file.",
+      "parentUuid": "716c0dda_df538cbe",
+      "range": {
+        "startLine": 2106,
+        "startChar": 4,
+        "endLine": 2108,
+        "endChar": 53
+      },
+      "revId": "e025f7e7bbcf1b2d56546f0750293a8b6a87f6dd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
