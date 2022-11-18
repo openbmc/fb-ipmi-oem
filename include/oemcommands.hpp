@@ -148,6 +148,10 @@ enum fb_oem_qc_cmds
 
 #define BOOT_SEQ_ARRAY_SIZE 10
 
+// Command for getting GPIO configuration
+constexpr uint8_t cmdOemGetGpioConfig = 0x05;
+static constexpr size_t GET_GPIO_CONFIG = 8;
+
 const char* bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
                          "OTHER",   "",         "",         "",
                          "",        "NET_IPV6"};

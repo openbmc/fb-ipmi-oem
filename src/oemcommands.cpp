@@ -1937,6 +1937,36 @@ ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
     return IPMI_CC_OK;
 }
 
+//----------------------------------------------------------------------
+// Get GPIO Configuration (CMD_OEM_GET_GPIO_CONFIG)
+//----------------------------------------------------------------------
+#if BIC_ENABLED
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGetGPIOConfigHandler(ipmi::Context::ptr ctx,
+                                std::vector<uint8_t> reqData)
+{
+    std::vector<uint8_t> respData;
+
+    if (reqData.size() != GET_GPIO_CONFIG) // 8bytes
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Request Length");
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    return ipmi::responseSuccess(respData);
+}
+
+#endif
+
 /* Helper function for sending DCMI commands to ME/BIC and
  * getting response back
  */
@@ -2093,6 +2123,14 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_FB_OEM_QC, CMD_OEM_Q_GET_DRIVE_INFO, NULL,
                          ipmiOemQGetDriveInfo,
                          PRIVILEGE_USER); // Get Drive Info
+#if BIC_ENABLED
+
+    ipmi::registerHandler(
+        ipmi::prioOemBase, ipmi::netFnOemFive, cmdOemGetGpioConfig,
+        ipmi::Privilege::User,
+        ipmiOemGetGPIOConfigHandler); // Get GPIO Configuration
+
+#endif
 
     /* FB OEM DCMI Commands as per DCMI spec 1.5 Section 6 */
     ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
