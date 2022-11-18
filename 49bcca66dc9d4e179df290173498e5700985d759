@@ -39,6 +39,30 @@
       },
       "revId": "49bcca66dc9d4e179df290173498e5700985d759",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "debc11fd_69f6d5b3",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 822,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-11-18T01:20:12Z",
+      "side": 1,
+      "message": "The \"GetPostCodes\" method is implemented here.\n\nhttps://github.com/openbmc/phosphor-post-code-manager/blob/master/src/post_code.cpp#L38",
+      "parentUuid": "40decf41_06f3b1d0",
+      "range": {
+        "startLine": 822,
+        "startChar": 26,
+        "endLine": 822,
+        "endChar": 46
+      },
+      "revId": "49bcca66dc9d4e179df290173498e5700985d759",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
