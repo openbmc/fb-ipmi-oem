@@ -16,6 +16,24 @@
       "message": "What will happen if postcode length is more than 230 ? will it take first(1 to 230 or n to 230)last postcodes?",
       "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2be444b5_c36d29d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-11-18T08:03:44Z",
+      "side": 1,
+      "message": "If POST code length is more than 230, it will return last 230 POST codes.",
+      "parentUuid": "c338cd40_8edd183f",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
