@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c338cd40_8edd183f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-11-18T05:49:25Z",
+      "side": 1,
+      "message": "What will happen if postcode length is more than 230 ? will it take first(1 to 230 or n to 230)last postcodes?",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
