@@ -33,7 +33,6 @@ namespace selector
 const std::string path = "/xyz/openbmc_project/Chassis/Buttons/HostSelector";
 const std::string interface =
     "xyz.openbmc_project.Chassis.Buttons.HostSelector";
-const std::string propertyName = "Position";
 } // namespace selector
 
 /* Declare storage functions used here */
@@ -56,25 +55,31 @@ size_t getMaxHostPosition()
         size_t result = std::get<size_t>(variant);
         return result;
     }
-    catch (...)
+    catch (const std::exception& e)
     {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "Failed to get MaxPosition from DBus");
+        std::cerr << e.what() << "Failed to get MaxPosition from DBus"
+                  << std::endl;
     }
-
     return MAX_HOST_POS;
 }
 
 size_t getSelectorPosition()
 {
-    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-    std::string service =
-        getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
-    Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
-                                    ipmi::selector::interface,
-                                    ipmi::selector::propertyName);
-    size_t result = std::get<size_t>(variant);
-    return result;
+    try
+    {
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+        std::string service =
+            getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
+        Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
+                                        ipmi::selector::interface, "Position");
+        return std::get<size_t>(variant);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << e.what() << "Failed to get host position from DBus"
+                  << std::endl;
+    }
+    return FRU_ALL;
 }
 
 static int panelNum = (sizeof(panels) / sizeof(struct ctrl_panel)) - 1;
@@ -85,26 +90,18 @@ static size_t plat_get_fru_sel()
 {
     size_t position;
     bool platform = isMultiHostPlatform();
-
     if (platform == true)
     {
-        try
+        position = getSelectorPosition();
+        if (position == BMC_POSITION)
         {
-            size_t hostPosition = getSelectorPosition();
-            position = hostPosition;
-            if (position == BMC_POSITION)
-            {
-                return FRU_ALL;
-            }
-        }
-        catch (...)
-        {
-            std::cout << "Error reading host selector position" << std::endl;
+            return FRU_ALL;
         }
     }
     else
     {
-        // For Tiogapass it just return 1, can modify to support more platform
+        /* For Tiogapass it just return 1, can modify
+         * to support more platform */
         position = 1;
     }
     return position;
