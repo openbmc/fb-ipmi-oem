@@ -48,7 +48,7 @@ namespace ipmi
 
 using namespace phosphor::logging;
 
-size_t getSelectorPosition();
+void getSelectorPosition(size_t& position);
 static void registerOEMFunctions() __attribute__((constructor));
 sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection()); // from ipmid/api.h
 static constexpr size_t maxFRUStringLength = 0x3F;
@@ -359,7 +359,7 @@ int8_t getFruData(std::string& data, std::string& name)
     bool platform = isMultiHostPlatform();
     if (platform == true)
     {
-        pos = getSelectorPosition();
+        getSelectorPosition(pos);
     }
 
     sd_bus* bus = NULL;

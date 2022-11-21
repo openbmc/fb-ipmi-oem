@@ -33,7 +33,6 @@ namespace selector
 const std::string path = "/xyz/openbmc_project/Chassis/Buttons/HostSelector";
 const std::string interface =
     "xyz.openbmc_project.Chassis.Buttons.HostSelector";
-const std::string propertyName = "Position";
 } // namespace selector
 
 /* Declare storage functions used here */
@@ -43,7 +42,7 @@ int getSensorValue(std::string&, double&);
 int getSensorUnit(std::string&, std::string&);
 } // namespace storage
 
-size_t getMaxHostPosition()
+void getMaxHostPosition(size_t& maxPosition)
 {
     try
     {
@@ -53,28 +52,33 @@ size_t getMaxHostPosition()
         Value variant =
             getDbusProperty(*dbus, service, ipmi::selector::path,
                             ipmi::selector::interface, "MaxPosition");
-        size_t result = std::get<size_t>(variant);
-        return result;
+        maxPosition = std::get<size_t>(variant);
     }
-    catch (...)
+    catch (const std::exception& e)
     {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "Failed to get MaxPosition from DBus");
+        lg2::error("Unable to get max host position - {MAXPOSITION}",
+                   "MAXPOSITION", maxPosition);
+        throw e;
     }
-
-    return MAX_HOST_POS;
 }
 
-size_t getSelectorPosition()
+void getSelectorPosition(size_t& hostPosition)
 {
-    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-    std::string service =
-        getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
-    Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
-                                    ipmi::selector::interface,
-                                    ipmi::selector::propertyName);
-    size_t result = std::get<size_t>(variant);
-    return result;
+    try
+    {
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+        std::string service =
+            getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
+        Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
+                                        ipmi::selector::interface, "Position");
+        hostPosition = std::get<size_t>(variant);
+    }
+    catch (const std::exception& e)
+    {
+        lg2::error("Unable to get host position - {POSITION}", "POSITION",
+                   hostPosition);
+        throw e;
+    }
 }
 
 static int panelNum = (sizeof(panels) / sizeof(struct ctrl_panel)) - 1;
@@ -85,26 +89,18 @@ static size_t plat_get_fru_sel()
 {
     size_t position;
     bool platform = isMultiHostPlatform();
-
     if (platform == true)
     {
-        try
+        getSelectorPosition(position);
+        if (position == BMC_POSITION)
         {
-            size_t hostPosition = getSelectorPosition();
-            position = hostPosition;
-            if (position == BMC_POSITION)
-            {
-                return FRU_ALL;
-            }
-        }
-        catch (...)
-        {
-            std::cout << "Error reading host selector position" << std::endl;
+            return FRU_ALL;
         }
     }
     else
     {
-        // For Tiogapass it just return 1, can modify to support more platform
+        /* For Tiogapass it just return 1,
+         *  can modify to support more platform */
         position = 1;
     }
     return position;
@@ -957,6 +953,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
     std::string verDel = "VERSION=";
     std::string verPath = "/etc/os-release";
     size_t hostPosition;
+    size_t maxPosition;
 
     if (page == 1)
     {
@@ -969,15 +966,15 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         bool platform = isMultiHostPlatform();
         if (platform == true)
         {
-            hostPosition = getSelectorPosition();
+            hostPosition = plat_get_fru_sel();
         }
 
+        getMaxHostPosition(maxPosition);
         if (hostPosition == BMC_POSITION || hostInstances == "0")
         {
             frame_info.append("FRU:spb", 0);
         }
-        else if (hostPosition != BMC_POSITION &&
-                 hostPosition <= getMaxHostPosition())
+        else if (hostPosition != BMC_POSITION && hostPosition <= maxPosition)
         {
             std::string data = "FRU:slot" + std::to_string(hostPosition);
             frame_info.append(data.c_str(), 0);
@@ -1068,15 +1065,24 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
 
             // Dimm info
             std::vector<std::string> data;
-            sysConfig(data, pos);
-            for (auto& info : data)
+            if (sysConfig(data, pos) == 0)
             {
-                frame_info.append(info.c_str(), 1);
+                for (auto& info : data)
+                {
+                    frame_info.append(info.c_str(), 1);
+                }
+            }
+            else
+            {
+                frame_info.append("Not Found", 1);
             }
 
             // Processor info
             std::string result;
-            procInfo(result, pos);
+            if (procInfo(result, pos) != 0)
+            {
+                result = "Not Found";
+            }
             frame_info.append(result.c_str(), 1);
         }
 
