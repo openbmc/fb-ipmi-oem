@@ -33,7 +33,6 @@ namespace selector
 const std::string path = "/xyz/openbmc_project/Chassis/Buttons/HostSelector";
 const std::string interface =
     "xyz.openbmc_project.Chassis.Buttons.HostSelector";
-const std::string propertyName = "Position";
 } // namespace selector
 
 /* Declare storage functions used here */
@@ -67,13 +66,21 @@ size_t getMaxHostPosition()
 
 size_t getSelectorPosition()
 {
-    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-    std::string service =
-        getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
-    Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
-                                    ipmi::selector::interface,
-                                    ipmi::selector::propertyName);
-    size_t result = std::get<size_t>(variant);
+    size_t result;
+    try
+    {
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+        std::string service =
+            getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
+        Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
+                                        ipmi::selector::interface, "Position");
+        result = std::get<size_t>(variant);
+    }
+    catch (...)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Failed to get host position from DBus");
+    }
     return result;
 }
 
