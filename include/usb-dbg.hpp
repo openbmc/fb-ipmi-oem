@@ -23,6 +23,7 @@
 #include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/property.hpp>
 #include <ipmid/utils.hpp>
