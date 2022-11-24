@@ -94,6 +94,30 @@
       },
       "revId": "e025f7e7bbcf1b2d56546f0750293a8b6a87f6dd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "55d51c9e_5a4e0872",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2108,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-11-24T16:08:49Z",
+      "side": 1,
+      "message": "I agree with Kumar.  If the current design is to place all the BIC commands in biccommands.cpp, we should keep them there and place more general, non-BIC commands in the oemcommands.cpp file.",
+      "parentUuid": "16621700_7c84e921",
+      "range": {
+        "startLine": 2106,
+        "startChar": 4,
+        "endLine": 2108,
+        "endChar": 53
+      },
+      "revId": "e025f7e7bbcf1b2d56546f0750293a8b6a87f6dd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
