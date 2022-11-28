@@ -34,6 +34,69 @@
       "parentUuid": "c338cd40_8edd183f",
       "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94a4e204_6f78633e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:17:18Z",
+      "side": 1,
+      "message": "Can we use a more complete parsed RspType than a raw vector?",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a74a65e2_b9d83aac",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 819,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:17:18Z",
+      "side": 1,
+      "message": "Why is this \"0\"?  Shouldn\u0027t it match the host ID?",
+      "range": {
+        "startLine": 819,
+        "startChar": 49,
+        "endLine": 819,
+        "endChar": 50
+      },
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4359dee5_4a5092b5",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:17:18Z",
+      "side": 1,
+      "message": "Is get\u003cuint64_t\u003e more obvious or is get\u003c0\u003e?",
+      "range": {
+        "startLine": 850,
+        "startChar": 42,
+        "endLine": 850,
+        "endChar": 43
+      },
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
