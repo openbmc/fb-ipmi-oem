@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d182ff92_0bbe17e7",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:13:11Z",
+      "side": 1,
+      "message": "Why did these all change to std::error?  If you\u0027re going to change to something else, use lg2?",
+      "revId": "073fe7f0b5615b7dfec5c1571e75df85bf760e7e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3154f8a9_ae430e77",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:13:11Z",
+      "side": 1,
+      "message": "Do we really want to use FRU_ALL as \"I failed in making a call\"?  Why aren\u0027t we throwing the exception farther up the stack?",
+      "revId": "073fe7f0b5615b7dfec5c1571e75df85bf760e7e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
