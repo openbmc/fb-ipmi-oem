@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "545ac3e1_e125bc74",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:10:22Z",
+      "side": 1,
+      "message": "Why are we returning as a vector of bytes if there is actually a \"bios flash size\" we\u0027re suppose to get?  Can\u0027t we make sure the response data parsed correctly?",
+      "range": {
+        "startLine": 128,
+        "startChar": 14,
+        "endLine": 128,
+        "endChar": 34
+      },
+      "revId": "8218290dfc9d53b47ef56f6b04c841a68e4b92d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68de261a_b6f6cc35",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-11-28T21:10:22Z",
+      "side": 1,
+      "message": "Why is this a generic vector?  What are the correct/expected parameters here?",
+      "range": {
+        "startLine": 130,
+        "startChar": 28,
+        "endLine": 130,
+        "endChar": 56
+      },
+      "revId": "8218290dfc9d53b47ef56f6b04c841a68e4b92d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
