@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0e1bdb5_42e436ab",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-11-29T13:45:43Z",
+      "side": 1,
+      "message": "Response:\nByte 1 – Completion Code\n00h – Success (Remaining standard Completion Codes are shown in IPMI\nspec v2.0 table 5-2)\nByte 2:4 – IANA ID – 00A015h, LS byte first\nByte 5:8 – flash size\n\nBios Flash size returns 4  bytes ( Byte 5:8 ). So only, returned as vector of bytes. This data parsed correctly and got the response.",
+      "parentUuid": "545ac3e1_e125bc74",
+      "range": {
+        "startLine": 128,
+        "startChar": 14,
+        "endLine": 128,
+        "endChar": 34
+      },
+      "revId": "8218290dfc9d53b47ef56f6b04c841a68e4b92d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "68de261a_b6f6cc35",
@@ -37,6 +61,30 @@
       "writtenOn": "2022-11-28T21:10:22Z",
       "side": 1,
       "message": "Why is this a generic vector?  What are the correct/expected parameters here?",
+      "range": {
+        "startLine": 130,
+        "startChar": 28,
+        "endLine": 130,
+        "endChar": 56
+      },
+      "revId": "8218290dfc9d53b47ef56f6b04c841a68e4b92d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35fa1186_1b22c851",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2022-11-29T13:45:43Z",
+      "side": 1,
+      "message": "Request:\nByte 1:3 – IANA ID – 00A015h, LS byte first\nByte 4 – target\n00h: BIOS\n\nThe input parameters are 3 bytes - IANA and 1 byte - target. So, declared as generic vector to handle all parameters. Also, sendBicCmd function accepts parameter as vector of bytes.",
+      "parentUuid": "68de261a_b6f6cc35",
       "range": {
         "startLine": 130,
         "startChar": 28,
