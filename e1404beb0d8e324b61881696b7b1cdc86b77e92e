@@ -76,6 +76,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9121a65_e736db4e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 819,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-11-30T01:23:39Z",
+      "side": 1,
+      "message": "All the Dbus object path name is defined as\n/xyz/openbmc_project/State/Boot/PostCode0 no matter which host ID it is.\n\nReference:\nhttps://github.com/openbmc/phosphor-post-code-manager/blob/master/meson.build#L16\n\nBMC creates different Dbus services like xyz.openbmc_project.State.Boot.PostCode$host_id to save POST codes from different hosts.",
+      "parentUuid": "a74a65e2_b9d83aac",
+      "range": {
+        "startLine": 819,
+        "startChar": 49,
+        "endLine": 819,
+        "endChar": 50
+      },
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4359dee5_4a5092b5",
