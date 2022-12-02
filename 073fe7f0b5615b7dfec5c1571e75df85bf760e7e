@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd152230_b1e3f1f9",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-12-02T10:57:41Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d182ff92_0bbe17e7",
+      "revId": "073fe7f0b5615b7dfec5c1571e75df85bf760e7e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3154f8a9_ae430e77",
@@ -31,6 +49,24 @@
       "writtenOn": "2022-11-28T21:13:11Z",
       "side": 1,
       "message": "Do we really want to use FRU_ALL as \"I failed in making a call\"?  Why aren\u0027t we throwing the exception farther up the stack?",
+      "revId": "073fe7f0b5615b7dfec5c1571e75df85bf760e7e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dee7d026_3f8305a8",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1001412
+      },
+      "writtenOn": "2022-12-02T10:57:41Z",
+      "side": 1,
+      "message": "Ack. I have updated this in latest patch set",
+      "parentUuid": "3154f8a9_ae430e77",
       "revId": "073fe7f0b5615b7dfec5c1571e75df85bf760e7e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
