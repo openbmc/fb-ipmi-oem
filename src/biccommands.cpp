@@ -26,8 +26,13 @@
 #include <variant>
 #include <iostream>
 
+#define SIZE_IANA_ID 3
+
 namespace ipmi
 {
+
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
 
 using namespace phosphor::logging;
 
@@ -116,6 +121,39 @@ ipmi::RspType<std::array<uint8_t, 3>>
     return ipmi::responseSuccess(iana);
 }
 
+//----------------------------------------------------------------------
+// ipmiOemClearCmos (CMD_OEM_CLEAR_CMOS)
+// This Function will clear the CMOS.
+// netfn=0x38 and cmd=0x25
+//----------------------------------------------------------------------
+ipmi::RspType<std::array<uint8_t, 3>>
+    ipmiOemClearCmos(ipmi::Context::ptr ctx, std::array<uint8_t, 3> iana)
+{
+    std::vector<uint8_t> respData;
+
+    if (iana.size() != SIZE_IANA_ID)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid IANA ID length received");
+        return ipmi::responseReqDataLenInvalid();
+    }
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    std::vector<uint8_t> reqData(iana.begin(), iana.end());
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    std::array<uint8_t, 3> resp;
+    std::copy(respData.begin(), respData.end(), resp.begin());
+
+    // sending the success response.
+    return ipmi::responseSuccess(resp);
+}
+
 [[maybe_unused]] static void registerBICFunctions(void)
 {
 
@@ -128,6 +166,9 @@ ipmi::RspType<std::array<uint8_t, 3>>
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
                           cmdOemSendPostBufferToBMC, ipmi::Privilege::User,
                           ipmiOemPostCodeHandler);
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+                          cmdOemClearCMOS, ipmi::Privilege::User,
+                          ipmiOemClearCmos);
     return;
 }
 
