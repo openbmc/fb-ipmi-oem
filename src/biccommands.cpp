@@ -206,6 +206,51 @@ ipmi::RspType<IanaType> ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
     return ipmi::responseSuccess(reqIana);
 }
 
+//----------------------------------------------------------------------
+// ipmiOemClearCmos (CMD_OEM_CLEAR_CMOS)
+// This Function will clear the CMOS.
+// netfn=0x38 and cmd=0x25
+//----------------------------------------------------------------------
+ipmi::RspType<IanaType> ipmiOemClearCmos(ipmi::Context::ptr ctx,
+                                         IanaType ianaReq)
+{
+    if (iana != ianaReq)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid request of IANA ID length received");
+        return ipmi::responseReqDataLenInvalid();
+    }
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    std::vector<uint8_t> respData;
+    std::vector<uint8_t> reqData(ianaReq.begin(), ianaReq.end());
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, reqData, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    if (respData.size() != iana.size())
+    {
+        return ipmi::responseReqDataLenInvalid();
+    }
+
+    IanaType resp;
+    std::copy_n(respData.begin(), resp.size(), resp.begin());
+
+    if (iana != resp)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid response of IANA ID received");
+        return ipmi::responseUnspecifiedError();
+        ;
+    }
+
+    // sending the success response.
+    return ipmi::responseSuccess(resp);
+}
+
 [[maybe_unused]] static void registerBICFunctions(void)
 {
 
@@ -227,6 +272,9 @@ ipmi::RspType<IanaType> ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
         ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
         static_cast<Cmd>(fb_bic_cmds::CMD_OEM_SET_HOST_POWER_STATE),
         ipmi::Privilege::User, ipmiOemSetHostPowerState);
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+                          static_cast<Cmd>(fb_bic_cmds::CMD_OEM_CLEAR_CMOS),
+                          ipmi::Privilege::User, ipmiOemClearCmos);
     return;
 }
 
