@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b05872a5_c1855eae",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-05T12:33:34Z",
+      "side": 1,
+      "message": "In case it hasn\u0027t been clear from my recent reviews here, I really don\u0027t want to see std::vector being used as either a RspType or parameter unless the method really calls for it.\n\nThe input here should be 3 or 4 bytes of IANA, right?  Let\u0027s be explicit on how long it can be.  Why aren\u0027t we verifying the IANA?\n\nWhat is the response?  Let\u0027s not make it a raw vector.  Let\u0027s specify the real data layout.",
+      "range": {
+        "startLine": 127,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 79
+      },
+      "revId": "e7eb137614477fa9cb326a1eb68bbbdb4d85d2a3",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
