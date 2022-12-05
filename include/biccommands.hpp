@@ -6,6 +6,7 @@ enum class fb_bic_cmds : uint8_t
     CMD_OEM_SEND_POST_BUFFER_TO_BMC = 0x8,
     CMD_OEM_SET_HOST_POWER_STATE = 0x0C,
     CMD_OEM_GET_FLASH_SIZE = 0x19,
+    CMD_OEM_CLEAR_CMOS = 0x25,
 };
 
 // Flash size response length
