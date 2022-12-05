@@ -5,7 +5,11 @@ enum class fb_bic_cmds : uint8_t
     CMD_OEM_GET_BIC_GPIO_STATE = 0x3,
     CMD_OEM_SEND_POST_BUFFER_TO_BMC = 0x8,
     CMD_OEM_SET_HOST_POWER_STATE = 0x0C,
+    CMD_OEM_CLEAR_CMOS = 0x25,
 };
+
+// Command for clear CMOS
+constexpr uint8_t cmdOemClearCMOS = 0x25;
 
 const char* dbusObj = "/xyz/openbmc_project/state/boot/raw";
 
