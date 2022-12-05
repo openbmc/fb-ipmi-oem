@@ -29,6 +29,9 @@
 namespace ipmi
 {
 
+int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
+               std::vector<uint8_t>&);
+
 using namespace phosphor::logging;
 
 #ifdef BIC_ENABLED
@@ -116,6 +119,27 @@ ipmi::RspType<std::array<uint8_t, 3>>
     return ipmi::responseSuccess(iana);
 }
 
+//----------------------------------------------------------------------
+// ipmiOemClearCmos (CMD_OEM_CLEAR_CMOS)
+// This Function will clear the CMOS.
+// netfn=0x38 and cmd=0x25
+//----------------------------------------------------------------------
+ipmi::RspType<std::vector<uint8_t>> ipmiOemClearCmos(ipmi::Context::ptr ctx,
+                                                     std::vector<uint8_t> iana)
+{
+    std::vector<uint8_t> respData;
+
+    uint8_t bicAddr = (uint8_t)ctx->hostIdx << 2;
+
+    if (sendBicCmd(ctx->netFn, ctx->cmd, bicAddr, iana, respData))
+    {
+        return ipmi::responseUnspecifiedError();
+    }
+
+    // sending the success response.
+    return ipmi::responseSuccess(respData);
+}
+
 [[maybe_unused]] static void registerBICFunctions(void)
 {
 
@@ -128,6 +152,9 @@ ipmi::RspType<std::array<uint8_t, 3>>
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
                           cmdOemSendPostBufferToBMC, ipmi::Privilege::User,
                           ipmiOemPostCodeHandler);
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+                          cmdOemClearCMOS, ipmi::Privilege::User,
+                          ipmiOemClearCmos);
     return;
 }
 
