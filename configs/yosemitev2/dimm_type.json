@@ -1,34 +1,26 @@
 {
-        "dimm_type0":
-        {
-                "short_name": "MEMA0"
-        },
-        "dimm_type1":
-        {
-                "short_name": "MEMA1"
-        },
-        "dimm_type2":
-        {
-                "short_name": "MEMB0"
-        },
-        "dimm_type3":
-        {
-                "short_name": "MEMB1"
-        },
-        "dimm_type4":
-        {
-                "short_name": "MEMD0"
-        },
-        "dimm_type5":
-        {
-                "short_name": "MEMD1"
-        },
-        "dimm_type6":
-        {
-                "short_name": "MEME0"
-        },
-        "dimm_type7":
-        {
-                "short_name": "MEME1"
-        }
+    "dimm_type0": {
+        "short_name": "MEMA0"
+    },
+    "dimm_type1": {
+        "short_name": "MEMA1"
+    },
+    "dimm_type2": {
+        "short_name": "MEMB0"
+    },
+    "dimm_type3": {
+        "short_name": "MEMB1"
+    },
+    "dimm_type4": {
+        "short_name": "MEMD0"
+    },
+    "dimm_type5": {
+        "short_name": "MEMD1"
+    },
+    "dimm_type6": {
+        "short_name": "MEME0"
+    },
+    "dimm_type7": {
+        "short_name": "MEME1"
+    }
 }
