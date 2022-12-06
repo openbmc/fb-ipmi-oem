@@ -150,6 +150,50 @@ ipmi::RspType<std::array<uint8_t, 3>, std::vector<uint8_t>>
     return ipmi::responseSuccess(respIana, gpioState);
 }
 
+ipmi::RspType<std::array<uint8_t, 3>>
+    ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
+                             std::array<uint8_t, 3> reqIana, uint8_t status)
+{
+    std::string targetUnit;
+
+    switch (status)
+    {
+        case HOST_POWER_ON:
+            targetUnit = "obmc-host-startmin@.target";
+            break;
+        case HOST_POWER_OFF:
+            targetUnit = "obmc-host-stop@.target";
+            break;
+        default:
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "IPMI ipmiOemHostPowerStatus power status error");
+            return ipmi::responseUnspecifiedError();
+    }
+
+    int mousePos = targetUnit.find('@');
+    targetUnit.insert(mousePos + 1, std::to_string(ctx->hostIdx + 1));
+
+    auto conn = getSdBus();
+    auto method = conn->new_method_call(systemdService, systemdObjPath,
+                                        systemdInterface, "StartUnit");
+    method.append(targetUnit);
+    method.append("replace");
+
+    try
+    {
+        conn->call_noreply(method);
+    }
+    catch (const sdbusplus::exception::SdBusError& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "IPMI ipmiOemHostPowerStatus Failed in call method",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return ipmi::responseUnspecifiedError();
+    }
+
+    return ipmi::responseSuccess(reqIana);
+}
+
 [[maybe_unused]] static void registerBICFunctions(void)
 {
 
@@ -165,6 +209,9 @@ ipmi::RspType<std::array<uint8_t, 3>, std::vector<uint8_t>>
     ipmi::registerHandler(ipmi::prioOemBase, ipmi::netFnOemFive,
                           CMD_OEM_GET_BIC_GPIO_STATE, ipmi::Privilege::User,
                           ipmiOemGetBicGpioState);
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+                          CMD_OEM_SET_HOST_POWER_STATE, ipmi::Privilege::User,
+                          ipmiOemSetHostPowerState);
     return;
 }
 
