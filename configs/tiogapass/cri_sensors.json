@@ -1,65 +1,50 @@
 {
-	"DTS_CPU1":
-	{
-		"short_name": "P0_TEMP:"
-	},
-	"DTS_CPU2":
-	{
-		"short_name": "P1_TEMP:"
-	},
-	"MB_HSC_IN_POWER":
-	{
-		"short_name": "HSC_PWR:",
-		"precision": 1
-	},
-	"MB_HSC_IN_VOLT":
-	{
-		"short_name": "HSC_VOL:",
-		"precision": 2
-	},
-	"MB_FAN0_TACH":
-	{
-		"short_name": "Fan0:"
-	},
-	"MB_FAN1_TACH":
-	{
-		"short_name": "Fan1:"
-	},
-	"MB_INLET_REMOTE_TEMP":
-	{
-		"short_name": "Inlet_TEMP:"
-	},
-	"MB_VR_CPU0_VCCIN_Temperature":
-	{
-		"short_name": "P0_VR_TEMP:"
-	},
-	"MB_VR_CPU1_VCCIN_Temperature":
-	{
-		"short_name": "P1_VR_TEMP:"
-	},
-	"MB_VR_CPU0_VCCIN_Output_Power":
-	{
-		"short_name": "P0_VR_Pwr:"
-	},
-	"MB_VR_CPU1_VCCIN_Output_Power":
-	{
-		"short_name": "P1_VR_Pwr:",
-		"precision": 1
-	},
-	"MB_CPU0_DIMM_GRPA_TEMP":
-	{
-		"short_name": "DIMMA012_TEMP:"
-	},
-	"MB_CPU0_DIMM_GRPB_TEMP":
-	{
-		"short_name": "DIMMA345_TEMP:"
-	},
-	"MB_CPU1_DIMM_GRPC_TEMP":
-	{
-		"short_name": "DIMMB012_TEMP:"
-	},
-	"MB_CPU1_DIMM_GRPD_TEMP":
-	{
-		"short_name": "DIMMB345_TEMP:"
-	}
+    "DTS_CPU1": {
+        "short_name": "P0_TEMP:"
+    },
+    "DTS_CPU2": {
+        "short_name": "P1_TEMP:"
+    },
+    "MB_HSC_IN_POWER": {
+        "short_name": "HSC_PWR:",
+        "precision": 1
+    },
+    "MB_HSC_IN_VOLT": {
+        "short_name": "HSC_VOL:",
+        "precision": 2
+    },
+    "MB_FAN0_TACH": {
+        "short_name": "Fan0:"
+    },
+    "MB_FAN1_TACH": {
+        "short_name": "Fan1:"
+    },
+    "MB_INLET_REMOTE_TEMP": {
+        "short_name": "Inlet_TEMP:"
+    },
+    "MB_VR_CPU0_VCCIN_Temperature": {
+        "short_name": "P0_VR_TEMP:"
+    },
+    "MB_VR_CPU1_VCCIN_Temperature": {
+        "short_name": "P1_VR_TEMP:"
+    },
+    "MB_VR_CPU0_VCCIN_Output_Power": {
+        "short_name": "P0_VR_Pwr:"
+    },
+    "MB_VR_CPU1_VCCIN_Output_Power": {
+        "short_name": "P1_VR_Pwr:",
+        "precision": 1
+    },
+    "MB_CPU0_DIMM_GRPA_TEMP": {
+        "short_name": "DIMMA012_TEMP:"
+    },
+    "MB_CPU0_DIMM_GRPB_TEMP": {
+        "short_name": "DIMMA345_TEMP:"
+    },
+    "MB_CPU1_DIMM_GRPC_TEMP": {
+        "short_name": "DIMMB012_TEMP:"
+    },
+    "MB_CPU1_DIMM_GRPD_TEMP": {
+        "short_name": "DIMMB345_TEMP:"
+    }
 }
