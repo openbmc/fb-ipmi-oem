@@ -107,6 +107,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b9d8c17_465a67ca",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-08T08:46:21Z",
+      "side": 1,
+      "message": "Hi Patrick,\n\nAfter checking, we find out that if we use vector\u003cuint64_t\u003e to get post codes, the result is shown below.\n\nThere are many useless zeroes in the result, since BMC only save one byte post codes from BIC.\n\nAlthough we use uint64_t to save primary post codes, but BIC could only support one byte data currently.\nhttps://github.com/facebook/OpenBIC/blob/main/common/dev/snoop.c#L57\n\nroot@greatlakes:~# busctl call xyz.openbmc_project.Ipmi.Host /xyz/openbmc_project/Ipmi xyz.openbmc_project.Ipmi.Server execute yyyaya{sv} 0x30 0 0x49 0 1 \"hostId\" i 0\n(yyyyay) 49 0 73 0 1840 183 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 112 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 183 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 183 0 0 0 0 0 0 0 190 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 210 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 210 0 0 0 0 0 0 0 214 0 0 0 0 0 0 0 112 0 0 0 0 0 0 0 185 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 183 0 0 0 0 0 0 0 184 0 0 0 0 0 0 0 215 0 0 0 0 0 0 0 201 0 0 0 0 0 0 0 218 0 0 0 0 0 0 0 217 0 0 0 0 0 0 0 219 0 0 0 0 0 0 0 186 0 0 0 0 0 0 0 185 0 0 0 0 0 0 0 112 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 203 0 0 0 0 0 0 0 187 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 208 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 208 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 208 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 209 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 209 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 112 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 183 0 0 0 0 0 0 0 202 0 0 0 0 0 0 0 220 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 204 0 0 0 0 0 0 0 188 0 0 0 0 0 0 0 206 0 0 0 0 0 0 0 198 0 0 0 0 0 0 0 126 0 0 0 0 0 0 0 191 0 0 0 0 0 0 0 175 0 0 0 0 0 0 0 80 0 0 0 0 0 0 0",
+      "parentUuid": "32fb57db_982cca05",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
