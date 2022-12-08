@@ -125,6 +125,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3e71bbe_c39686fc",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-08T13:21:44Z",
+      "side": 1,
+      "message": "The AMD systems have 4 byte post codes already.  How are we going to handle those?\n\nI don\u0027t think \"useless zeros\" is a good reason.  If we don\u0027t handle at least 4 byte post codes we\u0027re just going to be making changes to this code anyhow in the near future.  (I think there are ARM chips that use 64 byte post codes, so we should just follow what the dbus-interface is for post code sizes in the data we send here.)",
+      "parentUuid": "0b9d8c17_465a67ca",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
