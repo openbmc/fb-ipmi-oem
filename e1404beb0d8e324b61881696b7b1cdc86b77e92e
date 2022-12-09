@@ -143,6 +143,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cfa082e7_b82a2f80",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-09T09:04:01Z",
+      "side": 1,
+      "message": "We realized this situation as well.\n\nThus, we will discuss and provide a complete design for different CPU systems later.",
+      "parentUuid": "f3e71bbe_c39686fc",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
