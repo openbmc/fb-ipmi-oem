@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94f08d4d_14b77048",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1001292
+      },
+      "writtenOn": "2022-12-12T04:34:46Z",
+      "side": 1,
+      "message": "This just checks the size of the IANA ID.  I think we want to ensure the value is correct as well so we don\u0027t pass an invalid IANA ID to the BIC.",
+      "revId": "8272ca48aaa95b0bc776a9c6d151122cf8eb0d1a",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
