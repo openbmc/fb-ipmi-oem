@@ -161,6 +161,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41be22f6_df41a5f0",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-13T09:17:40Z",
+      "side": 1,
+      "message": "Hi Patrick,\n\nAfter testing, the command results from host is below\n\n[root@OpenBIC_Refactor_Slot3 ~]# ipmitool raw 0x30 0x49\n 40 00 00 00 00 00 00 00 42 00 00 00 00 00 00 00\n 47 00 00 00 00 00 00 00 4f 00 00 00 00 00 00 00\n 61 00 00 00 00 00 00 00 68 00 00 00 00 00 00 00\n 70 00 00 00 00 00 00 00 79 00 00 00 00 00 00 00\n 91 00 00 00 00 00 00 00 92 00 00 00 00 00 00 00\n 94 00 00 00 00 00 00 00 95 00 00 00 00 00 00 00\n 96 00 00 00 00 00 00 00 ef 00 00 00 00 00 00 00\n 92 00 00 00 00 00 00 00 99 00 00 00 00 00 00 00\n 91 00 00 00 00 00 00 00 92 00 00 00 00 00 00 00\n 97 00 00 00 00 00 00 00 98 00 00 00 00 00 00 00\n 92 00 00 00 00 00 00 00 99 00 00 00 00 00 00 00\n 92 00 00 00 00 00 00 00 ad 00 00 00 00 00 00 00\n b1 00 00 00 00 00 00 00 84 00 00 00 00 00 00 00\n aa 00 00 00 00 00 00 00 e3 00 00 00 00 00 00 00\n\n\nAs we can see, due to IPMB limitation, this handler could only return some post codes from the end.\n\nIn our CPU system, post codes are one byte.\nHowever, we use uint64_t vector to return, there are 7 zeroes following our post codes.\nIn that case, the amount of post codes that BMC could return is really small.\n\nDo you agree with this design?",
+      "parentUuid": "cfa082e7_b82a2f80",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
