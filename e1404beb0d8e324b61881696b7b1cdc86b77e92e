@@ -179,6 +179,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7346a9b_78420ae5",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T17:59:26Z",
+      "side": 1,
+      "message": "Why is getting the postcodes from the BMC over IPMI interesting?\n\nI\u0027m trying to make sure that we don\u0027t have system-specific code for interacting with the BIC when it comes to postcodes.  How do we make this portable between systems with different processor architectures?",
+      "parentUuid": "41be22f6_df41a5f0",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
