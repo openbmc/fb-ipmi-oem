@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49393fff_8c6ce442",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T17:57:49Z",
+      "side": 1,
+      "message": "possible buffer overrun here?  Maybe something like this?\n\nstd::copy_n(respData.begin(), resp.size(), resp.begin())\n\nOr check that respData.size() \u003d\u003d resp.size() ?",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 151,
+        "endChar": 62
+      },
+      "revId": "4cf7dee8e1a99afead3fcf7eff5639e37d42a818",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
