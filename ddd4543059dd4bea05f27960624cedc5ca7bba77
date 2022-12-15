@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e3514ad8_e7445cd6",
+        "filename": "include/biccommands.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T16:10:43Z",
+      "side": 1,
+      "message": "Prefer `enum class`.",
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c67a3e11_4194f870",
+        "filename": "include/biccommands.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T16:10:43Z",
+      "side": 1,
+      "message": "Let\u0027s add something like this so we can clean up the code everywhere:\n\n`using Iana \u003d std::array\u003cuint8_t, 3\u003e;`",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 26
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "803e127b_d1c9c7a5",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T16:10:43Z",
+      "side": 1,
+      "message": "Please add to a proper header file.  I see this is currently declared in `usb-dbg.cpp`.  Does it need to be moved to something BIC-centric?",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 38
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1fb357fc_39437b3a",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T16:10:43Z",
+      "side": 1,
+      "message": "Should this be `std::array\u003cuint8_t, 3\u003e` (or Iana type I proposed earlier)?",
+      "range": {
+        "startLine": 130,
+        "startChar": 51,
+        "endLine": 130,
+        "endChar": 71
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c80c49b2_39219ec6",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T16:10:43Z",
+      "side": 1,
+      "message": "Line 148-154 can be simplified quite a bit using ranges and back_inserter.\n\n```\n    auto r \u003d std::ranges::copy_n(respData.begin(), respIana.size(), respIana.begin()).in;\n    std::copy(r, respData.end(), std::back_inserter(gpioState));\n```",
+      "range": {
+        "startLine": 151,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 33
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "da5972b2_627a4824",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T16:10:43Z",
+      "side": 1,
+      "message": "Let\u0027s make this common with the one you defined earlier.  Maybe move to a common header that isn\u0027t related to the BIC.",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 59
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
