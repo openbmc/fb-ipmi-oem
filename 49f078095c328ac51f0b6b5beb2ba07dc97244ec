@@ -80,6 +80,24 @@
       "message": "prefer `enum class`",
       "revId": "49f078095c328ac51f0b6b5beb2ba07dc97244ec",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53978539_51c0b097",
+        "filename": "include/biccommands.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-16T08:25:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b225a5d4_4fbd766a",
+      "revId": "49f078095c328ac51f0b6b5beb2ba07dc97244ec",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
