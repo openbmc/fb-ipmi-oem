@@ -155,6 +155,57 @@ ipmi::RspType<IanaType, std::vector<uint8_t>>
     return ipmi::responseSuccess(respIana, gpioState);
 }
 
+//----------------------------------------------------------------------
+// ipmiOemSetHostPowerState (CMD_OEM_SET_HOST_POWER_STATE)
+// This Function will handle BIC incomming IPMI request for
+// setting host current state for netfn=0x38 and cmd=0x0C
+// send the response back to the sender.
+//----------------------------------------------------------------------
+
+ipmi::RspType<IanaType> ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
+                                                 IanaType reqIana,
+                                                 uint8_t status)
+{
+    std::string targetUnit;
+
+    switch (static_cast<HostPowerState>(status))
+    {
+        case HostPowerState::HOST_POWER_ON:
+            targetUnit = "obmc-host-startmin@.target";
+            break;
+        case HostPowerState::HOST_POWER_OFF:
+            targetUnit = "obmc-host-stop@.target";
+            break;
+        default:
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "IPMI ipmiOemHostPowerStatus power status error");
+            return ipmi::responseUnspecifiedError();
+    }
+
+    int mousePos = targetUnit.find('@');
+    targetUnit.insert(mousePos + 1, std::to_string(ctx->hostIdx + 1));
+
+    auto conn = getSdBus();
+    auto method = conn->new_method_call(systemdService, systemdObjPath,
+                                        systemdInterface, "StartUnit");
+    method.append(targetUnit);
+    method.append("replace");
+
+    try
+    {
+        conn->call_noreply(method);
+    }
+    catch (const sdbusplus::exception::SdBusError& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "IPMI ipmiOemHostPowerStatus Failed in call method",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return ipmi::responseUnspecifiedError();
+    }
+
+    return ipmi::responseSuccess(reqIana);
+}
+
 [[maybe_unused]] static void registerBICFunctions(void)
 {
 
@@ -172,6 +223,10 @@ ipmi::RspType<IanaType, std::vector<uint8_t>>
         ipmi::prioOemBase, ipmi::netFnOemFive,
         static_cast<Cmd>(fb_bic_cmds::CMD_OEM_GET_BIC_GPIO_STATE),
         ipmi::Privilege::User, ipmiOemGetBicGpioState);
+    ipmi::registerHandler(
+        ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+        static_cast<Cmd>(fb_bic_cmds::CMD_OEM_SET_HOST_POWER_STATE),
+        ipmi::Privilege::User, ipmiOemSetHostPowerState);
     return;
 }
 
