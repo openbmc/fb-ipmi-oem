@@ -87,6 +87,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "408e9060_81dad822",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-16T06:37:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1fb357fc_39437b3a",
+      "range": {
+        "startLine": 130,
+        "startChar": 51,
+        "endLine": 130,
+        "endChar": 71
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c80c49b2_39219ec6",
