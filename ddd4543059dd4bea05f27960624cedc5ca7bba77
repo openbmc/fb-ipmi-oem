@@ -88,6 +88,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "26c87a1c_c6768a69",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-16T06:43:01Z",
+      "side": 1,
+      "message": "Referring to appcommands.cpp and oemcommands.cpp, they just declare \"sendBicCmd\" function on the top of file instead of including usb-dbg.hpp.",
+      "parentUuid": "803e127b_d1c9c7a5",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 38
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1fb357fc_39437b3a",
