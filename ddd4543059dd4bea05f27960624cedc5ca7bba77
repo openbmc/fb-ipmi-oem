@@ -65,6 +65,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f659c24_931a9a37",
+        "filename": "include/biccommands.hpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-16T07:49:35Z",
+      "side": 1,
+      "message": "We find out that Iana has been defined in here\nhttps://github.com/openbmc/phosphor-host-ipmid/blob/master/include/ipmid/api-types.hpp#L26\n\nSo we use using IanaType \u003d std::array\u003cuint8_t, 3\u003e;",
+      "parentUuid": "e1cc9bff_46168e17",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 26
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "803e127b_d1c9c7a5",
