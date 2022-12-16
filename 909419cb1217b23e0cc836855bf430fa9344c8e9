@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c679aee5_07251117",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-16T14:39:58Z",
+      "side": 1,
+      "message": "Seems like a bunch of commits are adding this in assorted places.\n\nI\u0027ve suggested two things:\n\n1. We define a type like `using Iana \u003d std::array\u003cuint8_t, 3\u003e`.\n2. We put the iana constant in a header that can be reused.",
+      "revId": "909419cb1217b23e0cc836855bf430fa9344c8e9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fe2966e9_df822fea",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-16T14:39:58Z",
+      "side": 1,
+      "message": "Please don\u0027t forward declare like this.",
+      "revId": "909419cb1217b23e0cc836855bf430fa9344c8e9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "412ce867_0aa420e1",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-16T14:39:58Z",
+      "side": 1,
+      "message": "Please move down to ~line 143.  No need to forward declare variables in C++.  Put them near first use.",
+      "revId": "909419cb1217b23e0cc836855bf430fa9344c8e9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cdc92532_ba0355f4",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-16T14:39:58Z",
+      "side": 1,
+      "message": "I still don\u0027t see anything that forces the copy to be restricted to 3, which can result in a buffer overrun copying into resp.\n\nMaybe something like:\n\nif (respData.size() !\u003d iana.size()) {\n    return ipmi::someError\n}\n\nIana resp{};\nstd::copy_n(respData.begin(), resp.size(), resp.begin());",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 151,
+        "endChar": 62
+      },
+      "revId": "909419cb1217b23e0cc836855bf430fa9344c8e9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
