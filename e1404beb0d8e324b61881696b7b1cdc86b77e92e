@@ -197,6 +197,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd4fb724_ce2916b8",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2022-12-20T02:52:56Z",
+      "side": 1,
+      "message": "Hi Patrick,\n\nWe propose that we could add a option called \"support-post-code-byte\" in meson meaning that current CPU supports which kind of POST code for different CPU systems.\n\nIn that case, different projects could get corresponding POST codes without any meaningless zeroes.",
+      "parentUuid": "b7346a9b_78420ae5",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
