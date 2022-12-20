@@ -105,6 +105,8 @@ constexpr auto IPV4_PREFIX = "169.254";
 constexpr auto IPV6_PREFIX = "fe80";
 constexpr auto IP_INTERFACE = "xyz.openbmc_project.Network.IP";
 constexpr auto MAC_INTERFACE = "xyz.openbmc_project.Network.MACAddress";
+constexpr auto IPV4_PROTOCOL = "xyz.openbmc_project.Network.IP.Protocol.IPv4";
+constexpr auto IPV6_PROTOCOL = "xyz.openbmc_project.Network.IP.Protocol.IPv6";
 
 bool isLinkLocalIP(const std::string& address)
 {
@@ -113,9 +115,10 @@ bool isLinkLocalIP(const std::string& address)
 
 DbusObjectInfo getIPObject(sdbusplus::bus_t& bus, const std::string& interface,
                            const std::string& serviceRoot,
-                           const std::string& match)
+                           const std::string& protocol,
+                           const std::string& ethdev)
 {
-    auto objectTree = getAllDbusObjects(bus, serviceRoot, interface, match);
+    auto objectTree = getAllDbusObjects(bus, serviceRoot, interface, ethdev);
 
     if (objectTree.empty())
     {
@@ -129,7 +132,14 @@ DbusObjectInfo getIPObject(sdbusplus::bus_t& bus, const std::string& interface,
     {
         auto variant =
             ipmi::getDbusProperty(bus, object.second.begin()->first,
-                                  object.first, IP_INTERFACE, "Address");
+                                  object.first, IP_INTERFACE, "Type");
+        if (std::get<std::string>(variant) != protocol)
+        {
+            continue;
+        }
+
+        variant = ipmi::getDbusProperty(bus, object.second.begin()->first,
+                                        object.first, IP_INTERFACE, "Address");
 
         objectInfo = std::make_pair(object.first, object.second.begin()->first);
 
@@ -275,10 +285,10 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
     {
         case LanParam::IP:
         {
-            auto ethIP = ethdevice + "/" + ipmi::network::IPV4_TYPE;
             std::string ipaddress;
             auto ipObjectInfo = ipmi::network::getIPObject(
-                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT, ethIP);
+                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT,
+                ipmi::network::IPV4_PROTOCOL, ethdevice);
 
             auto properties = ipmi::getAllDbusProperties(
                 bus, ipObjectInfo.second, ipObjectInfo.first,
@@ -292,10 +302,10 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 
         case LanParam::IPV6:
         {
-            auto ethIP = ethdevice + "/" + ipmi::network::IPV6_TYPE;
             std::string ipaddress;
             auto ipObjectInfo = ipmi::network::getIPObject(
-                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT, ethIP);
+                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT,
+                ipmi::network::IPV6_PROTOCOL, ethdevice);
 
             auto properties = ipmi::getAllDbusProperties(
                 bus, ipObjectInfo.second, ipObjectInfo.first,
