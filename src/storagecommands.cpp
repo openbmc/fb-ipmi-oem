@@ -97,8 +97,8 @@ static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
         updateTimeMap[sensorConnection] = now;
 
         auto managedObj = dbus.new_method_call(
-            sensorConnection.c_str(), "/", "org.freedesktop.DBus.ObjectManager",
-            "GetManagedObjects");
+            sensorConnection.c_str(), "/xyz/openbmc_project/sensors",
+            "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
 
         ManagedObjectSensor managedObjects;
         try
