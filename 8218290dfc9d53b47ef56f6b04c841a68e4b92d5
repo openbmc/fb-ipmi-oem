@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e5550bd5_65308390",
+        "filename": "include/biccommands.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1001496
+      },
+      "writtenOn": "2022-12-22T12:58:30Z",
+      "side": 1,
+      "message": "Can you remove \"Get\" from name similar to \"cmdOemBicInfo\" as above?",
+      "revId": "8218290dfc9d53b47ef56f6b04c841a68e4b92d5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "545ac3e1_e125bc74",
         "filename": "src/biccommands.cpp",
         "patchSetId": 2
