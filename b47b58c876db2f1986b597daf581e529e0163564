@@ -16,6 +16,23 @@
       "message": "LGTM",
       "revId": "b47b58c876db2f1986b597daf581e529e0163564",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8acb1c78_aa570e78",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-01-11T04:12:45Z",
+      "side": 1,
+      "message": "Hi All, \n\nCould you please review this patch and provide your suggestions if any.",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
