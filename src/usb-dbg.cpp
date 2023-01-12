@@ -40,6 +40,7 @@ namespace storage
 {
 int getSensorValue(std::string&, double&);
 int getSensorUnit(std::string&, std::string&);
+int getSensorThreshold(std::string&, std::string&);
 } // namespace storage
 
 void getMaxHostPosition(size_t& maxPosition)
@@ -756,7 +757,23 @@ static int udbg_get_cri_sensor(uint8_t, uint8_t page, uint8_t* next,
                 if (ipmi::storage::getSensorUnit(senName, unitStr) == 0)
                     senStr += unitStr;
 
-                frame_snr.append(senStr.c_str(), 0);
+                std::string thresholdStr;
+                if (ipmi::storage::getSensorThreshold(senName, thresholdStr) ==
+                    0)
+                {
+                    if (thresholdStr != "")
+                    {
+                        senStr += ("/" + thresholdStr);
+                        std::string senStrWithBlinkAndInvertColor =
+                            ESC_ALT + senStr + ESC_RST;
+                        frame_snr.append(senStrWithBlinkAndInvertColor.c_str(),
+                                         0);
+                    }
+                    else
+                    {
+                        frame_snr.append(senStr.c_str(), 0);
+                    }
+                }
             }
             else
             {

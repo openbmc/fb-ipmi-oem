@@ -1,68 +1,107 @@
 {
-    "_HSC_Temp": {
-        "short_name": "MB_HSC_TEMP_C:"
-    },
-    "_MB_Inlet_Temp": {
-        "short_name": "MB_INLET_TEMP_C:"
-    },
-    "_VCCIN_SPS_Temp": {
-        "short_name": "MB_VR_VCCIN_TEMP_C:"
-    },
-    "_VCCIN_VR_Pout": {
-        "short_name": "MB_VR_VCCIN_PWR_W:"
-    },
-    "_CPU_PWR": {
-        "short_name": "MB_SOC_PACKAGE_PWR_W:"
-    },
-    "_EHV_VR_Pout": {
-        "short_name": "MB_VR_EHV_PWR_W:"
-    },
-    "_FAON_VR_Pout": {
-        "short_name": "MB_VR_FAON_PWR_W:"
-    },
-    "_FIVRA_VR_Pout": {
-        "short_name": "MB_VR_FIVRA_PWR_W:"
-    },
-    "_VCCD_VR_Pout": {
-        "short_name": "MB_VR_VCCD_PWR_W:"
-    },
-    "_HSC_Input_Pwr": {
-        "short_name": "MB_HSC_INPUT_PWR_W:"
-    },
-    "_DIMMA_Temp": {
-        "short_name": "MB_DIMMA0_TEMP_C:"
-    },
-    "_DIMMC_Temp": {
-        "short_name": "MB_DIMMA2_TEMP_C:"
-    },
-    "_DIMMD_Temp": {
-        "short_name": "MB_DIMMA3_TEMP_C:"
-    },
-    "_DIMME_Temp": {
-        "short_name": "MB_DIMMA4_TEMP_C:"
-    },
-    "_DIMMG_Temp": {
-        "short_name": "MB_DIMMA6_TEMP_C:"
-    },
-    "_DIMMH_Temp": {
-        "short_name": "MB_DIMMA7_TEMP_C:"
-    },
-    "_SOC_CPU_Temp": {
-        "short_name": "MB_SOC_CPU_TEMP_C:"
-    },
-    "_FIO_Temp": {
-        "short_name": "FIO_FRONT_TEMP_C:"
-    },
-    "_VCCD_VR_Vol": {
-        "short_name": "MB_VR_VCCD_VOLT_V:"
-    },
-    "_VCCIN_VR_Vol": {
-        "short_name": "MB_VR_VCCIN_VOLT_V:"
-    },
-    "_EHV_VR_Vol": {
-        "short_name": "MB_VR_EHV_VOLT_V:"
-    },
-    "_HSC_Input_Vol": {
-        "short_name": "MB_HSC_INPUT_VOLT_V:"
-    }
+  "BB_INLET_TEMP_C": {
+    "short_name": "BB_INLET_TEMP_C:"
+  },
+  "BB_OUTLET_TEMP_C": {
+    "short_name": "BB_OUTLET_TEMP_C:"
+  },
+  "BB_HSC_TEMP_C": {
+    "short_name": "BB_HSC_TEMP_C:"
+  },
+  "NIC_TEMP_C": {
+    "short_name": "NIC_TEMP_C:"
+  },
+  "BB_P5V_VOLT_V": {
+    "short_name": "BB_P5V_VOLT_V:"
+  },
+  "BB_P12V_VOLT_V": {
+    "short_name": "BB_P12V_VOLT_V:"
+  },
+  "BB_P3V3_STBY_VOLT_V": {
+    "short_name": "BB_P3V3_STBY_VOLT_V:"
+  },
+  "BB_P2V5_STBY_VOLT_V": {
+    "short_name": "BB_P2V5_STBY_VOLT_V:"
+  },
+  "BB_ADC_P5V_USB_VOLT_V": {
+    "short_name": "BB_ADC_P5V_USB_VOLT_V:"
+  },
+  "BB_P1V8_STBY_VOLT_V": {
+    "short_name": "BB_P1V8_STBY_VOLT_V:"
+  },
+  "BB_P1V2_STBY_VOLT_V": {
+    "short_name": "BB_P1V2_STBY_VOLT_V:"
+  },
+  "BB_ADC_P1V0_STBY_VOLT_V": {
+    "short_name": "BB_ADC_P1V0_STBY_VOLT_V:"
+  },
+  "BB_ADC_P0V6_STBY_VOLT_V": {
+    "short_name": "BB_ADC_P0V6_STBY_VOLT_V:"
+  },
+  "BB_ADC_P3V3_RGM_STBY_VOLT_V": {
+    "short_name": "BB_ADC_P3V3_RGM_STBY_VOLT_V:"
+  },
+  "BB_ADC_P3V3_NIC_VOLT_V": {
+    "short_name": "BB_ADC_P3V3_NIC_VOLT_V:"
+  },
+  "BB_MEDUSA_INPUT_VOLT_V": {
+    "short_name": "BB_MEDUSA_INPUT_VOLT_V:"
+  },
+  "BB_MEDUSA_OUTPUT_VOLT_V": {
+    "short_name": "BB_MEDUSA_OUTPUT_VOLT_V:"
+  },
+  "BB_HSC_INPUT_VOLT_V": {
+    "short_name": "BB_HSC_INPUT_VOLT_V:"
+  },
+  "BB_ADC_NIC_P12V_VOLT_V": {
+    "short_name": "BB_ADC_NIC_P12V_VOLT_V:"
+  },
+  "BB_MEDUSA_CURR_A": {
+    "short_name": "BB_MEDUSA_CURR_A:"
+  },
+  "BB_HSC_OUTPUT_CURR_A": {
+    "short_name": "BB_HSC_OUTPUT_CURR_A:"
+  },
+  "BB_ADC_FAN_OUTPUT_CURR_A": {
+    "short_name": "BB_ADC_FAN_OUTPUT_CURR_A:"
+  },
+  "BB_ADC_NIC_OUTPUT_CURR_A": {
+    "short_name": "BB_ADC_NIC_OUTPUT_CURR_A:"
+  },
+  "BB_MEDUSA_PWR_W": {
+    "short_name": "BB_MEDUSA_PWR_W:"
+  },
+  "BB_HSC_INPUT_PWR_W": {
+    "short_name": "BB_HSC_INPUT_PWR_W:"
+  },
+  "BB_NIC_PWR_W": {
+    "short_name": "BB_NIC_PWR_W:"
+  },
+  "BB_FAN0_TACH_RPM": {
+    "short_name": "BB_FAN0_TACH_RPM:"
+  },
+  "BB_FAN1_TACH_RPM": {
+    "short_name": "BB_FAN1_TACH_RPM:"
+  },
+  "BB_FAN2_TACH_RPM": {
+    "short_name": "BB_FAN2_TACH_RPM:"
+  },
+  "BB_FAN3_TACH_RPM": {
+    "short_name": "BB_FAN3_TACH_RPM:"
+  },
+  "BB_HSC_PEAK_OUTPUT_CURR_A": {
+    "short_name": "BB_HSC_PEAK_OUTPUT_CURR_A:"
+  },
+  "BB_HSC_PEAK_INPUT_PWR_W": {
+    "short_name": "BB_HSC_PEAK_INPUT_PWR_W:"
+  },
+  "BB_MEDUSA_VDELTA_VOLT_V": {
+    "short_name": "BB_MEDUSA_VDELTA_VOLT_V:"
+  },
+  "BB_CPU_PDB_VDELTA_VOLT_V": {
+    "short_name": "BB_CPU_PDB_VDELTA_VOLT_V:"
+  },
+  "BB_FAN_PWR_W": {
+    "short_name": "BB_FAN_PWR_W:"
+  }
 }

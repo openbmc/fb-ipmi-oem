@@ -75,6 +75,42 @@ boost::container::flat_map<uint8_t, std::pair<uint8_t, uint8_t>> deviceHashes;
 
 static sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
 
+using InterfaceName = std::string;
+using PropertyName = std::string;
+using ThresholdStr = std::string;
+
+enum class AlarmType
+{
+    low,
+    high
+};
+
+using Property = std::tuple<PropertyName, ThresholdStr>;
+
+std::vector<InterfaceName> thresholdCheckedOrder{
+    "xyz.openbmc_project.Sensor.Threshold.HardShutdown",
+    "xyz.openbmc_project.Sensor.Threshold.SoftShutdown",
+    "xyz.openbmc_project.Sensor.Threshold.Critical",
+    "xyz.openbmc_project.Sensor.Threshold.Warning"};
+
+const std::map<std::string, std::map<AlarmType, Property>> alarmProperties{
+    {"xyz.openbmc_project.Sensor.Threshold.HardShutdown",
+     {{AlarmType::low, Property{"HardShutdownAlarmLow", "LNR"}},
+      {AlarmType::high, Property{"HardShutdownAlarmHigh", "UNR"}}}},
+
+    {"xyz.openbmc_project.Sensor.Threshold.SoftShutdown",
+     {{AlarmType::low, Property{"SoftShutdownAlarmLow", "LNR"}},
+      {AlarmType::high, Property{"SoftShutdownAlarmHigh", "UNR"}}}},
+
+    {"xyz.openbmc_project.Sensor.Threshold.Critical",
+     {{AlarmType::low, Property{"CriticalAlarmLow", "LCR"}},
+      {AlarmType::high, Property{"CriticalAlarmHigh", "UCR"}}}},
+
+    {"xyz.openbmc_project.Sensor.Threshold.Warning",
+     {{AlarmType::low, Property{"WarningAlarmLow", "LNC"}},
+      {AlarmType::high, Property{"WarningAlarmHigh", "UNC"}}}},
+};
+
 static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
                          SensorMap& sensorMap)
 {
@@ -819,6 +855,74 @@ static int getSensorConnectionByName(std::string& name, std::string& connection,
         }
     }
     return -1;
+}
+
+int getSensorThreshold(std::string& name, std::string& thresholdStr)
+{
+    std::string connection;
+    std::string path;
+    int ret = -1;
+    thresholdStr = "";
+
+    ret = getSensorConnectionByName(name, connection, path);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    SensorMap sensorMap;
+    if (!getSensorMap(connection, path, sensorMap))
+    {
+        return ret;
+    }
+
+    // Iterate threshold interfaces with priority order
+    for (auto interfaceIter = thresholdCheckedOrder.begin();
+         interfaceIter != thresholdCheckedOrder.end(); ++interfaceIter)
+    {
+        std::string interface = *interfaceIter;
+        auto interfaceProperty = alarmProperties.find(interface);
+        if (interfaceProperty != alarmProperties.end())
+        {
+            auto propertyValue = interfaceProperty->second;
+            auto propertyAlarmHigh =
+                propertyValue.find(AlarmType::high)->second;
+            auto propertyAlarmLow = propertyValue.find(AlarmType::low)->second;
+
+            // Checks threshold properties value in sensorMap
+            auto thresholdInterfaceSensorMap = sensorMap.find(interface);
+
+            // Ignore if interface not set
+            if (thresholdInterfaceSensorMap == sensorMap.end())
+            {
+                continue;
+            }
+
+            auto& thresholdMap = thresholdInterfaceSensorMap->second;
+            auto alarmHigh = thresholdMap.find(std::get<0>(propertyAlarmHigh));
+            auto alarmLow = thresholdMap.find(std::get<0>(propertyAlarmLow));
+            if (alarmHigh != thresholdMap.end())
+            {
+                bool alarmHighValue = std::get<bool>(alarmHigh->second);
+                if (alarmHighValue == true)
+                {
+                    thresholdStr = std::get<1>(propertyAlarmHigh);
+                    break;
+                }
+            }
+            if (alarmLow != thresholdMap.end())
+            {
+                bool alarmLowValue = std::get<bool>(alarmLow->second);
+                if (alarmLowValue == true)
+                {
+                    thresholdStr = std::get<1>(propertyAlarmLow);
+                    break;
+                }
+            }
+        }
+    }
+
+    return 0;
 }
 
 int getSensorValue(std::string& name, double& val)
