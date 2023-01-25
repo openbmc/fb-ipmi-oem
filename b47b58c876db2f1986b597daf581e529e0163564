@@ -33,6 +33,64 @@
       "message": "Hi All, \n\nCould you please review this patch and provide your suggestions if any.",
       "revId": "b47b58c876db2f1986b597daf581e529e0163564",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9786f40_f00f3b1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:06:46Z",
+      "side": 1,
+      "message": "Please rebase and leverage new IANA type.",
+      "parentUuid": "8acb1c78_aa570e78",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ab9ea44_8a7fdbbe",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:06:46Z",
+      "side": 1,
+      "message": "Do you need to check the size of the response?  Seems like you have potential buffer overruns here.\nDo you need to confirm the IANA matches any expected?",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e1e35c6_b1c43e0d",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:06:46Z",
+      "side": 1,
+      "message": "nit: prefer std::advance(respData.begin(), ianaResp.size())",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 50
+      },
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
