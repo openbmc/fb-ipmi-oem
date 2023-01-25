@@ -154,6 +154,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "422d4337_9fd8e52e",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 13
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T13:44:31Z",
+      "side": 1,
+      "message": "Please clean them all up in a follow up commit then.  It is poor practice to forward declare some other C-part\u0027s functions.",
+      "parentUuid": "26c87a1c_c6768a69",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 38
+      },
+      "revId": "ddd4543059dd4bea05f27960624cedc5ca7bba77",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1fb357fc_39437b3a",
