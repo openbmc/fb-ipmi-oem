@@ -1,0 +1,233 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4b0e3c2_7b6f9c03",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "Since you\u0027re putting these into a tuple you might want to do something like:\n\n`struct PropertyName : std::string {};`\n\nThis will create an entirely new type, but one that acts exactly like a std::string.  That way when you do `std::get` on the tuple entries you can do `std::get\u003cPropertyName\u003e`.\n\nThe way it currently is, you\u0027re doing types here which is ok for documentation of Property on line 88, but otherwise provides little extra value.  Elsewhere in the code I have to regularly look up what the \u0027std::get\u003c0\u003e\u0027 means.\n\n\nAlternatively, maybe just turn Property into a light-weight struct rather than a tuple:\n\n```\nstruct Property {\n    PropertyName name;\n    ThresholdStr threshold;\n};\n```",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 33
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed06d515_578c4a6d",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "const",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15fe7fb3_2cb2e203",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "unordered_map?",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66ca2009_7f389db7",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 883,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "```\nfor(auto\u0026 interface : thresholdCheckedOrder)\n```",
+      "range": {
+        "startLine": 880,
+        "startChar": 0,
+        "endLine": 883,
+        "endChar": 47
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ededdfc_59df7d66",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 886,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "Prefer reducing nesting in logic by patterns like this:\n\n```\nif (interfaceProperty \u003d\u003d alarmProperties.end()) {\n    continue;\n}\n```",
+      "range": {
+        "startLine": 885,
+        "startChar": 0,
+        "endLine": 886,
+        "endChar": 9
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb7adac0_4e4ab9ea",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "```\nauto\u0026 propertyAlarmHigh \u003d propertyValue.at(AlarmType::high);\nauto\u0026 propertyAlarmLow \u003d propertyValue.at(AlarmType::low);\n```",
+      "range": {
+        "startLine": 888,
+        "startChar": 0,
+        "endLine": 890,
+        "endChar": 79
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22a09227_7458eb82",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 902,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "`std::get\u003cPropertyName\u003e`, prefer types over numbers for readability (see above discussion on this).",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01f1631d_b6dbe9cc",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 903,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "Move to line 913?",
+      "range": {
+        "startLine": 903,
+        "startChar": 0,
+        "endLine": 903,
+        "endChar": 77
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8ef4ee4_6e95f344",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 907,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "Why not this?\n\n`if (std::get\u003cbool\u003e(alarmHigh-\u003esecond))`\n\nAs it currently stands you\u0027ve added a whole lot more characters without any, in my opinion, improvement of readability.  So it is just more to read and review.",
+      "range": {
+        "startLine": 906,
+        "startChar": 0,
+        "endLine": 907,
+        "endChar": 43
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfbcd1fa_1233d940",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "How are we dealing with the error path?  Deal with the error path first to reduce nesting.",
+      "range": {
+        "startLine": 760,
+        "startChar": 0,
+        "endLine": 763,
+        "endChar": 17
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e732fc98_44fa0cef",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:02:43Z",
+      "side": 1,
+      "message": "`if (thresholdStr.size())`\n\nSize is a far cheaper comparison than string-compare.",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
