@@ -217,6 +217,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0664959f_36057023",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-25T14:08:29Z",
+      "side": 1,
+      "message": "I would prefer to avoid different meson options on different machines as much as possible because it means we don\u0027t get compile checking in CI and then things break in openbmc/openbmc.\n\nWhere are the \"extra zeros\" visible?  Is it just going across the dbus?  Is it going out the debug card?\n\nExtra stuff on the dbus doesn\u0027t matter, does it?",
+      "parentUuid": "bd4fb724_ce2916b8",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a74a65e2_b9d83aac",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 2
