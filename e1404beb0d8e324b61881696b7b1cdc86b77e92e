@@ -233,6 +233,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9c144e6_d01f392b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-01-31T08:25:29Z",
+      "side": 1,
+      "message": "After checking BIOS behavior, all the meaningful post codes should not be zero.\n\nHere we provide a design.\n\nFirst of all, we use uint64_t type vector to get all post codes so that we would not lose any post codes.\n\nSecondly, we can filter all zeroes in this uint64_t type vector and put all non-zero post codes into an uint8_t type vector.\n\nFinally, we return this uint8_t type vector as the return result.\n\nDo you agree with this idea?",
+      "parentUuid": "0664959f_36057023",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
