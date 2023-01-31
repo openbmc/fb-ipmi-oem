@@ -253,6 +253,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2231bbf7_2b295e77",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-01-31T17:27:18Z",
+      "side": 1,
+      "message": "Who is the \"return to\"?  I am missing the recipient of this IPMI command.  Is it going to the debug card?  Or something else?\n\nWe would need to add code to not just filter out zeros but instead... ensure all 64-bit integers have 0s in the upper N bytes, then chop out those upper N on all values.\n\nie. it is going to be a problem if you remove the 0s in one post code but not all the others.",
+      "parentUuid": "d9c144e6_d01f392b",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a74a65e2_b9d83aac",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 2
