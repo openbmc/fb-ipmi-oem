@@ -269,6 +269,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3873bf8d_7abd360a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T09:29:32Z",
+      "side": 1,
+      "message": "The recipient of this IPMI command is host.\n\nAfter entering this IPMI command in host console, it will display the POST code sequence on host console.\n\nThe design we propose is like below\n\nFor example:\n\nWith zeroes\n[root@OpenBIC_Refactor_Slot3 ~]# ipmitool raw 0x30 0x49\n40 00 00 00 00 00 00 00 42 00 00 00 00 00 00 00\n47 00 00 00 00 00 00 00 4f 00 00 00 00 00 00 00\n61 00 00 00 00 00 00 00 68 00 00 00 00 00 00 00\n70 00 00 00 00 00 00 00 79 00 00 00 00 00 00 00\n91 00 00 00 00 00 00 00 92 00 00 00 00 00 00 00\n94 00 00 00 00 00 00 00 95 00 00 00 00 00 00 00\n96 00 00 00 00 00 00 00 ef 00 00 00 00 00 00 00\n92 00 00 00 00 00 00 00 99 00 00 00 00 00 00 00\n\nFilter zeroes\n[root@OpenBIC_Refactor_Slot3 ~]# ipmitool raw 0x30 0x49\n40 42 47 4f 61 68 70 79 91 92 94 95 96 ef 92 99\n\nWe will filter all 0s in all post codes",
+      "parentUuid": "2231bbf7_2b295e77",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a74a65e2_b9d83aac",
