@@ -53,6 +53,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f36e1246_c96d5f0a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-02-01T14:44:33Z",
+      "side": 1,
+      "message": "Ack. Working on it.",
+      "parentUuid": "c9786f40_f00f3b1a",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6ab9ea44_8a7fdbbe",
@@ -72,6 +90,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7b065382_562d9c1a",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-02-01T14:44:33Z",
+      "side": 1,
+      "message": "Ack. Working on it.",
+      "parentUuid": "6ab9ea44_8a7fdbbe",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5e1e35c6_b1c43e0d",
         "filename": "src/biccommands.cpp",
         "patchSetId": 4
@@ -83,6 +119,30 @@
       "writtenOn": "2023-01-25T14:06:46Z",
       "side": 1,
       "message": "nit: prefer std::advance(respData.begin(), ianaResp.size())",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 50
+      },
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4d6e14b1_beccf8c3",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-02-01T14:44:33Z",
+      "side": 1,
+      "message": "Ack. Working on it.",
+      "parentUuid": "5e1e35c6_b1c43e0d",
       "range": {
         "startLine": 153,
         "startChar": 16,
