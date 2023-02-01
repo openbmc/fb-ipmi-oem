@@ -40,6 +40,7 @@ namespace storage
 {
 int getSensorValue(std::string&, double&);
 int getSensorUnit(std::string&, std::string&);
+int getSensorThreshold(std::string&, std::string&);
 } // namespace storage
 
 void getMaxHostPosition(size_t& maxPosition)
@@ -756,7 +757,28 @@ static int udbg_get_cri_sensor(uint8_t, uint8_t page, uint8_t* next,
                 if (ipmi::storage::getSensorUnit(senName, unitStr) == 0)
                     senStr += unitStr;
 
-                frame_snr.append(senStr.c_str(), 0);
+                std::string thresholdStr;
+                int ret =
+                    ipmi::storage::getSensorThreshold(senName, thresholdStr);
+                if (ret < 0)
+                {
+                    phosphor::logging::log<phosphor::logging::level::ERR>(
+                        "Error getting critical sensor threshold status",
+                        phosphor::logging::entry("CRI_SENSOR_NAME=%s",
+                                                 senName.c_str()));
+                    return -1;
+                }
+                if (thresholdStr.size() != 0)
+                {
+                    senStr += ("/" + thresholdStr);
+                    std::string senStrWithBlinkAndInvertColor =
+                        ESC_ALT + senStr + ESC_RST;
+                    frame_snr.append(senStrWithBlinkAndInvertColor.c_str(), 0);
+                }
+                else
+                {
+                    frame_snr.append(senStr.c_str(), 0);
+                }
             }
             else
             {
