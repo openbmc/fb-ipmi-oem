@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8db5620_bbfbc686",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Hi Patrick, thanks for your suggestion. The code has been modified, please check it.",
+      "revId": "4c1ee942e6d456f93db35bb36bbe10f21dd41965",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

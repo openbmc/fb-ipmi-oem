@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe9a51b5_6c16f42f",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4b0e3c2_7b6f9c03",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 33
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ed06d515_578c4a6d",
@@ -37,6 +61,24 @@
       "writtenOn": "2023-01-25T14:02:43Z",
       "side": 1,
       "message": "const",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "40c9f424_5562929c",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed06d515_578c4a6d",
       "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -58,6 +100,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b10a1a20_d3522ea2",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15fe7fb3_2cb2e203",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "66ca2009_7f389db7",
@@ -71,6 +131,30 @@
       "writtenOn": "2023-01-25T14:02:43Z",
       "side": 1,
       "message": "```\nfor(auto\u0026 interface : thresholdCheckedOrder)\n```",
+      "range": {
+        "startLine": 880,
+        "startChar": 0,
+        "endLine": 883,
+        "endChar": 47
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "641dc218_9c638a7a",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 883,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66ca2009_7f389db7",
       "range": {
         "startLine": 880,
         "startChar": 0,
@@ -104,6 +188,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7a49ece_479980d0",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 886,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ededdfc_59df7d66",
+      "range": {
+        "startLine": 885,
+        "startChar": 0,
+        "endLine": 886,
+        "endChar": 9
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bb7adac0_4e4ab9ea",
@@ -117,6 +225,30 @@
       "writtenOn": "2023-01-25T14:02:43Z",
       "side": 1,
       "message": "```\nauto\u0026 propertyAlarmHigh \u003d propertyValue.at(AlarmType::high);\nauto\u0026 propertyAlarmLow \u003d propertyValue.at(AlarmType::low);\n```",
+      "range": {
+        "startLine": 888,
+        "startChar": 0,
+        "endLine": 890,
+        "endChar": 79
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54fc8fda_f4581ea7",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb7adac0_4e4ab9ea",
       "range": {
         "startLine": 888,
         "startChar": 0,
@@ -144,6 +276,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "766afa6e_50c5c8ab",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 902,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22a09227_7458eb82",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "01f1631d_b6dbe9cc",
@@ -157,6 +307,30 @@
       "writtenOn": "2023-01-25T14:02:43Z",
       "side": 1,
       "message": "Move to line 913?",
+      "range": {
+        "startLine": 903,
+        "startChar": 0,
+        "endLine": 903,
+        "endChar": 77
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1d35a97_551f02c7",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 903,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01f1631d_b6dbe9cc",
       "range": {
         "startLine": 903,
         "startChar": 0,
@@ -190,6 +364,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb9e9d98_0f5ae150",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 907,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a8ef4ee4_6e95f344",
+      "range": {
+        "startLine": 906,
+        "startChar": 0,
+        "endLine": 907,
+        "endChar": 43
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bfbcd1fa_1233d940",
@@ -213,6 +411,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b7958cb_dcdd6254",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bfbcd1fa_1233d940",
+      "range": {
+        "startLine": 760,
+        "startChar": 0,
+        "endLine": 763,
+        "endChar": 17
+      },
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e732fc98_44fa0cef",
@@ -226,6 +448,24 @@
       "writtenOn": "2023-01-25T14:02:43Z",
       "side": 1,
       "message": "`if (thresholdStr.size())`\n\nSize is a far cheaper comparison than string-compare.",
+      "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4efee2d_1b2475d4",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-02-01T08:42:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e732fc98_44fa0cef",
       "revId": "2381fb84c0d26060f112027722e3cae7bfa2a8af",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
