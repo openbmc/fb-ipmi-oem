@@ -289,6 +289,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "33a3583a_a96c40b4",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-02-01T16:45:39Z",
+      "side": 1,
+      "message": "Understood.  Go ahead with the filtering as long as the filtering is not \"drop every 00\", as I said in my last comment.",
+      "parentUuid": "3873bf8d_7abd360a",
+      "revId": "e1404beb0d8e324b61881696b7b1cdc86b77e92e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a74a65e2_b9d83aac",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 2
