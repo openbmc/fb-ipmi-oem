@@ -71,6 +71,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "536941ab_b314cf56",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-02-02T07:32:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f36e1246_c96d5f0a",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6ab9ea44_8a7fdbbe",
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "Ack. Working on it.",
       "parentUuid": "6ab9ea44_8a7fdbbe",
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ce53cc2_11a2bb87",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-02-02T07:32:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b065382_562d9c1a",
       "revId": "b47b58c876db2f1986b597daf581e529e0163564",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -143,6 +179,30 @@
       "side": 1,
       "message": "Ack. Working on it.",
       "parentUuid": "5e1e35c6_b1c43e0d",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 50
+      },
+      "revId": "b47b58c876db2f1986b597daf581e529e0163564",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d01e0bb_21ebae2d",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1000546
+      },
+      "writtenOn": "2023-02-02T07:32:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d6e14b1_beccf8c3",
       "range": {
         "startLine": 153,
         "startChar": 16,
