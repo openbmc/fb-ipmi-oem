@@ -819,6 +819,69 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     return IPMI_CC_OK;
 }
 
+//----------------------------------------------------------------------
+// Get port 80 record (CMD_OEM_GET_80PORT_RECORD)
+//----------------------------------------------------------------------
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGet80PortRecord(ipmi::Context::ptr ctx)
+{
+    auto postCodeService = "xyz.openbmc_project.State.Boot.PostCode" +
+                           std::to_string(ctx->hostIdx + 1);
+    auto postCodeObjPath = "/xyz/openbmc_project/State/Boot/PostCode" +
+                           std::to_string(ctx->hostIdx + 1);
+    constexpr auto postCodeInterface =
+        "xyz.openbmc_project.State.Boot.PostCode";
+    const static uint16_t lastestPostCodeIndex = 1;
+    constexpr const auto maxPostCodeLen =
+        224; // The length must be lower than IPMB limitation
+    size_t startIndex = 0;
+
+    std::vector<std::tuple<uint64_t, std::vector<uint8_t>>> postCodes;
+    std::vector<uint8_t> resData;
+
+    auto conn = getSdBus();
+    /* Get the post codes by calling GetPostCodes method */
+    auto msg =
+        conn->new_method_call(postCodeService.c_str(), postCodeObjPath.c_str(),
+                              postCodeInterface, "GetPostCodes");
+    msg.append(lastestPostCodeIndex);
+
+    try
+    {
+        auto reply = conn->call(msg);
+        reply.read(postCodes);
+    }
+    catch (const sdbusplus::exception::SdBusError& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "IPMI Get80PortRecord Failed in call method",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return ipmi::responseUnspecifiedError();
+    }
+
+    /* Get post code data */
+    for (size_t i = 0; i < postCodes.size(); ++i)
+    {
+        uint64_t primaryPostCode = std::get<uint64_t>(postCodes[i]);
+        for (int j = postCodeSize - 1; j >= 0; --j)
+        {
+            uint8_t postCode =
+                ((primaryPostCode >> (sizeof(uint64_t) * j)) & 0xFF);
+            resData.emplace_back(postCode);
+        }
+    }
+
+    std::vector<uint8_t> response;
+    if (resData.size() > maxPostCodeLen)
+    {
+        startIndex = resData.size() - maxPostCodeLen;
+    }
+
+    response.assign(resData.begin() + startIndex, resData.end());
+
+    return ipmi::responseSuccess(response);
+}
+
 /* Helper functions to set boot order */
 void setBootOrder(std::string bootObjPath, uint8_t* data,
                   std::string bootOrderKey)
@@ -2057,6 +2120,9 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_BOARD_ID, NULL,
                          ipmiOemGetBoardID,
                          PRIVILEGE_USER); // Get Board ID
+    ipmi::registerHandler(ipmi::prioOemBase, ipmi::netFnOemOne,
+                          CMD_OEM_GET_80PORT_RECORD, ipmi::Privilege::User,
+                          ipmiOemGet80PortRecord); // Get 80 Port Record
     ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_MACHINE_CONFIG_INFO, NULL,
                          ipmiOemSetMachineCfgInfo,
                          PRIVILEGE_USER); // Set Machine Config Info

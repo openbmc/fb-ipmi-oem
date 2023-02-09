@@ -34,6 +34,7 @@ endif
 
 conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES',host_instances)
+conf_data.set('POST_CODE_BYTES', get_option('post-code-bytes'))
 
 configure_file(input: 'meson_config.h.in',
                output: 'config.h',
