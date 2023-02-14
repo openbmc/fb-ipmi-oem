@@ -364,7 +364,6 @@ int8_t getFruData(std::string& data, std::string& name)
     static constexpr const auto depth = 0;
     std::vector<std::string> paths;
     std::string machinePath;
-    std::string baseBoard = "Baseboard";
 
     bool platform = isMultiHostPlatform();
     if (platform == true)

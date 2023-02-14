@@ -32,8 +32,14 @@ if get_option('host-instances') != ''
   host_instances = get_option('host-instances')
 endif
 
+baseboard_name = 'Baseboard'
+if get_option('baseboard_name') != ''
+  baseboard_name = get_option('baseboard_name')
+endif
+
 conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES',host_instances)
+conf_data.set_quoted('BASEBOARD',baseboard_name)
 
 configure_file(input: 'meson_config.h.in',
                output: 'config.h',

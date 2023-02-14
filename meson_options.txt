@@ -13,3 +13,7 @@ option(
   type : 'boolean',
   value : true,
   description: 'Enable ME support')
+option(
+  'baseboard_name',
+  type: 'string',
+  description: 'Baseboard name')

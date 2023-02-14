@@ -1,3 +1,5 @@
 #pragma once
 
 inline static const std::string hostInstances = @INSTANCES@;
+
+inline static const std::string baseBoard = @BASEBOARD@;
