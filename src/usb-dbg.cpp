@@ -606,74 +606,67 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
 static int udbg_get_cri_sel(uint8_t, uint8_t page, uint8_t* next,
                             uint8_t* count, uint8_t* buffer)
 {
-    int len;
-    int ret;
-    char line_buff[FRAME_PAGE_BUF_SIZE];
-    const char* ptr;
-    FILE* fp;
-    struct stat file_stat;
-    size_t pos = plat_get_fru_sel();
-    static uint8_t pre_pos = FRU_ALL;
-    bool pos_changed = pre_pos != pos;
-
-    pre_pos = pos;
-
-    /* Revisit this */
-    fp = fopen("/mnt/data/cri_sel", "r");
-    if (fp)
+    if (page == 1)
     {
-        if ((stat("/mnt/data/cri_sel", &file_stat) == 0) &&
-            (file_stat.st_mtime != frame_sel.mtime || pos_changed))
-        {
-            // initialize and clear frame
-            frame_sel.init(FRAME_BUFF_SIZE);
-            frame_sel.overwrite = 1;
-            frame_sel.max_page = 20;
-            frame_sel.mtime = file_stat.st_mtime;
-            snprintf(frame_sel.title, 32, "Cri SEL");
-
-            while (fgets(line_buff, FRAME_PAGE_BUF_SIZE, fp))
-            {
-                // Remove newline
-                line_buff[strlen(line_buff) - 1] = '\0';
-                ptr = line_buff;
-                // Find message
-                ptr = strstr(ptr, "local0.err");
-                if (ptr == NULL)
-                {
-                    continue;
-                }
-
-                if ((ptr = strrchr(ptr, ':')) == NULL)
-                {
-                    continue;
-                }
-                len = strlen(ptr);
-                if (len > 2)
-                {
-                    // to skip log string ": "
-                    ptr += 2;
-                }
-                // Write new message
-                frame_sel.insert(ptr, 0);
-            }
-        }
-        fclose(fp);
-    }
-    else
-    {
-        // Title only
+        // initialize and clear frame
         frame_sel.init(FRAME_BUFF_SIZE);
+        frame_sel.overwrite = 1;
+        frame_sel.max_page = 20;
         snprintf(frame_sel.title, 32, "Cri SEL");
-        frame_sel.mtime = 0;
-    }
 
+        static constexpr const auto depth = 0;
+        std::vector<std::string> paths;
+
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+
+        auto mapperCall = dbus->new_method_call(
+            "xyz.openbmc_project.ObjectMapper",
+            "/xyz/openbmc_project/object_mapper",
+            "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
+        static constexpr std::array<const char*, 1> interface = {
+            "xyz.openbmc_project.Logging.Entry"};
+        mapperCall.append("/", depth, interface);
+
+        try
+        {
+            auto reply = dbus->call(mapperCall);
+            reply.read(paths);
+        }
+        catch (sdbusplus::exception_t& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+            return -1;
+        }
+
+        std::string message;
+
+        // Iterate each loggings
+        for (const auto& path : paths)
+        {
+            Value variant = ipmi::getDbusProperty(
+                *dbus, "xyz.openbmc_project.Logging", path,
+                "xyz.openbmc_project.Logging.Entry", "Severity");
+
+            // Only filter critial sel
+            if (std::get<std::string>(variant) !=
+                "xyz.openbmc_project.Logging.Entry.Level.Critical")
+            {
+                continue;
+            }
+
+            variant = ipmi::getDbusProperty(
+                *dbus, "xyz.openbmc_project.Logging", path,
+                "xyz.openbmc_project.Logging.Entry", "Message");
+            message = std::get<std::string>(variant);
+
+            frame_sel.insert(message.c_str(), 0);
+        }
+    }
     if (page > frame_sel.pages)
     {
         return -1;
     }
-
-    ret = frame_sel.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
+    int ret = frame_sel.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
     if (ret < 0)
     {
         *count = 0;
