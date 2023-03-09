@@ -1418,6 +1418,28 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
         phosphor::logging::entry("IPMISEL_MESSAGE_ID=%s", messageID.c_str()),
         phosphor::logging::entry("IPMISEL_MESSAGE_ARGS=%s", logErr.c_str()));
 
+    std::map<std::string, std::string> ad;
+    std::string severity =
+        "xyz.openbmc_project.Logging.Entry.Level.Informational";
+    ad.emplace("IPMI_RAW", ipmiRaw);
+    ad.emplace("REDFISH_MESSAGE_ID", messageID);
+    ad.emplace("REDFISH_MESSAGE_ARGS", logErr);
+
+    auto bus = sdbusplus::bus::new_default();
+    auto reqMsg = bus.new_method_call(
+        "xyz.openbmc_project.Logging", "/xyz/openbmc_project/logging",
+        "xyz.openbmc_project.Logging.Create", "Create");
+    reqMsg.append(journalMsg, severity, ad);
+
+    try
+    {
+        auto respMsg = bus.call(reqMsg);
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+    }
+
     int responseID = selObj.addEntry(ipmiRaw.c_str());
     if (responseID < 0)
     {
