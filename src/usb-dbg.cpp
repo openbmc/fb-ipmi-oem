@@ -16,6 +16,7 @@
 
 #include <usb-dbg.hpp>
 #include <commandutils.hpp>
+#include <iomanip>
 
 namespace ipmi
 {
@@ -603,77 +604,150 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
     return -1;
 }
 
+std::tuple<std::string, std::string>
+    getThresholdRepresentMessage(const std::string& messageId)
+{
+    std::string threshold, assertion;
+
+    if (messageId.find("SensorThresholdCriticalHighGoingHigh") !=
+        std::string::npos)
+    {
+        threshold = "UCR";
+        assertion = "Assert";
+    }
+    else if (messageId.find("SensorThresholdCriticalLowGoingLow") !=
+             std::string::npos)
+    {
+        threshold = "LCR";
+        assertion = "Assert";
+    }
+    return {threshold, assertion};
+}
+
+std::string getCriSelForSensorOutOfThreshold(const std::string& path,
+                                             const std::string& messageId)
+{
+    auto dbus = getSdBus();
+    Value variant;
+    try
+    {
+        variant = ipmi::getDbusProperty(
+            *dbus, "xyz.openbmc_project.Logging", path,
+            "xyz.openbmc_project.Logging.Entry", "MessageArgs");
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "MessageArgs property not available");
+        return "";
+    }
+    auto [threshold, assertion] = getThresholdRepresentMessage(messageId);
+
+    std::string sensorName = std::get<std::vector<std::string>>(variant).at(0);
+
+    double sensorValue =
+        std::stod(std::get<std::vector<std::string>>(variant).at(1));
+
+    // Limit the value to two digits after the decimal point to avoid sel too
+    // long to show on debug card.
+    std::stringstream sensorValueStream;
+    sensorValueStream << std::fixed << std::setprecision(2) << sensorValue;
+
+    std::string unitStr;
+    if (ipmi::storage::getSensorUnit(sensorName, unitStr) != 0)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Fail to get sensor unit",
+            phosphor::logging::entry("sensorName=%s", sensorName.c_str()));
+    }
+
+    return (sensorName + " " + threshold + " " + sensorValueStream.str() +
+            unitStr + "-" + assertion);
+}
+
 static int udbg_get_cri_sel(uint8_t, uint8_t page, uint8_t* next,
                             uint8_t* count, uint8_t* buffer)
 {
-    int len;
-    int ret;
-    char line_buff[FRAME_PAGE_BUF_SIZE];
-    const char* ptr;
-    FILE* fp;
-    struct stat file_stat;
-    size_t pos = plat_get_fru_sel();
-    static uint8_t pre_pos = FRU_ALL;
-    bool pos_changed = pre_pos != pos;
-
-    pre_pos = pos;
-
-    /* Revisit this */
-    fp = fopen("/mnt/data/cri_sel", "r");
-    if (fp)
+    if (page == 1)
     {
-        if ((stat("/mnt/data/cri_sel", &file_stat) == 0) &&
-            (file_stat.st_mtime != frame_sel.mtime || pos_changed))
+        // initialize and clear frame
+        frame_sel.init(FRAME_BUFF_SIZE);
+        frame_sel.overwrite = 1;
+        frame_sel.max_page = 20;
+        snprintf(frame_sel.title, 32, "Cri SEL");
+
+        static constexpr const auto depth = 0;
+        std::vector<std::string> paths;
+
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+
+        auto mapperCall = dbus->new_method_call(
+            "xyz.openbmc_project.ObjectMapper",
+            "/xyz/openbmc_project/object_mapper",
+            "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
+        static constexpr std::array<const char*, 1> interface = {
+            "xyz.openbmc_project.Logging.Entry"};
+        mapperCall.append("/", depth, interface);
+
+        try
         {
-            // initialize and clear frame
-            frame_sel.init(FRAME_BUFF_SIZE);
-            frame_sel.overwrite = 1;
-            frame_sel.max_page = 20;
-            frame_sel.mtime = file_stat.st_mtime;
-            snprintf(frame_sel.title, 32, "Cri SEL");
+            auto reply = dbus->call(mapperCall);
+            reply.read(paths);
+        }
+        catch (sdbusplus::exception_t& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+            return -1;
+        }
 
-            while (fgets(line_buff, FRAME_PAGE_BUF_SIZE, fp))
+        std::string sel, messageId;
+
+        // Iterate each loggings
+        for (const auto& path : paths)
+        {
+            sel = "";
+
+            Value variant = ipmi::getDbusProperty(
+                *dbus, "xyz.openbmc_project.Logging", path,
+                "xyz.openbmc_project.Logging.Entry", "Severity");
+
+            // Only filter critial sel
+            if (std::get<std::string>(variant) !=
+                "xyz.openbmc_project.Logging.Entry.Level.Critical")
             {
-                // Remove newline
-                line_buff[strlen(line_buff) - 1] = '\0';
-                ptr = line_buff;
-                // Find message
-                ptr = strstr(ptr, "local0.err");
-                if (ptr == NULL)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if ((ptr = strrchr(ptr, ':')) == NULL)
+            try
+            {
+                variant = ipmi::getDbusProperty(
+                    *dbus, "xyz.openbmc_project.Logging", path,
+                    "xyz.openbmc_project.Logging.Entry", "MessageId");
+                messageId = std::get<std::string>(variant);
+            }
+            catch (const std::exception& e)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "MessageId property not available");
+                continue;
+            }
+
+            // Filter sels belonging to the sensor
+            if (messageId.find("SensorThreshold") != std::string::npos)
+            {
+                sel = getCriSelForSensorOutOfThreshold(path, messageId);
+                if (!sel.empty())
                 {
-                    continue;
+                    frame_sel.insert(sel.c_str(), 0);
                 }
-                len = strlen(ptr);
-                if (len > 2)
-                {
-                    // to skip log string ": "
-                    ptr += 2;
-                }
-                // Write new message
-                frame_sel.insert(ptr, 0);
             }
         }
-        fclose(fp);
     }
-    else
-    {
-        // Title only
-        frame_sel.init(FRAME_BUFF_SIZE);
-        snprintf(frame_sel.title, 32, "Cri SEL");
-        frame_sel.mtime = 0;
-    }
-
     if (page > frame_sel.pages)
     {
         return -1;
     }
-
-    ret = frame_sel.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
+    int ret = frame_sel.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
     if (ret < 0)
     {
         *count = 0;
