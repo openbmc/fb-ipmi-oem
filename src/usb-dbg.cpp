@@ -43,6 +43,15 @@ int getSensorUnit(std::string&, std::string&);
 int getSensorThreshold(std::string&, std::string&);
 } // namespace storage
 
+namespace boot
+{
+std::tuple<std::string, std::string> objPath(size_t id);
+void setBootOrder(std::string bootObjPath, const std::vector<uint8_t>& bootSeq,
+                  std::string hostName);
+void getBootOrder(std::string bootObjPath, std::vector<uint8_t>& bootSeq,
+                  std::string hostName);
+} // namespace boot
+
 void getMaxHostPosition(size_t& maxPosition)
 {
     try
@@ -1155,82 +1164,76 @@ static uint8_t panel_main(uint8_t item)
     }
 }
 
-static uint8_t panel_boot_order(uint8_t)
+static uint8_t panel_boot_order(uint8_t selectedItemIndex)
 {
-    /* To be implemented */
-#if 0
-    int i;
-    unsigned char buff[MAX_VALUE_LEN], pickup, len;
+    static constexpr size_t sizeBootOrder = 6;
+    static constexpr size_t bootValid = 0x80;
+
+    std::vector<uint8_t> bootSeq;
+
+    ctrl_panel& bootOrderPanel = panels[PANEL_BOOT_ORDER];
+
     size_t pos = plat_get_fru_sel();
-    if (pos != FRU_ALL && pal_get_boot_order(pos, buff, buff, &len) == 0)
-    {
-        if (item > 0 && item < SIZE_BOOT_ORDER)
-        {
-            pickup = buff[item];
-            while (item > 1)
-            {
-                buff[item] = buff[item - 1];
-                item--;
-            }
-            buff[item] = pickup;
-            buff[0] |= 0x80;
-            pal_set_boot_order(pos, buff, buff, &len);
 
-            // refresh items
-            return panels[PANEL_BOOT_ORDER].select(0);
+    if (pos == FRU_ALL)
+    {
+        bootOrderPanel.item_num = 0;
+        return PANEL_BOOT_ORDER;
+    }
+
+    auto [bootObjPath, hostName] = ipmi::boot::objPath(pos);
+    ipmi::boot::getBootOrder(bootObjPath, bootSeq, hostName);
+
+    uint8_t& bootMode = bootSeq.front();
+
+    // One item is selected to set a new boot sequence.
+    // The selected item become the first boot order.
+    if (selectedItemIndex > 0 && selectedItemIndex < sizeBootOrder)
+    {
+        // Move the selected item to second element (the first one is boot mode)
+        std::rotate(bootSeq.begin() + 1, bootSeq.begin() + selectedItemIndex,
+                    bootSeq.begin() + selectedItemIndex + 1);
+
+        bootMode |= bootValid;
+        try
+        {
+            ipmi::boot::setBootOrder(bootObjPath, bootSeq, hostName);
+        }
+        catch (const std::exception& e)
+        {
+            lg2::error("Fail to set boot order : {ERROR}", "ERROR", e);
         }
 
-        // '*': boot flags valid, BIOS has not yet read
-        snprintf(panels[PANEL_BOOT_ORDER].item_str[0], 32, "Boot Order%c",
-                 (buff[0] & 0x80) ? '*' : '\0');
-
-        for (i = 1; i < SIZE_BOOT_ORDER; i++)
-        {
-            switch (buff[i])
-            {
-                case 0x0:
-                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-                             " USB device");
-                    break;
-                case 0x1:
-                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-                             " Network v4");
-                    break;
-                case (0x1 | 0x8):
-                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-                             " Network v6");
-                    break;
-                case 0x2:
-                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-                             " SATA HDD");
-                    break;
-                case 0x3:
-                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-                             " SATA-CDROM");
-                    break;
-                case 0x4:
-                    snprintf(panels[PANEL_BOOT_ORDER].item_str[i], 32,
-                             " Other");
-                    break;
-                default:
-                    panels[PANEL_BOOT_ORDER].item_str[i][0] = '\0';
-                    break;
-            }
-        }
-
-        // remove empty items
-        for (i--;
-             (strlen(panels[PANEL_BOOT_ORDER].item_str[i]) == 0) && (i > 0);
-             i--)
-            ;
-
-        panels[PANEL_BOOT_ORDER].item_num = i;
+        // refresh items
+        return bootOrderPanel.select(0);
     }
-    else
+
+    // '*': boot flags valid, BIOS has not yet read
+    snprintf(bootOrderPanel.item_str[0], sizeof(bootOrderPanel.item_str),
+             "Boot Order%c", (bootMode & bootValid) ? '*' : '\0');
+
+    static const std::unordered_map<uint8_t, const char*>
+        bootOrderMappingTable = {
+            {0x00, " USB device"}, {0x01, " Network v4"}, {0x02, " SATA HDD"},
+            {0x03, " SATA-CDROM"}, {0x04, " Other"},      {0x09, " Network v6"},
+        };
+
+    size_t validItem = 0;
+    for (size_t i = 1; i < sizeBootOrder; i++)
     {
-        panels[PANEL_BOOT_ORDER].item_num = 0;
+        auto find = bootOrderMappingTable.find(bootSeq.at(i));
+        if (find == bootOrderMappingTable.end())
+        {
+            lg2::error("Unknown boot order : {BOOTORDER}", "BOOTORDER",
+                       bootSeq.at(i));
+            break;
+        }
+        snprintf(bootOrderPanel.item_str[i], sizeof(bootOrderPanel.item_str),
+                 "%s", find->second);
+        validItem++;
     }
-#endif
+
+    bootOrderPanel.item_num = validItem;
     return PANEL_BOOT_ORDER;
 }
 
