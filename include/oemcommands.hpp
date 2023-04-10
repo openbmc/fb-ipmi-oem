@@ -148,9 +148,23 @@ enum fb_oem_qc_cmds
 
 #define BOOT_SEQ_ARRAY_SIZE 10
 
-const char* bootSeq[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
-                         "OTHER",   "",         "",         "",
-                         "",        "NET_IPV6"};
+const char* bootSeqDefine[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
+                               "OTHER",   "",         "",         "",
+                               "",        "NET_IPV6"};
+
+/*
+Byte 2-6– Boot sequence
+    Bit 2:0 – boot device id
+        000b: USB device
+        001b: Network
+        010b: SATA HDD
+        011b: SATA-CDROM
+        100b: Other removable Device
+    Bit 7:3 – reserve for boot device special request
+        If Bit 2:0 is 001b (Network), Bit3 is IPv4/IPv6 order
+           Bit3=0b: IPv4 first
+           Bit3=1b: IPv6 first
+*/
 std::map<std::string, int> bootMap = {{"USB_DEV", 0},  {"NET_IPV4", 1},
                                       {"NET_IPV6", 9}, {"SATA_HDD", 2},
                                       {"SATA_CD", 3},  {"OTHER", 4}};
