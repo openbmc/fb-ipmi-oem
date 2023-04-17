@@ -16,6 +16,7 @@
 
 #include <usb-dbg.hpp>
 #include <commandutils.hpp>
+#include <xyz/openbmc_project/Control/Power/RestorePolicy/server.hpp>
 
 namespace ipmi
 {
@@ -42,6 +43,24 @@ int getSensorValue(std::string&, double&);
 int getSensorUnit(std::string&, std::string&);
 int getSensorThreshold(std::string&, std::string&);
 } // namespace storage
+
+namespace power_policy
+{
+using namespace sdbusplus::xyz::openbmc_project::Control::Power::server;
+using DbusValue = RestorePolicy::Policy;
+
+struct PowerPolicyPropery
+{
+    DbusValue dbusValue;
+    std::string message;
+};
+
+// The power policy options with the order are shown on debug card.
+const std::vector<PowerPolicyPropery> selectedOptions = {
+    {RestorePolicy::Policy::AlwaysOn, "Power On"},
+    {RestorePolicy::Policy::Restore, "Last State"},
+    {RestorePolicy::Policy::AlwaysOff, "Power Off"}};
+} // namespace power_policy
 
 void getMaxHostPosition(size_t& maxPosition)
 {
@@ -1241,39 +1260,66 @@ static uint8_t panel_boot_order(uint8_t)
     return PANEL_BOOT_ORDER;
 }
 
-static uint8_t panel_power_policy(uint8_t)
+static uint8_t panel_power_policy(uint8_t selectedItemIndex)
 {
-/* To be cleaned */
-#if 0
-    uint8_t buff[32] = {0};
-    uint8_t res_len;
+    ctrl_panel& powerPolicyPanel = panels[PANEL_POWER_POLICY];
     size_t pos = plat_get_fru_sel();
-    uint8_t policy;
-    uint8_t pwr_policy_item_map[3] = {POWER_CFG_ON, POWER_CFG_LPS,
-                                      POWER_CFG_OFF};
 
-    if (pos != FRU_ALL)
+    if (pos == FRU_ALL)
     {
-        if (item > 0 && item <= sizeof(pwr_policy_item_map))
+        powerPolicyPanel.item_num = 0;
+        return PANEL_POWER_POLICY;
+    }
+
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string powerPolicyObjectPath = "/xyz/openbmc_project/control/host" +
+                                        std::to_string(pos) +
+                                        "/power_restore_policy";
+
+    std::string service = getService(
+        *dbus, power_policy::RestorePolicy::interface, powerPolicyObjectPath);
+
+    // Set the power policy by the item is selected
+    if (selectedItemIndex > 0)
+    {
+        // The user interface pressed index start from one
+        power_policy::PowerPolicyPropery item =
+            power_policy::selectedOptions.at(selectedItemIndex - 1);
+
+        setDbusProperty(
+            *dbus, service, powerPolicyObjectPath,
+            power_policy::RestorePolicy::interface, "PowerRestorePolicy",
+            power_policy::RestorePolicy::convertPolicyToString(item.dbusValue));
+
+        // refresh page
+        return powerPolicyPanel.select(0);
+    }
+
+    Value variant = getDbusProperty(*dbus, service, powerPolicyObjectPath,
+                                    power_policy::RestorePolicy::interface,
+                                    "PowerRestorePolicy");
+    std::string powerPolicy = std::get<std::string>(variant);
+
+    // Shows up all the power policy options
+    std::string presentMessage;
+    size_t startedIndex = 1;
+    for (auto option : power_policy::selectedOptions)
+    {
+        presentMessage = "";
+        if (option.dbusValue ==
+            power_policy::RestorePolicy::convertPolicyFromString(powerPolicy))
         {
-            policy = pwr_policy_item_map[item - 1];
-            pal_set_power_restore_policy(pos, &policy, NULL);
+            // * Represent the option as the current power policy
+            presentMessage = "*";
         }
-        pal_get_chassis_status(pos, NULL, buff, &res_len);
-        policy = (((uint8_t)buff[0]) >> 5) & 0x7;
-        snprintf(panels[PANEL_POWER_POLICY].item_str[1], 32, "%cPower On",
-                 policy == POWER_CFG_ON ? '*' : ' ');
-        snprintf(panels[PANEL_POWER_POLICY].item_str[2], 32, "%cLast State",
-                 policy == POWER_CFG_LPS ? '*' : ' ');
-        snprintf(panels[PANEL_POWER_POLICY].item_str[3], 32, "%cPower Off",
-                 policy == POWER_CFG_OFF ? '*' : ' ');
-        panels[PANEL_POWER_POLICY].item_num = 3;
+        presentMessage += option.message;
+        snprintf(powerPolicyPanel.item_str[startedIndex],
+                 sizeof(powerPolicyPanel.item_str), "%s",
+                 presentMessage.c_str());
+        startedIndex++;
     }
-    else
-    {
-        panels[PANEL_POWER_POLICY].item_num = 0;
-    }
-#endif
+
+    powerPolicyPanel.item_num = power_policy::selectedOptions.size();
     return PANEL_POWER_POLICY;
 }
 
