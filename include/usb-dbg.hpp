@@ -124,7 +124,7 @@ struct ctrl_panel
 {
     uint8_t parent;
     uint8_t item_num;
-    char item_str[8][32];
+    std::string item_str[8];
     uint8_t (*select)(uint8_t item);
 };
 

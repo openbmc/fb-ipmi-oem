@@ -16,6 +16,7 @@
 
 #include <commandutils.hpp>
 #include <usb-dbg.hpp>
+#include <xyz/openbmc_project/Control/Power/RestorePolicy/server.hpp>
 
 namespace ipmi
 {
@@ -42,6 +43,22 @@ int getSensorValue(std::string&, double&);
 int getSensorUnit(std::string&, std::string&);
 int getSensorThreshold(std::string&, std::string&);
 } // namespace storage
+
+namespace power_policy
+{
+using namespace sdbusplus::xyz::openbmc_project::Control::Power::server;
+
+struct PowerPolicyPropery
+{
+    RestorePolicy::Policy dbusValue;
+    std::string message;
+};
+
+const std::vector<PowerPolicyPropery> selectedOptions = {
+    {RestorePolicy::Policy::AlwaysOn, "Power On"},
+    {RestorePolicy::Policy::Restore, "Last State"},
+    {RestorePolicy::Policy::AlwaysOff, "Power Off"}};
+} // namespace power_policy
 
 void getMaxHostPosition(size_t& maxPosition)
 {
@@ -1234,39 +1251,58 @@ static uint8_t panel_boot_order(uint8_t)
     return PANEL_BOOT_ORDER;
 }
 
-static uint8_t panel_power_policy(uint8_t)
+static uint8_t panel_power_policy(uint8_t selectedItemIndex)
 {
-/* To be cleaned */
-#if 0
-    uint8_t buff[32] = {0};
-    uint8_t res_len;
+    ctrl_panel& powerPolicyPanel = panels[PANEL_POWER_POLICY];
     size_t pos = plat_get_fru_sel();
-    uint8_t policy;
-    uint8_t pwr_policy_item_map[3] = {POWER_CFG_ON, POWER_CFG_LPS,
-                                      POWER_CFG_OFF};
 
-    if (pos != FRU_ALL)
+    // Power policy only for server board. Ignore when uart position at BMC .
+    if (pos == FRU_ALL)
     {
-        if (item > 0 && item <= sizeof(pwr_policy_item_map))
-        {
-            policy = pwr_policy_item_map[item - 1];
-            pal_set_power_restore_policy(pos, &policy, NULL);
-        }
-        pal_get_chassis_status(pos, NULL, buff, &res_len);
-        policy = (((uint8_t)buff[0]) >> 5) & 0x7;
-        snprintf(panels[PANEL_POWER_POLICY].item_str[1], 32, "%cPower On",
-                 policy == POWER_CFG_ON ? '*' : ' ');
-        snprintf(panels[PANEL_POWER_POLICY].item_str[2], 32, "%cLast State",
-                 policy == POWER_CFG_LPS ? '*' : ' ');
-        snprintf(panels[PANEL_POWER_POLICY].item_str[3], 32, "%cPower Off",
-                 policy == POWER_CFG_OFF ? '*' : ' ');
-        panels[PANEL_POWER_POLICY].item_num = 3;
+        powerPolicyPanel.item_num = 0;
+        return PANEL_POWER_POLICY;
     }
-    else
+
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string powerPolicyObjectPath = "/xyz/openbmc_project/control/host" +
+                                        std::to_string(pos) +
+                                        "/power_restore_policy";
+
+    std::string service = getService(
+        *dbus, power_policy::RestorePolicy::interface, powerPolicyObjectPath);
+
+    // Set the power policy when item is selected
+    if (selectedItemIndex > 0)
     {
-        panels[PANEL_POWER_POLICY].item_num = 0;
+        // The user interface pressed index start from one
+        const power_policy::PowerPolicyPropery& item =
+            power_policy::selectedOptions.at(selectedItemIndex - 1);
+
+        setDbusProperty(*dbus, service, powerPolicyObjectPath,
+                        power_policy::RestorePolicy::interface,
+                        "PowerRestorePolicy",
+                        sdbusplus::message::convert_to_string(item.dbusValue));
+
+        // refresh page
+        return powerPolicyPanel.select(0);
     }
-#endif
+
+    Value variant = getDbusProperty(*dbus, service, powerPolicyObjectPath,
+                                    power_policy::RestorePolicy::interface,
+                                    "PowerRestorePolicy");
+
+    auto powerPolicy = power_policy::RestorePolicy::convertStringToPolicy(
+        std::get<std::string>(variant));
+
+    // * Represent the option is current power policy
+    std::transform(power_policy::selectedOptions.begin(),
+                   power_policy::selectedOptions.end(),
+                   powerPolicyPanel.item_str + 1,
+                   [=](power_policy::PowerPolicyPropery policy) {
+        return ((policy.dbusValue == powerPolicy) ? "*" : "") + policy.message;
+    });
+
+    powerPolicyPanel.item_num = power_policy::selectedOptions.size();
     return PANEL_POWER_POLICY;
 }
 
@@ -1298,10 +1334,12 @@ int plat_udbg_control_panel(uint8_t panel, uint8_t operation, uint8_t item,
 
     buffer[0] = panel;
     buffer[1] = item;
-    buffer[2] = strlen(panels[panel].item_str[item]);
+    buffer[2] = size(panels[panel].item_str[item]);
+
     if (buffer[2] > 0 && (buffer[2] + 3) < FRAME_PAGE_BUF_SIZE)
     {
-        memcpy(&buffer[3], panels[panel].item_str[item], buffer[2]);
+        std::memcpy(&buffer[3], (panels[panel].item_str[item]).c_str(),
+                    buffer[2]);
     }
     *count = buffer[2] + 3;
     return IPMI_CC_OK;
