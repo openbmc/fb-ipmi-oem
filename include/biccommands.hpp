@@ -1,3 +1,4 @@
+#include <cstdint>
 
 enum class fb_bic_cmds : uint8_t
 {

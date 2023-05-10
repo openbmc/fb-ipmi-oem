@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-#include <ipmid/api.hpp>
-#include <ipmid/api-types.hpp>
-
-#include <commandutils.hpp>
 #include <biccommands.hpp>
+#include <commandutils.hpp>
+#include <ipmid/api-types.hpp>
+#include <ipmid/api.hpp>
 #include <phosphor-logging/log.hpp>
 
-#include <vector>
-#include <variant>
 #include <iostream>
+#include <variant>
+#include <vector>
 
 namespace ipmi
 {
@@ -55,7 +54,6 @@ ipmi::RspType<IanaType, uint8_t, uint2_t, uint6_t, uint8_t, uint8_t,
                       uint8_t interface, uint2_t lun, uint6_t netFnReq,
                       uint8_t cmdReq, SecureBuffer data)
 {
-
     ipmi::message::Response::ptr res;
 
     // Updating the correct netfn and cmd in the ipmi Context
@@ -308,7 +306,6 @@ ipmi::RspType<IanaType> ipmiOemClearCmos(ipmi::Context::ptr ctx,
 
 [[maybe_unused]] static void registerBICFunctions(void)
 {
-
     phosphor::logging::log<phosphor::logging::level::INFO>(
         "Registering BIC commands");
 
