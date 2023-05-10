@@ -77,10 +77,10 @@ inline static bool getSensorSubtree(SensorSubTree& subtree)
         return false;
     }
     sdbusplus::bus_t dbus(bus);
-    auto mapperCall =
-        dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
-                             "/xyz/openbmc_project/object_mapper",
-                             "xyz.openbmc_project.ObjectMapper", "GetSubTree");
+    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                                           "/xyz/openbmc_project/object_mapper",
+                                           "xyz.openbmc_project.ObjectMapper",
+                                           "GetSubTree");
     static constexpr const auto depth = 2;
     static constexpr std::array<const char*, 3> interfaces = {
         "xyz.openbmc_project.Sensor.Value",

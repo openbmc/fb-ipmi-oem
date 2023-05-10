@@ -15,10 +15,11 @@
  */
 
 #pragma once
+#include "config.h"
+
 #include <sdbusplus/bus.hpp>
 
 #include <iostream>
-#include "config.h"
 
 static constexpr bool debug = false;
 

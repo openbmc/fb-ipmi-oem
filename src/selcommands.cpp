@@ -260,7 +260,6 @@ static void logThermalEvent(uint8_t* data, std::string& errLog)
 
 static void logCritIrq(uint8_t* data, std::string& errLog)
 {
-
     if (data[0] == 0x0)
     {
         errLog = "NMI / Diagnostic Interrupt";
@@ -279,7 +278,6 @@ static void logCritIrq(uint8_t* data, std::string& errLog)
 
 static void logPostErr(uint8_t* data, std::string& errLog)
 {
-
     if ((data[0] & 0x0F) == 0x0)
     {
         errLog = "System Firmware Error";
@@ -296,8 +294,8 @@ static void logPostErr(uint8_t* data, std::string& errLog)
     }
     else if (((data[0] >> 6) & 0x03) == 0x2)
     {
-        errLog +=
-            ", OEM Post Code 0x" + byteToStr(data[2]) + byteToStr(data[1]);
+        errLog += ", OEM Post Code 0x" + byteToStr(data[2]) +
+                  byteToStr(data[1]);
 
         switch ((data[2] << 8) | data[1])
         {
@@ -484,7 +482,6 @@ static void logIioErr(uint8_t* data, std::string& errLog)
     {
         case 0x0:
         {
-
             /* All Info Valid */
             [[maybe_unused]] uint8_t chnNum = (data[2] & 0x1C) >> 2;
             [[maybe_unused]] uint8_t dimmNum = data[2] & 0x3;
@@ -531,7 +528,6 @@ static void logIioErr(uint8_t* data, std::string& errLog)
 
 static void logPwrErr(uint8_t* data, std::string& errLog)
 {
-
     if (data[0] == 0x1)
     {
         errLog = "SYS_PWROK failure";
@@ -552,7 +548,6 @@ static void logPwrErr(uint8_t* data, std::string& errLog)
 
 static void logCatErr(uint8_t* data, std::string& errLog)
 {
-
     if (data[0] == 0x0)
     {
         errLog = "IERR/CATERR";
@@ -757,7 +752,6 @@ static void logNmHealth(uint8_t* data, std::string& errLog)
 
 static void logNmCap(uint8_t* data, std::string& errLog)
 {
-
     const std::vector<std::string> nmCapStsStr = {"Not Available", "Available"};
     if (data[0] & 0x7) // BIT1=policy, BIT2=monitoring, BIT3=pwr
                        // limit and the others are reserved
@@ -804,7 +798,6 @@ static void logPwrThreshold(uint8_t* data, std::string& errLog)
 
 static void logMSMI(uint8_t* data, std::string& errLog)
 {
-
     if (data[0] == 0x0)
     {
         errLog = "IERR/MSMI";
@@ -873,7 +866,6 @@ static const boost::container::flat_map<
 
 static void parseSelHelper(StdSELEntry* data, std::string& errStr)
 {
-
     /* Check if sensor type is OS_BOOT (0x1f) */
     if (data->sensorType == 0x1F)
     {
@@ -1159,7 +1151,6 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
 static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
                          std::string& msgLog)
 {
-
     /* Get record type */
     int recType = reqData[2];
     std::string errType, errLog;
@@ -1265,8 +1256,8 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
     {
         errType = unknownErr;
         toHexStr(reqData, errLog);
-        msgLog +=
-            errType + " (0x" + recTypeStream.str() + ") RawData: " + errLog;
+        msgLog += errType + " (0x" + recTypeStream.str() +
+                  ") RawData: " + errLog;
     }
 }
 
@@ -1289,7 +1280,6 @@ ipmi::RspType<uint8_t,  // SEL version
               uint8_t>  // operation support
     ipmiStorageGetSELInfo()
 {
-
     fb_oem::ipmi::sel::GetSELInfoData info;
 
     selObj.getInfo(info);
@@ -1301,7 +1291,6 @@ ipmi::RspType<uint8_t,  // SEL version
 ipmi::RspType<uint16_t, std::vector<uint8_t>>
     ipmiStorageGetSELEntry(std::vector<uint8_t> data)
 {
-
     if (data.size() != sizeof(fb_oem::ipmi::sel::GetSELEntryRequest))
     {
         return ipmi::responseReqDataLenInvalid();
@@ -1407,8 +1396,8 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
     fb_oem::ipmi::sel::parseSelData((ctx->hostIdx + 1), data, logErr);
 
     static const std::string openBMCMessageRegistryVersion("0.1");
-    std::string messageID =
-        "OpenBMC." + openBMCMessageRegistryVersion + ".SELEntryAdded";
+    std::string messageID = "OpenBMC." + openBMCMessageRegistryVersion +
+                            ".SELEntryAdded";
 
     /* Log the Raw SEL message to the journal */
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;
