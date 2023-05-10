@@ -22,11 +22,11 @@
 
 #include <appcommands.hpp>
 #include <commandutils.hpp>
+#include <ipmid/api-types.hpp>
+#include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
-#include <ipmid/api.hpp>
-#include <ipmid/api-types.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -313,7 +313,6 @@ static int platGetSysFWVer(std::vector<uint8_t>& respData,
 ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
                                                std::vector<uint8_t> req)
 {
-
     uint8_t param = req[0];
     uint8_t req_len = req.size();
     std::optional<size_t> hostId = findHost(ctx->hostIdx);

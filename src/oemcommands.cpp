@@ -16,30 +16,28 @@
  */
 
 #include "xyz/openbmc_project/Common/error.hpp"
-#include <xyz/openbmc_project/Control/Boot/Mode/server.hpp>
-#include <xyz/openbmc_project/Control/Boot/Source/server.hpp>
-#include <xyz/openbmc_project/Control/Boot/Type/server.hpp>
 
+#include <commandutils.hpp>
+#include <ipmid/api-types.hpp>
 #include <ipmid/api.hpp>
 #include <ipmid/utils.hpp>
-#include <commandutils.hpp>
 #include <nlohmann/json.hpp>
 #include <oemcommands.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/bus.hpp>
-
-#include <ipmid/api.hpp>
-#include <ipmid/api-types.hpp>
+#include <xyz/openbmc_project/Control/Boot/Mode/server.hpp>
+#include <xyz/openbmc_project/Control/Boot/Source/server.hpp>
+#include <xyz/openbmc_project/Control/Boot/Type/server.hpp>
 
 #include <array>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <regex>
 
 #define SIZE_IANA_ID 3
 
@@ -130,9 +128,9 @@ DbusObjectInfo getIPObject(sdbusplus::bus_t& bus, const std::string& interface,
 
     for (auto& object : objectTree)
     {
-        auto variant =
-            ipmi::getDbusProperty(bus, object.second.begin()->first,
-                                  object.first, IP_INTERFACE, "Type");
+        auto variant = ipmi::getDbusProperty(bus, object.second.begin()->first,
+                                             object.first, IP_INTERFACE,
+                                             "Type");
         if (std::get<std::string>(variant) != protocol)
         {
             continue;
@@ -206,8 +204,8 @@ static constexpr auto bootEnableProp = "Enabled";
 std::tuple<std::string, std::string> objPath(size_t id)
 {
     std::string hostName = "host" + std::to_string(id);
-    std::string bootObjPath =
-        "/xyz/openbmc_project/control/" + hostName + "/boot";
+    std::string bootObjPath = "/xyz/openbmc_project/control/" + hostName +
+                              "/boot";
     return std::make_tuple(std::move(bootObjPath), std::move(hostName));
 }
 
@@ -841,9 +839,9 @@ ipmi::RspType<std::vector<uint8_t>>
 
     auto conn = getSdBus();
     /* Get the post codes by calling GetPostCodes method */
-    auto msg =
-        conn->new_method_call(postCodeService.c_str(), postCodeObjPath.c_str(),
-                              postCodeInterface, "GetPostCodes");
+    auto msg = conn->new_method_call(postCodeService.c_str(),
+                                     postCodeObjPath.c_str(), postCodeInterface,
+                                     "GetPostCodes");
     msg.append(lastestPostCodeIndex);
 
     try
@@ -895,8 +893,8 @@ void setBootOrder(std::string bootObjPath, uint8_t* data,
     std::string bootOption =
         sdbusplus::message::convert_to_string<boot::BootMode>(bootValue);
 
-    std::string service =
-        getService(*dbus, ipmi::boot::bootModeIntf, bootObjPath);
+    std::string service = getService(*dbus, ipmi::boot::bootModeIntf,
+                                     bootObjPath);
     setDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootModeIntf,
                     ipmi::boot::bootModeProp, bootOption);
 
@@ -957,7 +955,6 @@ void setBootOrder(std::string bootObjPath, uint8_t* data,
 ipmi::RspType<std::vector<uint8_t>>
     ipmiOemSetBootOrder(ipmi::Context::ptr ctx, std::vector<uint8_t> data)
 {
-
     uint8_t bootSeq[SIZE_BOOT_ORDER];
     size_t len = data.size();
 
@@ -1007,11 +1004,11 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
 
     // GETTING PROPERTY OF MODE INTERFACE
 
-    std::string service =
-        getService(*dbus, ipmi::boot::bootModeIntf, bootObjPath);
-    Value variant =
-        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootModeIntf,
-                        ipmi::boot::bootModeProp);
+    std::string service = getService(*dbus, ipmi::boot::bootModeIntf,
+                                     bootObjPath);
+    Value variant = getDbusProperty(*dbus, service, bootObjPath,
+                                    ipmi::boot::bootModeIntf,
+                                    ipmi::boot::bootModeProp);
 
     auto bootMode = sdbusplus::message::convert_from_string<boot::BootMode>(
         std::get<std::string>(variant));
@@ -1021,18 +1018,18 @@ ipmi::RspType<uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>
     // GETTING PROPERTY OF TYPE INTERFACE
 
     service = getService(*dbus, ipmi::boot::bootTypeIntf, bootObjPath);
-    variant =
-        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootTypeIntf,
-                        ipmi::boot::bootTypeProp);
+    variant = getDbusProperty(*dbus, service, bootObjPath,
+                              ipmi::boot::bootTypeIntf,
+                              ipmi::boot::bootTypeProp);
 
     auto bootType = sdbusplus::message::convert_from_string<boot::BootType>(
         std::get<std::string>(variant));
 
     // Get the valid bit from boot enabled property
     service = getService(*dbus, ipmi::boot::bootEnableIntf, bootObjPath);
-    variant =
-        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootEnableIntf,
-                        ipmi::boot::bootEnableProp);
+    variant = getDbusProperty(*dbus, service, bootObjPath,
+                              ipmi::boot::bootEnableIntf,
+                              ipmi::boot::bootEnableProp);
 
     bool validFlag = std::get<bool>(variant);
 
@@ -1297,7 +1294,6 @@ ipmi::RspType<> ipmiOemSetSystemGuid(ipmi::Context::ptr ctx,
 
     if (reqData.size() != GUID_SIZE) // 16bytes
     {
-
         return ipmi::responseReqDataLenInvalid();
     }
 

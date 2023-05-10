@@ -21,12 +21,12 @@
 
 #include <appcommands.hpp>
 #include <ipmid/api.hpp>
+#include <ipmid/utils.hpp>
 #include <nlohmann/json.hpp>
-#include <phosphor-logging/log.hpp>
 #include <phosphor-logging/lg2.hpp>
+#include <phosphor-logging/log.hpp>
 #include <sdbusplus/asio/connection.hpp>
 #include <sdbusplus/asio/property.hpp>
-#include <ipmid/utils.hpp>
 
 #include <fstream>
 #include <iomanip>
@@ -99,8 +99,7 @@ struct frame
     uint8_t esc_sts;
     uint8_t overwrite;
     time_t mtime;
-    frame() : buf(NULL), pages(0), mtime(0)
-    {}
+    frame() : buf(NULL), pages(0), mtime(0) {}
     int init(size_t size);
     int append(const char* string, int indent);
     int insert(const char* string, int indent);
