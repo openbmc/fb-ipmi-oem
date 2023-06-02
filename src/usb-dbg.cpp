@@ -967,8 +967,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
     std::string partName = "PartNumber";
     std::string verDel = "VERSION=";
     std::string verPath = "/etc/os-release";
-    size_t hostPosition;
-    size_t maxPosition;
+    size_t hostPosition = 0;
+    size_t maxPosition = 0;
 
     if (page == 1)
     {
