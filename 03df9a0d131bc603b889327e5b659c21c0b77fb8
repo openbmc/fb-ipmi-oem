@@ -236,6 +236,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "72b1d5fb_5e7feb64",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-05T09:20:52Z",
+      "side": 1,
+      "message": "Hi Patrick,\nBecause the postcode is a group of incoming from bic, so we have to declare it as static to remain the previous status.\nAfter we got the whole dimm loop pattern, it will store in the global variable dimmLoops.",
+      "parentUuid": "9cb5163c_be9e15db",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 55
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e33c659d_eecb7d8b",
@@ -448,6 +472,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb8d0305_84fec765",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-05T09:20:52Z",
+      "side": 1,
+      "message": "Hi Patrick,\nBecause of in bic code different systems (e.g. HD or CL) they use different drivers and cmd to send postcode for different CPU (Intel or AMD). And for compatibility and not affect to the different systems I register this handler.",
+      "parentUuid": "bb806687_0a3ab9ef",
+      "range": {
+        "startLine": 415,
+        "startChar": 0,
+        "endLine": 419,
+        "endChar": 65
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e608a485_7f79d8bd",
@@ -461,6 +509,30 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "Suggest putting this as a separate commit because I can\u0027t tell how it is related to the rest of the commit and it seems like it is a fix for something.",
+      "range": {
+        "startLine": 970,
+        "startChar": 0,
+        "endLine": 971,
+        "endChar": 27
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6e128dc1_1cf62814",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 971,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-05T09:20:52Z",
+      "side": 1,
+      "message": "Hi Patrick,\nI modified this because of CI would fail and told me to initialize hostPosition.",
+      "parentUuid": "e608a485_7f79d8bd",
       "range": {
         "startLine": 970,
         "startChar": 0,
