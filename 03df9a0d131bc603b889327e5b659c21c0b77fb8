@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cb1aac6_2f87d69f",
+        "filename": "include/types.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13763cc7_c97b3f9f",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 12
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ecd6d8c1_9ab91c41",
@@ -37,6 +61,24 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "I\u0027m not sure what \"maxHost\" refers to.  Below it looks like you\u0027re using this as an array size for post codes attached to a single host.",
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b254034_e2d8270d",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Hi Patrick, \nI rename maxHost to numOfHosts for the initial size of the array used as below, to record each host dimm loop detect status.",
+      "parentUuid": "ecd6d8c1_9ab91c41",
       "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -81,6 +123,48 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec9612c8_15beffd4",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2344833a_e07b6505",
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e970467_c06cac77",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4c7e3b25_eb511d20",
+      "range": {
+        "startLine": 47,
+        "startChar": 10,
+        "endLine": 47,
+        "endChar": 18
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8ce04ab1_1bcac75b",
@@ -94,6 +178,24 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "unordered_map?",
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "575d4da6_db2cb33c",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ce04ab1_1bcac75b",
       "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -144,6 +246,54 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5e014d0_237318ef",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11ad22db_4b7ebb46",
+      "range": {
+        "startLine": 83,
+        "startChar": 30,
+        "endLine": 83,
+        "endChar": 35
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc47bad6_df36930a",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f154a18d_8f31b2b6",
+      "range": {
+        "startLine": 83,
+        "startChar": 57,
+        "endLine": 83,
+        "endChar": 64
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fdcb5d74_a9e53655",
@@ -157,6 +307,30 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "Should this one be a const\u0026?  Are we really modifying the vector?",
+      "range": {
+        "startLine": 84,
+        "startChar": 30,
+        "endLine": 84,
+        "endChar": 51
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0d18b943_0881689e",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fdcb5d74_a9e53655",
       "range": {
         "startLine": 84,
         "startChar": 30,
@@ -190,6 +364,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "12cc44a0_9491966b",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0a38814_101eb132",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 5
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "326638d0_c680ade8",
@@ -203,6 +401,30 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "Can you document what a \"byte group\" is here?  When I read this initially I was expecting just 2 bytes as if these were fields but then when I read the code below it doesn\u0027t seem like that is the case.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 44
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f8a66f32_3d8a4c32",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "326638d0_c680ade8",
       "range": {
         "startLine": 97,
         "startChar": 0,
@@ -306,6 +528,54 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ace21f37_1d6d2340",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e33c659d_eecb7d8b",
+      "range": {
+        "startLine": 110,
+        "startChar": 28,
+        "endLine": 110,
+        "endChar": 36
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b37e16b9_d50d17c9",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "10bbc36e_8a57e911",
+      "range": {
+        "startLine": 110,
+        "startChar": 42,
+        "endLine": 110,
+        "endChar": 44
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f22fb102_be00cc41",
@@ -319,6 +589,24 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "static constexpr?",
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c13412a9_489cfb22",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f22fb102_be00cc41",
       "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -340,6 +628,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "18706fdb_090aa171",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Hi Patrick,\nYes, it must be 4 byte. It already filters at the beginning of this detection function.\nI didn\u0027t modify anchorTag to array, because I think comparing vector and array will be more complicated.",
+      "parentUuid": "63f8cd86_191a5014",
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "213ec4e0_88d822fa",
@@ -353,6 +659,30 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "This is especially confusing where we have a struct to store some data but then we have global/static variables in other cases.  Please make this consistent.",
+      "range": {
+        "startLine": 146,
+        "startChar": 0,
+        "endLine": 148,
+        "endChar": 61
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "86cbfc4c_3bf0705b",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "213ec4e0_88d822fa",
       "range": {
         "startLine": 146,
         "startChar": 0,
@@ -386,6 +716,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e85f72a_8704bb05",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "908176eb_f1dafe00",
+      "range": {
+        "startLine": 154,
+        "startChar": 57,
+        "endLine": 154,
+        "endChar": 66
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c4adab7e_31a5ce32",
@@ -399,6 +753,24 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "Are we dropping the dimm locations and the major/minor codes?",
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e76bbb38_434d487b",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Hi Patrick,\nThe entire the dimm pattern is stored. (Anchor Tag , Total Error Count, Number of Error DIMM, Dimm location, major code, minor code)",
+      "parentUuid": "c4adab7e_31a5ce32",
       "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -426,6 +798,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e558518_b2bb39b6",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19febe77_489f63d6",
+      "range": {
+        "startLine": 177,
+        "startChar": 4,
+        "endLine": 177,
+        "endChar": 25
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "707314aa_1c76495b",
@@ -439,6 +835,30 @@
       "writtenOn": "2023-06-02T11:54:07Z",
       "side": 1,
       "message": "Would be good for us to consider refactoring all the logging calls to use the lg2 interfaces.  You can certainly ensure new code is using lg2 even if the originally logging APIs are used elsewhere in the file.",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 40
+      },
+      "revId": "03df9a0d131bc603b889327e5b659c21c0b77fb8",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a5194461_0bc335bb",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-06T02:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "707314aa_1c76495b",
       "range": {
         "startLine": 180,
         "startChar": 0,
