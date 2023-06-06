@@ -20,6 +20,7 @@
 #include <ipmid/api-types.hpp>
 #include <ipmid/api.hpp>
 #include <phosphor-logging/log.hpp>
+#include <types.hpp>
 
 #include <iostream>
 #include <variant>
@@ -41,6 +42,13 @@ extern message::Response::ptr executeIpmiCommand(message::Request::ptr);
 
 int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
                std::vector<uint8_t>&);
+
+constexpr size_t amdDimmLoopPrefix = 0xDDEE;
+
+namespace dimm
+{
+std::unordered_map<hostId, dimmLoop> dimmLoops;
+} // namespace dimm
 
 //----------------------------------------------------------------------
 // ipmiOemBicHandler (IPMI/Section - ) (CMD_OEM_BIC_INFO)
@@ -71,10 +79,86 @@ ipmi::RspType<IanaType, uint8_t, uint2_t, uint6_t, uint8_t, uint8_t,
                                  res->cc, res->payload);
 }
 
+void dimmLoopPatternDetection(size_t hostId, std::vector<uint8_t> data)
+{
+    if constexpr (postCodeSize != amdPostCodeSize)
+    {
+        return;
+    }
+
+    if (data.size() != amdPostCodeSize)
+    {
+        return;
+    }
+
+    /*
+    Reference from Meta_BIOS_Requirement_Spec_v0.80
+    For AMD platform, the POST code looping pattern format should be:
+    (each group has 4 bytes)
+    ●Group #0: [DDEE0000]
+    ●Group #1: [DDEE] + Total Error Count
+    ●Group #2: [DDEE] + Number of Error DIMM
+    ●Group #3: [DDEE] + Dimm location
+    ●Group #4: [DDEE] + major code
+    ●Group #5: [DDEE] + minor code
+    */
+
+    static constexpr size_t numOfHosts = 0xff;
+    // The flag to know host of post code start to detect dimm loop pattern
+    static bool startDetect[numOfHosts] = {false};
+    static size_t totalErrorCount[numOfHosts] = {0};
+
+    size_t prefix = (data[3] << 8) | data[2];
+
+    if (prefix != amdDimmLoopPrefix)
+    {
+        // Clear all the post code stored before.
+        if (startDetect[hostId])
+        {
+            dimm::dimmLoops[hostId].totalErrorCount = 0;
+            dimm::dimmLoops[hostId].postCode.clear();
+
+            startDetect[hostId] = false;
+        }
+        return;
+    }
+
+    // Which means it already got the dimm loop, stop checking again.
+    if (dimm::dimmLoops[hostId].totalErrorCount != 0)
+    {
+        return;
+    }
+
+    static const std::vector<uint8_t> anchorTag = {0x0, 0x0, 0xEE, 0xDD};
+    if (data == anchorTag)
+    {
+        startDetect[hostId] = true;
+    }
+    if (startDetect[hostId])
+    {
+        // The second one is error count
+        if (dimm::dimmLoops[hostId].postCode.size() % 6 == 1)
+        {
+            totalErrorCount[hostId] = (data[1] << 8) | data[0];
+        }
+
+        dimm::dimmLoops[hostId].postCode.push_back(data);
+
+        // Is the last element of dimmloop then stop to detect
+        if (dimm::dimmLoops[hostId].postCode.size() ==
+            (totalErrorCount[hostId] * 6))
+        {
+            // Set totalErrorCount in structure when detection gets whole
+            // dimm loop pattern completely
+            dimm::dimmLoops[hostId].totalErrorCount = totalErrorCount[hostId];
+        }
+    }
+}
+
 //----------------------------------------------------------------------
 // ipmiOemPostCodeHandler (CMD_OEM_BIC_POST_BUFFER_INFO)
 // This Function will handle BIC incomming postcode from multi-host for
-// netfn=0x38 and cmd=0x08 send the response back to the sender.
+// netfn=0x38 and cmd=0x08 or 0x33 send the response back to the sender.
 //----------------------------------------------------------------------
 
 ipmi::RspType<IanaType> ipmiOemPostCodeHandler(ipmi::Context::ptr ctx,
@@ -84,6 +168,14 @@ ipmi::RspType<IanaType> ipmiOemPostCodeHandler(ipmi::Context::ptr ctx,
 {
     // creating bus connection
     auto conn = getSdBus();
+
+    auto hostId = findHost(ctx->hostIdx);
+    if (!hostId)
+    {
+        lg2::error("Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
+    dimmLoopPatternDetection(*hostId, data);
 
     using postcode_t = std::tuple<uint64_t, std::vector<uint8_t>>;
 
@@ -315,6 +407,10 @@ ipmi::RspType<IanaType> ipmiOemClearCmos(ipmi::Context::ptr ctx,
     ipmi::registerHandler(
         ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
         static_cast<Cmd>(fb_bic_cmds::CMD_OEM_SEND_POST_BUFFER_TO_BMC),
+        ipmi::Privilege::User, ipmiOemPostCodeHandler);
+    ipmi::registerHandler(
+        ipmi::prioOpenBmcBase, ipmi::netFnOemFive,
+        static_cast<Cmd>(fb_bic_cmds::CMD_OEM_1S_4BYTE_POST_BUF),
         ipmi::Privilege::User, ipmiOemPostCodeHandler);
     ipmi::registerHandler(
         ipmi::prioOemBase, ipmi::netFnOemFive,
