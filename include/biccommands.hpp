@@ -1,3 +1,5 @@
+#include <phosphor-logging/lg2.hpp>
+
 #include <cstdint>
 
 enum class fb_bic_cmds : uint8_t
@@ -8,6 +10,7 @@ enum class fb_bic_cmds : uint8_t
     CMD_OEM_SET_HOST_POWER_STATE = 0x0C,
     CMD_OEM_GET_FLASH_SIZE = 0x19,
     CMD_OEM_CLEAR_CMOS = 0x25,
+    CMD_OEM_1S_4BYTE_POST_BUF = 0x33,
 };
 
 // Flash size response length
