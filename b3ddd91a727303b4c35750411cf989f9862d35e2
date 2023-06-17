@@ -1,0 +1,164 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5175930_1f5c57d3",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "`std::map\u003cRestorePolicy::Policy, std::string\u003e`?",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 53
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "145fccbe_3c7d542f",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1265,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "I don\u0027t understand what this code is doing.  Can we get a comment?\n\nI think it is saying that if the position switch is set to BMC then the policy is always \"0\"?  Should we have a N/A value in the map?",
+      "range": {
+        "startLine": 1261,
+        "startChar": 0,
+        "endLine": 1265,
+        "endChar": 5
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3959d9ee_592c0723",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1279,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "Should this be a const\u0026?  Otherwise it looks like we\u0027re making a copy here.",
+      "range": {
+        "startLine": 1279,
+        "startChar": 8,
+        "endLine": 1279,
+        "endChar": 40
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2655015_3c81cbe1",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1285,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "I have a minor preference for `sdbusplus::message::convert_to_string(item.dbusValue)` here.",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd68c9af_fd711b80",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1294,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "Either use `std::message::convert_from_string\u003cRestorePolicy::Policy\u003e` or `convertPolicyFromString` here.  Keep in mind that `convert_from_string` gives an optional, which might be `false`, but `convertPolicyFromString` can throw.",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a221a15_c448f893",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1299,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "Don\u0027t write your own searches.  Use std::find or, in the case of map, just look-up.\n\nIt looks like you\u0027re iterating over each element to build up the whole panel?  In that case you should be able to use `std::transform` to copy from one string to another.",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6971dccd_6549106b",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1303,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "Doing lots of extra work by having to go through each entry and convert multiple times.  This is why I suggested lifting this out of the loop onto line 1294 directly.",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "302ffb4e_39295e54",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:41:23Z",
+      "side": 1,
+      "message": "Prefer we avoid snprintf.\n\nIt seems like all we are doing is converting a C++ string and copying it into a character buffer?  This seems like a really indirect and expensive way of doing that.\n\nAny reason the panel can\u0027t hold a std::string directly and we can `std::move` into it here?",
+      "range": {
+        "startLine": 1309,
+        "startChar": 8,
+        "endLine": 1309,
+        "endChar": 16
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
