@@ -1,0 +1,170 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af6f4f0a_eb192e21",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "`auto`?  I don\u0027t think `size_t` is appropriate for a byte-pattern.\n\nI mentioned later on that maybe an `array\u003cuint8_t, 2\u003e` (or 4) might be more appropriate here.",
+      "range": {
+        "startLine": 46,
+        "startChar": 10,
+        "endLine": 46,
+        "endChar": 16
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6947b687_432f3226",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "Generally we shouldn\u0027t see a constant like this being used to initialize an array.  Use a dynamic structure of some sort if that\u0027s what you need.  Especially because we have 8 hosts and you\u0027re allocating over a page of memory as a result of this structure.\n\nYou\u0027ve already got the dimmLoops structure which is looked up by hostId.  That seems sufficient.",
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ab08fbb_2693f8fb",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "Still see a static function member.  Why can\u0027t we add this to the `dimmLoop` structure?",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 52
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "385226e4_c9ed8d0f",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "Pretty sure size_t isn\u0027t what you intended to use here.  You can use `auto`  or uint16?\n\nHonestly I\u0027m surprised we don\u0027t just use a uint32_t for everything here since the post codes are 32 bit in size.  Or an `array\u003cuint8_t, 2\u003e`.  We can construct the array directly from the position in the original `data` array.",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 11
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2d9c2f3_a84bdb35",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "How can you be certain that we won\u0027t get 2 DIMM loops in a row?  Is there something that ensures after \"DDEE + minor code\" we get something other than a `DDEE`?",
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fed2e5c3_c77694d5",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "Can this be constexpr?\n\nMight want to make it a `std::array\u003cuint8_t, 4\u003e`.\n\nYou can also look at `std::ranges::equal` and `std::ranges::starts_with` for some of the comparisons you need to do.  Unfortunately, `starts_with` isn\u0027t available until C++23, but the documentation for it gives an alternative approach using `std::ranges::mismatch`.  That might be too much work.",
+      "range": {
+        "startLine": 132,
+        "startChar": 11,
+        "endLine": 132,
+        "endChar": 37
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0355582f_1c5426ed",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "This seems strange to push back the vector of data just to keep a count?",
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "000994a9_ff86b311",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-17T01:18:18Z",
+      "side": 1,
+      "message": "I still don\u0027t understand this code.  Why are there going to be 6 * error count for remaining buffers?\n\nWhy can\u0027t we save the error count right away in line 142?  Still not enough documentation as to what is going on here.",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 42
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
