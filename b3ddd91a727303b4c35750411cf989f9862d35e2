@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fa21ac4f_fa62ac92",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "I keep with vector for iterate to show on debug card panel.",
+      "parentUuid": "f5175930_1f5c57d3",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 53
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "145fccbe_3c7d542f",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-06-17T01:41:23Z",
       "side": 1,
       "message": "I don\u0027t understand what this code is doing.  Can we get a comment?\n\nI think it is saying that if the position switch is set to BMC then the policy is always \"0\"?  Should we have a N/A value in the map?",
+      "range": {
+        "startLine": 1261,
+        "startChar": 0,
+        "endLine": 1265,
+        "endChar": 5
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f076fb1_be0b117a",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1265,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Added a comment. Set item number to zero for not showing option on the panel. And uart position at bmc no need any options for power policy.",
+      "parentUuid": "145fccbe_3c7d542f",
       "range": {
         "startLine": 1261,
         "startChar": 0,
@@ -70,6 +118,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "74a47d9e_b1ead707",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1279,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3959d9ee_592c0723",
+      "range": {
+        "startLine": 1279,
+        "startChar": 8,
+        "endLine": 1279,
+        "endChar": 40
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2655015_3c81cbe1",
@@ -83,6 +155,24 @@
       "writtenOn": "2023-06-17T01:41:23Z",
       "side": 1,
       "message": "I have a minor preference for `sdbusplus::message::convert_to_string(item.dbusValue)` here.",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99ef1703_748d1239",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1285,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2655015_3c81cbe1",
       "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -104,6 +194,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c52458c_efa6f42a",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1294,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Done. Used convertStringToPolicy instead.",
+      "parentUuid": "dd68c9af_fd711b80",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3a221a15_c448f893",
@@ -117,6 +225,24 @@
       "writtenOn": "2023-06-17T01:41:23Z",
       "side": 1,
       "message": "Don\u0027t write your own searches.  Use std::find or, in the case of map, just look-up.\n\nIt looks like you\u0027re iterating over each element to build up the whole panel?  In that case you should be able to use `std::transform` to copy from one string to another.",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec8fd9a5_71ca3bd2",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1299,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a221a15_c448f893",
       "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -138,6 +264,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd0055a0_aaf86017",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1303,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6971dccd_6549106b",
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "302ffb4e_39295e54",
@@ -151,6 +295,30 @@
       "writtenOn": "2023-06-17T01:41:23Z",
       "side": 1,
       "message": "Prefer we avoid snprintf.\n\nIt seems like all we are doing is converting a C++ string and copying it into a character buffer?  This seems like a really indirect and expensive way of doing that.\n\nAny reason the panel can\u0027t hold a std::string directly and we can `std::move` into it here?",
+      "range": {
+        "startLine": 1309,
+        "startChar": 8,
+        "endLine": 1309,
+        "endChar": 16
+      },
+      "revId": "b3ddd91a727303b4c35750411cf989f9862d35e2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "981724fa_706bccbb",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-20T09:28:22Z",
+      "side": 1,
+      "message": "Done. Modified type of item_str to string.",
+      "parentUuid": "302ffb4e_39295e54",
       "range": {
         "startLine": 1309,
         "startChar": 8,
