@@ -16,6 +16,24 @@
       "message": "I think we can end up with a buffer overrun here now.\n\n```\nstd::min(buffer[2], panels[panel].item_str[item].length())\n```",
       "revId": "fc1e8fecea8bef465fb43739078634e3db5e1695",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6bdfc890_1ce7df48",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1310,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-21T03:13:26Z",
+      "side": 1,
+      "message": "Hi Patrick, thanks for your advice.\nBut I am a bit confused about the intention for using std::min. Because at #1305 it already stores the length of item_str. What I see buffer[2] and panels[panel].item_str[item].length() are the same thing.",
+      "parentUuid": "86020ea5_69d39102",
+      "revId": "fc1e8fecea8bef465fb43739078634e3db5e1695",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
