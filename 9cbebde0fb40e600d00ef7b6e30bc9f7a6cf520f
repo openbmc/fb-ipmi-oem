@@ -104,6 +104,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "af5779af_9ffd2118",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-21T07:09:05Z",
+      "side": 1,
+      "message": "Hi Patrick, when we got 2 dimm loops the postcode will keep looping like this:\n[DDEE0000][DDEE0002][DDEE0001][DDEE0A10][DDEE0009][DDEE4001][DDEE0000][DDEE0002][DDEE0002][DDEE00A2][DDEE0009][DDEE4001] ....\nAnd it won\u0027t stop, keep repeating postcode pattern as above. And I ask from Bios team and they said it won\u0027t happen with postcode without DDEE prefix showing up when dimm loop error happens.",
+      "parentUuid": "b2d9c2f3_a84bdb35",
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fed2e5c3_c77694d5",
@@ -144,6 +162,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f1769506_d57f0848",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-21T07:09:05Z",
+      "side": 1,
+      "message": "Hi Patrick, the dimm loop patterns were being stored and used for decode and show its description on debug card (This will be the next feature. still ongoing). This commit is for dimm loop detection.",
+      "parentUuid": "0355582f_1c5426ed",
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "000994a9_ff86b311",
@@ -157,6 +193,30 @@
       "writtenOn": "2023-06-17T01:18:18Z",
       "side": 1,
       "message": "I still don\u0027t understand this code.  Why are there going to be 6 * error count for remaining buffers?\n\nWhy can\u0027t we save the error count right away in line 142?  Still not enough documentation as to what is going on here.",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 42
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b5cfeeda_49bc6c89",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-21T07:09:05Z",
+      "side": 1,
+      "message": "Hi Patrick, here is the process and example of this code design:\n\nHere is the postcode continuously into this function:\n[DDEE0000] \u003c\u003d get anchor flag, which mean dimm loop pattern is starting\n[DDEE0002] \u003c\u003d which meaning there will be 2 dimm loops pattern coming, \n              total 12 postcodes. (6 byte as a group)\n[DDEE0001] \u003c\u003d keep counting and storing.\n[DDEE0A10] \u003c\u003d keep counting and storing.\n[DDEE0009] \u003c\u003d keep counting and storing.\n[DDEE4001] \u003c\u003d keep counting and storing.\n[DDEE0000] \u003c\u003d keep counting and storing.\n[DDEE0002] \u003c\u003d keep counting and storing.\n[DDEE0002] \u003c\u003d keep counting and storing.\n[DDEE00A2] \u003c\u003d keep counting and storing.\n[DDEE0009] \u003c\u003d keep counting and storing.\n[DDEE4001] \u003c\u003d keep counting and this is 12th postcode. And set up the error \n             count in structure,  which means I got the whole patterns and \n\t     all being stored. After that, this dimm loop pattern will keep\n\t     repeating, no need to check again",
+      "parentUuid": "000994a9_ff86b311",
       "range": {
         "startLine": 148,
         "startChar": 0,
