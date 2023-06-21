@@ -34,6 +34,24 @@
       "parentUuid": "86020ea5_69d39102",
       "revId": "fc1e8fecea8bef465fb43739078634e3db5e1695",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3406aeb2_5d63b5d0",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1310,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-21T03:17:59Z",
+      "side": 1,
+      "message": "Keep this unresolved",
+      "parentUuid": "6bdfc890_1ce7df48",
+      "revId": "fc1e8fecea8bef465fb43739078634e3db5e1695",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
