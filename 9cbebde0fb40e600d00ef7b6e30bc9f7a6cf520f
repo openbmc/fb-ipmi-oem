@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc2c82d4_b4f56476",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-26T07:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af6f4f0a_eb192e21",
+      "range": {
+        "startLine": 46,
+        "startChar": 10,
+        "endLine": 46,
+        "endChar": 16
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6947b687_432f3226",
@@ -37,6 +61,24 @@
       "writtenOn": "2023-06-17T01:18:18Z",
       "side": 1,
       "message": "Generally we shouldn\u0027t see a constant like this being used to initialize an array.  Use a dynamic structure of some sort if that\u0027s what you need.  Especially because we have 8 hosts and you\u0027re allocating over a page of memory as a result of this structure.\n\nYou\u0027ve already got the dimmLoops structure which is looked up by hostId.  That seems sufficient.",
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bfabaacc_03acbfa5",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-26T07:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6947b687_432f3226",
       "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -64,6 +106,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7165e635_68fef8c2",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-26T07:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ab08fbb_2693f8fb",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 52
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "385226e4_c9ed8d0f",
@@ -77,6 +143,30 @@
       "writtenOn": "2023-06-17T01:18:18Z",
       "side": 1,
       "message": "Pretty sure size_t isn\u0027t what you intended to use here.  You can use `auto`  or uint16?\n\nHonestly I\u0027m surprised we don\u0027t just use a uint32_t for everything here since the post codes are 32 bit in size.  Or an `array\u003cuint8_t, 2\u003e`.  We can construct the array directly from the position in the original `data` array.",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 11
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f09e0d9_47afb90e",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-26T07:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "385226e4_c9ed8d0f",
       "range": {
         "startLine": 111,
         "startChar": 4,
@@ -135,6 +225,30 @@
       "writtenOn": "2023-06-17T01:18:18Z",
       "side": 1,
       "message": "Can this be constexpr?\n\nMight want to make it a `std::array\u003cuint8_t, 4\u003e`.\n\nYou can also look at `std::ranges::equal` and `std::ranges::starts_with` for some of the comparisons you need to do.  Unfortunately, `starts_with` isn\u0027t available until C++23, but the documentation for it gives an alternative approach using `std::ranges::mismatch`.  That might be too much work.",
+      "range": {
+        "startLine": 132,
+        "startChar": 11,
+        "endLine": 132,
+        "endChar": 37
+      },
+      "revId": "9cbebde0fb40e600d00ef7b6e30bc9f7a6cf520f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71f4ffaa_c40cc98f",
+        "filename": "src/biccommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1001618
+      },
+      "writtenOn": "2023-06-26T07:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fed2e5c3_c77694d5",
       "range": {
         "startLine": 132,
         "startChar": 11,
