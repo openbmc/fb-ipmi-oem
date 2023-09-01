@@ -65,7 +65,7 @@ constexpr static const char* fruDeviceServiceName =
 constexpr static const size_t cacheTimeoutSeconds = 10;
 
 static std::vector<uint8_t> fruCache;
-static uint8_t cacheBus = 0xFF;
+static uint16_t cacheBus = 0xFFFF;
 static uint8_t cacheAddr = 0XFF;
 
 std::unique_ptr<phosphor::Timer> cacheTimer = nullptr;
@@ -314,7 +314,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     catch (const sdbusplus::exception_t&)
     {
         lastDevId = 0xFF;
-        cacheBus = 0xFF;
+        cacheBus = 0xFFFF;
         cacheAddr = 0xFF;
         return IPMI_CC_RESPONSE_ERROR;
     }
