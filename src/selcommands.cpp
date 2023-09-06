@@ -1186,9 +1186,17 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
             }
         }
 
-        uint32_t timeStamp = data->timeStamp;
-        std::tm* ts = localtime(reinterpret_cast<time_t*>(&timeStamp));
-        std::string timeStr = std::asctime(ts);
+        time_t timeStamp = static_cast<time_t>(data->timeStamp);
+        std::string timeStr;
+        std::tm ts;
+        if (localtime_r(&timeStamp, &ts))
+        {
+            char buf[64];
+            if (strftime(buf, sizeof(buf), "%c", &ts))
+            {
+                timeStr = buf;
+            }
+        }
 
         parseStdSel(data, errLog);
         ptr = &(data->eventData1);
@@ -1219,9 +1227,17 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
         std::string oemDataStr;
         toHexStr(oemData, oemDataStr);
 
-        uint32_t timeStamp = data->timeStamp;
-        std::tm* ts = localtime(reinterpret_cast<time_t*>(&timeStamp));
-        std::string timeStr = std::asctime(ts);
+        time_t timeStamp = static_cast<time_t>(data->timeStamp);
+        std::string timeStr;
+        std::tm ts;
+        if (localtime_r(&timeStamp, &ts))
+        {
+            char buf[64];
+            if (strftime(buf, sizeof(buf), "%c", &ts))
+            {
+                timeStr = buf;
+            }
+        }
 
         errType = oemTSErr;
         parseOemSel(data, errLog);
