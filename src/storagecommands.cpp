@@ -236,9 +236,17 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
 
     deviceHashes.clear();
 
-    // hash the object paths to create unique device id's. increment on
-    // collision
-    [[maybe_unused]] std::hash<std::string> hasher;
+    uint8_t fruHash = 0;
+    uint8_t mbFruBus = 0, mbFruAddr = 0;
+
+    auto device = getMbFruDevice();
+    if (device)
+    {
+        std::tie(mbFruBus, mbFruAddr) = *device;
+        deviceHashes.emplace(0, std::make_pair(mbFruBus, mbFruAddr));
+        fruHash++;
+    }
+
     for (const auto& fru : frus)
     {
         auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
@@ -260,37 +268,10 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
 
         uint8_t fruBus = std::get<uint32_t>(busFind->second);
         uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
-
-        uint8_t fruHash = 0;
-        // Need to revise this strategy for dev id
-        /*
-        if (fruBus != 0 || fruAddr != 0)
+        if (fruBus != mbFruBus || fruAddr != mbFruAddr)
         {
-          fruHash = hasher(fru.first.str);
-          // can't be 0xFF based on spec, and 0 is reserved for baseboard
-          if (fruHash == 0 || fruHash == 0xFF)
-          {
-            fruHash = 1;
-          }
-        }
-        */
-        std::pair<uint8_t, uint8_t> newDev(fruBus, fruAddr);
-
-        bool emplacePassed = false;
-        while (!emplacePassed)
-        {
-            auto resp = deviceHashes.emplace(fruHash, newDev);
-            emplacePassed = resp.second;
-            if (!emplacePassed)
-            {
-                fruHash++;
-                // can't be 0xFF based on spec, and 0 is reserved for
-                // baseboard
-                if (fruHash == 0XFF)
-                {
-                    fruHash = 0x1;
-                }
-            }
+            deviceHashes.emplace(fruHash, std::make_pair(fruBus, fruAddr));
+            fruHash++;
         }
     }
     auto deviceFind = deviceHashes.find(devId);

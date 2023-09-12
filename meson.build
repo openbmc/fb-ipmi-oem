@@ -89,6 +89,7 @@ zfboemcmds_pre = declare_dependency(
 
 zfboemcmds_lib = library(
   'zfboemcmds',
+  'src/commandutils.cpp',
   'src/oemcommands.cpp',
   'src/appcommands.cpp',
   'src/storagecommands.cpp',
