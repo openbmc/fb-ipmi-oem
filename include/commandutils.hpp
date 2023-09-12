@@ -21,11 +21,19 @@
 #include <sdbusplus/bus.hpp>
 
 #include <iostream>
+#include <vector>
 
 static constexpr bool debug = false;
 
 using IanaType = std::array<uint8_t, 3>;
 using flashSize = std::array<uint8_t, 4>;
+
+struct FruIdDevice
+{
+    uint8_t id;
+    uint8_t bus;
+    uint8_t addr;
+};
 
 static constexpr IanaType iana = {0x15, 0xA0, 0x0}; // Meta's IANA
 
@@ -96,6 +104,9 @@ inline static void printCommand(unsigned int netfn, unsigned int cmd)
                   << netfn << "], Cmd:[0x" << cmd << "]\n";
     }
 }
+
+// get all fruid devices when devId < 0
+std::vector<FruIdDevice> getFruIdDevice(int devId = -1);
 
 namespace ipmi
 {

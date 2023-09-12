@@ -1255,21 +1255,33 @@ ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     int fd = -1;
     ssize_t len;
     int ret = 0;
+    std::string eepromPath = FRU_EEPROM;
+
+    // find the eeprom path of fruid 0
+    std::vector<FruIdDevice> device = getFruIdDevice(0);
+    if (!device.empty())
+    {
+        std::stringstream ss;
+        ss << "/sys/bus/i2c/devices/" << static_cast<int>(device[0].bus) << "-"
+           << std::setw(4) << std::setfill('0') << std::hex
+           << static_cast<int>(device[0].addr) << "/eeprom";
+        eepromPath = ss.str();
+    }
 
     errno = 0;
 
     // Check if file is present
-    if (access(FRU_EEPROM, F_OK) == -1)
+    if (access(eepromPath.c_str(), F_OK) == -1)
     {
-        std::cerr << "Unable to access: " << FRU_EEPROM << std::endl;
+        std::cerr << "Unable to access: " << eepromPath << std::endl;
         return errno;
     }
 
     // Open the file
-    fd = open(FRU_EEPROM, O_WRONLY);
+    fd = open(eepromPath.c_str(), O_WRONLY);
     if (fd == -1)
     {
-        std::cerr << "Unable to open: " << FRU_EEPROM << std::endl;
+        std::cerr << "Unable to open: " << eepromPath << std::endl;
         return errno;
     }
 

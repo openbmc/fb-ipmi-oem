@@ -218,77 +218,86 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         writeFru();
     }
 
-    sdbusplus::message_t getObjects = dbus.new_method_call(
-        fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
-        "GetManagedObjects");
-    ManagedObjectType frus;
-    try
-    {
-        sdbusplus::message_t resp = dbus.call(getObjects);
-        resp.read(frus);
-    }
-    catch (const sdbusplus::exception_t&)
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "replaceCacheFru: error getting managed objects");
-        return IPMI_CC_RESPONSE_ERROR;
-    }
-
     deviceHashes.clear();
 
-    // hash the object paths to create unique device id's. increment on
-    // collision
-    [[maybe_unused]] std::hash<std::string> hasher;
-    for (const auto& fru : frus)
+    std::vector<FruIdDevice> devices = getFruIdDevice();
+    for (const auto& fruid : devices)
     {
-        auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
-        if (fruIface == fru.second.end())
+        deviceHashes.emplace(fruid.id, std::make_pair(fruid.bus, fruid.addr));
+    }
+
+    if (deviceHashes.empty())
+    {
+        sdbusplus::message_t getObjects = dbus.new_method_call(
+            fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
+            "GetManagedObjects");
+        ManagedObjectType frus;
+        try
         {
-            continue;
+            sdbusplus::message_t resp = dbus.call(getObjects);
+            resp.read(frus);
+        }
+        catch (const sdbusplus::exception_t&)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "replaceCacheFru: error getting managed objects");
+            return IPMI_CC_RESPONSE_ERROR;
         }
 
-        auto busFind = fruIface->second.find("BUS");
-        auto addrFind = fruIface->second.find("ADDRESS");
-        if (busFind == fruIface->second.end() ||
-            addrFind == fruIface->second.end())
+        // hash the object paths to create unique device id's. increment on
+        // collision
+        [[maybe_unused]] std::hash<std::string> hasher;
+        for (const auto& fru : frus)
         {
-            phosphor::logging::log<phosphor::logging::level::INFO>(
-                "fru device missing Bus or Address",
-                phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
-            continue;
-        }
-
-        uint8_t fruBus = std::get<uint32_t>(busFind->second);
-        uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
-
-        uint8_t fruHash = 0;
-        // Need to revise this strategy for dev id
-        /*
-        if (fruBus != 0 || fruAddr != 0)
-        {
-          fruHash = hasher(fru.first.str);
-          // can't be 0xFF based on spec, and 0 is reserved for baseboard
-          if (fruHash == 0 || fruHash == 0xFF)
-          {
-            fruHash = 1;
-          }
-        }
-        */
-        std::pair<uint8_t, uint8_t> newDev(fruBus, fruAddr);
-
-        bool emplacePassed = false;
-        while (!emplacePassed)
-        {
-            auto resp = deviceHashes.emplace(fruHash, newDev);
-            emplacePassed = resp.second;
-            if (!emplacePassed)
+            auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
+            if (fruIface == fru.second.end())
             {
-                fruHash++;
-                // can't be 0xFF based on spec, and 0 is reserved for
-                // baseboard
-                if (fruHash == 0XFF)
+                continue;
+            }
+
+            auto busFind = fruIface->second.find("BUS");
+            auto addrFind = fruIface->second.find("ADDRESS");
+            if (busFind == fruIface->second.end() ||
+                addrFind == fruIface->second.end())
+            {
+                phosphor::logging::log<phosphor::logging::level::INFO>(
+                    "fru device missing Bus or Address",
+                    phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
+                continue;
+            }
+
+            uint8_t fruBus = std::get<uint32_t>(busFind->second);
+            uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
+
+            uint8_t fruHash = 0;
+            // Need to revise this strategy for dev id
+            /*
+            if (fruBus != 0 || fruAddr != 0)
+            {
+              fruHash = hasher(fru.first.str);
+              // can't be 0xFF based on spec, and 0 is reserved for baseboard
+              if (fruHash == 0 || fruHash == 0xFF)
+              {
+                fruHash = 1;
+              }
+            }
+            */
+            std::pair<uint8_t, uint8_t> newDev(fruBus, fruAddr);
+
+            bool emplacePassed = false;
+            while (!emplacePassed)
+            {
+                auto resp = deviceHashes.emplace(fruHash, newDev);
+                emplacePassed = resp.second;
+                if (!emplacePassed)
                 {
-                    fruHash = 0x1;
+                    fruHash++;
+                    // can't be 0xFF based on spec, and 0 is reserved for
+                    // baseboard
+                    if (fruHash == 0XFF)
+                    {
+                        fruHash = 0x1;
+                    }
                 }
             }
         }
