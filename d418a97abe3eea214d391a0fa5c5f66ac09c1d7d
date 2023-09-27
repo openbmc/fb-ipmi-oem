@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "941cec51_ca23a276",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2023-09-27T07:36:29Z",
+      "side": 1,
+      "message": "updated the commit message:\n\nThe MB FRUID should be exposed with ID 0 for BIOS to get the data to\nfill out SMBIOS table during POST. However, current IDs depend on the\nordering of the FruDevice object paths.",
+      "parentUuid": "e132dcf0_8d8a7561",
+      "revId": "d418a97abe3eea214d391a0fa5c5f66ac09c1d7d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5b6d8bf4_af37fb92",
@@ -31,6 +49,30 @@
       "writtenOn": "2023-09-19T17:42:26Z",
       "side": 1,
       "message": "We really should not be opening EEPROMs directly.  I don\u0027t think I want to see this behavior expanded.\n\n1. We are trying to get approval to remove the get/set GUID function.  There seems to be no production use case for it as far as I\u0027ve heard from RTP.  Do you know of a use case?\n\n2. We should be relying on the entity-manager / fru-manager parsing of the EEPROM directly rather than secondarily doing our own parsing of the EEPROM.\n\n3. Rather than yet-another configuration file, if we do need to do this work, we should be able to figure the appropriate EEPROM from the entity-manager information.",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 5
+      },
+      "revId": "d418a97abe3eea214d391a0fa5c5f66ac09c1d7d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be5ab18d_0b5f0150",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2023-09-27T07:36:29Z",
+      "side": 1,
+      "message": "1. I only know that BIOS uses to populates into SMBIOS table.\n2 \u0026 3. revised the implementation to figure out MB EEPROM path from the entity-manager information.",
+      "parentUuid": "5b6d8bf4_af37fb92",
       "range": {
         "startLine": 90,
         "startChar": 0,
