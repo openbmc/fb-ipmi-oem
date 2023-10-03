@@ -913,58 +913,6 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     return 0;
 }
 
-#ifdef ME_SUPPORT
-static int getMeStatus(std::string& status, size_t pos)
-{
-    uint8_t cmd = 0x01;   // Get Device id command
-    uint8_t netFn = 0x06; // Netfn for APP
-    std::shared_ptr<sdbusplus::asio::connection> bus = getSdBus();
-    std::vector<uint8_t> cmdData;
-
-    uint8_t meAddr = meAddress;
-    bool platform = isMultiHostPlatform();
-    if (platform == true)
-    {
-        meAddr = ((pos - 1) << 2);
-    }
-
-    auto method = bus->new_method_call("xyz.openbmc_project.Ipmi.Channel.Ipmb",
-                                       "/xyz/openbmc_project/Ipmi/Channel/Ipmb",
-                                       "org.openbmc.Ipmb", "sendRequest");
-    method.append(meAddr, netFn, lun, cmd, cmdData);
-
-    auto reply = bus->call(method);
-    if (reply.is_method_error())
-    {
-        std::cerr << "Error reading from ME\n";
-        return -1;
-    }
-
-    IpmbMethodType resp;
-    reply.read(resp);
-
-    std::vector<uint8_t> data;
-    data = std::get<5>(resp);
-
-    if (DEBUG)
-    {
-        std::cout << "ME Get ID: ";
-        for (size_t d : data)
-        {
-            std::cout << d << " ";
-        }
-        std::cout << "\n";
-    }
-
-    if (data[2] & 0x80)
-        status = "recovery mode";
-    else
-        status = "operation mode";
-
-    return 0;
-}
-#endif
-
 static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
                               uint8_t* count, uint8_t* buffer)
 {
@@ -1053,19 +1001,6 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
                 frame_info.append("BIOS_FW_ver:", 0);
                 frame_info.append(biosVer.c_str(), 1);
             }
-
-#ifdef ME_SUPPORT
-            // ME status
-            std::string meStatus;
-            if (getMeStatus(meStatus, pos) != 0)
-            {
-                phosphor::logging::log<phosphor::logging::level::WARNING>(
-                    "Reading ME status failed");
-                meStatus = "unknown";
-            }
-            frame_info.append("ME_status:", 0);
-            frame_info.append(meStatus.c_str(), 1);
-#endif
         }
 
         /* TBD: Board ID needs implementation */
