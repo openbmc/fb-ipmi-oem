@@ -48,14 +48,6 @@ if not get_option('bic').disabled()
     language : 'cpp')
 endif
 
-if get_option('me_support')
-  add_project_arguments(
-    cpp.get_supported_arguments([
-        '-DME_SUPPORT',
-    ]),
-    language : 'cpp')
-endif
-
 root_inc = include_directories('.', 'include')
 
 # Dependencies
