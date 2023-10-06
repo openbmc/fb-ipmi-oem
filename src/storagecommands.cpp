@@ -623,7 +623,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_INVALID_FIELD_REQUEST;
     }
 
-    uint16_t nextRecord = lastRecord > static_cast<size_t>(req->recordID + 1)
+    uint16_t nextRecord = lastRecord >= static_cast<size_t>(req->recordID + 1)
                               ? req->recordID + 1
                               : 0XFFFF;
 
