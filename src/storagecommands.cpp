@@ -68,7 +68,7 @@ static std::vector<uint8_t> fruCache;
 static uint16_t cacheBus = 0xFFFF;
 static uint8_t cacheAddr = 0XFF;
 
-std::unique_ptr<phosphor::Timer> cacheTimer = nullptr;
+std::unique_ptr<sdbusplus::Timer> cacheTimer = nullptr;
 
 // we unfortunately have to build a map of hashes in case there is a
 // collision to verify our dev-id
@@ -198,7 +198,7 @@ void createTimer()
 {
     if (cacheTimer == nullptr)
     {
-        cacheTimer = std::make_unique<phosphor::Timer>(writeFru);
+        cacheTimer = std::make_unique<sdbusplus::Timer>(writeFru);
     }
 }
 
