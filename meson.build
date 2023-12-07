@@ -58,14 +58,7 @@ ipmid_dep = dependency('libipmid')
 channellayer_dep = dependency('libchannellayer')
 userlayer_dep = dependency('libuserlayer')
 
-if cpp.has_header_symbol(
-        'nlohmann/json.hpp',
-        'nlohmann::json::string_t',
-        required:false)
-    nlohmann_json_dep = declare_dependency()
-else
-    nlohmann_json_dep = dependency('nlohmann-json')
-endif
+nlohmann_json_dep = dependency('nlohmann_json', include_type: 'system')
 
 zfboemcmds_pre = declare_dependency(
   include_directories: root_inc,
