@@ -93,6 +93,11 @@ enum class LanParam : uint8_t
     IPV6 = 59,
 };
 
+enum class FwInfoParam : uint8_t
+{
+    CPLD = 1,
+};
+
 namespace network
 {
 
@@ -730,6 +735,99 @@ int8_t procInfo(std::string& result, size_t pos)
     return 0;
 }
 
+bool getComponentSoftwareVersion(size_t hostId, std::string compnentName,
+                                 std::string& version)
+{
+    const std::string swVerIntf = "xyz.openbmc_project.Software.Version";
+    const std::string objPath = "/xyz/openbmc_project/software/host" +
+                                std::to_string(hostId) + "/" + compnentName;
+    std::string busName = "";
+    std::cout << "[DEBUG] OBJPATH = " << objPath << std::endl;
+
+    // find service name by object path
+    try
+    {
+        auto method = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                                           "/xyz/openbmc_project/object_mapper",
+                                           "xyz.openbmc_project.ObjectMapper",
+                                           "GetObject");
+        method.append(objPath, std::vector<std::string>({swVerIntf}));
+        std::map<std::string, std::vector<std::string>> response;
+        auto reply = dbus.call(method);
+        reply.read(response);
+        if (!response.empty())
+        {
+            busName = response.begin()->first;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+    }
+
+    // get compnent software version string
+    try
+    {
+        auto method = dbus.new_method_call(busName.c_str(), objPath.c_str(),
+                                           "org.freedesktop.DBus.Properties",
+                                           "Get");
+        method.append(swVerIntf, "Version");
+        std::variant<std::string> value;
+
+        auto reply = dbus.call(method);
+        reply.read(value);
+        version = std::get<std::string>(value);
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+        return false;
+    }
+
+    return true;
+}
+
+bool convertCPLDVersionToBytes(std::string hexString,
+                               std::vector<uint8_t>& bytes)
+{
+    // Check if the string has even length
+    if (hexString.length() % 2 != 0)
+    {
+        return false;
+    }
+
+    // Check if all characters are valid hexadecimal digits
+    for (char c : hexString)
+    {
+        if (!isxdigit(c))
+        {
+            return false;
+        }
+    }
+
+    // convert hex string to byte array
+    std::vector<uint8_t> byteArray;
+    for (size_t i = 0; i < hexString.length(); i += 2)
+    {
+        std::string byteString = hexString.substr(i, 2);
+        uint8_t byte = std::stoul(byteString, nullptr, 16);
+        byteArray.push_back(byte);
+    }
+
+    // Valid CPLD version contains 4 bytes
+    if (byteArray.size() != 4)
+    {
+        return false;
+    }
+
+    bytes = byteArray;
+    return true;
+}
+
 typedef struct
 {
     uint8_t cur_power_state;
@@ -1085,6 +1183,59 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemGetBootOrder(ipmi::Context::ptr ctx)
 
     return ipmi::responseSuccess(bootSeq);
 }
+
+//----------------------------------------------------------------------
+// Get Firmware Info (CMD_OEM_GET_FW_INFO)
+//----------------------------------------------------------------------
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGetFirmwareInfo(ipmi::Context::ptr ctx, uint8_t target)
+{
+    std::optional<size_t> hostId = findHost(ctx->hostIdx);
+
+    if (!hostId)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Invalid Host Id received");
+        return ipmi::responseInvalidCommand();
+    }
+
+    std::string compnent;
+    if (static_cast<FwInfoParam>(target) == FwInfoParam::CPLD)
+    {
+        compnent = "cpld";
+    }
+    else
+    {
+        return ipmi::responseParmOutOfRange();
+    }
+
+    std::string versionStr;
+    if (!getComponentSoftwareVersion(*hostId, compnent, versionStr))
+    {
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    if (versionStr.empty())
+    {
+        return ipmi::responseCommandNotAvailable();
+    }
+
+    if (static_cast<FwInfoParam>(target) == FwInfoParam::CPLD)
+    {
+        // CPLD version is 4 bytes hex string, convert it to byte array.
+        std::vector<uint8_t> bytes;
+        if (!convertCPLDVersionToBytes(versionStr, bytes))
+        {
+            return ipmi::responseCommandNotAvailable();
+        }
+        return ipmi::responseSuccess(bytes);
+    }
+
+    return ipmi::responseSuccess(
+        std::vector<uint8_t>(versionStr.begin(), versionStr.end()));
+}
+
+//----------------------------------------------------------------------
 // Set Machine Config Info (CMD_OEM_SET_MACHINE_CONFIG_INFO)
 //----------------------------------------------------------------------
 ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t, ipmi_cmd_t,
@@ -2220,6 +2371,10 @@ static void registerOEMFunctions(void)
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
                           CMD_OEM_SET_BOOT_ORDER, ipmi::Privilege::User,
                           ipmiOemSetBootOrder); // Set Boot Order
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_GET_FW_INFO, ipmi::Privilege::User,
+                          ipmiOemGetFirmwareInfo); // Set Boot Order
 
     return;
 }
