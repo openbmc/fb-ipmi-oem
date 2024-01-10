@@ -601,7 +601,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         return IPMI_CC_INVALID_RESERVATION_ID;
     }
 
-    if (sensorTree.empty() && !getSensorSubtree(sensorTree))
+    if (!getSensorSubtree(sensorTree) && sensorTree.empty())
     {
         return IPMI_CC_RESPONSE_ERROR;
     }
@@ -823,7 +823,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 static int getSensorConnectionByName(std::string& name, std::string& connection,
                                      std::string& path)
 {
-    if (sensorTree.empty() && !getSensorSubtree(sensorTree))
+    if (!getSensorSubtree(sensorTree) && sensorTree.empty())
     {
         return -1;
     }
