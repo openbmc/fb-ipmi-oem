@@ -1,0 +1,83 @@
+{
+    "MB_CPU_TEMP_C": {
+        "short_name": "CPU_TEMP:"
+    },
+    "FAN_BP0_FAN0_TACH_IL_SPEED_RPM": {
+        "short_name": "BP0_FAN0_INLET_SP:"
+    },
+    "FAN_BP0_FAN0_TACH_OL_SPEED_RPM": {
+        "short_name": "BP0_FAN0_OUTLET_SP:"
+    },
+    "FAN_BP0_FAN1_TACH_IL_SPEED_RPM": {
+        "short_name": "BP0_FAN1_INLET_SP:"
+    },
+    "FAN_BP0_FAN1_TACH_OL_SPEED_RPM": {
+        "short_name": "BP0_FAN1_OUTLET_SP:"
+    },
+    "FAN_BP0_FAN2_TACH_IL_SPEED_RPM": {
+        "short_name": "BP0_FAN2_INLET_SP:"
+    },
+    "FAN_BP0_FAN2_TACH_OL_SPEED_RPM": {
+        "short_name": "BP0_FAN2_OUTLET_SP:"
+    },
+    "FAN_BP0_FAN3_TACH_IL_SPEED_RPM": {
+        "short_name": "BP0_FAN3_INLET_SP:"
+    },
+    "FAN_BP0_FAN3_TACH_OL_SPEED_RPM": {
+        "short_name": "BP0_FAN3_OUTLET_SP:"
+    },
+    "FAN_BP1_FAN0_TACH_IL_SPEED_RPM": {
+        "short_name": "BP1_FAN0_INLET_SP:"
+    },
+    "FAN_BP1_FAN0_TACH_OL_SPEED_RPM": {
+        "short_name": "BP1_FAN0_OUTLET_SP:"
+    },
+    "FAN_BP1_FAN1_TACH_IL_SPEED_RPM": {
+        "short_name": "BP1_FAN1_INLET_SP:"
+    },
+    "FAN_BP1_FAN1_TACH_OL_SPEED_RPM": {
+        "short_name": "BP1_FAN1_OUTLET_SP:"
+    },
+    "FAN_BP1_FAN2_TACH_IL_SPEED_RPM": {
+        "short_name": "BP1_FAN2_INLET_SP:"
+    },
+    "FAN_BP1_FAN2_TACH_OL_SPEED_RPM": {
+        "short_name": "BP1_FAN2_OUTLET_SP:"
+    },
+    "FAN_BP1_FAN3_TACH_IL_SPEED_RPM": {
+        "short_name": "BP1_FAN3_INLET_SP:"
+    },
+    "FAN_BP1_FAN3_TACH_OL_SPEED_RPM": {
+        "short_name": "BP1_FAN3_OUTLET_SP:"
+    },
+    "MB_INLET_TEMP_C": {
+        "short_name": "INLET_TEMP:"
+    },
+    "MB_OUTLET_TEMP_C": {
+        "short_name": "OUTLET_TEMP:"
+    },
+    "MB_DIMM_A0_TEMP_C": {
+        "short_name": "DIMMA0_TEMP:"
+    },
+    "MB_DIMM_A1_TEMP_C": {
+        "short_name": "DIMMA1_TEMP:"
+    },
+    "MB_DIMM_A2_TEMP_C": {
+        "short_name": "DIMMA2_TEMP:"
+    },
+    "MB_DIMM_A4_TEMP_C": {
+        "short_name": "DIMMA4_TEMP:"
+    },
+    "MB_DIMM_A6_TEMP_C": {
+        "short_name": "DIMMA6_TEMP:"
+    },
+    "MB_DIMM_A7_TEMP_C": {
+        "short_name": "DIMMA7_TEMP:"
+    },
+    "MB_DIMM_A8_TEMP_C": {
+        "short_name": "DIMMA8_TEMP:"
+    },
+    "MB_DIMM_A10_TEMP_C": {
+        "short_name": "DIMMA10_TEMP:"
+    }
+}
