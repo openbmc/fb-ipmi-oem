@@ -1,0 +1,8 @@
+{
+    "CMM_P3V_BAT_VOLT_V": {
+        "short_name": "P3V_BAT_VOLT_V:"
+    },
+    "CMM_OUTLET_TEMP_C": {
+        "short_name": "OUTLET_TEMP_C:"
+    }
+}
