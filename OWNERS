@@ -32,7 +32,7 @@
 # data within them will be kept sorted.
 
 owners:
-- amithash@fb.com
+- amithash@meta.com
 - patrick@stwcx.xyz
 
 reviewers:
@@ -41,7 +41,7 @@ matchers:
 
 openbmc:
 - name: Amithash Prasad
-  email: amithash@fb.com
+  email: amithash@meta.com
   discord: amithash
 - name: Patrick Williams
   email: patrick@stwcx.xyz
