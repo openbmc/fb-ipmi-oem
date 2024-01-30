@@ -75,10 +75,10 @@ int getGUID(off_t offset, uint8_t* guid)
     std::string eepromPath = FRU_EEPROM;
 
     // find the eeprom path of MB FRU
-    auto device = getMbFruDevice();
-    if (device)
+    auto devices = getMbFruDevice();
+    if (devices[0])
     {
-        auto [bus, address] = *device;
+        auto [bus, address] = *devices[0];
         std::stringstream ss;
         ss << "/sys/bus/i2c/devices/" << static_cast<int>(bus) << "-"
            << std::setw(4) << std::setfill('0') << std::hex

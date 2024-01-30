@@ -1258,10 +1258,10 @@ ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     std::string eepromPath = FRU_EEPROM;
 
     // find the eeprom path of MB FRU
-    auto device = getMbFruDevice();
-    if (device)
+    auto devices = getMbFruDevice();
+    if (devices[0])
     {
-        auto [bus, address] = *device;
+        auto [bus, address] = *devices[0];
         std::stringstream ss;
         ss << "/sys/bus/i2c/devices/" << static_cast<int>(bus) << "-"
            << std::setw(4) << std::setfill('0') << std::hex
