@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ce4f3f1_3471e126",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-30T17:23:40Z",
+      "side": 1,
+      "message": "Can you expand on the commit message here as to what this accomplishes?  I don\u0027t know what feature this is enabling.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 21
+      },
+      "revId": "fcdcf2fc8d54806e32f1db0cbc04bcb155742a10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "deff27f7_d3665ef1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-01-30T17:23:40Z",
+      "side": 1,
+      "message": "I thought we said we didn\u0027t need to support the GUID?",
+      "revId": "fcdcf2fc8d54806e32f1db0cbc04bcb155742a10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
