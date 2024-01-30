@@ -218,66 +218,84 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         writeFru();
     }
 
-    sdbusplus::message_t getObjects = dbus.new_method_call(
-        fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
-        "GetManagedObjects");
-    ManagedObjectType frus;
-    try
-    {
-        sdbusplus::message_t resp = dbus.call(getObjects);
-        resp.read(frus);
-    }
-    catch (const sdbusplus::exception_t&)
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "replaceCacheFru: error getting managed objects");
-        return IPMI_CC_RESPONSE_ERROR;
-    }
-
     deviceHashes.clear();
 
-    uint8_t fruHash = 0;
-    uint8_t mbFruBus = 0, mbFruAddr = 0;
-
-    auto device = getMbFruDevice();
-    if (device)
+    auto devices = getMbFruDevice();
+    if (!devices.empty())
     {
-        std::tie(mbFruBus, mbFruAddr) = *device;
-        deviceHashes.emplace(0, std::make_pair(mbFruBus, mbFruAddr));
-        fruHash++;
+        for (size_t i = 0; i < devices.size(); i++)
+        {
+            if (devices[i])
+            {
+                deviceHashes.emplace(i, *devices[i]);
+            }
+        }
     }
 
-    for (const auto& fru : frus)
-    {
-        auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
-        if (fruIface == fru.second.end())
-        {
-            continue;
-        }
-
-        auto busFind = fruIface->second.find("BUS");
-        auto addrFind = fruIface->second.find("ADDRESS");
-        if (busFind == fruIface->second.end() ||
-            addrFind == fruIface->second.end())
-        {
-            phosphor::logging::log<phosphor::logging::level::INFO>(
-                "fru device missing Bus or Address",
-                phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
-            continue;
-        }
-
-        uint8_t fruBus = std::get<uint32_t>(busFind->second);
-        uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
-        if (fruBus != mbFruBus || fruAddr != mbFruAddr)
-        {
-            deviceHashes.emplace(fruHash, std::make_pair(fruBus, fruAddr));
-            fruHash++;
-        }
-    }
     auto deviceFind = deviceHashes.find(devId);
     if (deviceFind == deviceHashes.end())
     {
-        return IPMI_CC_SENSOR_INVALID;
+        sdbusplus::message_t getObjects = dbus.new_method_call(
+            fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
+            "GetManagedObjects");
+        ManagedObjectType frus;
+        try
+        {
+            sdbusplus::message_t resp = dbus.call(getObjects);
+            resp.read(frus);
+        }
+        catch (const sdbusplus::exception_t&)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "replaceCacheFru: error getting managed objects");
+            return IPMI_CC_RESPONSE_ERROR;
+        }
+        uint8_t fruHash = 0;
+
+        for (const auto& fru : frus)
+        {
+            auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
+            if (fruIface == fru.second.end())
+            {
+                continue;
+            }
+
+            auto busFind = fruIface->second.find("BUS");
+            auto addrFind = fruIface->second.find("ADDRESS");
+            if (busFind == fruIface->second.end() ||
+                addrFind == fruIface->second.end())
+            {
+                phosphor::logging::log<phosphor::logging::level::INFO>(
+                    "fru device missing Bus or Address",
+                    phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
+                continue;
+            }
+
+            uint8_t bus = std::get<uint32_t>(busFind->second);
+            uint8_t addr = std::get<uint32_t>(addrFind->second);
+            std::pair<uint8_t, uint8_t> devPair = std::make_pair(bus, addr);
+            auto pairFind = std::find_if(deviceHashes.begin(),
+                                         deviceHashes.end(),
+                                         [devPair](const auto& entry) {
+                return entry.second == devPair;
+            });
+            if (pairFind != deviceHashes.end())
+            {
+                continue;
+            }
+
+            while (deviceHashes.find(fruHash) != deviceHashes.end())
+            {
+                fruHash++;
+            }
+            deviceHashes.emplace(fruHash, devPair);
+        }
+
+        deviceFind = deviceHashes.find(devId);
+        if (deviceFind == deviceHashes.end())
+        {
+            return IPMI_CC_SENSOR_INVALID;
+        }
     }
 
     fruCache.clear();

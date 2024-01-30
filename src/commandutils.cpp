@@ -18,13 +18,15 @@
 #include <ipmid/utils.hpp>
 #include <phosphor-logging/log.hpp>
 
-std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void)
-{
-    static std::optional<std::pair<uint8_t, uint8_t>> device = std::nullopt;
+#include <regex>
 
-    if (device)
+std::vector<std::optional<std::pair<uint8_t, uint8_t>>> getMbFruDevice(void)
+{
+    static std::vector<std::optional<std::pair<uint8_t, uint8_t>>> devices;
+
+    if (!devices.empty())
     {
-        return device;
+        return devices;
     }
 
     sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
@@ -47,22 +49,33 @@ std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void)
     catch (const sdbusplus::exception_t& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-        return std::nullopt;
+        return devices;
     }
 
-    const std::string suffix = "/MB_FRU";
+    std::regex suffix(R"(/FRUID_(\d+)$)");
     for (const auto& path : paths)
     {
-        if (path.ends_with(suffix))
+        std::smatch match;
+        if (std::regex_search(path, match, suffix))
         {
             uint8_t fruBus = std::get<uint64_t>(
                 ipmi::getDbusProperty(dbus, entityManager, path, iface, "Bus"));
             uint8_t fruAddr = std::get<uint64_t>(ipmi::getDbusProperty(
                 dbus, entityManager, path, iface, "Address"));
-            device = std::make_pair(fruBus, fruAddr);
-            break;
+
+            size_t index = std::stoul(match[1]);
+            if (index >= devices.size())
+            {
+                devices.resize(index + 1, std::nullopt);
+            }
+            devices[index] = std::make_pair(fruBus, fruAddr);
         }
     }
 
-    return device;
+    if (devices.empty())
+    {
+        devices.emplace_back(std::nullopt);
+    }
+
+    return devices;
 }
