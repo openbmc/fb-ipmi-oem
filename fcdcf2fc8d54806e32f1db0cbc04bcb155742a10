@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2a495048_41a7396c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-01-31T01:48:04Z",
+      "side": 1,
+      "message": "OK. I updated the commit message.",
+      "parentUuid": "4ce4f3f1_3471e126",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 21
+      },
+      "revId": "fcdcf2fc8d54806e32f1db0cbc04bcb155742a10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "deff27f7_d3665ef1",
@@ -37,6 +61,24 @@
       "writtenOn": "2024-01-30T17:23:40Z",
       "side": 1,
       "message": "I thought we said we didn\u0027t need to support the GUID?",
+      "revId": "fcdcf2fc8d54806e32f1db0cbc04bcb155742a10",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a75ae68_ff641185",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-01-31T01:48:04Z",
+      "side": 1,
+      "message": "Right. It\u0027s just for the consistency since I modified the function \"getMbFruDevice()\"",
+      "parentUuid": "deff27f7_d3665ef1",
       "revId": "fcdcf2fc8d54806e32f1db0cbc04bcb155742a10",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
