@@ -28,6 +28,32 @@
 #include <iostream>
 #include <sstream>
 
+enum class MemErrType
+{
+    memTrainErr = 0,
+    memPmicErr = 7
+};
+
+enum class PostEvtType
+{
+    pxeBootFail = 0,
+    httpBootFail = 6,
+    getCertFail = 7,
+    amdAblFail = 10
+};
+
+enum class PcieEvtType
+{
+    dpc = 0
+};
+
+enum class MemEvtType
+{
+    ppr = 0,
+    adddc = 5,
+    noDimm = 7
+};
+
 //----------------------------------------------------------------------
 // Platform specific functions for storing app data
 //----------------------------------------------------------------------
@@ -1093,54 +1119,233 @@ static void parseOemSel(TsOemSELEntry* data, std::string& errStr)
     return;
 }
 
+static std::string dimmLocationStr(uint8_t socket, uint8_t channel,
+                                   uint8_t slot)
+{
+    uint8_t sled = (socket >> 4) & 0x3;
+
+    socket &= 0xf;
+    if (channel == 0xFF && slot == 0xFF)
+    {
+        return std::format(
+            "DIMM Slot Location: Sled {:02}/Socket {:02}, Channel unknown"
+            ", Slot unknown, DIMM unknown",
+            sled, socket);
+    }
+    else
+    {
+        channel &= 0xf;
+        slot &= 0xf;
+        const char label[] = {'A', 'C', 'B', 'D'};
+        uint8_t idx = socket * 2 + slot;
+        return std::format("DIMM Slot Location: Sled {:02}/Socket {:02}"
+                           ", Channel {:02}, Slot {:02} DIMM {}",
+                           sled, socket, channel, slot,
+                           (idx < sizeof(label))
+                               ? label[idx] + std::to_string(channel)
+                               : "NA");
+    }
+}
+
 static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
 {
     uint8_t* ptr = data->oemData;
+    uint8_t eventType = ptr[5] & 0xf;
     int genInfo = ptr[0];
     int errType = genInfo & 0x0f;
-    std::vector<std::string> dimmEvent = {
-        "Memory training failure", "Memory correctable error",
-        "Memory uncorrectable error", "Reserved"};
+    std::vector<std::string> dimmErr = {
+        "Memory training failure",
+        "Memory correctable error",
+        "Memory uncorrectable error",
+        "Memory correctable error (Patrol scrub)",
+        "Memory uncorrectable error (Patrol scrub)",
+        "Memory Parity Error (PCC=0)",
+        "Memory Parity Error (PCC=1)",
+        "Memory PMIC Error",
+        "CXL Memory training error",
+        "Reserved"};
+    std::vector<std::string> postEvent = {
+        "System PXE boot fail",
+        "CMOS/NVRAM configuration cleared",
+        "TPM Self-Test Fail",
+        "Boot Drive failure",
+        "Data Drive failure",
+        "Received invalid boot order request from BMC",
+        "System HTTP boot fail",
+        "BIOS fails to get the certificate from BMC",
+        "Password cleared by jumper",
+        "DXE FV check failure",
+        "AMD ABL failure",
+        "Reserved"};
+    std::vector<std::string> certErr = {
+        "No certificate at BMC", "IPMI transaction fail",
+        "Certificate data corrupted", "Reserved"};
+    std::vector<std::string> pcieEvent = {"PCIe DPC Event",
+                                          "PCIe LER Event",
+                                          "PCIe Link Retraining and Recovery",
+                                          "PCIe Link CRC Error Check and Retry",
+                                          "PCIe Corrupt Data Containment",
+                                          "PCIe Express ECRC",
+                                          "Reserved"};
+    std::vector<std::string> memEvent = {
+        "Memory PPR event",
+        "Memory Correctable Error logging limit reached",
+        "Memory disable/map-out for FRB",
+        "Memory SDDC",
+        "Memory Address range/Partial mirroring",
+        "Memory ADDDC",
+        "Memory SMBus hang recovery",
+        "No DIMM in System",
+        "Reserved"};
+    std::vector<std::string> memPprTime = {"Boot time", "Autonomous",
+                                           "Run time", "Reserved"};
+    std::vector<std::string> memPpr = {"PPR success", "PPR fail", "PPR request",
+                                       "Reserved"};
+    std::vector<std::string> memAdddc = {"Bank VLS", "r-Bank VLS + re-buddy",
+                                         "r-Bank VLS + Rank VLS",
+                                         "r-Rank VLS + re-buddy", "Reserved"};
+    std::vector<std::string> pprEvent = {"PPR disable", "Soft PPR", "Hard PPR",
+                                         "Reserved"};
 
     std::stringstream tmpStream;
-    tmpStream << std::hex << std::uppercase << std::setfill('0');
 
     switch (errType)
     {
         case unifiedPcieErr:
-            if (((genInfo & 0x10) >> 4) == 0) // x86
-            {
-                tmpStream << "GeneralInfo: x86/PCIeErr(0x" << std::setw(2)
-                          << genInfo << "),";
-            }
-
-            tmpStream << " Bus " << std::setw(2) << (int)(ptr[8]) << "/Dev "
-                      << std::setw(2) << (int)(ptr[7] >> 3) << "/Fun "
-                      << std::setw(2) << (int)(ptr[7] & 0x7)
-                      << ", TotalErrID1Cnt: 0x" << std::setw(4)
-                      << (int)((ptr[10] << 8) | ptr[9]) << ", ErrID2: 0x"
-                      << std::setw(2) << (int)(ptr[11]) << ", ErrID1: 0x"
-                      << std::setw(2) << (int)(ptr[12]);
-
+            tmpStream << std::format(
+                "GeneralInfo: x86/PCIeErr(0x{:02X})"
+                ", Bus {:02X}/Dev {:02X}/Fun {:02X}, TotalErrID1Cnt: 0x{:04X}"
+                ", ErrID2: 0x{:02X}, ErrID1: 0x{:02X}",
+                genInfo, ptr[8], ptr[7] >> 3, ptr[7] & 0x7,
+                (ptr[10] << 8) | ptr[9], ptr[11], ptr[12]);
             break;
         case unifiedMemErr:
-            tmpStream << "GeneralInfo: MemErr(0x" << std::setw(2) << genInfo
-                      << "), DIMM Slot Location: Sled " << std::setw(2)
-                      << (int)((ptr[5] >> 4) & 0x03) << "/Socket "
-                      << std::setw(2) << (int)(ptr[5] & 0x0f) << ", Channel "
-                      << std::setw(2) << (int)(ptr[6] & 0x0f) << ", Slot "
-                      << std::setw(2) << (int)(ptr[7] & 0x0f)
-                      << ", DIMM Failure Event: " << dimmEvent[(ptr[9] & 0x03)]
-                      << ", Major Code: 0x" << std::setw(2) << (int)(ptr[10])
-                      << ", Minor Code: 0x" << std::setw(2) << (int)(ptr[11]);
+            eventType = ptr[9] & 0xf;
+            tmpStream << std::format(
+                "GeneralInfo: MemErr(0x{:02X}), {}, DIMM Failure Event: {}",
+                genInfo, dimmLocationStr(ptr[5], ptr[6], ptr[7]),
+                dimmErr[std::min(eventType,
+                                 static_cast<uint8_t>(dimmErr.size() - 1))]);
 
+            if (static_cast<MemErrType>(eventType) == MemErrType::memTrainErr ||
+                static_cast<MemErrType>(eventType) == MemErrType::memPmicErr)
+            {
+                bool amd = ptr[9] & 0x80;
+                tmpStream << std::format(
+                    ", Major Code: 0x{:02X}, Minor Code: 0x{:0{}X}", ptr[10],
+                    amd ? (ptr[12] << 8 | ptr[11]) : ptr[11], amd ? 4 : 2);
+            }
+            break;
+        case unifiedIioErr:
+            tmpStream << std::format(
+                "GeneralInfo: IIOErr(0x{:02X})"
+                ", IIO Port Location: Sled {:02}/Socket {:02}, Stack 0x{:02X}"
+                ", Error Type: 0x{:02X}, Error Severity: 0x{:02X}"
+                ", Error ID: 0x{:02X}",
+                genInfo, (ptr[5] >> 4) & 0x3, ptr[5] & 0xf, ptr[6], ptr[10],
+                ptr[11] & 0xf, ptr[12]);
+            break;
+        case unifiedPostEvt:
+            tmpStream << std::format(
+                "GeneralInfo: POST(0x{:02X}), POST Failure Event: {}", genInfo,
+                postEvent[std::min(
+                    eventType, static_cast<uint8_t>(postEvent.size() - 1))]);
+
+            switch (static_cast<PostEvtType>(eventType))
+            {
+                case PostEvtType::pxeBootFail:
+                case PostEvtType::httpBootFail:
+                {
+                    uint8_t failType = ptr[10] & 0xf;
+                    tmpStream
+                        << std::format(", Fail Type: {}, Error Code: 0x{:02X}",
+                                       (failType == 4 || failType == 6)
+                                           ? std::format("IPv{} fail", failType)
+                                           : std::format("0x{:02X}", ptr[10]),
+                                       ptr[11]);
+                    break;
+                }
+                case PostEvtType::getCertFail:
+                    tmpStream << std::format(
+                        ", Failure Detail: {}",
+                        certErr[std::min(
+                            ptr[9], static_cast<uint8_t>(certErr.size() - 1))]);
+                    break;
+                case PostEvtType::amdAblFail:
+                    tmpStream << std::format(", ABL Error Code: 0x{:04X}",
+                                             (ptr[12] << 8) | ptr[11]);
+                    break;
+            }
+            break;
+        case unifiedPcieEvt:
+            tmpStream << std::format(
+                "GeneralInfo: PCIeEvent(0x{:02X}), PCIe Failure Event: {}",
+                genInfo,
+                pcieEvent[std::min(
+                    eventType, static_cast<uint8_t>(pcieEvent.size() - 1))]);
+
+            if (static_cast<PcieEvtType>(eventType) == PcieEvtType::dpc)
+            {
+                tmpStream << std::format(
+                    ", Status: 0x{:04X}, Source ID: 0x{:04X}",
+                    (ptr[8] << 8) | ptr[7], (ptr[10] << 8) | ptr[9]);
+            }
+            break;
+        case unifiedMemEvt:
+            eventType = ptr[9] & 0xf;
+            tmpStream << std::format("GeneralInfo: MemEvent(0x{:02X})", genInfo)
+                      << (static_cast<MemEvtType>(eventType) !=
+                                  MemEvtType::noDimm
+                              ? std::format(", {}", dimmLocationStr(
+                                                        ptr[5], ptr[6], ptr[7]))
+                              : "")
+                      << ", DIMM Failure Event: ";
+
+            switch (static_cast<MemEvtType>(eventType))
+            {
+                case MemEvtType::ppr:
+                    tmpStream << std::format("{} {}",
+                                             memPprTime[(ptr[10] >> 2) & 0x3],
+                                             memPpr[ptr[10] & 0x3]);
+                    break;
+                case MemEvtType::adddc:
+                    tmpStream << std::format(
+                        "{} {}",
+                        memEvent[std::min(eventType, static_cast<uint8_t>(
+                                                         memEvent.size() - 1))],
+                        memAdddc[std::min(
+                            static_cast<uint8_t>(ptr[11] & 0xf),
+                            static_cast<uint8_t>(memAdddc.size() - 1))]);
+                    break;
+                default:
+                    tmpStream << std::format(
+                        "{}", memEvent[std::min(
+                                  eventType,
+                                  static_cast<uint8_t>(memEvent.size() - 1))]);
+                    break;
+            }
+            break;
+        case unifiedBootGuard:
+            tmpStream << std::format(
+                "GeneralInfo: Boot Guard ACM Failure Events(0x{:02X})"
+                ", Error Class: 0x{:02X}, Error Code: 0x{:02X}",
+                genInfo, ptr[9], ptr[10]);
+            break;
+        case unifiedPprEvt:
+            tmpStream << std::format(
+                "GeneralInfo: PPREvent(0x{:02X}), {}"
+                ", DIMM Info: {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}",
+                genInfo,
+                pprEvent[std::min(eventType,
+                                  static_cast<uint8_t>(pprEvent.size() - 1))],
+                ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12]);
             break;
         default:
             std::vector<uint8_t> oemData(ptr, ptr + 13);
             std::string oemDataStr;
             toHexStr(oemData, oemDataStr);
-            tmpStream << "Undefined Error Type(0x" << std::setw(2) << errType
-                      << "), Raw: " << oemDataStr;
+            tmpStream << std::format("Undefined Error Type(0x{:02X}), Raw: {}",
+                                     errType, oemDataStr);
     }
 
     errStr = tmpStream.str();
