@@ -9,3 +9,8 @@ option(
   'machine',
   type: 'string',
   description: 'Machine')
+option(
+  'bmc-fru-name',
+  type: 'string',
+  value: 'Baseboard',
+  description: 'BMC FRU Name')

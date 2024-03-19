@@ -518,7 +518,6 @@ int8_t getFruData(std::string& data, std::string& name)
     static constexpr const auto depth = 0;
     std::vector<std::string> paths;
     std::string machinePath;
-    std::string baseBoard = "Baseboard";
 
     bool platform = isMultiHostPlatform();
     if (platform == true)
@@ -558,20 +557,13 @@ int8_t getFruData(std::string& data, std::string& name)
 
     for (const auto& path : paths)
     {
-        if (platform == true)
+        if (platform == true && pos != BMC_POS)
         {
-            if (pos == BMC_POS)
-            {
-                machinePath = baseBoard;
-            }
-            else
-            {
-                machinePath = "_" + std::to_string(pos);
-            }
+            machinePath = "_" + std::to_string(pos);
         }
         else
         {
-            machinePath = baseBoard;
+            machinePath = bmcFruName;
         }
 
         auto found = path.find(machinePath);

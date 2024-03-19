@@ -944,7 +944,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         getMaxHostPosition(maxPosition);
         if (hostPosition == BMC_POSITION || hostInstances == "0")
         {
-            frame_info.append("FRU:spb", 0);
+            std::string data = "FRU:" + bmcFruName;
+            frame_info.append(data.c_str(), 0);
         }
         else if (hostPosition != BMC_POSITION && hostPosition <= maxPosition)
         {
