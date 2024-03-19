@@ -32,8 +32,11 @@ if get_option('host-instances') != ''
   host_instances = get_option('host-instances')
 endif
 
+bmc_fru_name = get_option('bmc-fru-name')
+
 conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES',host_instances)
+conf_data.set_quoted('BMC_FRU_NAME',bmc_fru_name)
 conf_data.set('POST_CODE_BYTES', get_option('post-code-bytes'))
 
 configure_file(input: 'meson_config.h.in',
