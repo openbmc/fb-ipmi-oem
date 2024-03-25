@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "45fdff37_8e9b617e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-03-25T14:21:40Z",
+      "side": 1,
+      "message": "Can we do some kind of look up in the Inventory model instead?  Every system potentially has its own baseboard name (due to how entity-manager works) and I don\u0027t want to have to have every system need its own `bbappend` file.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 44
+      },
+      "revId": "83427ba10a52a9c0603ce464372a74f00e35b056",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0569c54_ce0fbb4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-03-25T14:21:40Z",
+      "side": 1,
+      "message": "Can we do",
+      "revId": "83427ba10a52a9c0603ce464372a74f00e35b056",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
