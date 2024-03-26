@@ -48,6 +48,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "198efe0f_d26e7268",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1001892
+      },
+      "writtenOn": "2024-03-26T03:17:27Z",
+      "side": 1,
+      "message": "Or could we add a file instead of meson option? Such as \"config/{system}/fru_desc.json\", and specify the FRU information in this file.",
+      "parentUuid": "7ce15c76_a36adc06",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 44
+      },
+      "revId": "83427ba10a52a9c0603ce464372a74f00e35b056",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "c0569c54_ce0fbb4f",
