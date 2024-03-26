@@ -72,6 +72,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "3abf996d_42275c8d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-03-26T05:04:47Z",
+      "side": 1,
+      "message": "Hi Easton. I\u0027m pretty sure the inventory design document that Xinyuan sent to your team specifies how we want to identify the baseboard from a dbus level. If not, or you need clarity, please email him your question. \n\nWe should be able to determine this from dbus information. We will eventually need Redfish to differentiate the FRU type as well and it can only operate off dbus information.",
+      "parentUuid": "198efe0f_d26e7268",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 44
+      },
+      "revId": "83427ba10a52a9c0603ce464372a74f00e35b056",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "c0569c54_ce0fbb4f",
