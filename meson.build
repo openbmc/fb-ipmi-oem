@@ -83,6 +83,7 @@ zfboemcmds_lib = library(
   'src/selcommands.cpp',
   'src/transportcommands.cpp',
   'src/biccommands.cpp',
+  'src/groupextcommands.cpp',
   implicit_include_directories: false,
   dependencies: zfboemcmds_pre,
   version: meson.project_version(),
