@@ -21,6 +21,7 @@ namespace ipmi
 {
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data);
+std::string get_mother_board_fru_name();
 int8_t getFruData(std::string& serial, std::string& name);
 int8_t sysConfig(std::vector<std::string>& data, size_t pos);
 int8_t procInfo(std::string& result, size_t pos);
@@ -944,7 +945,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         getMaxHostPosition(maxPosition);
         if (hostPosition == BMC_POSITION || hostInstances == "0")
         {
-            frame_info.append("FRU:spb", 0);
+            std::string data = "FRU:" + get_mother_board_fru_name();
+            frame_info.append(data.c_str(), 0);
         }
         else if (hostPosition != BMC_POSITION && hostPosition <= maxPosition)
         {
