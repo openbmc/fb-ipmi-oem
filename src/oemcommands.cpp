@@ -511,6 +511,61 @@ bool isMultiHostPlatform()
     return platform;
 }
 
+// return "" equals failed
+std::string getMotherBoardFruPath()
+{
+    std::vector<std::string> paths;
+    static constexpr const auto depth = 0;
+    sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
+
+    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                                           "/xyz/openbmc_project/object_mapper",
+                                           "xyz.openbmc_project.ObjectMapper",
+                                           "GetSubTreePaths");
+    static constexpr auto interface = {
+        "xyz.openbmc_project.Inventory.Item.Board.Motherboard"};
+
+    mapperCall.append("/xyz/openbmc_project/inventory/", depth, interface);
+    try
+    {
+        auto reply = dbus.call(mapperCall);
+        reply.read(paths);
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+        return "";
+    }
+
+    for (const auto& path : paths)
+    {
+        return path;
+    }
+
+    return "";
+}
+
+// return "" equals failed
+std::string getMotherBoardFruName()
+{
+    std::string path = getMotherBoardFruPath();
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string service = "xyz.openbmc_project.EntityManager";
+
+    try
+    {
+        auto value = ipmi::getDbusProperty(
+            *dbus, service, path, "xyz.openbmc_project.Inventory.Item.Board",
+            "Name");
+        return std::get<std::string>(value);
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+        return "";
+    }
+}
+
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
@@ -518,7 +573,8 @@ int8_t getFruData(std::string& data, std::string& name)
     static constexpr const auto depth = 0;
     std::vector<std::string> paths;
     std::string machinePath;
-    std::string baseBoard = "Baseboard";
+    std::string baseBoard = getMotherBoardFruPath();
+    baseBoard = baseBoard.empty() ? "Baseboard" : baseBoard;
 
     bool platform = isMultiHostPlatform();
     if (platform == true)
