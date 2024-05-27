@@ -511,6 +511,71 @@ bool isMultiHostPlatform()
     return platform;
 }
 
+// return code:  0 successful
+// return code: -1 failed, and mb_path will not change
+int8_t get_mother_board_fru_path(std::string& mb_path)
+{
+    std::vector<std::string> paths;
+    static constexpr const auto depth = 0;
+
+    sd_bus* bus = NULL;
+    int ret = sd_bus_default_system(&bus);
+    if (ret < 0)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Failed to connect to system bus",
+            phosphor::logging::entry("ERRNO=0x%X", -ret));
+        sd_bus_unref(bus);
+        return -1;
+    }
+    sdbusplus::bus_t dbus(bus);
+    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                                           "/xyz/openbmc_project/object_mapper",
+                                           "xyz.openbmc_project.ObjectMapper",
+                                           "GetSubTreePaths");
+    static constexpr std::array<const char*, 1> interface = {
+        "xyz.openbmc_project.Inventory.Item.Board.Motherboard"};
+
+    mapperCall.append("/xyz/openbmc_project/inventory/", depth, interface);
+    try
+    {
+        auto reply = dbus.call(mapperCall);
+        reply.read(paths);
+    }
+    catch (sdbusplus::exception_t& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+        return -1;
+    }
+
+    for (const auto& path : paths)
+    {
+        mb_path = path;
+    }
+
+    return 0;
+}
+
+// return "" equals failed
+std::string get_mother_board_fru_name()
+{
+    std::string path;
+
+    if (get_mother_board_fru_path(path))
+    {
+        return "";
+    }
+
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string service = "xyz.openbmc_project.EntityManager";
+
+    auto value = ipmi::getDbusProperty(
+        *dbus, service, path, "xyz.openbmc_project.Inventory.Item.Board",
+        "Name");
+
+    return std::get<std::string>(value);
+}
+
 // return code: 0 successful
 int8_t getFruData(std::string& data, std::string& name)
 {
@@ -519,6 +584,8 @@ int8_t getFruData(std::string& data, std::string& name)
     std::vector<std::string> paths;
     std::string machinePath;
     std::string baseBoard = "Baseboard";
+
+    get_mother_board_fru_path(baseBoard);
 
     bool platform = isMultiHostPlatform();
     if (platform == true)
