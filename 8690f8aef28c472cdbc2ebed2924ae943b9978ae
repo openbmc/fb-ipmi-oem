@@ -1,0 +1,170 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "940b996a_8f56e548",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Please avoid return codes in new code.  Just return the string.",
+      "range": {
+        "startLine": 516,
+        "startChar": 0,
+        "endLine": 516,
+        "endChar": 6
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4f625ee_7e478261",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Please don\u0027t call raw C functions like this.  sdbusplus wraps all of this nicely already.\n\nIn any case, you should just use the `dbus` global that already exists in this file.",
+      "range": {
+        "startLine": 521,
+        "startChar": 0,
+        "endLine": 531,
+        "endChar": 31
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f94f149_9acb760c",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Please use the generated strings whenever possible now.\n\n```\nxyz/openbmc_project/Inventory/Item/Board/Motherboard/common.hpp\n18:    static constexpr auto interface \u003d \"xyz.openbmc_project.Inventory.Item.Board.Motherboard\";\n```",
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8f688f8_4fb6d56a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Also here:\n\n```\nxyz/openbmc_project/Inventory/Item/common.hpp\n24:    static constexpr auto namespace_path \u003d \"/xyz/openbmc_project/inventory\";\n```",
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96933bc2_eb32b54e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Why are we iterating?",
+      "range": {
+        "startLine": 551,
+        "startChar": 0,
+        "endLine": 554,
+        "endChar": 5
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "675ae477_9e9b0c92",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Why did you use this method here but a totally different way on line 521-531?",
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c2f21eef_012fcb53",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "getBaseboardPath ? or getMotherboardPath?  Don\u0027t mix snake_case and camelCase in the same file.",
+      "range": {
+        "startLine": 588,
+        "startChar": 4,
+        "endLine": 588,
+        "endChar": 29
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69b59e29_82592135",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-05-29T22:11:31Z",
+      "side": 1,
+      "message": "Why are we using the \"path\" here and not the \"name\"?",
+      "range": {
+        "startLine": 588,
+        "startChar": 4,
+        "endLine": 588,
+        "endChar": 29
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
