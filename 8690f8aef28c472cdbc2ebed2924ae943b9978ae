@@ -339,6 +339,30 @@
       },
       "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bb10ac2_3e1ebb8a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 1001939
+      },
+      "writtenOn": "2024-06-04T07:27:04Z",
+      "side": 1,
+      "message": "string with a space is not a valid object name in dbus.",
+      "parentUuid": "981bc1db_c17fc1c4",
+      "range": {
+        "startLine": 588,
+        "startChar": 4,
+        "endLine": 588,
+        "endChar": 29
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
