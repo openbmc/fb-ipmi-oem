@@ -212,6 +212,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11305e1a_cf6105b6",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1001939
+      },
+      "writtenOn": "2024-06-17T05:17:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fa2d908_ff17a3c9",
+      "range": {
+        "startLine": 551,
+        "startChar": 0,
+        "endLine": 554,
+        "endChar": 5
+      },
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "675ae477_9e9b0c92",
@@ -243,6 +267,24 @@
       "side": 1,
       "message": "Cause I am not sure that if there is a GetSubTreePaths function?",
       "parentUuid": "675ae477_9e9b0c92",
+      "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "521d5290_08e235b8",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 1001939
+      },
+      "writtenOn": "2024-06-17T05:17:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d3984245_ede4985f",
       "revId": "8690f8aef28c472cdbc2ebed2924ae943b9978ae",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
