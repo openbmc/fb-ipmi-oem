@@ -656,7 +656,7 @@ static int udbg_get_cri_sel(uint8_t, uint8_t page, uint8_t* next,
                 *dbus, "xyz.openbmc_project.Logging", path,
                 "xyz.openbmc_project.Logging.Entry", "Severity");
 
-            // Only filter critial sel
+            // Only filter critical sel
             if (std::get<std::string>(variant) !=
                 "xyz.openbmc_project.Logging.Entry.Level.Critical")
             {

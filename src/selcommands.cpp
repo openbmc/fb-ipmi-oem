@@ -219,10 +219,10 @@ class SELData
 };
 
 /*
- * A Function to parse common SEL message, a helper funciton
+ * A Function to parse common SEL message, a helper function
  * for parseStdSel.
  *
- * Note that this function __CANNOT__ be overriden.
+ * Note that this function __CANNOT__ be overridden.
  * To add board specific routine, please override parseStdSel.
  */
 
@@ -557,13 +557,13 @@ static void logPwrErr(uint8_t* data, std::string& errLog)
     if (data[0] == 0x1)
     {
         errLog = "SYS_PWROK failure";
-        /* Also try logging to Critial log file, if available */
+        /* Also try logging to Critical log file, if available */
         /* "SYS_PWROK failure,FRU:1" */
     }
     else if (data[0] == 0x2)
     {
         errLog = "PCH_PWROK failure";
-        /* Also try logging to Critial log file, if available */
+        /* Also try logging to Critical log file, if available */
         /* "PCH_PWROK failure,FRU:1" */
     }
     else
@@ -577,13 +577,13 @@ static void logCatErr(uint8_t* data, std::string& errLog)
     if (data[0] == 0x0)
     {
         errLog = "IERR/CATERR";
-        /* Also try logging to Critial log file, if available */
+        /* Also try logging to Critical log file, if available */
         /* "IERR,FRU:1 */
     }
     else if (data[0] == 0xB)
     {
         errLog = "MCERR/CATERR";
-        /* Also try logging to Critial log file, if available */
+        /* Also try logging to Critical log file, if available */
         /* "MCERR,FRU:1 */
     }
     else
@@ -601,7 +601,7 @@ static void logDimmHot(uint8_t* data, std::string& errLog)
     else
     {
         errLog = "Unknown";
-        /* Also try logging to Critial log file, if available */
+        /* Also try logging to Critical log file, if available */
         /* ""CPU_DIMM_HOT %s,FRU:1" */
     }
 }
@@ -993,7 +993,7 @@ static void parseDimmPhyloc(StdSELEntry* data, std::string& errStr)
                   " Card: " + std::to_string(chNum) + "," +
                   " Module: " + std::to_string(dimmNum) + "," +
                   " Rank Number: " + std::to_string(rankNum) + "," +
-                  " Location: DIMM Unknow";
+                  " Location: DIMM Unknown";
     }
 }
 

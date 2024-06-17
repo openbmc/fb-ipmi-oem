@@ -150,7 +150,7 @@ void dimmLoopPatternDetection(size_t hostId, std::vector<uint8_t> data)
 
 //----------------------------------------------------------------------
 // ipmiOemPostCodeHandler (CMD_OEM_BIC_POST_BUFFER_INFO)
-// This Function will handle BIC incomming postcode from multi-host for
+// This Function will handle BIC incoming postcode from multi-host for
 // netfn=0x38 and cmd=0x08 or 0x33 send the response back to the sender.
 //----------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ ipmi::RspType<IanaType> ipmiOemPostCodeHandler(ipmi::Context::ptr ctx,
                 "xyz.openbmc_project.State.Boot.Raw", dbusObjStr.c_str(),
                 "org.freedesktop.DBus.Properties", "Set");
 
-            // Adding paramters to method call
+            // Adding parameters to method call
             method.append(dbusService, "Value",
                           std::variant<postcode_t>(postCode));
 
@@ -243,7 +243,7 @@ ipmi::RspType<IanaType, std::vector<uint8_t>>
 
 //----------------------------------------------------------------------
 // ipmiOemSetHostPowerState (CMD_OEM_SET_HOST_POWER_STATE)
-// This Function will handle BIC incomming IPMI request for
+// This Function will handle BIC incoming IPMI request for
 // setting host current state for netfn=0x38 and cmd=0x0C
 // send the response back to the sender.
 //----------------------------------------------------------------------

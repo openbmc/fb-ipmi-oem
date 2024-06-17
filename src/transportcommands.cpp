@@ -81,7 +81,7 @@ ipmi_ret_t ipmiTransGetSolConfig(ipmi_netfn_t, ipmi_cmd_t,
             break;
         case SOL_PARAM_SOL_THRESHOLD:
             *res++ = 0x00;
-            /* Byte 2: Char send thresold: setting this value to 1 means
+            /* Byte 2: Char send threshold: setting this value to 1 means
              * that BMC to send packet as soon as first character arrived.
              */
             *res++ = 0x01;
