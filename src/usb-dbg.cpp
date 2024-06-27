@@ -1077,8 +1077,14 @@ int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
         case 1: // info_page
             return udbg_get_info_page(frame, page, next, count, buffer);
         case 2: // critical SEL
+            #ifndef CRI_SEL_ENABLE
+                return 0;
+            #endif
             return udbg_get_cri_sel(frame, page, next, count, buffer);
         case 3: // critical Sensor
+            #ifndef CRI_SENSOR_ENABLE
+                return 0;
+            #endif
             return udbg_get_cri_sensor(frame, page, next, count, buffer);
         default:
             return -1;

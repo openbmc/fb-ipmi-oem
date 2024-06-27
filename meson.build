@@ -48,6 +48,23 @@ if not get_option('bic').disabled()
     language : 'cpp')
 endif
 
+if not get_option('cri-sel').disabled()
+  add_project_arguments(
+    cpp.get_supported_arguments([
+        '-DCRI_SEL_ENABLED',
+    ]),
+    language : 'cpp')
+endif
+
+if not get_option('cri-sensor').disabled()
+  add_project_arguments(
+    cpp.get_supported_arguments([
+        '-DCRI_SENSOR_ENABLED',
+    ]),
+    language : 'cpp')
+endif
+
+
 root_inc = include_directories('.', 'include')
 
 # Dependencies
