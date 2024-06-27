@@ -9,3 +9,6 @@ option(
   'machine',
   type: 'string',
   description: 'Machine')
+option('cri-sel', type: 'feature', description: 'Enable critical Log Event')
+option('cri-sensor', type: 'feature', description: 'Enable critical Sensor Event')
+
