@@ -74,7 +74,7 @@ enum fb_oem_cmds
     CMD_OEM_SET_IPMB_OFFONLINE = 0xE6,
     CMD_OEM_RISER_SENSOR_MON_CRL = 0xE7,
     CMD_OEM_BBV_POWER_CYCLE = 0xE9,
-    CMD_OEM_ADD_CPER_LOG = 0x70,
+    CMD_OEM_CRASHDUMP = 0x70,
 
 };
 
@@ -242,6 +242,197 @@ typedef struct
     uint8_t paramSel;
     uint8_t data[];
 } qDriveInfo_t;
+
+enum class BankType : uint8_t
+{
+    mca = 0x01,
+    virt = 0x02,
+    cpuWdt = 0x03,
+    tcdx = 0x06,
+    cake = 0x07,
+    pie0 = 0x08,
+    iom = 0x09,
+    ccix = 0x0a,
+    cs = 0x0b,
+    pcieAer = 0x0c,
+    wdtReg = 0x0d,
+    ctrl = 0x80,
+    crdHdr = 0x81
+};
+
+enum class CrdState
+{
+    free = 0x01,
+    waitData = 0x02,
+    packing = 0x03
+};
+
+enum class CrdCtrl
+{
+    getState = 0x01,
+    finish = 0x02
+};
+
+constexpr uint8_t ccmNum = 8;
+constexpr uint8_t tcdxNum = 12;
+constexpr uint8_t cakeNum = 6;
+constexpr uint8_t pie0Num = 1;
+constexpr uint8_t iomNum = 4;
+constexpr uint8_t ccixNum = 4;
+constexpr uint8_t csNum = 8;
+
+#pragma pack(push, 1)
+
+struct CrdCmdHdr
+{
+    uint8_t version;
+    uint8_t reserved[3];
+};
+
+struct CrdBankHdr
+{
+    BankType bankType;
+    uint8_t version;
+    union
+    {
+        struct
+        {
+            uint8_t bankId;
+            uint8_t coreId;
+        };
+        uint8_t reserved[2];
+    };
+};
+
+struct CrashDumpHdr
+{
+    CrdCmdHdr cmdHdr;
+    CrdBankHdr bankHdr;
+};
+
+// Type 0x01: MCA Bank
+struct CrdMcaBank
+{
+    uint64_t mcaCtrl;
+    uint64_t mcaSts;
+    uint64_t mcaAddr;
+    uint64_t mcaMisc0;
+    uint64_t mcaCtrlMask;
+    uint64_t mcaConfig;
+    uint64_t mcaIpid;
+    uint64_t mcaSynd;
+    uint64_t mcaDestat;
+    uint64_t mcaDeaddr;
+    uint64_t mcaMisc1;
+};
+
+struct BankCorePair
+{
+    uint8_t bankId;
+    uint8_t coreId;
+};
+
+// Type 0x02: Virtual/Global Bank
+struct CrdVirtualBankV2
+{
+    uint32_t s5ResetSts;
+    uint32_t breakevent;
+    uint16_t mcaCount;
+    uint16_t procNum;
+    uint32_t apicId;
+    uint32_t eax;
+    uint32_t ebx;
+    uint32_t ecx;
+    uint32_t edx;
+    struct BankCorePair mcaList[];
+};
+
+struct CrdVirtualBankV3
+{
+    uint32_t s5ResetSts;
+    uint32_t breakevent;
+    uint32_t rstSts;
+    uint16_t mcaCount;
+    uint16_t procNum;
+    uint32_t apicId;
+    uint32_t eax;
+    uint32_t ebx;
+    uint32_t ecx;
+    uint32_t edx;
+    struct BankCorePair mcaList[];
+};
+
+// Type 0x03: CPU/Data Fabric Watchdog Timer Bank
+struct CrdCpuWdtBank
+{
+    uint32_t hwAssertStsHi[ccmNum];
+    uint32_t hwAssertStsLo[ccmNum];
+    uint32_t origWdtAddrLogHi[ccmNum];
+    uint32_t origWdtAddrLogLo[ccmNum];
+    uint32_t hwAssertMskHi[ccmNum];
+    uint32_t hwAssertMskLo[ccmNum];
+    uint32_t origWdtAddrLogStat[ccmNum];
+};
+
+template <size_t N>
+struct CrdHwAssertBank
+{
+    uint32_t hwAssertStsHi[N];
+    uint32_t hwAssertStsLo[N];
+    uint32_t hwAssertMskHi[N];
+    uint32_t hwAssertMskLo[N];
+};
+
+// Type 0x0C: PCIe AER Bank
+struct CrdPcieAerBank
+{
+    uint8_t bus;
+    uint8_t dev;
+    uint8_t fun;
+    uint16_t cmd;
+    uint16_t sts;
+    uint16_t slot;
+    uint8_t secondBus;
+    uint16_t vendorId;
+    uint16_t devId;
+    uint16_t classCodeLo; // Class Code 3 byte
+    uint8_t classCodeHi;
+    uint16_t secondSts;
+    uint16_t ctrl;
+    uint32_t uncorrErrSts;
+    uint32_t uncorrErrMsk;
+    uint32_t uncorrErrSeverity;
+    uint32_t corrErrSts;
+    uint32_t corrErrMsk;
+    uint32_t hdrLogDw0;
+    uint32_t hdrLogDw1;
+    uint32_t hdrLogDw2;
+    uint32_t hdrLogDw3;
+    uint32_t rootErrSts;
+    uint16_t corrErrSrcId;
+    uint16_t errSrcId;
+    uint32_t laneErrSts;
+};
+
+// Type 0x0D: SMU/PSP/PTDMA Watchdog Timers Register Bank
+struct CrdWdtRegBank
+{
+    uint8_t nbio;
+    char name[32];
+    uint32_t addr;
+    uint8_t count;
+    uint32_t data[];
+};
+
+// Type 0x81: Crashdump Header
+struct CrdHdrBank
+{
+    uint64_t ppin;
+    uint32_t ucodeVer;
+    uint32_t pmio;
+};
+
+#pragma pack(pop)
 
 const char* cpuInfoKey[] = {"",     "product_name", "basic_info",
                             "type", "micro_code",   "turbo_mode"};

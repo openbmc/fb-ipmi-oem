@@ -55,6 +55,8 @@ constexpr uint8_t cmdSetSystemGuid = 0xEF;
 constexpr uint8_t cmdSetQDimmInfo = 0x12;
 constexpr uint8_t cmdGetQDimmInfo = 0x13;
 
+constexpr ipmi_ret_t ccInvalidParam = 0x80;
+
 int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
 int plat_udbg_get_gpio_desc(uint8_t, uint8_t*, uint8_t*, uint8_t*, uint8_t*,
@@ -2096,6 +2098,424 @@ ipmi::RspType<std::vector<uint8_t>>
     return sendDCMICmd(ctx, ipmi::dcmi::cmdActDeactivatePwrLimit, reqData);
 }
 
+// OEM Crashdump related functions
+static ipmi_ret_t setDumpState(CrdState& currState, CrdState newState)
+{
+    switch (newState)
+    {
+        case CrdState::waitData:
+            if (currState == CrdState::packing)
+                return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+            break;
+        case CrdState::packing:
+            if (currState != CrdState::waitData)
+                return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
+            break;
+        case CrdState::free:
+            break;
+        default:
+            return IPMI_CC_UNSPECIFIED_ERROR;
+    }
+    currState = newState;
+
+    return IPMI_CC_OK;
+}
+
+static ipmi_ret_t handleMcaBank(const CrashDumpHdr& hdr,
+                                std::span<const uint8_t> data,
+                                CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(CrdMcaBank))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    const auto* pBank = reinterpret_cast<const CrdMcaBank*>(data.data());
+    ss << std::format(" Bank ID : 0x{:02X}, Core ID : 0x{:02X}\n",
+                      hdr.bankHdr.bankId, hdr.bankHdr.coreId);
+    ss << std::format(" MCA_CTRL      : 0x{:016X}\n", pBank->mcaCtrl);
+    ss << std::format(" MCA_STATUS    : 0x{:016X}\n", pBank->mcaSts);
+    ss << std::format(" MCA_ADDR      : 0x{:016X}\n", pBank->mcaAddr);
+    ss << std::format(" MCA_MISC0     : 0x{:016X}\n", pBank->mcaMisc0);
+    ss << std::format(" MCA_CTRL_MASK : 0x{:016X}\n", pBank->mcaCtrlMask);
+    ss << std::format(" MCA_CONFIG    : 0x{:016X}\n", pBank->mcaConfig);
+    ss << std::format(" MCA_IPID      : 0x{:016X}\n", pBank->mcaIpid);
+    ss << std::format(" MCA_SYND      : 0x{:016X}\n", pBank->mcaSynd);
+    ss << std::format(" MCA_DESTAT    : 0x{:016X}\n", pBank->mcaDestat);
+    ss << std::format(" MCA_DEADDR    : 0x{:016X}\n", pBank->mcaDeaddr);
+    ss << std::format(" MCA_MISC1     : 0x{:016X}\n", pBank->mcaMisc1);
+    ss << "\n";
+
+    return IPMI_CC_OK;
+}
+
+template <typename T>
+static ipmi_ret_t handleVirtualBank(std::span<const uint8_t> data,
+                                    CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(T))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    const auto* pBank = reinterpret_cast<const T*>(data.data());
+
+    if (data.size() < sizeof(T) + sizeof(BankCorePair) * pBank->mcaCount)
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    ss << " Virtual Bank\n";
+    ss << std::format(" S5_RESET_STATUS   : 0x{:08X}\n", pBank->s5ResetSts);
+    ss << std::format(" PM_BREAKEVENT     : 0x{:08X}\n", pBank->breakevent);
+    if constexpr (std::is_same_v<T, CrdVirtualBankV3>)
+    {
+        ss << std::format(" WARMCOLDRSTSTATUS : 0x{:08X}\n", pBank->rstSts);
+    }
+    ss << std::format(" PROCESSOR NUMBER  : 0x{:04X}\n", pBank->procNum);
+    ss << std::format(" APIC ID           : 0x{:08X}\n", pBank->apicId);
+    ss << std::format(" EAX               : 0x{:08X}\n", pBank->eax);
+    ss << std::format(" EBX               : 0x{:08X}\n", pBank->ebx);
+    ss << std::format(" ECX               : 0x{:08X}\n", pBank->ecx);
+    ss << std::format(" EDX               : 0x{:08X}\n", pBank->edx);
+    ss << " VALID LIST        : ";
+    for (size_t i = 0; i < pBank->mcaCount; i++)
+    {
+        ss << std::format("(0x{:02X},0x{:02X}) ", pBank->mcaList[i].bankId,
+                          pBank->mcaList[i].coreId);
+    }
+    ss << "\n\n";
+
+    return IPMI_CC_OK;
+}
+
+static ipmi_ret_t handleCpuWdtBank(std::span<const uint8_t> data,
+                                   CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(CrdCpuWdtBank))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    const auto* pBank = reinterpret_cast<const CrdCpuWdtBank*>(data.data());
+    for (size_t i = 0; i < ccmNum; i++)
+    {
+        ss << std::format("  [CCM{}]\n", i);
+        ss << std::format("    HwAssertStsHi      : 0x{:08X}\n",
+                          pBank->hwAssertStsHi[i]);
+        ss << std::format("    HwAssertStsLo      : 0x{:08X}\n",
+                          pBank->hwAssertStsLo[i]);
+        ss << std::format("    OrigWdtAddrLogHi   : 0x{:08X}\n",
+                          pBank->origWdtAddrLogHi[i]);
+        ss << std::format("    OrigWdtAddrLogLo   : 0x{:08X}\n",
+                          pBank->origWdtAddrLogLo[i]);
+        ss << std::format("    HwAssertMskHi      : 0x{:08X}\n",
+                          pBank->hwAssertMskHi[i]);
+        ss << std::format("    HwAssertMskLo      : 0x{:08X}\n",
+                          pBank->hwAssertMskLo[i]);
+        ss << std::format("    OrigWdtAddrLogStat : 0x{:08X}\n",
+                          pBank->origWdtAddrLogStat[i]);
+    }
+    ss << "\n";
+
+    return IPMI_CC_OK;
+}
+
+template <size_t N>
+static ipmi_ret_t handleHwAssertBank(const char* name,
+                                     std::span<const uint8_t> data,
+                                     CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(CrdHwAssertBank<N>))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    const CrdHwAssertBank<N>* pBank =
+        reinterpret_cast<const CrdHwAssertBank<N>*>(data.data());
+
+    for (size_t i = 0; i < N; i++)
+    {
+        ss << std::format("  [{}{}]\n", name, i);
+        ss << std::format("    HwAssertStsHi : 0x{:08X}\n",
+                          pBank->hwAssertStsHi[i]);
+        ss << std::format("    HwAssertStsLo : 0x{:08X}\n",
+                          pBank->hwAssertStsLo[i]);
+        ss << std::format("    HwAssertMskHi : 0x{:08X}\n",
+                          pBank->hwAssertMskHi[i]);
+        ss << std::format("    HwAssertMskLo : 0x{:08X}\n",
+                          pBank->hwAssertMskLo[i]);
+    }
+    ss << "\n";
+
+    return IPMI_CC_OK;
+}
+
+static ipmi_ret_t handlePcieAerBank(std::span<const uint8_t> data,
+                                    CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(CrdPcieAerBank))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    const auto* pBank = reinterpret_cast<const CrdPcieAerBank*>(data.data());
+    ss << std::format("  [Bus{} Dev{} Fun{}]\n", pBank->bus, pBank->dev,
+                      pBank->fun);
+    ss << std::format("    Command                      : 0x{:04X}\n",
+                      pBank->cmd);
+    ss << std::format("    Status                       : 0x{:04X}\n",
+                      pBank->sts);
+    ss << std::format("    Slot                         : 0x{:04X}\n",
+                      pBank->slot);
+    ss << std::format("    Secondary Bus                : 0x{:02X}\n",
+                      pBank->secondBus);
+    ss << std::format("    Vendor ID                    : 0x{:04X}\n",
+                      pBank->vendorId);
+    ss << std::format("    Device ID                    : 0x{:04X}\n",
+                      pBank->devId);
+    ss << std::format("    Class Code                   : 0x{:02X}{:04X}\n",
+                      pBank->classCodeHi, pBank->classCodeLo);
+    ss << std::format("    Bridge: Secondary Status     : 0x{:04X}\n",
+                      pBank->secondSts);
+    ss << std::format("    Bridge: Control              : 0x{:04X}\n",
+                      pBank->ctrl);
+    ss << std::format("    Uncorrectable Error Status   : 0x{:08X}\n",
+                      pBank->uncorrErrSts);
+    ss << std::format("    Uncorrectable Error Mask     : 0x{:08X}\n",
+                      pBank->uncorrErrMsk);
+    ss << std::format("    Uncorrectable Error Severity : 0x{:08X}\n",
+                      pBank->uncorrErrSeverity);
+    ss << std::format("    Correctable Error Status     : 0x{:08X}\n",
+                      pBank->corrErrSts);
+    ss << std::format("    Correctable Error Mask       : 0x{:08X}\n",
+                      pBank->corrErrMsk);
+    ss << std::format("    Header Log DW0               : 0x{:08X}\n",
+                      pBank->hdrLogDw0);
+    ss << std::format("    Header Log DW1               : 0x{:08X}\n",
+                      pBank->hdrLogDw1);
+    ss << std::format("    Header Log DW2               : 0x{:08X}\n",
+                      pBank->hdrLogDw2);
+    ss << std::format("    Header Log DW3               : 0x{:08X}\n",
+                      pBank->hdrLogDw3);
+    ss << std::format("    Root Error Status            : 0x{:08X}\n",
+                      pBank->rootErrSts);
+    ss << std::format("    Correctable Error Source ID  : 0x{:04X}\n",
+                      pBank->corrErrSrcId);
+    ss << std::format("    Error Source ID              : 0x{:04X}\n",
+                      pBank->errSrcId);
+    ss << std::format("    Lane Error Status            : 0x{:08X}\n",
+                      pBank->laneErrSts);
+    ss << "\n";
+
+    return IPMI_CC_OK;
+}
+
+static ipmi_ret_t handleWdtRegBank(std::span<const uint8_t> data,
+                                   CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(CrdWdtRegBank))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    const auto* pBank = reinterpret_cast<const CrdWdtRegBank*>(data.data());
+    if (data.size() < sizeof(CrdWdtRegBank) + sizeof(uint32_t) * pBank->count)
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    ss << std::format("  [NBIO{}] {}\n", pBank->nbio, pBank->name);
+    ss << std::format("    Address: 0x{:08X}\n", pBank->addr);
+    ss << std::format("    Data Count: {}\n", pBank->count);
+    ss << "    Data:\n";
+    for (size_t i = 0; i < pBank->count; i++)
+    {
+        ss << std::format("      {}: 0x{:08X}\n", i, pBank->data[i]);
+    }
+    ss << "\n";
+
+    return IPMI_CC_OK;
+}
+
+static ipmi_ret_t handleCrdHdrBank(std::span<const uint8_t> data,
+                                   CrdState& currState, std::stringstream& ss)
+{
+    if (data.size() < sizeof(CrdHdrBank))
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
+    if (res)
+        return res;
+
+    const auto* pBank = reinterpret_cast<const CrdHdrBank*>(data.data());
+    ss << " Crashdump Header\n";
+    ss << std::format(" CPU PPIN      : 0x{:016X}\n", pBank->ppin);
+    ss << std::format(" UCODE VERSION : 0x{:08X}\n", pBank->ucodeVer);
+    ss << std::format(" PMIO 80h      : 0x{:08X}\n", pBank->pmio);
+    ss << std::format(
+        "    BIT0 - SMN Parity/SMN Timeouts PSP/SMU Parity and ECC/SMN On-Package Link Error : {}\n",
+        pBank->pmio & 0x1);
+    ss << std::format("    BIT2 - PSP Parity and ECC : {}\n",
+                      (pBank->pmio & 0x4) >> 2);
+    ss << std::format("    BIT3 - SMN Timeouts SMU : {}\n",
+                      (pBank->pmio & 0x8) >> 3);
+    ss << std::format("    BIT4 - SMN Off-Package Link Packet Error : {}\n",
+                      (pBank->pmio & 0x10) >> 4);
+    ss << "\n";
+
+    return IPMI_CC_OK;
+}
+
+static std::string getFilename(const std::filesystem::path& dir,
+                               const std::string& prefix)
+{
+    std::vector<int> indices;
+    std::regex pattern(prefix + "(\\d+)\\.txt");
+
+    for (const auto& entry : std::filesystem::directory_iterator(dir))
+    {
+        std::string filename = entry.path().filename().string();
+        std::smatch match;
+        if (std::regex_match(filename, match, pattern))
+            indices.push_back(std::stoi(match[1]));
+    }
+
+    std::sort(indices.rbegin(), indices.rend());
+    while (indices.size() > 2) // keep 3 files, so remove if more than 2
+    {
+        std::filesystem::remove(
+            dir / (prefix + std::to_string(indices.back()) + ".txt"));
+        indices.pop_back();
+    }
+
+    int nextIndex = indices.empty() ? 1 : indices.front() + 1;
+    return prefix + std::to_string(nextIndex) + ".txt";
+}
+
+static ipmi_ret_t handleCtrlBank(std::span<const uint8_t> data,
+                                 CrdState& currState, std::stringstream& ss)
+{
+    if (data.empty())
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+
+    switch (static_cast<CrdCtrl>(data[0]))
+    {
+        case CrdCtrl::getState:
+            break;
+        case CrdCtrl::finish:
+        {
+            ipmi_ret_t res = setDumpState(currState, CrdState::packing);
+            if (res)
+                return res;
+
+            const std::filesystem::path dumpDir = "/var/lib/fb-ipmi-oem";
+            std::string filename = getFilename(dumpDir, "crashdump_");
+            std::ofstream outFile(dumpDir / filename);
+            if (!outFile.is_open())
+                return IPMI_CC_UNSPECIFIED_ERROR;
+
+            auto now = std::chrono::system_clock::to_time_t(
+                std::chrono::system_clock::now());
+            outFile << "Crash Dump generated at: "
+                    << std::put_time(std::localtime(&now), "%Y-%m-%d %H:%M:%S")
+                    << "\n\n";
+            outFile << ss.str();
+            outFile.close();
+            ss.str("");
+            ss.clear();
+            setDumpState(currState, CrdState::free);
+            break;
+        }
+        default:
+            return ccInvalidParam;
+    }
+
+    return IPMI_CC_OK;
+}
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemCrashdump([[maybe_unused]] ipmi::Context::ptr ctx,
+                     std::vector<uint8_t> reqData)
+{
+    static CrdState dumpState = CrdState::free;
+    static std::stringstream ss;
+
+    if (reqData.size() < sizeof(CrashDumpHdr))
+        return ipmi::responseReqDataLenInvalid();
+
+    const auto* pHdr = reinterpret_cast<const CrashDumpHdr*>(reqData.data());
+    std::span<const uint8_t> bData{reqData.data() + sizeof(CrashDumpHdr),
+                                   reqData.size() - sizeof(CrashDumpHdr)};
+    ipmi_ret_t res;
+
+    switch (pHdr->bankHdr.bankType)
+    {
+        case BankType::mca:
+            res = handleMcaBank(*pHdr, bData, dumpState, ss);
+            break;
+        case BankType::virt:
+            if (pHdr->bankHdr.version >= 3)
+            {
+                res = handleVirtualBank<CrdVirtualBankV3>(bData, dumpState, ss);
+                break;
+            }
+            res = handleVirtualBank<CrdVirtualBankV2>(bData, dumpState, ss);
+            break;
+        case BankType::cpuWdt:
+            res = handleCpuWdtBank(bData, dumpState, ss);
+            break;
+        case BankType::tcdx:
+            res = handleHwAssertBank<tcdxNum>("TCDX", bData, dumpState, ss);
+            break;
+        case BankType::cake:
+            res = handleHwAssertBank<cakeNum>("CAKE", bData, dumpState, ss);
+            break;
+        case BankType::pie0:
+            res = handleHwAssertBank<pie0Num>("PIE", bData, dumpState, ss);
+            break;
+        case BankType::iom:
+            res = handleHwAssertBank<iomNum>("IOM", bData, dumpState, ss);
+            break;
+        case BankType::ccix:
+            res = handleHwAssertBank<ccixNum>("CCIX", bData, dumpState, ss);
+            break;
+        case BankType::cs:
+            res = handleHwAssertBank<csNum>("CS", bData, dumpState, ss);
+            break;
+        case BankType::pcieAer:
+            res = handlePcieAerBank(bData, dumpState, ss);
+            break;
+        case BankType::wdtReg:
+            res = handleWdtRegBank(bData, dumpState, ss);
+            break;
+        case BankType::ctrl:
+            res = handleCtrlBank(bData, dumpState, ss);
+            if (res == IPMI_CC_OK &&
+                static_cast<CrdCtrl>(bData[0]) == CrdCtrl::getState)
+            {
+                return ipmi::responseSuccess(
+                    std::vector<uint8_t>{static_cast<uint8_t>(dumpState)});
+            }
+            break;
+        case BankType::crdHdr:
+            res = handleCrdHdrBank(bData, dumpState, ss);
+            break;
+        default:
+            return ipmi::responseInvalidFieldRequest();
+    }
+
+    return ipmi::response(res);
+}
+
 static void registerOEMFunctions(void)
 {
     /* Get OEM data from json file */
@@ -2219,6 +2639,10 @@ static void registerOEMFunctions(void)
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
                           CMD_OEM_SET_BOOT_ORDER, ipmi::Privilege::User,
                           ipmiOemSetBootOrder); // Set Boot Order
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_CRASHDUMP, ipmi::Privilege::User,
+                          ipmiOemCrashdump);
 
     return;
 }
