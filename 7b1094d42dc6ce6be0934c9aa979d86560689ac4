@@ -16,6 +16,24 @@
       "message": "Can we just delete the code?",
       "revId": "7b1094d42dc6ce6be0934c9aa979d86560689ac4",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf3173cb_2471c889",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2024-07-01T07:26:02Z",
+      "side": 1,
+      "message": "I am going to check with YV4 if they need this feature.",
+      "parentUuid": "8b287095_7002224b",
+      "revId": "7b1094d42dc6ce6be0934c9aa979d86560689ac4",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
