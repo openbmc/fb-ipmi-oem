@@ -16,6 +16,24 @@
       "message": "Already set to CMD_OEM_ADD_CPER_LOG. Is that something we can reuse?",
       "revId": "bf576227ed51eae8eab7269dbc1adce496532c41",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8bb32bcd_cc99411a",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-07-08T20:27:06Z",
+      "side": 1,
+      "message": "Never mind. Looks like this is unused.",
+      "parentUuid": "5c0e605a_97da1a87",
+      "revId": "bf576227ed51eae8eab7269dbc1adce496532c41",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
