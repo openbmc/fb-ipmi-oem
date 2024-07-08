@@ -112,6 +112,7 @@ struct frame
 struct frame frame_info;
 struct frame frame_sel;
 struct frame frame_snr;
+struct frame frame_postcode;
 
 enum ENUM_PANEL
 {
