@@ -1069,6 +1069,77 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
     return 0;
 }
 
+static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
+                             uint8_t* count, uint8_t* buffer)
+{
+    if (page == 1)
+    {
+        // Initialize and clear frame (example initialization)
+        frame_postcode.init(FRAME_BUFF_SIZE);
+        snprintf(frame_postcode.title, 32, "Extra Post Code");
+        frame_sel.overwrite = 1;
+        frame_sel.max_page = 5;
+
+        // Synchronously get D-Bus connection
+        auto bus = sdbusplus::bus::new_default();
+
+        // Build D-Bus method call
+        auto method = bus.new_method_call(
+            "xyz.openbmc_project.State.Boot.PostCode0", // Target service name
+            "/xyz/openbmc_project/State/Boot/PostCode0", // Object path
+            "xyz.openbmc_project.State.Boot.PostCode", // Interface name
+            "GetPostCodes"); // Method name
+
+        method.append(uint16_t(1)); // Add method parameter, assuming it's page
+
+        try
+        {
+            auto reply = bus.call(method); // Send synchronous method call
+
+            // Read return value is 
+            std::vector<std::tuple<uint64_t, std::vector<uint8_t>>> postcodes;
+            reply.read(postcodes);
+
+            // Insert retrieved postcodes into frame_postcode (example insertion)
+
+            std::cout << "Postcodes:" << std::endl;
+            std::string result;
+            for (const auto& [code, extra] : postcodes)
+            {
+                result = std::format("{:02x}", code);
+                frame_postcode.append(result.c_str(), 0);
+            }
+        }
+        catch (const std::exception& e)
+        {
+            // Handle exceptions
+            std::cerr << "Error retrieving postcodes: " << e.what() << std::endl;
+            return -1;
+        }
+    }
+
+    if (page > frame_postcode.pages)
+    {
+        return -1;
+    }
+
+    int ret = frame_postcode.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
+    if (ret < 0)
+    {
+        *count = 0;
+        return -1;
+    }
+    *count = (uint8_t)ret;
+
+    if (page < frame_postcode.pages)
+        *next = page + 1;
+    else
+        *next = 0xFF; // Set next to 0xFF to indicate last page
+    return 0;
+}
+
+
+
 int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
                              uint8_t* count, uint8_t* buffer)
 {
@@ -1076,9 +1147,14 @@ int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
     {
         case 1: // info_page
             return udbg_get_info_page(frame, page, next, count, buffer);
-        case 2: // critical SEL
+        case 2: // Extra Post Code
+#ifndef EXTRA_POST_ENABLED
+            return 0;
+#endif
+            return udbg_get_postcode(frame, page, next, count, buffer);
+        case 3: // critical SEL
             return udbg_get_cri_sel(frame, page, next, count, buffer);
-        case 3: // critical Sensor
+        case 4: // critical Sensor
             return udbg_get_cri_sensor(frame, page, next, count, buffer);
         default:
             return -1;
