@@ -35,6 +35,7 @@ endif
 conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES',host_instances)
 conf_data.set('POST_CODE_BYTES', get_option('post-code-bytes'))
+conf_data.set('DEBUG_CARD_FRAME_SIZE', get_option('debug-card-frame-size'))
 
 configure_file(input: 'meson_config.h.in',
                output: 'config.h',
@@ -44,6 +45,14 @@ if not get_option('bic').disabled()
   add_project_arguments(
     cpp.get_supported_arguments([
         '-DBIC_ENABLED',
+    ]),
+    language : 'cpp')
+endif
+
+if get_option('extra-post-code').enabled()
+  add_project_arguments(
+    cpp.get_supported_arguments([
+        '-DEXTRA_POST_ENABLED',
     ]),
     language : 'cpp')
 endif
