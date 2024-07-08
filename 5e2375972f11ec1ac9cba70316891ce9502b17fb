@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5bf42ac_bf218db8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-07-08T20:12:25Z",
+      "side": 1,
+      "message": "Detected backwards compatibility breaks.",
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fbb8889_4ed4b0dd",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-07-08T20:12:25Z",
+      "side": 1,
+      "message": "I see serious backwards compatibility issues here. Peter, can you see if we can use 4 as \"Extra Post Code\" instead of 2?\nHaving this reordered means an older USB Debug card when requesting for \"critical SEL\" will end up getting \"Extra Post Code\".",
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
