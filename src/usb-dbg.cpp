@@ -612,209 +612,6 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
     return -1;
 }
 
-static int udbg_get_cri_sel(uint8_t, uint8_t page, uint8_t* next,
-                            uint8_t* count, uint8_t* buffer)
-{
-    if (page == 1)
-    {
-        // initialize and clear frame
-        frame_sel.init(FRAME_BUFF_SIZE);
-        frame_sel.overwrite = 1;
-        frame_sel.max_page = 20;
-        snprintf(frame_sel.title, 32, "Cri SEL");
-
-        static constexpr const auto depth = 0;
-        std::vector<std::string> paths;
-
-        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-
-        auto mapperCall = dbus->new_method_call(
-            "xyz.openbmc_project.ObjectMapper",
-            "/xyz/openbmc_project/object_mapper",
-            "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
-        static constexpr std::array<const char*, 1> interface = {
-            "xyz.openbmc_project.Logging.Entry"};
-        mapperCall.append("/", depth, interface);
-
-        try
-        {
-            auto reply = dbus->call(mapperCall);
-            reply.read(paths);
-        }
-        catch (sdbusplus::exception_t& e)
-        {
-            phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-            return -1;
-        }
-
-        std::string message;
-
-        // Iterate each loggings
-        for (const auto& path : paths)
-        {
-            Value variant = ipmi::getDbusProperty(
-                *dbus, "xyz.openbmc_project.Logging", path,
-                "xyz.openbmc_project.Logging.Entry", "Severity");
-
-            // Only filter critical sel
-            if (std::get<std::string>(variant) !=
-                "xyz.openbmc_project.Logging.Entry.Level.Critical")
-            {
-                continue;
-            }
-
-            variant = ipmi::getDbusProperty(
-                *dbus, "xyz.openbmc_project.Logging", path,
-                "xyz.openbmc_project.Logging.Entry", "Message");
-            message = std::get<std::string>(variant);
-
-            frame_sel.insert(message.c_str(), 0);
-        }
-    }
-    if (page > frame_sel.pages)
-    {
-        return -1;
-    }
-    int ret = frame_sel.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
-    if (ret < 0)
-    {
-        *count = 0;
-        return -1;
-    }
-    *count = (uint8_t)ret;
-
-    if (page < frame_sel.pages)
-        *next = page + 1;
-    else
-        *next = 0xFF; // Set the value of next to 0xFF to indicate this is the
-                      // last page
-
-    return 0;
-}
-
-static int udbg_get_cri_sensor(uint8_t, uint8_t page, uint8_t* next,
-                               uint8_t* count, uint8_t* buffer)
-{
-    int ret;
-    double fvalue;
-    size_t pos = plat_get_fru_sel();
-
-    if (page == 1)
-    {
-        // Only update frame data while getting page 1
-
-        // initialize and clear frame
-        frame_snr.init(FRAME_BUFF_SIZE);
-        snprintf(frame_snr.title, 32, "CriSensor");
-
-        nlohmann::json senObj;
-
-        /* Get critical sensor names stored in json file */
-        std::ifstream file(JSON_SENSOR_NAMES_FILE);
-        if (file)
-        {
-            file >> senObj;
-            file.close();
-        }
-        else
-        {
-            phosphor::logging::log<phosphor::logging::level::ERR>(
-                "Critical Sensor names file not found",
-                phosphor::logging::entry("CRI_SENSOR_NAMES_FILE=%s",
-                                         JSON_SENSOR_NAMES_FILE));
-            return -1;
-        }
-
-        /* Get sensors values for all critical sensors */
-        for (auto& j : senObj.items())
-        {
-            std::string senName = j.key();
-            auto val = j.value();
-
-            if (senName[0] == '_')
-            {
-                senName = std::to_string(pos) + senName;
-            }
-
-            if (ipmi::storage::getSensorValue(senName, fvalue) == 0)
-            {
-                std::stringstream ss;
-                int prec = 0; // Default value
-
-                if (val.find("precision") != val.end())
-                    prec = val["precision"];
-
-                ss << std::fixed << std::setprecision(prec) << fvalue;
-
-                std::string senStr;
-                if (val.find("short_name") != val.end())
-                    senStr = val["short_name"];
-                else
-                    senStr = senName;
-
-                senStr += ss.str();
-
-                /* Get unit string for sensor and append in output */
-                std::string unitStr;
-                if (ipmi::storage::getSensorUnit(senName, unitStr) == 0)
-                    senStr += unitStr;
-
-                std::string thresholdStr;
-                int ret = ipmi::storage::getSensorThreshold(senName,
-                                                            thresholdStr);
-                if (ret < 0)
-                {
-                    phosphor::logging::log<phosphor::logging::level::ERR>(
-                        "Error getting critical sensor threshold status",
-                        phosphor::logging::entry("CRI_SENSOR_NAME=%s",
-                                                 senName.c_str()));
-                    return -1;
-                }
-                if (thresholdStr.size() != 0)
-                {
-                    senStr += ("/" + thresholdStr);
-                    std::string senStrWithBlinkAndInvertColor =
-                        ESC_ALT + senStr + ESC_RST;
-                    frame_snr.append(senStrWithBlinkAndInvertColor.c_str(), 0);
-                }
-                else
-                {
-                    frame_snr.append(senStr.c_str(), 0);
-                }
-            }
-            else
-            {
-                phosphor::logging::log<phosphor::logging::level::INFO>(
-                    "Critical sensor not found",
-                    phosphor::logging::entry("CRI_SENSOR_NAME=%s",
-                                             senName.c_str()));
-            }
-        }
-
-    } // End of update frame
-
-    if (page > frame_snr.pages)
-    {
-        return -1;
-    }
-
-    ret = frame_snr.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
-    if (ret < 0)
-    {
-        *count = 0;
-        return -1;
-    }
-    *count = (uint8_t)ret;
-
-    if (page < frame_snr.pages)
-        *next = page + 1;
-    else
-        *next = 0xFF; // Set the value of next to 0xFF to indicate this is the
-                      // last page
-
-    return 0;
-}
-
 static int getBiosVer(std::string& ver, size_t hostPosition)
 {
     nlohmann::json appObj;
@@ -1069,6 +866,74 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
     return 0;
 }
 
+static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
+                             uint8_t* count, uint8_t* buffer)
+{
+    if (page == 1)
+    {
+        // Initialize and clear frame (example initialization)
+        frame_postcode.init(FRAME_BUFF_SIZE);
+        snprintf(frame_postcode.title, 32, "Extra Post Code");
+        frame_sel.overwrite = 1;
+        frame_sel.max_page = 5;
+
+        // Synchronously get D-Bus connection
+        auto bus = sdbusplus::bus::new_default();
+
+        // Build D-Bus method call
+        auto method = bus.new_method_call(
+            "xyz.openbmc_project.State.Boot.PostCode0",  // Target service name
+            "/xyz/openbmc_project/State/Boot/PostCode0", // Object path
+            "xyz.openbmc_project.State.Boot.PostCode",   // Interface name
+            "GetPostCodes");                             // Method name
+
+        method.append(uint16_t(1)); // Add method parameter, assuming it's page
+
+        try
+        {
+            auto reply = bus.call(method); // Send synchronous method call
+
+            // Read postcode value
+            std::vector<std::tuple<uint64_t, std::vector<uint8_t>>> postcodes;
+            reply.read(postcodes);
+
+            // Insert retrieved postcodes into frame_postcode
+            std::string result;
+            for (const auto& [code, extra] : postcodes)
+            {
+                result = std::format("{:02x}", code);
+                frame_postcode.append(result.c_str(), 0);
+            }
+        }
+        catch (const std::exception& e)
+        {
+            // Handle exceptions
+            std::cerr << "Error retrieving postcodes: " << e.what()
+                      << std::endl;
+            return -1;
+        }
+    }
+
+    if (page > frame_postcode.pages)
+    {
+        return -1;
+    }
+
+    int ret = frame_postcode.getPage(page, (char*)buffer, FRAME_PAGE_BUF_SIZE);
+    if (ret < 0)
+    {
+        *count = 0;
+        return -1;
+    }
+    *count = (uint8_t)ret;
+
+    if (page < frame_postcode.pages)
+        *next = page + 1;
+    else
+        *next = 0xFF; // Set next to 0xFF to indicate last page
+    return 0;
+}
+
 int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
                              uint8_t* count, uint8_t* buffer)
 {
@@ -1076,10 +941,8 @@ int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
     {
         case 1: // info_page
             return udbg_get_info_page(frame, page, next, count, buffer);
-        case 2: // critical SEL
-            return udbg_get_cri_sel(frame, page, next, count, buffer);
-        case 3: // critical Sensor
-            return udbg_get_cri_sensor(frame, page, next, count, buffer);
+        case 2: // Extra Post Code
+            return udbg_get_postcode(frame, page, next, count, buffer);
         default:
             return -1;
     }

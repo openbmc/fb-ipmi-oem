@@ -749,7 +749,7 @@ ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t, ipmi_cmd_t,
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
-    uint8_t num_frames = 3;
+    uint8_t num_frames = debugCardFrameSize;
 
     std::memcpy(res, req, SIZE_IANA_ID); // IANA ID
     res[SIZE_IANA_ID] = num_frames;
