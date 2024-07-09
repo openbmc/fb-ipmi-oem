@@ -33,6 +33,24 @@
       "message": "I see serious backwards compatibility issues here. Peter, can you see if we can use 4 as \"Extra Post Code\" instead of 2?\nHaving this reordered means an older USB Debug card when requesting for \"critical SEL\" will end up getting \"Extra Post Code\".",
       "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15f4f5d0_2bbe192c",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2024-07-09T01:00:35Z",
+      "side": 1,
+      "message": "I plan to remove critical SEL and critical sensors because Meta RTP Yuvin confirmed that we don\u0027t need them. Should we remove critical SEL and critical sensors first?",
+      "parentUuid": "4fbb8889_4ed4b0dd",
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
