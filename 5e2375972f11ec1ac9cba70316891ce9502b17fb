@@ -51,6 +51,24 @@
       "parentUuid": "4fbb8889_4ed4b0dd",
       "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be307f85_5b0d17ac",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-07-09T18:52:05Z",
+      "side": 1,
+      "message": "Are you saying the debug card does not have an association with 2 \u003d\u003d CRITICAL_SEL and it only means page-2 and this code `snprintf(frame_postcode.title, 32, \"Extra Post Code\");` is whats setting what that page title means?",
+      "parentUuid": "15f4f5d0_2bbe192c",
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
