@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c5c89bd7_a082fcf0",
+        "filename": "meson.options",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2024-07-11T02:36:14Z",
+      "side": 1,
+      "message": "At a minimum, this needs to be retained.\noption(\u0027debug-card-frame-size\u0027, type: \u0027integer\u0027, description: \u0027debug card frame size.\u0027, value: 2)\n\nSome platforms might not require a postcode frame. In such cases, you can set the value to 1. If the value is not set to 1, you may find an empty frame on the debug card.",
+      "parentUuid": "ce08b6cf_84c26062",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 97
+      },
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4fbb8889_4ed4b0dd",
         "filename": "src/usb-dbg.cpp",
         "patchSetId": 3
