@@ -1209,8 +1209,9 @@ static uint8_t panel_power_policy(uint8_t)
     return PANEL_POWER_POLICY;
 }
 
-int plat_udbg_control_panel(uint8_t panel, uint8_t operation, uint8_t item,
-                            uint8_t* count, uint8_t* buffer)
+ipmi_ret_t plat_udbg_control_panel(uint8_t panel, uint8_t operation,
+                                   uint8_t item, uint8_t* count,
+                                   uint8_t* buffer)
 {
     if (panel > panelNum || panel < PANEL_MAIN)
         return IPMI_CC_PARM_OUT_OF_RANGE;

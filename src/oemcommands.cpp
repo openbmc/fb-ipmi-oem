@@ -59,8 +59,7 @@ int plat_udbg_get_post_desc(uint8_t, uint8_t*, uint8_t, uint8_t*, uint8_t*,
                             uint8_t*);
 int plat_udbg_get_gpio_desc(uint8_t, uint8_t*, uint8_t*, uint8_t*, uint8_t*,
                             uint8_t*);
-ipmi_ret_t plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t*, uint8_t*,
-                                    uint8_t*);
+int plat_udbg_get_frame_data(uint8_t, uint8_t, uint8_t*, uint8_t*, uint8_t*);
 ipmi_ret_t plat_udbg_control_panel(uint8_t, uint8_t, uint8_t, uint8_t*,
                                    uint8_t*);
 int sendMeCmd(uint8_t, uint8_t, std::vector<uint8_t>&, std::vector<uint8_t>&);
