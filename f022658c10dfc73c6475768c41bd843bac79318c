@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08e783fb_5c47245f",
+        "filename": "include/groupextcommands.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-07-18T22:22:31Z",
+      "side": 1,
+      "message": "nit: `static constexpr auto`?\n\nIdeally these would get added to phosphor-dbus-interfaces rather than being coded as strings.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 63
+      },
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2114d787_34cac143",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-07-18T22:22:31Z",
+      "side": 1,
+      "message": "nit: you can use `PHOSPHOR_LOG2_USING;` instead of having the `lg2::` prefix everywhere.",
+      "range": {
+        "startLine": 21,
+        "startChar": 8,
+        "endLine": 21,
+        "endChar": 13
+      },
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a7f9b7f_f05f9dea",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-07-18T22:22:31Z",
+      "side": 1,
+      "message": "Do you need to deal with endianness here?",
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd0c040a_143a510c",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-07-18T22:22:31Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this have the hostid on it also?",
+      "range": {
+        "startLine": 40,
+        "startChar": 34,
+        "endLine": 40,
+        "endChar": 48
+      },
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "051a7f18_14e77293",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-07-18T22:22:31Z",
+      "side": 1,
+      "message": "lg2::error(\"postcode handler error: {ERROR}\" , \"ERROR\", e);",
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
