@@ -24,6 +24,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2c63d183_964918cb",
+        "filename": "include/groupextcommands.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-07-19T16:46:13Z",
+      "side": 1,
+      "message": "Done.\n\nPatrick, I am not sure how to use phosphor-dbus-interfaces to get service name and object path, could you point me to the examples?",
+      "parentUuid": "08e783fb_5c47245f",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 63
+      },
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2114d787_34cac143",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-07-18T22:22:31Z",
       "side": 1,
       "message": "nit: you can use `PHOSPHOR_LOG2_USING;` instead of having the `lg2::` prefix everywhere.",
+      "range": {
+        "startLine": 21,
+        "startChar": 8,
+        "endLine": 21,
+        "endChar": 13
+      },
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ac2d0e8_00c72f52",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-07-19T16:46:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2114d787_34cac143",
       "range": {
         "startLine": 21,
         "startChar": 8,
@@ -66,6 +114,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "42206133_6e1bee16",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-07-19T16:46:13Z",
+      "side": 1,
+      "message": "In SBMR, the postcode is 9 bytes.\nI take first 8 bytes as primary code (uint64_t), and put all 9 bytes into extra code (array[byte]).\n\nI am not sure which one you were talking? primary code or extra code?\nCould you add more information?",
+      "parentUuid": "4a7f9b7f_f05f9dea",
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "cd0c040a_143a510c",
         "filename": "src/groupextcommands.cpp",
         "patchSetId": 3
@@ -77,6 +143,30 @@
       "writtenOn": "2024-07-18T22:22:31Z",
       "side": 1,
       "message": "Shouldn\u0027t this have the hostid on it also?",
+      "range": {
+        "startLine": 40,
+        "startChar": 34,
+        "endLine": 40,
+        "endChar": 48
+      },
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "857108c3_d03824b5",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-07-19T16:46:13Z",
+      "side": 1,
+      "message": "The bus name does not have id.\nThe hostid is attached with object path.\n\nsingle-host:\n```\nroot@bmc:~# busctl tree xyz.openbmc_project.State.Boot.Raw\n└─ /xyz\n  └─ /xyz/openbmc_project\n    └─ /xyz/openbmc_project/state\n      └─ /xyz/openbmc_project/state/boot\n        └─ /xyz/openbmc_project/state/boot/raw0\n```\n\nmulti-host:\n```\nroot@bmc:~# busctl tree xyz.openbmc_project.State.Boot.Raw\n└─ /xyz\n  └─ /xyz/openbmc_project\n    └─ /xyz/openbmc_project/state\n      └─ /xyz/openbmc_project/state/boot\n        ├─ /xyz/openbmc_project/state/boot/raw1\n        ├─ /xyz/openbmc_project/state/boot/raw2\n        ├─ /xyz/openbmc_project/state/boot/raw3\n        ├─ /xyz/openbmc_project/state/boot/raw4\n        ├─ /xyz/openbmc_project/state/boot/raw5\n        ├─ /xyz/openbmc_project/state/boot/raw6\n        ├─ /xyz/openbmc_project/state/boot/raw7\n        └─ /xyz/openbmc_project/state/boot/raw8\n```",
+      "parentUuid": "cd0c040a_143a510c",
       "range": {
         "startLine": 40,
         "startChar": 34,
@@ -100,6 +190,24 @@
       "writtenOn": "2024-07-18T22:22:31Z",
       "side": 1,
       "message": "lg2::error(\"postcode handler error: {ERROR}\" , \"ERROR\", e);",
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51fce865_b77a99ab",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-07-19T16:46:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "051a7f18_14e77293",
       "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
