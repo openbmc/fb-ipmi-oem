@@ -65,6 +65,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2bdeb009_009a15a2",
+        "filename": "meson.options",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-07-22T21:58:38Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c5c89bd7_a082fcf0",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 97
+      },
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4fbb8889_4ed4b0dd",
@@ -132,6 +156,24 @@
       "side": 1,
       "message": "Yes, I understand that the debug card just gets the frame number first, then it will get frame information one by one and display it on the debug card LCD. The cases 1/2/3 are just frame numbers; the debug card doesn\u0027t know whether 2 is CRITICAL_SEL or not.",
       "parentUuid": "be307f85_5b0d17ac",
+      "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a0f5cac_bbb6beeb",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1147,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-07-22T21:58:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50a97ddc_a037a052",
       "revId": "5e2375972f11ec1ac9cba70316891ce9502b17fb",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
