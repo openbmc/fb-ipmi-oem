@@ -130,6 +130,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7b11ee2_5ee3ae2b",
+        "filename": "src/groupextcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-07-22T06:16:02Z",
+      "side": 1,
+      "message": "Hi @Patrick,\n\nFor primary code (uint64_t), I add byteswap() to convert to system\u0027s endian.\n\nFor extra code (array[byte]), I checked with Cosmo, our plan is storing the postcode as what it is, then adjust output at print side (ex: bmcweb, mfg-tool) to meet the order as user expected.\n\nCould you also have a look with the bmcweb commit, thank you.\nhttps://gerrit.openbmc.org/c/openbmc/bmcweb/+/70163/2/redfish-core/lib/log_services.hpp",
+      "parentUuid": "42206133_6e1bee16",
+      "revId": "f022658c10dfc73c6475768c41bd843bac79318c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cd0c040a_143a510c",
