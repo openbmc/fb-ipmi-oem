@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eea05c7f_d279f62f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-08-05T07:48:37Z",
+      "side": 1,
+      "message": "Hi @Patrick \u0026 @Amithash, please kindly help review this patch and let me know if any more concers. Thanks.",
+      "revId": "c448808e70479cc14bc4d5a5274d6cb9f947efef",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
