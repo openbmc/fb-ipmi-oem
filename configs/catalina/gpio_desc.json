@@ -1,0 +1,13 @@
+{
+    "GpioDesc": [
+        ["0x00", 0, 0, ""],
+        ["0x10", 0, 2, "DEBUG_RST_BTN_N"],
+        ["0x11", 0, 1, "DEBUG_PWR_BTN_N"],
+        ["0x12", 0, 0, "HPM_SCM_PERST_N"],
+        ["0x13", 0, 0, "IOEXP_INT_3V3_L"],
+        ["0x14", 1, 0, "STBY_POWER_PG"],
+        ["0x15", 0, 0, "SYS_RST_OUT_L"],
+        ["0x16", 1, 0, "RUN_POWER_PG"],
+        ["0x17", 0, 3, "FM_UART_SWITCH_N"]
+    ]
+}
