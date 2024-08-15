@@ -49,6 +49,8 @@ enum fb_oem_cmds
     CMD_OEM_GET_80PORT_RECORD = 0x49,
     CMD_OEM_SET_BOOT_ORDER = 0x52,
     CMD_OEM_GET_BOOT_ORDER = 0x53,
+    CMD_OEM_GET_HTTPS_BOOT_DATA = 0x57,
+    CMD_OEM_GET_HTTPS_BOOT_ATTR = 0x58,
     CMD_OEM_SET_MACHINE_CONFIG_INFO = 0x6A,
     CMD_OEM_LEGACY_SET_PPR = 0x6E,
     CMD_OEM_LEGACY_GET_PPR = 0x6F,
@@ -243,6 +245,12 @@ typedef struct
     uint8_t data[];
 } qDriveInfo_t;
 
+enum class HttpsBootAttr : uint8_t
+{
+    certSize = 0x00,
+    certCrc = 0x01
+};
+
 enum class BankType : uint8_t
 {
     mca = 0x01,
@@ -282,6 +290,12 @@ constexpr uint8_t ccixNum = 4;
 constexpr uint8_t csNum = 8;
 
 #pragma pack(push, 1)
+
+struct HttpsDataReq
+{
+    uint16_t offset;
+    uint8_t length;
+};
 
 struct CrdCmdHdr
 {

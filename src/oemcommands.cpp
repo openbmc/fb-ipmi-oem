@@ -17,6 +17,7 @@
 
 #include "xyz/openbmc_project/Common/error.hpp"
 
+#include <boost/crc.hpp>
 #include <commandutils.hpp>
 #include <ipmid/api-types.hpp>
 #include <ipmid/api.hpp>
@@ -70,6 +71,8 @@ int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
                std::vector<uint8_t>&);
 
 nlohmann::json oemData __attribute__((init_priority(101)));
+
+constexpr const char* certPath = "/mnt/data/host/bios-rootcert";
 
 static constexpr size_t GUID_SIZE = 16;
 // TODO Make offset and location runtime configurable to ensure we
@@ -2098,6 +2101,84 @@ ipmi::RspType<std::vector<uint8_t>>
     return sendDCMICmd(ctx, ipmi::dcmi::cmdActDeactivatePwrLimit, reqData);
 }
 
+// Https Boot related functions
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGetHttpsData([[maybe_unused]] ipmi::Context::ptr ctx,
+                        std::vector<uint8_t> reqData)
+{
+    if (reqData.size() < sizeof(HttpsDataReq))
+        return ipmi::responseReqDataLenInvalid();
+
+    const auto* pReq = reinterpret_cast<const HttpsDataReq*>(reqData.data());
+    std::error_code ec;
+    auto fileSize = std::filesystem::file_size(certPath, ec);
+    if (ec)
+        return ipmi::responseUnspecifiedError();
+
+    if (pReq->offset >= fileSize)
+        return ipmi::responseInvalidFieldRequest();
+
+    std::ifstream file(certPath, std::ios::binary);
+    if (!file)
+        return ipmi::responseUnspecifiedError();
+
+    auto readLen = std::min<uint16_t>(pReq->length, fileSize - pReq->offset);
+    std::vector<uint8_t> resData(readLen + 1);
+    resData[0] = readLen;
+    file.seekg(pReq->offset);
+    file.read(reinterpret_cast<char*>(resData.data() + 1), readLen);
+
+    return ipmi::responseSuccess(resData);
+}
+
+ipmi::RspType<std::vector<uint8_t>>
+    ipmiOemGetHttpsAttr([[maybe_unused]] ipmi::Context::ptr ctx,
+                        std::vector<uint8_t> reqData)
+{
+    if (reqData.size() < sizeof(HttpsBootAttr))
+        return ipmi::responseReqDataLenInvalid();
+
+    std::vector<uint8_t> resData;
+
+    switch (static_cast<HttpsBootAttr>(reqData[0]))
+    {
+        case HttpsBootAttr::certSize:
+        {
+            std::error_code ec;
+            auto fileSize = std::filesystem::file_size(certPath, ec);
+            if (ec || fileSize > std::numeric_limits<uint16_t>::max())
+                return ipmi::responseUnspecifiedError();
+
+            uint16_t size = static_cast<uint16_t>(fileSize);
+            resData.resize(sizeof(uint16_t));
+            std::memcpy(resData.data(), &size, sizeof(uint16_t));
+            break;
+        }
+        case HttpsBootAttr::certCrc:
+        {
+            std::ifstream file(certPath, std::ios::binary);
+            if (!file)
+                return ipmi::responseUnspecifiedError();
+
+            boost::crc_32_type result;
+            char data[1024];
+            while (file.read(data, sizeof(data)))
+                result.process_bytes(data, file.gcount());
+            if (file.gcount() > 0)
+                result.process_bytes(data, file.gcount());
+
+            uint32_t crc = result.checksum();
+            resData.resize(sizeof(uint32_t));
+            std::memcpy(resData.data(), &crc, sizeof(uint32_t));
+            break;
+        }
+        default:
+            return ipmi::responseInvalidFieldRequest();
+    }
+
+    return ipmi::responseSuccess(resData);
+}
+
 // OEM Crashdump related functions
 static ipmi_ret_t setDumpState(CrdState& currState, CrdState newState)
 {
@@ -2639,6 +2720,14 @@ static void registerOEMFunctions(void)
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
                           CMD_OEM_SET_BOOT_ORDER, ipmi::Privilege::User,
                           ipmiOemSetBootOrder); // Set Boot Order
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_GET_HTTPS_BOOT_DATA, ipmi::Privilege::User,
+                          ipmiOemGetHttpsData);
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_GET_HTTPS_BOOT_ATTR, ipmi::Privilege::User,
+                          ipmiOemGetHttpsAttr);
 
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
                           CMD_OEM_CRASHDUMP, ipmi::Privilege::User,
