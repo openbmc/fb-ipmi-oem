@@ -57,11 +57,11 @@ void getMaxHostPosition(size_t& maxPosition)
     try
     {
         std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-        std::string service = getService(*dbus, ipmi::selector::interface,
-                                         ipmi::selector::path);
-        Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
-                                        ipmi::selector::interface,
-                                        "MaxPosition");
+        std::string service =
+            getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
+        Value variant =
+            getDbusProperty(*dbus, service, ipmi::selector::path,
+                            ipmi::selector::interface, "MaxPosition");
         maxPosition = std::get<size_t>(variant);
     }
     catch (const std::exception& e)
@@ -77,8 +77,8 @@ void getSelectorPosition(size_t& hostPosition)
     try
     {
         std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
-        std::string service = getService(*dbus, ipmi::selector::interface,
-                                         ipmi::selector::path);
+        std::string service =
+            getService(*dbus, ipmi::selector::interface, ipmi::selector::path);
         Value variant = getDbusProperty(*dbus, service, ipmi::selector::path,
                                         ipmi::selector::interface, "Position");
         hostPosition = std::get<size_t>(variant);
@@ -516,8 +516,8 @@ int plat_udbg_get_post_desc(uint8_t index, uint8_t* next, uint8_t phase,
             {
                 if (postObj.size() != phase)
                 {
-                    std::string nextPhaseStr = "Phase" +
-                                               std::to_string(phase + 1);
+                    std::string nextPhaseStr =
+                        "Phase" + std::to_string(phase + 1);
                     postCode = postObj[nextPhaseStr][0][0];
                     *next = stoul(postCode, nullptr, 16);
                     *end = 0;
@@ -1007,8 +1007,8 @@ static uint8_t panel_boot_order(uint8_t selectedItemIndex)
     }
 
     // '*': boot flags valid, BIOS has not yet read
-    bootOrderPanel.item_str[0] = std::string("Boot Order") +
-                                 ((bootMode & bootValid) ? "*" : "");
+    bootOrderPanel.item_str[0] =
+        std::string("Boot Order") + ((bootMode & bootValid) ? "*" : "");
 
     static const std::unordered_map<uint8_t, const char*>
         bootOrderMappingTable = {

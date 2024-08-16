@@ -133,9 +133,9 @@ DbusObjectInfo getIPObject(sdbusplus::bus_t& bus, const std::string& interface,
 
     for (auto& object : objectTree)
     {
-        auto variant = ipmi::getDbusProperty(bus, object.second.begin()->first,
-                                             object.first, IP_INTERFACE,
-                                             "Type");
+        auto variant =
+            ipmi::getDbusProperty(bus, object.second.begin()->first,
+                                  object.first, IP_INTERFACE, "Type");
         if (std::get<std::string>(variant) != protocol)
         {
             continue;
@@ -210,8 +210,8 @@ static constexpr auto bootEnableProp = "Enabled";
 std::tuple<std::string, std::string> objPath(size_t id)
 {
     std::string hostName = "host" + std::to_string(id);
-    std::string bootObjPath = "/xyz/openbmc_project/control/" + hostName +
-                              "/boot";
+    std::string bootObjPath =
+        "/xyz/openbmc_project/control/" + hostName + "/boot";
     return std::make_tuple(std::move(bootObjPath), std::move(hostName));
 }
 
@@ -237,8 +237,8 @@ void setBootOrder(std::string bootObjPath, const std::vector<uint8_t>& bootSeq,
     std::string bootOption =
         sdbusplus::message::convert_to_string<boot::BootMode>(bootValue);
 
-    std::string service = getService(*dbus, ipmi::boot::bootModeIntf,
-                                     bootObjPath);
+    std::string service =
+        getService(*dbus, ipmi::boot::bootModeIntf, bootObjPath);
     setDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootModeIntf,
                     ipmi::boot::bootModeProp, bootOption);
 
@@ -315,11 +315,11 @@ void getBootOrder(std::string bootObjPath, std::vector<uint8_t>& bootSeq,
 
     // GETTING PROPERTY OF MODE INTERFACE
 
-    std::string service = getService(*dbus, ipmi::boot::bootModeIntf,
-                                     bootObjPath);
-    Value variant = getDbusProperty(*dbus, service, bootObjPath,
-                                    ipmi::boot::bootModeIntf,
-                                    ipmi::boot::bootModeProp);
+    std::string service =
+        getService(*dbus, ipmi::boot::bootModeIntf, bootObjPath);
+    Value variant =
+        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootModeIntf,
+                        ipmi::boot::bootModeProp);
 
     auto bootMode = sdbusplus::message::convert_from_string<boot::BootMode>(
         std::get<std::string>(variant));
@@ -329,18 +329,18 @@ void getBootOrder(std::string bootObjPath, std::vector<uint8_t>& bootSeq,
     // GETTING PROPERTY OF TYPE INTERFACE
 
     service = getService(*dbus, ipmi::boot::bootTypeIntf, bootObjPath);
-    variant = getDbusProperty(*dbus, service, bootObjPath,
-                              ipmi::boot::bootTypeIntf,
-                              ipmi::boot::bootTypeProp);
+    variant =
+        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootTypeIntf,
+                        ipmi::boot::bootTypeProp);
 
     auto bootType = sdbusplus::message::convert_from_string<boot::BootType>(
         std::get<std::string>(variant));
 
     // Get the valid bit to boot enabled property
     service = getService(*dbus, ipmi::boot::bootEnableIntf, bootObjPath);
-    variant = getDbusProperty(*dbus, service, bootObjPath,
-                              ipmi::boot::bootEnableIntf,
-                              ipmi::boot::bootEnableProp);
+    variant =
+        getDbusProperty(*dbus, service, bootObjPath, ipmi::boot::bootEnableIntf,
+                        ipmi::boot::bootEnableProp);
 
     bool validFlag = std::get<bool>(variant);
 
@@ -541,10 +541,10 @@ int8_t getFruData(std::string& data, std::string& name)
         return -1;
     }
     sdbusplus::bus_t dbus(bus);
-    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
-                                           "/xyz/openbmc_project/object_mapper",
-                                           "xyz.openbmc_project.ObjectMapper",
-                                           "GetSubTreePaths");
+    auto mapperCall = dbus.new_method_call(
+        "xyz.openbmc_project.ObjectMapper",
+        "/xyz/openbmc_project/object_mapper",
+        "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
     static constexpr std::array<const char*, 1> interface = {
         "xyz.openbmc_project.Inventory.Decorator.Asset"};
     mapperCall.append("/xyz/openbmc_project/inventory/", depth, interface);
@@ -745,10 +745,9 @@ typedef struct
 //----------------------------------------------------------------------
 // Get Debug Frame Info
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t, ipmi_cmd_t,
-                                  ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemDbgGetFrameInfo(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -764,10 +763,9 @@ ipmi_ret_t ipmiOemDbgGetFrameInfo(ipmi_netfn_t, ipmi_cmd_t,
 //----------------------------------------------------------------------
 // Get Debug Updated Frames
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t, ipmi_cmd_t,
-                                  ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemDbgGetUpdFrames(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -787,10 +785,9 @@ ipmi_ret_t ipmiOemDbgGetUpdFrames(ipmi_netfn_t, ipmi_cmd_t,
 //----------------------------------------------------------------------
 // Get Debug POST Description
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t, ipmi_cmd_t,
-                                 ipmi_request_t request,
-                                 ipmi_response_t response,
-                                 ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemDbgGetPostDesc(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -826,10 +823,9 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(ipmi_netfn_t, ipmi_cmd_t,
 //----------------------------------------------------------------------
 // Get Debug GPIO Description
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t, ipmi_cmd_t,
-                                 ipmi_request_t request,
-                                 ipmi_response_t response,
-                                 ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemDbgGetGpioDesc(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -866,10 +862,9 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(ipmi_netfn_t, ipmi_cmd_t,
 //----------------------------------------------------------------------
 // Get Debug Frame Data
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t, ipmi_cmd_t,
-                                  ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemDbgGetFrameData(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -903,10 +898,9 @@ ipmi_ret_t ipmiOemDbgGetFrameData(ipmi_netfn_t, ipmi_cmd_t,
 //----------------------------------------------------------------------
 // Get Debug Control Panel
 //----------------------------------------------------------------------
-ipmi_ret_t ipmiOemDbgGetCtrlPanel(ipmi_netfn_t, ipmi_cmd_t,
-                                  ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemDbgGetCtrlPanel(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
@@ -997,9 +991,9 @@ ipmi::RspType<std::vector<uint8_t>>
 
     auto conn = getSdBus();
     /* Get the post codes by calling GetPostCodes method */
-    auto msg = conn->new_method_call(postCodeService.c_str(),
-                                     postCodeObjPath.c_str(), postCodeInterface,
-                                     "GetPostCodes");
+    auto msg =
+        conn->new_method_call(postCodeService.c_str(), postCodeObjPath.c_str(),
+                              postCodeInterface, "GetPostCodes");
     msg.append(lastestPostCodeIndex);
 
     try
@@ -1569,10 +1563,9 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 // Byte 6..7 – Revision
 //
 
-ipmi::RspType<> ipmiOemQSetProcInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t,
-                                    uint8_t, uint8_t procIndex,
-                                    uint8_t paramSel,
-                                    std::vector<uint8_t> request)
+ipmi::RspType<> ipmiOemQSetProcInfo(
+    ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t, uint8_t procIndex,
+    uint8_t paramSel, std::vector<uint8_t> request)
 {
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
@@ -1720,10 +1713,9 @@ ipmi::RspType<std::vector<uint8_t>>
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
-ipmi::RspType<> ipmiOemQSetDimmInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t,
-                                    uint8_t, uint8_t dimmIndex,
-                                    uint8_t paramSel,
-                                    std::vector<uint8_t> request)
+ipmi::RspType<> ipmiOemQSetDimmInfo(
+    ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t, uint8_t dimmIndex,
+    uint8_t paramSel, std::vector<uint8_t> request)
 {
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
@@ -1990,10 +1982,9 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
 // Byte 2..N – Configuration parameter data (see Table_1415h Parameters of HDD
 // Information)
 //
-ipmi_ret_t ipmiOemQGetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
-                                ipmi_request_t request,
-                                ipmi_response_t response,
-                                ipmi_data_len_t data_len, ipmi_context_t)
+ipmi_ret_t ipmiOemQGetDriveInfo(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t)
 {
     qDriveInfo_t* req = reinterpret_cast<qDriveInfo_t*>(request);
     uint8_t numParam = sizeof(driveInfoKey) / sizeof(uint8_t*);
@@ -2073,38 +2064,33 @@ ipmi::RspType<std::vector<uint8_t>>
 
 /* DCMI Command handellers. */
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMIGetPowerReading(ipmi::Context::ptr ctx,
-                               std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemDCMIGetPowerReading(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     return sendDCMICmd(ctx, ipmi::dcmi::cmdGetPowerReading, reqData);
 }
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMIGetPowerLimit(ipmi::Context::ptr ctx,
-                             std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemDCMIGetPowerLimit(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     return sendDCMICmd(ctx, ipmi::dcmi::cmdGetPowerLimit, reqData);
 }
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMISetPowerLimit(ipmi::Context::ptr ctx,
-                             std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemDCMISetPowerLimit(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     return sendDCMICmd(ctx, ipmi::dcmi::cmdSetPowerLimit, reqData);
 }
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemDCMIApplyPowerLimit(ipmi::Context::ptr ctx,
-                               std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemDCMIApplyPowerLimit(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     return sendDCMICmd(ctx, ipmi::dcmi::cmdActDeactivatePwrLimit, reqData);
 }
 
 // Https Boot related functions
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemGetHttpsData([[maybe_unused]] ipmi::Context::ptr ctx,
-                        std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemGetHttpsData(
+    [[maybe_unused]] ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     if (reqData.size() < sizeof(HttpsDataReq))
         return ipmi::responseReqDataLenInvalid();
@@ -2131,9 +2117,8 @@ ipmi::RspType<std::vector<uint8_t>>
     return ipmi::responseSuccess(resData);
 }
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemGetHttpsAttr([[maybe_unused]] ipmi::Context::ptr ctx,
-                        std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemGetHttpsAttr(
+    [[maybe_unused]] ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     if (reqData.size() < sizeof(HttpsBootAttr))
         return ipmi::responseReqDataLenInvalid();
@@ -2307,9 +2292,9 @@ static ipmi_ret_t handleCpuWdtBank(std::span<const uint8_t> data,
 }
 
 template <size_t N>
-static ipmi_ret_t handleHwAssertBank(const char* name,
-                                     std::span<const uint8_t> data,
-                                     CrdState& currState, std::stringstream& ss)
+static ipmi_ret_t
+    handleHwAssertBank(const char* name, std::span<const uint8_t> data,
+                       CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdHwAssertBank<N>))
         return IPMI_CC_REQ_DATA_LEN_INVALID;
@@ -2523,9 +2508,8 @@ static ipmi_ret_t handleCtrlBank(std::span<const uint8_t> data,
     return IPMI_CC_OK;
 }
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemCrashdump([[maybe_unused]] ipmi::Context::ptr ctx,
-                     std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
+    [[maybe_unused]] ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 {
     static CrdState dumpState = CrdState::free;
     static std::stringstream ss;
@@ -2692,25 +2676,25 @@ static void registerOEMFunctions(void)
                          PRIVILEGE_USER); // Get Drive Info
 
     /* FB OEM DCMI Commands as per DCMI spec 1.5 Section 6 */
-    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
-                               ipmi::dcmi::cmdGetPowerReading,
-                               ipmi::Privilege::User,
-                               ipmiOemDCMIGetPowerReading); // Get Power Reading
+    ipmi::registerGroupHandler(
+        ipmi::prioOpenBmcBase, groupDCMI, ipmi::dcmi::cmdGetPowerReading,
+        ipmi::Privilege::User,
+        ipmiOemDCMIGetPowerReading); // Get Power Reading
 
-    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
-                               ipmi::dcmi::cmdGetPowerLimit,
-                               ipmi::Privilege::User,
-                               ipmiOemDCMIGetPowerLimit); // Get Power Limit
+    ipmi::registerGroupHandler(
+        ipmi::prioOpenBmcBase, groupDCMI, ipmi::dcmi::cmdGetPowerLimit,
+        ipmi::Privilege::User,
+        ipmiOemDCMIGetPowerLimit); // Get Power Limit
 
-    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
-                               ipmi::dcmi::cmdSetPowerLimit,
-                               ipmi::Privilege::Operator,
-                               ipmiOemDCMISetPowerLimit); // Set Power Limit
+    ipmi::registerGroupHandler(
+        ipmi::prioOpenBmcBase, groupDCMI, ipmi::dcmi::cmdSetPowerLimit,
+        ipmi::Privilege::Operator,
+        ipmiOemDCMISetPowerLimit); // Set Power Limit
 
-    ipmi::registerGroupHandler(ipmi::prioOpenBmcBase, groupDCMI,
-                               ipmi::dcmi::cmdActDeactivatePwrLimit,
-                               ipmi::Privilege::Operator,
-                               ipmiOemDCMIApplyPowerLimit); // Apply Power Limit
+    ipmi::registerGroupHandler(
+        ipmi::prioOpenBmcBase, groupDCMI, ipmi::dcmi::cmdActDeactivatePwrLimit,
+        ipmi::Privilege::Operator,
+        ipmiOemDCMIApplyPowerLimit); // Apply Power Limit
 
     /* FB OEM BOOT ORDER COMMANDS */
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,

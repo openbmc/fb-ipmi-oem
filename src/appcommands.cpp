@@ -323,8 +323,8 @@ static int platGetSysFWVer(std::vector<uint8_t>& respData,
 //----------------------------------------------------------------------
 // Set Sys Info Params (IPMI/Sec 22.14a) (CMD_APP_SET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
-                                               std::vector<uint8_t> req)
+ipmi::RspType<uint8_t>
+    ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx, std::vector<uint8_t> req)
 {
     uint8_t param = req[0];
     uint8_t req_len = req.size();
@@ -401,9 +401,8 @@ ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
 //----------------------------------------------------------------------
 // Get Sys Info Params (IPMI/Sec 22.14b) (CMD_APP_GET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiAppGetSysInfoParams(ipmi::Context::ptr ctx, uint8_t, uint8_t param,
-                            uint8_t, uint8_t)
+ipmi::RspType<std::vector<uint8_t>> ipmiAppGetSysInfoParams(
+    ipmi::Context::ptr ctx, uint8_t, uint8_t param, uint8_t, uint8_t)
 {
     int len;
     std::vector<uint8_t> respData;
@@ -459,10 +458,10 @@ ipmi::RspType<std::vector<uint8_t>>
             break;
         case SYS_INFO_PARAM_BIOS_CURRENT_BOOT_LIST:
             len = appData[KEY_BIOS_BOOT_LEN].get<uint8_t>();
-            respData.insert(respData.end(),
-                            std::begin(sysInfoParams.bios_current_boot_list),
-                            std::begin(sysInfoParams.bios_current_boot_list) +
-                                len);
+            respData.insert(
+                respData.end(),
+                std::begin(sysInfoParams.bios_current_boot_list),
+                std::begin(sysInfoParams.bios_current_boot_list) + len);
             break;
         case SYS_INFO_PARAM_BIOS_FIXED_BOOT_DEVICE:
             respData.insert(respData.end(),

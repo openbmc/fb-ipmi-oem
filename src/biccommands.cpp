@@ -154,10 +154,9 @@ void dimmLoopPatternDetection(size_t hostId, std::vector<uint8_t> data)
 // netfn=0x38 and cmd=0x08 or 0x33 send the response back to the sender.
 //----------------------------------------------------------------------
 
-ipmi::RspType<IanaType> ipmiOemPostCodeHandler(ipmi::Context::ptr ctx,
-                                               IanaType reqIana,
-                                               uint8_t dataLen,
-                                               std::vector<uint8_t> data)
+ipmi::RspType<IanaType>
+    ipmiOemPostCodeHandler(ipmi::Context::ptr ctx, IanaType reqIana,
+                           uint8_t dataLen, std::vector<uint8_t> data)
 {
     // creating bus connection
     auto conn = getSdBus();
@@ -248,9 +247,8 @@ ipmi::RspType<IanaType, std::vector<uint8_t>>
 // send the response back to the sender.
 //----------------------------------------------------------------------
 
-ipmi::RspType<IanaType> ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
-                                                 IanaType reqIana,
-                                                 uint8_t status)
+ipmi::RspType<IanaType> ipmiOemSetHostPowerState(
+    ipmi::Context::ptr ctx, IanaType reqIana, uint8_t status)
 {
     std::string targetUnit;
 
@@ -298,9 +296,8 @@ ipmi::RspType<IanaType> ipmiOemSetHostPowerState(ipmi::Context::ptr ctx,
 // netfn=0x38 and cmd=0x19 send the response back to the sender.
 //----------------------------------------------------------------------
 
-ipmi::RspType<IanaType, flashSize>
-    ipmiOemGetBiosFlashSize(ipmi::Context::ptr ctx, IanaType ianaReq,
-                            uint8_t target)
+ipmi::RspType<IanaType, flashSize> ipmiOemGetBiosFlashSize(
+    ipmi::Context::ptr ctx, IanaType ianaReq, uint8_t target)
 {
     if (iana != ianaReq)
     {

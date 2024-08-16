@@ -28,10 +28,10 @@ std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void)
     }
 
     sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
-    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
-                                           "/xyz/openbmc_project/object_mapper",
-                                           "xyz.openbmc_project.ObjectMapper",
-                                           "GetSubTreePaths");
+    auto mapperCall = dbus.new_method_call(
+        "xyz.openbmc_project.ObjectMapper",
+        "/xyz/openbmc_project/object_mapper",
+        "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
     static constexpr int32_t depth = 0;
     static constexpr auto iface = "xyz.openbmc_project.Configuration.EEPROM";
     static constexpr auto entityManager = "xyz.openbmc_project.EntityManager";

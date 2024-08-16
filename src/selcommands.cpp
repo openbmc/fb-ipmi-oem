@@ -712,18 +712,19 @@ static void logNmExcA(uint8_t* data, std::string& errLog)
 
 static void logPCHThermal(uint8_t* data, std::string& errLog)
 {
-    const std::vector<std::string> thresEvtName = {"Lower Non-critical",
-                                                   "Unknown",
-                                                   "Lower Critical",
-                                                   "Unknown",
-                                                   "Lower Non-recoverable",
-                                                   "Unknown",
-                                                   "Unknown",
-                                                   "Upper Non-critical",
-                                                   "Unknown",
-                                                   "Upper Critical",
-                                                   "Unknown",
-                                                   "Upper Non-recoverable"};
+    const std::vector<std::string> thresEvtName = {
+        "Lower Non-critical",
+        "Unknown",
+        "Lower Critical",
+        "Unknown",
+        "Lower Non-recoverable",
+        "Unknown",
+        "Unknown",
+        "Upper Non-critical",
+        "Unknown",
+        "Upper Critical",
+        "Unknown",
+        "Upper Non-recoverable"};
 
     if ((data[0] & 0x0f) < 12)
     {
@@ -771,9 +772,8 @@ static void logNmHealth(uint8_t* data, std::string& errLog)
         errLog = "Unknown";
     }
 
-    errLog += ", Domain:" + nmDomName[domIdx] +
-              ", ErrType:" + nmErrType[errIdx] + ", Err:0x" +
-              byteToStr(data[2]);
+    errLog += ", Domain:" + nmDomName[domIdx] + ", ErrType:" +
+              nmErrType[errIdx] + ", Err:0x" + byteToStr(data[2]);
 }
 
 static void logNmCap(uint8_t* data, std::string& errLog)
@@ -860,35 +860,36 @@ static void logHprWarn(uint8_t* data, std::string& errLog)
 static const boost::container::flat_map<
     uint8_t,
     std::pair<std::string, std::function<void(uint8_t*, std::string&)>>>
-    sensorNameTable = {{0xE9, {"SYSTEM_EVENT", logSysEvent}},
-                       {0x7D, {"THERM_THRESH_EVT", logThermalEvent}},
-                       {0xAA, {"BUTTON", logDefault}},
-                       {0xAB, {"POWER_STATE", logDefault}},
-                       {0xEA, {"CRITICAL_IRQ", logCritIrq}},
-                       {0x2B, {"POST_ERROR", logPostErr}},
-                       {0x40, {"MACHINE_CHK_ERR", logMchChkErr}},
-                       {0x41, {"PCIE_ERR", logPcieErr}},
-                       {0x43, {"IIO_ERR", logIioErr}},
-                       {0X63, {"MEMORY_ECC_ERR", logDefault}},
-                       {0X87, {"MEMORY_ERR_LOG_DIS", logDefault}},
-                       {0X51, {"PROCHOT_EXT", logDefault}},
-                       {0X56, {"PWR_ERR", logPwrErr}},
-                       {0xE6, {"CATERR_A", logCatErr}},
-                       {0xEB, {"CATERR_B", logCatErr}},
-                       {0xB3, {"CPU_DIMM_HOT", logDimmHot}},
-                       {0x90, {"SOFTWARE_NMI", logSwNMI}},
-                       {0x1C, {"CPU0_THERM_STATUS", logCPUThermalSts}},
-                       {0x1D, {"CPU1_THERM_STATUS", logCPUThermalSts}},
-                       {0x16, {"ME_POWER_STATE", logMEPwrState}},
-                       {0x17, {"SPS_FW_HEALTH", logSPSFwHealth}},
-                       {0x18, {"NM_EXCEPTION_A", logNmExcA}},
-                       {0x08, {"PCH_THERM_THRESHOLD", logPCHThermal}},
-                       {0x19, {"NM_HEALTH", logNmHealth}},
-                       {0x1A, {"NM_CAPABILITIES", logNmCap}},
-                       {0x1B, {"NM_THRESHOLD", logNmThreshold}},
-                       {0x3B, {"PWR_THRESH_EVT", logPwrThreshold}},
-                       {0xE7, {"MSMI", logMSMI}},
-                       {0xC5, {"HPR_WARNING", logHprWarn}}};
+    sensorNameTable = {
+        {0xE9, {"SYSTEM_EVENT", logSysEvent}},
+        {0x7D, {"THERM_THRESH_EVT", logThermalEvent}},
+        {0xAA, {"BUTTON", logDefault}},
+        {0xAB, {"POWER_STATE", logDefault}},
+        {0xEA, {"CRITICAL_IRQ", logCritIrq}},
+        {0x2B, {"POST_ERROR", logPostErr}},
+        {0x40, {"MACHINE_CHK_ERR", logMchChkErr}},
+        {0x41, {"PCIE_ERR", logPcieErr}},
+        {0x43, {"IIO_ERR", logIioErr}},
+        {0X63, {"MEMORY_ECC_ERR", logDefault}},
+        {0X87, {"MEMORY_ERR_LOG_DIS", logDefault}},
+        {0X51, {"PROCHOT_EXT", logDefault}},
+        {0X56, {"PWR_ERR", logPwrErr}},
+        {0xE6, {"CATERR_A", logCatErr}},
+        {0xEB, {"CATERR_B", logCatErr}},
+        {0xB3, {"CPU_DIMM_HOT", logDimmHot}},
+        {0x90, {"SOFTWARE_NMI", logSwNMI}},
+        {0x1C, {"CPU0_THERM_STATUS", logCPUThermalSts}},
+        {0x1D, {"CPU1_THERM_STATUS", logCPUThermalSts}},
+        {0x16, {"ME_POWER_STATE", logMEPwrState}},
+        {0x17, {"SPS_FW_HEALTH", logSPSFwHealth}},
+        {0x18, {"NM_EXCEPTION_A", logNmExcA}},
+        {0x08, {"PCH_THERM_THRESHOLD", logPCHThermal}},
+        {0x19, {"NM_HEALTH", logNmHealth}},
+        {0x1A, {"NM_CAPABILITIES", logNmCap}},
+        {0x1B, {"NM_THRESHOLD", logNmThreshold}},
+        {0x3B, {"PWR_THRESH_EVT", logPwrThreshold}},
+        {0xE7, {"MSMI", logMSMI}},
+        {0xC5, {"HPR_WARNING", logHprWarn}}};
 
 static void parseSelHelper(StdSELEntry* data, std::string& errStr)
 {
@@ -1180,13 +1181,14 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
     std::vector<std::string> certErr = {
         "No certificate at BMC", "IPMI transaction fail",
         "Certificate data corrupted", "Reserved"};
-    std::vector<std::string> pcieEvent = {"PCIe DPC Event",
-                                          "PCIe LER Event",
-                                          "PCIe Link Retraining and Recovery",
-                                          "PCIe Link CRC Error Check and Retry",
-                                          "PCIe Corrupt Data Containment",
-                                          "PCIe Express ECRC",
-                                          "Reserved"};
+    std::vector<std::string> pcieEvent = {
+        "PCIe DPC Event",
+        "PCIe LER Event",
+        "PCIe Link Retraining and Recovery",
+        "PCIe Link CRC Error Check and Retry",
+        "PCIe Corrupt Data Containment",
+        "PCIe Express ECRC",
+        "Reserved"};
     std::vector<std::string> memEvent = {
         "Memory PPR event",
         "Memory Correctable Error logging limit reached",
@@ -1201,9 +1203,9 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
                                            "Run time", "Reserved"};
     std::vector<std::string> memPpr = {"PPR success", "PPR fail", "PPR request",
                                        "Reserved"};
-    std::vector<std::string> memAdddc = {"Bank VLS", "r-Bank VLS + re-buddy",
-                                         "r-Bank VLS + Rank VLS",
-                                         "r-Rank VLS + re-buddy", "Reserved"};
+    std::vector<std::string> memAdddc = {
+        "Bank VLS", "r-Bank VLS + re-buddy", "r-Bank VLS + Rank VLS",
+        "r-Rank VLS + re-buddy", "Reserved"};
     std::vector<std::string> pprEvent = {"PPR disable", "Soft PPR", "Hard PPR",
                                          "Reserved"};
 
@@ -1293,13 +1295,13 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
             break;
         case unifiedMemEvt:
             eventType = ptr[9] & 0xf;
-            tmpStream << std::format("GeneralInfo: MemEvent(0x{:02X})", genInfo)
-                      << (static_cast<MemEvtType>(eventType) !=
-                                  MemEvtType::noDimm
-                              ? std::format(", {}", dimmLocationStr(
-                                                        ptr[5], ptr[6], ptr[7]))
-                              : "")
-                      << ", DIMM Failure Event: ";
+            tmpStream
+                << std::format("GeneralInfo: MemEvent(0x{:02X})", genInfo)
+                << (static_cast<MemEvtType>(eventType) != MemEvtType::noDimm
+                        ? std::format(", {}",
+                                      dimmLocationStr(ptr[5], ptr[6], ptr[7]))
+                        : "")
+                << ", DIMM Failure Event: ";
 
             switch (static_cast<MemEvtType>(eventType))
             {
@@ -1597,8 +1599,8 @@ ipmi::RspType<uint16_t, std::vector<uint8_t>>
     }
 }
 
-ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
-                                               std::vector<uint8_t> data)
+ipmi::RspType<uint16_t>
+    ipmiStorageAddSELEntry(ipmi::Context::ptr ctx, std::vector<uint8_t> data)
 {
     /* Per the IPMI spec, need to cancel any reservation when a
      * SEL entry is added
@@ -1617,8 +1619,8 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
     fb_oem::ipmi::sel::parseSelData((ctx->hostIdx + 1), data, logErr);
 
     static const std::string openBMCMessageRegistryVersion("0.1");
-    std::string messageID = "OpenBMC." + openBMCMessageRegistryVersion +
-                            ".SELEntryAdded";
+    std::string messageID =
+        "OpenBMC." + openBMCMessageRegistryVersion + ".SELEntryAdded";
 
     /* Log the Raw SEL message to the journal */
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;

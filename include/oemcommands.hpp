@@ -167,9 +167,9 @@ Byte 2-6– Boot sequence
            Bit3=0b: IPv4 first
            Bit3=1b: IPv6 first
 */
-std::map<std::string, int> bootMap = {{"USB_DEV", 0},  {"NET_IPV4", 1},
-                                      {"NET_IPV6", 9}, {"SATA_HDD", 2},
-                                      {"SATA_CD", 3},  {"OTHER", 4}};
+std::map<std::string, int> bootMap = {
+    {"USB_DEV", 0},  {"NET_IPV4", 1}, {"NET_IPV6", 9},
+    {"SATA_HDD", 2}, {"SATA_CD", 3},  {"OTHER", 4}};
 
 std::map<size_t, std::string> dimmVenMap = {
     {0xce, "Samsung"}, {0xad, "Hynix"}, {0x2c, "Micron"}};

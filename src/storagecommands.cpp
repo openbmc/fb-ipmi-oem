@@ -304,10 +304,9 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     return IPMI_CC_OK;
 }
 
-ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t, ipmi_cmd_t,
-                                  ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t dataLen, ipmi_context_t)
+ipmi_ret_t ipmiStorageReadFRUData(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t dataLen, ipmi_context_t)
 {
     if (*dataLen != 4)
     {
@@ -355,10 +354,9 @@ ipmi_ret_t ipmiStorageReadFRUData(ipmi_netfn_t, ipmi_cmd_t,
     return IPMI_CC_OK;
 }
 
-ipmi_ret_t ipmiStorageWriteFRUData(ipmi_netfn_t, ipmi_cmd_t,
-                                   ipmi_request_t request,
-                                   ipmi_response_t response,
-                                   ipmi_data_len_t dataLen, ipmi_context_t)
+ipmi_ret_t ipmiStorageWriteFRUData(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t dataLen, ipmi_context_t)
 {
     if (*dataLen < 4 ||
         *dataLen >=
@@ -481,31 +479,33 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
         return IPMI_CC_RESPONSE_ERROR;
     }
     boost::container::flat_map<std::string, DbusVariant>* fruData = nullptr;
-    auto fru = std::find_if(frus.begin(), frus.end(),
-                            [bus, address, &fruData](ManagedEntry& entry) {
-        auto findFruDevice = entry.second.find("xyz.openbmc_project.FruDevice");
-        if (findFruDevice == entry.second.end())
-        {
-            return false;
-        }
-        fruData = &(findFruDevice->second);
-        auto findBus = findFruDevice->second.find("BUS");
-        auto findAddress = findFruDevice->second.find("ADDRESS");
-        if (findBus == findFruDevice->second.end() ||
-            findAddress == findFruDevice->second.end())
-        {
-            return false;
-        }
-        if (std::get<uint32_t>(findBus->second) != bus)
-        {
-            return false;
-        }
-        if (std::get<uint32_t>(findAddress->second) != address)
-        {
-            return false;
-        }
-        return true;
-    });
+    auto fru = std::find_if(
+        frus.begin(), frus.end(),
+        [bus, address, &fruData](ManagedEntry& entry) {
+            auto findFruDevice =
+                entry.second.find("xyz.openbmc_project.FruDevice");
+            if (findFruDevice == entry.second.end())
+            {
+                return false;
+            }
+            fruData = &(findFruDevice->second);
+            auto findBus = findFruDevice->second.find("BUS");
+            auto findAddress = findFruDevice->second.find("ADDRESS");
+            if (findBus == findFruDevice->second.end() ||
+                findAddress == findFruDevice->second.end())
+            {
+                return false;
+            }
+            if (std::get<uint32_t>(findBus->second) != bus)
+            {
+                return false;
+            }
+            if (std::get<uint32_t>(findAddress->second) != address)
+            {
+                return false;
+            }
+            return true;
+        });
     if (fru == frus.end())
     {
         return IPMI_CC_RESPONSE_ERROR;
@@ -968,10 +968,9 @@ int getSensorUnit(std::string& name, std::string& unit)
         return -1;
 }
 
-ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(ipmi_netfn_t, ipmi_cmd_t,
-                                        ipmi_request_t request,
-                                        ipmi_response_t response,
-                                        ipmi_data_len_t dataLen, ipmi_context_t)
+ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(
+    ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t dataLen, ipmi_context_t)
 {
     if (*dataLen != 1)
     {

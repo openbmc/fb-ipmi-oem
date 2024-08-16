@@ -77,10 +77,10 @@ inline static bool getSensorSubtree(SensorSubTree& subtree)
         return false;
     }
     sdbusplus::bus_t dbus(bus);
-    auto mapperCall = dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
-                                           "/xyz/openbmc_project/object_mapper",
-                                           "xyz.openbmc_project.ObjectMapper",
-                                           "GetSubTree");
+    auto mapperCall =
+        dbus.new_method_call("xyz.openbmc_project.ObjectMapper",
+                             "/xyz/openbmc_project/object_mapper",
+                             "xyz.openbmc_project.ObjectMapper", "GetSubTree");
     static constexpr const auto depth = 2;
     static constexpr std::array<const char*, 3> interfaces = {
         "xyz.openbmc_project.Sensor.Value",
@@ -164,10 +164,9 @@ inline static uint8_t getSensorEventTypeFromPath(const std::string&)
     return 0x1; // reading type = threshold
 }
 
-static inline bool getSensorAttributes(const double max, const double min,
-                                       int16_t& mValue, int8_t& rExp,
-                                       int16_t& bValue, int8_t& bExp,
-                                       bool& bSigned)
+static inline bool getSensorAttributes(
+    const double max, const double min, int16_t& mValue, int8_t& rExp,
+    int16_t& bValue, int8_t& bExp, bool& bSigned)
 {
     // computing y = (10^rRexp) * (Mx + (B*(10^Bexp)))
     // check for 0, assume always positive
@@ -275,10 +274,9 @@ static inline bool getSensorAttributes(const double max, const double min,
     return true;
 }
 
-static inline uint8_t
-    scaleIPMIValueFromDouble(const double value, const uint16_t mValue,
-                             const int8_t rExp, const uint16_t bValue,
-                             const int8_t bExp, const bool bSigned)
+static inline uint8_t scaleIPMIValueFromDouble(
+    const double value, const uint16_t mValue, const int8_t rExp,
+    const uint16_t bValue, const int8_t bExp, const bool bSigned)
 {
     uint32_t scaledValue =
         (value - (bValue * std::pow(10, bExp) * std::pow(10, rExp))) /
