@@ -901,8 +901,20 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
             std::string result;
             for (const auto& [code, extra] : postcodes)
             {
-                result = std::format("{:02x}", code);
-                frame_postcode.append(result.c_str(), 0);
+                if (extra.empty())
+                {
+                    result = std::format("{:02x}", code);
+                    frame_postcode.append(result.c_str(), 0);
+                }
+                else
+                {
+                    result = "";
+                    for (const auto& byte : extra)
+                    {
+                        result += std::format("{:02X}", byte);
+                    }
+                    frame_postcode.append(result.c_str(), 0);
+                }
             }
         }
         catch (const std::exception& e)
