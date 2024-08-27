@@ -16,6 +16,24 @@
       "message": "Hi @Patrick, the CI is complaining groupextcommands.cpp formating, which is not modified in this commit.\nShould I send another commit to fix that error as well ?",
       "revId": "4c151f18a2229bf029046cedf9a105c3b8481898",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4d5b22b_042c24a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-08-27T12:04:16Z",
+      "side": 1,
+      "message": "Yes, just do that in the future please.  I\u0027ll rebase this commit onto a fix.",
+      "parentUuid": "929fed9a_165449ae",
+      "revId": "4c151f18a2229bf029046cedf9a105c3b8481898",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
