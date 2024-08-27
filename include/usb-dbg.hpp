@@ -36,11 +36,16 @@
 namespace ipmi
 {
 
-#define JSON_POST_DATA_FILE "/usr/share/lcd-debug/post_desc.json"
-#define JSON_GPIO_DATA_FILE "/usr/share/lcd-debug/gpio_desc.json"
-#define JSON_SENSOR_NAMES_FILE "/usr/share/lcd-debug/cri_sensors.json"
+static constexpr bool DEBUG = false;
 
-#define ETH_INTF_NAME "eth0"
+static constexpr auto JSON_POST_DATA_FILE =
+    "/usr/share/lcd-debug/post_desc.json";
+static constexpr auto JSON_GPIO_DATA_FILE =
+    "/usr/share/lcd-debug/gpio_desc.json";
+static constexpr auto JSON_SENSOR_NAMES_FILE =
+    "/usr/share/lcd-debug/cri_sensors.json";
+
+static constexpr auto ETH_INTF_NAME = "eth0";
 
 #define ESCAPE "\x1B"
 #define ESC_BAT ESCAPE "B"
@@ -49,42 +54,27 @@ namespace ipmi
 #define ESC_ALT ESCAPE "[5;7m"
 #define ESC_RST ESCAPE "[m"
 
-#define LINE_DELIMITER '\x1F'
+static constexpr char LINE_DELIMITER = '\x1F';
 
-#define FRAME_BUFF_SIZE 4096
-#define FRAME_PAGE_BUF_SIZE 256
+static constexpr size_t FRAME_BUFF_SIZE = 4096;
+static constexpr size_t FRAME_PAGE_BUF_SIZE = 256;
+
 #define FRU_ALL 0
-#define MAX_VALUE_LEN 64
 
-#define DEBUG_GPIO_KEY "GpioDesc"
-#define GPIO_ARRAY_SIZE 4
-#define GPIO_PIN_INDEX 0
-#define GPIO_LEVEL_INDEX 1
-#define GPIO_DEF_INDEX 2
-#define GPIO_DESC_INDEX 3
-#define BMC_POSITION 0
-#define MAX_HOST_POS 4
+static constexpr auto DEBUG_GPIO_KEY = "GpioDesc";
+static constexpr auto GPIO_ARRAY_SIZE = 4;
+static constexpr auto GPIO_PIN_INDEX = 0;
+static constexpr auto GPIO_LEVEL_INDEX = 1;
+static constexpr auto GPIO_DEF_INDEX = 2;
+static constexpr auto GPIO_DESC_INDEX = 3;
 
-/* Used for systems which do not specifically have a
- * phase, and we want to ignore the phase provided by the
- * debug card */
-#define PHASE_ANY 0xff
+static constexpr size_t BMC_POSITION = 0;
 
-static constexpr bool DEBUG = false;
-static const uint8_t meAddress = 1;
+static constexpr uint8_t meAddress = 1;
 static constexpr uint8_t lun = 0;
 
 using IpmbMethodType =
     std::tuple<int, uint8_t, uint8_t, uint8_t, uint8_t, std::vector<uint8_t>>;
-
-typedef struct _sensor_desc
-{
-    char name[16];
-    uint8_t sensor_num;
-    char unit[5];
-    uint8_t fru;
-    uint8_t disp_prec;
-} sensor_desc_t;
 
 struct frame
 {
@@ -92,27 +82,30 @@ struct frame
     size_t max_size;
     size_t max_page;
     char* buf;
-    uint16_t idx_head, idx_tail;
-    uint8_t line_per_page;
-    uint8_t line_width;
-    uint16_t lines, pages;
+    size_t idx_head, idx_tail;
+    size_t line_per_page;
+    size_t line_width;
+    size_t lines, pages;
     uint8_t esc_sts;
-    uint8_t overwrite;
+    bool overwrite;
     time_t mtime;
-    frame() : buf(NULL), pages(0), mtime(0) {}
-    int init(size_t size);
-    int append(const char* string, int indent);
-    int insert(const char* string, int indent);
-    int getPage(int page, char* page_buf, size_t page_buf_size);
-    int isFull();
-    int isEscSeq(char chr);
-    int parse(char* buf, size_t buf_size, const char* input, int indent);
+
+    frame() : buf(nullptr), pages(0), mtime(0) {}
+
+    void init(size_t size = FRAME_BUFF_SIZE);
+    void append(const std::string& str, size_t indent = 0);
+    int getPage(size_t page, char* page_buf, size_t page_buf_size);
+    bool isFull() const;
+    bool isEscSeq(char chr);
+
+  private:
+    auto parse(const std::string& input, size_t indent) -> std::string;
 };
 
-struct frame frame_info;
-struct frame frame_sel;
-struct frame frame_snr;
-struct frame frame_postcode;
+frame frame_info;
+frame frame_sel;
+frame frame_snr;
+frame frame_postcode;
 
 enum class panel : uint8_t
 {

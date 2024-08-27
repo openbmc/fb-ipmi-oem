@@ -117,7 +117,7 @@ static size_t plat_get_fru_sel()
 }
 
 // return 0 on seccuess
-int frame::init(size_t size)
+void frame::init(size_t size)
 {
     // Reset status
     idx_head = idx_tail = 0;
@@ -125,13 +125,12 @@ int frame::init(size_t size)
     esc_sts = 0;
     pages = 1;
 
-    if (buf != NULL && max_size == size)
+    if (buf != nullptr && max_size == size)
     {
-        // reinit
-        return 0;
+        return;
     }
 
-    if (buf != NULL && max_size != size)
+    if (buf != nullptr && max_size != size)
     {
         delete[] buf;
     }
@@ -142,28 +141,15 @@ int frame::init(size_t size)
     max_page = size;
     line_per_page = 7;
     line_width = 16;
-    overwrite = 0;
+    overwrite = false;
 
-    if (buf)
-        return 0;
-    else
-        return -1;
+    return;
 }
 
 // return 0 on seccuess
-int frame::append(const char* string, int indent)
+void frame::append(const std::string& str, size_t indent)
 {
-    const size_t buf_size = 128;
-    char lbuf[buf_size];
-    char* ptr;
-    int ret;
-
-    ret = parse(lbuf, buf_size, string, indent);
-
-    if (ret < 0)
-        return ret;
-
-    for (ptr = lbuf; *ptr != '\0'; ptr++)
+    for (auto ch : parse(str, indent))
     {
         if (isFull())
         {
@@ -174,11 +160,13 @@ int frame::append(const char* string, int indent)
                 idx_head = (idx_head + 1) % max_size;
             }
             else
-                return -1;
+            {
+                throw std::overflow_error("No room in buffer");
+            }
         }
 
-        buf[idx_tail] = *ptr;
-        if (*ptr == LINE_DELIMITER)
+        buf[idx_tail] = ch;
+        if (ch == LINE_DELIMITER)
             lines++;
 
         idx_tail = (idx_tail + 1) % max_size;
@@ -189,71 +177,27 @@ int frame::append(const char* string, int indent)
     if (pages > max_page)
         pages = max_page;
 
-    return 0;
-}
-
-// return 0 on seccuess
-int frame::insert(const char* string, int indent)
-{
-    const size_t buf_size = 128;
-    char lbuf[buf_size];
-    char* ptr;
-    int ret;
-    int i;
-
-    ret = parse(lbuf, buf_size, string, indent);
-
-    if (ret < 0)
-        return ret;
-
-    for (i = strlen(lbuf) - 1; i >= 0; i--)
-    {
-        ptr = &lbuf[i];
-        if (isFull())
-        {
-            if (overwrite)
-            {
-                idx_tail = (idx_tail + max_size - 1) % max_size;
-                if (buf[idx_tail] == LINE_DELIMITER)
-                    lines--;
-            }
-            else
-                return -1;
-        }
-
-        idx_head = (idx_head + max_size - 1) % max_size;
-
-        buf[idx_head] = *ptr;
-        if (*ptr == LINE_DELIMITER)
-            lines++;
-    }
-
-    pages = (lines / line_per_page) + ((lines % line_per_page) ? 1 : 0);
-
-    if (pages > max_page)
-        pages = max_page;
-
-    return 0;
+    return;
 }
 
 // return page size
-int frame::getPage(int page, char* page_buf, size_t page_buf_size)
+int frame::getPage(size_t page, char* page_buf, size_t page_buf_size)
 {
     int ret;
     uint16_t line = 0;
     uint16_t idx, len;
 
-    if (buf == NULL)
+    if (buf == nullptr)
         return -1;
 
     // 1-based page
     if (page > pages || page < 1)
         return -1;
 
-    if (page_buf == NULL || page_buf_size == 0)
+    if (page_buf == nullptr || page_buf_size == 0)
         return -1;
 
-    ret = snprintf(page_buf, 17, "%-10s %02d/%02d", title, page, pages);
+    ret = snprintf(page_buf, 17, "%-10s %02zd/%02zd", title, page, pages);
     len = strlen(page_buf);
     if (ret < 0)
         return -1;
@@ -287,20 +231,19 @@ int frame::getPage(int page, char* page_buf, size_t page_buf_size)
     return len;
 }
 
-// return 1 for frame buffer full
-int frame::isFull()
+bool frame::isFull() const
 {
-    if (buf == NULL)
-        return -1;
+    if (buf == nullptr)
+        return true;
 
     if ((idx_tail + 1) % max_size == idx_head)
-        return 1;
+        return true;
     else
-        return 0;
+        return false;
 }
 
 // return 1 for Escape Sequence
-int frame::isEscSeq(char chr)
+bool frame::isEscSeq(char chr)
 {
     uint8_t curr_sts = esc_sts;
 
@@ -314,77 +257,47 @@ int frame::isEscSeq(char chr)
         esc_sts = 0;
 
     if (curr_sts || esc_sts)
-        return 1;
+        return true;
     else
-        return 0;
+        return false;
 }
 
 // return 0 on success
-int frame::parse(char* lbuf, size_t buf_size, const char* input, int indent)
+auto frame::parse(const std::string& input, size_t indent) -> std::string
 {
-    uint8_t pos, esc;
-    size_t i;
-    const char *in, *end;
+    if (indent > line_width)
+        return {};
 
-    if (buf == NULL || input == NULL)
-        return -1;
+    std::string result;
+    size_t linepos = 0;
 
-    if (indent >= line_width || indent < 0)
-        return -1;
-
-    in = input;
-    end = in + strlen(input);
-    pos = 0; // line position
-    esc = 0; // escape state
-    i = 0;   // buf index
-    while (in != end)
+    for (auto ch : input)
     {
-        if (i >= buf_size)
-            break;
+        // Pad the line.
+        result.append(indent, ' ');
+        linepos = indent;
 
-        if (pos < indent)
+        bool esc = isEscSeq(ch);
+
+        // Check if new line is needed.
+        if (!esc && linepos == line_width)
         {
-            // fill indent
-            lbuf[i++] = ' ';
-            pos++;
-            continue;
+            result.push_back(LINE_DELIMITER);
+            result.append(indent, ' ');
+            linepos = indent;
         }
 
-        esc = isEscSeq(*in);
-
-        if (!esc && pos == line_width)
-        {
-            lbuf[i++] = LINE_DELIMITER;
-            pos = 0;
-            continue;
-        }
-
+        // Insert character.
+        result.push_back(ch);
         if (!esc)
-            pos++;
-
-        // fill input data
-        lbuf[i++] = *(in++);
+            ++linepos;
     }
 
-    // padding
-    while (pos <= line_width)
-    {
-        if (i >= buf_size)
-            break;
-        if (pos < line_width)
-            lbuf[i++] = ' ';
-        else
-            lbuf[i++] = LINE_DELIMITER;
-        pos++;
-    }
+    // Fill out remaining line.
+    result.append(line_width - linepos, ' ');
+    result.push_back(LINE_DELIMITER);
 
-    // full
-    if (i >= buf_size)
-        return -1;
-
-    lbuf[i++] = '\0';
-
-    return 0;
+    return result;
 }
 
 static int chk_cri_sel_update(uint8_t* cri_sel_up)
@@ -410,7 +323,7 @@ static int chk_cri_sel_update(uint8_t* cri_sel_up)
     }
     else
     {
-        if (frame_sel.buf == NULL || frame_sel.lines != 0 || pre_pos != pos)
+        if (frame_sel.buf == nullptr || frame_sel.lines != 0 || pre_pos != pos)
         {
             *cri_sel_up = 1;
         }
@@ -729,7 +642,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         // Only update frame data while getting page 1
 
         // initialize and clear frame
-        frame_info.init(FRAME_BUFF_SIZE);
+        frame_info.init();
         snprintf(frame_info.title, 32, "SYS_Info");
 
         bool platform = isMultiHostPlatform();
@@ -741,35 +654,35 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         getMaxHostPosition(maxPosition);
         if (hostPosition == BMC_POSITION || hostInstances == "0")
         {
-            frame_info.append("FRU:spb", 0);
+            frame_info.append("FRU:spb");
         }
         else if (hostPosition != BMC_POSITION && hostPosition <= maxPosition)
         {
             std::string data = "FRU:slot" + std::to_string(hostPosition);
-            frame_info.append(data.c_str(), 0);
+            frame_info.append(data);
         }
 
         // FRU
         std::string data;
-        frame_info.append("SN:", 0);
+        frame_info.append("SN:");
         if (getFruData(data, serialName) != 0)
         {
             data = "Not Found";
         }
-        frame_info.append(data.c_str(), 1);
-        frame_info.append("PN:", 0);
+        frame_info.append(data, 1);
+        frame_info.append("PN:");
         if (getFruData(data, partName) != 0)
         {
             data = "Not Found";
         }
-        frame_info.append(data.c_str(), 1);
+        frame_info.append(data, 1);
 
         // LAN
         getNetworkData(3, line_buff);
-        frame_info.append("BMC_IP:", 0);
+        frame_info.append("BMC_IP:");
         frame_info.append(line_buff, 1);
         getNetworkData(59, line_buff);
-        frame_info.append("BMC_IPv6:", 0);
+        frame_info.append("BMC_IPv6:");
         frame_info.append(line_buff, 1);
 
         // BMC ver
@@ -782,8 +695,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
                 if (line.find(verDel) != std::string::npos)
                 {
                     std::string bmcVer = line.substr(verDel.size());
-                    frame_info.append("BMC_FW_ver:", 0);
-                    frame_info.append(bmcVer.c_str(), 1);
+                    frame_info.append("BMC_FW_ver:");
+                    frame_info.append(bmcVer, 1);
                     break;
                 }
             }
@@ -795,8 +708,8 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
             std::string biosVer;
             if (getBiosVer(biosVer, hostPosition) == 0)
             {
-                frame_info.append("BIOS_FW_ver:", 0);
-                frame_info.append(biosVer.c_str(), 1);
+                frame_info.append("BIOS_FW_ver:");
+                frame_info.append(biosVer, 1);
             }
         }
 
@@ -804,20 +717,20 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         // Board ID
 
         // Battery - Use Escape sequence
-        frame_info.append("Battery:", 0);
+        frame_info.append("Battery:");
         frame_info.append(ESC_BAT "     ", 1);
         // frame_info.append(&frame_info, esc_bat, 1);
 
         // MCU Version - Use Escape sequence
-        frame_info.append("MCUbl_ver:", 0);
+        frame_info.append("MCUbl_ver:");
         frame_info.append(ESC_MCU_BL_VER, 1);
-        frame_info.append("MCU_ver:", 0);
+        frame_info.append("MCU_ver:");
         frame_info.append(ESC_MCU_RUN_VER, 1);
 
         // Sys config present device
         if (hostPosition != BMC_POSITION)
         {
-            frame_info.append("Sys Conf. info:", 0);
+            frame_info.append("Sys Conf. info:");
 
             // Dimm info
             std::vector<std::string> data;
@@ -825,7 +738,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
             {
                 for (auto& info : data)
                 {
-                    frame_info.append(info.c_str(), 1);
+                    frame_info.append(info, 1);
                 }
             }
             else
@@ -839,7 +752,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
             {
                 result = "Not Found";
             }
-            frame_info.append(result.c_str(), 1);
+            frame_info.append(result, 1);
         }
 
     } // End of update frame
@@ -872,9 +785,9 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
     if (page == 1)
     {
         // Initialize and clear frame (example initialization)
-        frame_postcode.init(FRAME_BUFF_SIZE);
+        frame_postcode.init();
         snprintf(frame_postcode.title, 32, "Extra Post Code");
-        frame_sel.overwrite = 1;
+        frame_sel.overwrite = true;
         frame_sel.max_page = 5;
 
         // Synchronously get D-Bus connection
@@ -902,7 +815,7 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
             for (const auto& [code, extra] : postcodes)
             {
                 result = std::format("{:02x}", code);
-                frame_postcode.append(result.c_str(), 0);
+                frame_postcode.append(result);
             }
         }
         catch (const std::exception& e)
@@ -1052,9 +965,9 @@ static panel panel_power_policy(size_t)
         if (item > 0 && item <= sizeof(pwr_policy_item_map))
         {
             policy = pwr_policy_item_map[item - 1];
-            pal_set_power_restore_policy(pos, &policy, NULL);
+            pal_set_power_restore_policy(pos, &policy, nullptr);
         }
-        pal_get_chassis_status(pos, NULL, buff, &res_len);
+        pal_get_chassis_status(pos, nullptr, buff, &res_len);
         policy = (((uint8_t)buff[0]) >> 5) & 0x7;
         snprintf(panels[PANEL_POWER_POLICY].item_str[1], 32, "%cPower On",
                  policy == POWER_CFG_ON ? '*' : ' ');
@@ -1103,7 +1016,7 @@ ipmi_ret_t plat_udbg_control_panel(uint8_t cur_panel, uint8_t operation,
     buffer[1] = item;
     buffer[2] = std::size(panels[cur_panel].item_str[item]);
 
-    if (buffer[2] > 0 && (buffer[2] + 3) < FRAME_PAGE_BUF_SIZE)
+    if (buffer[2] > 0 && (buffer[2] + 3u) < FRAME_PAGE_BUF_SIZE)
     {
         std::memcpy(&buffer[3], (panels[cur_panel].item_str[item]).c_str(),
                     buffer[2]);
