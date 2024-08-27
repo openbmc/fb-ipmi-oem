@@ -81,6 +81,30 @@
       },
       "revId": "676191ee16658b461e033f52bf07c3a3794bbfe5",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88157ae5_0505251d",
+        "filename": "src/usb-dbg.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-08-27T13:17:12Z",
+      "side": 1,
+      "message": "We\u0027ve attempted to discuss this same problem in the bmcweb commit.  The first 8 bytes should go in primary.  The 1 extra byte should go in secondary.  Otherwise we\u0027re never going to be able to upstream that bmcweb support.",
+      "parentUuid": "0905fe20_85dfe266",
+      "range": {
+        "startLine": 909,
+        "startChar": 16,
+        "endLine": 917,
+        "endChar": 17
+      },
+      "revId": "676191ee16658b461e033f52bf07c3a3794bbfe5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
