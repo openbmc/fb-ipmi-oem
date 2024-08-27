@@ -948,35 +948,35 @@ int plat_udbg_get_frame_data(uint8_t frame, uint8_t page, uint8_t* next,
     }
 }
 
-static uint8_t panel_main(uint8_t item)
+static panel panel_main(size_t item)
 {
     // Update item list when select item 0
     switch (item)
     {
         case 1:
-            return panels[PANEL_BOOT_ORDER].select(0);
+            return panels[std::to_underlying(panel::BOOT_ORDER)].select(0);
         case 2:
-            return panels[PANEL_POWER_POLICY].select(0);
+            return panels[std::to_underlying(panel::POWER_POLICY)].select(0);
         default:
-            return PANEL_MAIN;
+            return panel::MAIN;
     }
 }
 
-static uint8_t panel_boot_order(uint8_t selectedItemIndex)
+static panel panel_boot_order(size_t selectedItemIndex)
 {
     static constexpr size_t sizeBootOrder = 6;
     static constexpr size_t bootValid = 0x80;
 
     std::vector<uint8_t> bootSeq;
 
-    ctrl_panel& bootOrderPanel = panels[PANEL_BOOT_ORDER];
+    ctrl_panel& bootOrderPanel = panels[std::to_underlying(panel::BOOT_ORDER)];
 
     size_t pos = plat_get_fru_sel();
 
     if (pos == FRU_ALL)
     {
         bootOrderPanel.item_num = 0;
-        return PANEL_BOOT_ORDER;
+        return panel::BOOT_ORDER;
     }
 
     auto [bootObjPath, hostName] = ipmi::boot::objPath(pos);
@@ -1033,10 +1033,10 @@ static uint8_t panel_boot_order(uint8_t selectedItemIndex)
     }
 
     bootOrderPanel.item_num = validItem;
-    return PANEL_BOOT_ORDER;
+    return panel::BOOT_ORDER;
 }
 
-static uint8_t panel_power_policy(uint8_t)
+static panel panel_power_policy(size_t)
 {
 /* To be cleaned */
 #if 0
@@ -1069,18 +1069,18 @@ static uint8_t panel_power_policy(uint8_t)
         panels[PANEL_POWER_POLICY].item_num = 0;
     }
 #endif
-    return PANEL_POWER_POLICY;
+    return panel::POWER_POLICY;
 }
 
-ipmi_ret_t plat_udbg_control_panel(uint8_t panel, uint8_t operation,
+ipmi_ret_t plat_udbg_control_panel(uint8_t cur_panel, uint8_t operation,
                                    uint8_t item, uint8_t* count,
                                    uint8_t* buffer)
 {
-    if (panel > panelNum || panel < PANEL_MAIN)
+    if (cur_panel > panelNum || cur_panel < std::to_underlying(panel::MAIN))
         return IPMI_CC_PARM_OUT_OF_RANGE;
 
     // No more item; End of item list
-    if (item > panels[panel].item_num)
+    if (item > panels[cur_panel].item_num)
         return IPMI_CC_PARM_OUT_OF_RANGE;
 
     switch (operation)
@@ -1088,24 +1088,24 @@ ipmi_ret_t plat_udbg_control_panel(uint8_t panel, uint8_t operation,
         case 0: // Get Description
             break;
         case 1: // Select item
-            panel = panels[panel].select(item);
+            cur_panel = std::to_underlying(panels[cur_panel].select(item));
             item = 0;
             break;
         case 2: // Back
-            panel = panels[panel].parent;
+            cur_panel = std::to_underlying(panels[cur_panel].parent);
             item = 0;
             break;
         default:
             return IPMI_CC_PARM_OUT_OF_RANGE;
     }
 
-    buffer[0] = panel;
+    buffer[0] = cur_panel;
     buffer[1] = item;
-    buffer[2] = std::size(panels[panel].item_str[item]);
+    buffer[2] = std::size(panels[cur_panel].item_str[item]);
 
     if (buffer[2] > 0 && (buffer[2] + 3) < FRAME_PAGE_BUF_SIZE)
     {
-        std::memcpy(&buffer[3], (panels[panel].item_str[item]).c_str(),
+        std::memcpy(&buffer[3], (panels[cur_panel].item_str[item]).c_str(),
                     buffer[2]);
     }
     *count = buffer[2] + 3;

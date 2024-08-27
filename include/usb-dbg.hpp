@@ -114,29 +114,30 @@ struct frame frame_sel;
 struct frame frame_snr;
 struct frame frame_postcode;
 
-enum ENUM_PANEL
+enum class panel : uint8_t
 {
-    PANEL_MAIN = 1,
-    PANEL_BOOT_ORDER = 2,
-    PANEL_POWER_POLICY = 3,
+    NONE = 0,
+    MAIN = 1,
+    BOOT_ORDER = 2,
+    POWER_POLICY = 3,
 };
 
 struct ctrl_panel
 {
-    uint8_t parent;
-    uint8_t item_num;
-    std::string item_str[8];
-    uint8_t (*select)(uint8_t item);
+    panel parent;
+    size_t item_num;
+    std::array<std::string, 8> item_str;
+    panel (*select)(size_t item);
 };
 
-static uint8_t panel_main(uint8_t item);
-static uint8_t panel_boot_order(uint8_t item);
-static uint8_t panel_power_policy(uint8_t item);
+static panel panel_main(size_t item);
+static panel panel_boot_order(size_t item);
+static panel panel_power_policy(size_t item);
 
-static struct ctrl_panel panels[] = {
+static ctrl_panel panels[] = {
     {/* dummy entry for making other to 1-based */},
     {
-        .parent = PANEL_MAIN,
+        .parent = panel::MAIN,
         .item_num = 2,
         .item_str =
             {
@@ -147,7 +148,7 @@ static struct ctrl_panel panels[] = {
         .select = panel_main,
     },
     {
-        .parent = PANEL_MAIN,
+        .parent = panel::MAIN,
         .item_num = 0,
         .item_str =
             {
@@ -156,7 +157,7 @@ static struct ctrl_panel panels[] = {
         .select = panel_boot_order,
     },
     {
-        .parent = PANEL_MAIN,
+        .parent = panel::MAIN,
         .item_num = 0,
         .item_str =
             {
