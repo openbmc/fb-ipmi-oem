@@ -46,8 +46,8 @@ ipmi::RspType<> ipmiSBMRSendBootProgress(ipmi::Context::ptr ctx,
         auto primaryPostCode = reinterpret_cast<const uint64_t*>(data.data());
         auto postCode = postcode_t(bigEndianToHost(*primaryPostCode), data);
         auto conn = getSdBus();
-        auto hostbootRawObj = std::string(bootRawObjPrefix) +
-                              std::to_string(*hostId);
+        auto hostbootRawObj =
+            std::string(bootRawObjPrefix) + std::to_string(*hostId);
         auto method =
             conn->new_method_call(bootRawBusName, hostbootRawObj.data(),
                                   "org.freedesktop.DBus.Properties", "Set");
