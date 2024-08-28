@@ -44,7 +44,10 @@ ipmi::RspType<> ipmiSBMRSendBootProgress(ipmi::Context::ptr ctx,
     try
     {
         auto primaryPostCode = reinterpret_cast<const uint64_t*>(data.data());
-        auto postCode = postcode_t(bigEndianToHost(*primaryPostCode), data);
+        auto secondaryPostCode =
+            std::vector<uint8_t>(data.begin() + 8, data.end());
+        auto postCode =
+            postcode_t(bigEndianToHost(*primaryPostCode), secondaryPostCode);
         auto conn = getSdBus();
         auto hostbootRawObj =
             std::string(bootRawObjPrefix) + std::to_string(*hostId);
