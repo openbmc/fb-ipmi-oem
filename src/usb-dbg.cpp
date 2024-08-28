@@ -898,10 +898,13 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
             reply.read(postcodes);
 
             // Insert retrieved postcodes into frame_postcode
-            std::string result;
             for (const auto& [code, extra] : postcodes)
             {
-                result = std::format("{:02x}", code);
+                std::string result = std::format("{:02x}", code);
+                for (const auto& byte : extra)
+                {
+                    result += std::format("{:02x}", byte);
+                }
                 frame_postcode.append(result.c_str(), 0);
             }
         }
