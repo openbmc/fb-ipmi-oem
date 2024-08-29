@@ -273,24 +273,24 @@ auto frame::parse(const std::string& input, size_t indent) -> std::string
 
     for (auto ch : input)
     {
-        // Pad the line.
-        result.append(indent, ' ');
-        linepos = indent;
-
-        bool esc = isEscSeq(ch);
-
-        // Check if new line is needed.
-        if (!esc && linepos == line_width)
+        if (linepos == 0)
         {
-            result.push_back(LINE_DELIMITER);
             result.append(indent, ' ');
             linepos = indent;
         }
 
         // Insert character.
         result.push_back(ch);
-        if (!esc)
-            ++linepos;
+
+        if (!isEscSeq(ch))
+        {
+            // Check if new line is needed.
+            if (++linepos == line_width)
+            {
+                result.push_back(LINE_DELIMITER);
+                linepos = 0;
+            }
+        }
     }
 
     // Fill out remaining line.
