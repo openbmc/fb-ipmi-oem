@@ -782,13 +782,20 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
 static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
                              uint8_t* count, uint8_t* buffer)
 {
+    // up to 70 codes can be displayed on 10 pages
+    static constexpr size_t maxPostcodes = 70;
+
+    static constexpr const char* formatStr =
+        (postCodeSize == 4)   ? "{:08X}"
+        : (postCodeSize == 8) ? "{:016X}"
+                              : "{:02X}";
+
     if (page == 1)
     {
         // Initialize and clear frame (example initialization)
         frame_postcode.init();
-        snprintf(frame_postcode.title, 32, "Extra Post Code");
-        frame_sel.overwrite = true;
-        frame_sel.max_page = 5;
+        snprintf(frame_postcode.title, 32, "POST CODE");
+        frame_postcode.max_page = 10;
 
         // Synchronously get D-Bus connection
         auto bus = sdbusplus::bus::new_default();
@@ -810,15 +817,23 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
             std::vector<std::tuple<uint64_t, std::vector<uint8_t>>> postcodes;
             reply.read(postcodes);
 
-            // Insert retrieved postcodes into frame_postcode
-            for (const auto& [code, extra] : postcodes)
+            // retrieve the latest postcodes
+            size_t numEntries = std::min(maxPostcodes, postcodes.size());
+            for (auto it = postcodes.rbegin();
+                 it != postcodes.rbegin() + numEntries; ++it)
             {
-                std::string result = std::format("{:02x}", code);
+                const auto& [code, extra] = *it;
+                std::string result = std::format(formatStr, code);
                 for (const auto& byte : extra)
                 {
-                    result += std::format("{:02x}", byte);
+                    result += std::format("{:02X}", byte);
                 }
+
                 frame_postcode.append(result);
+                if (frame_postcode.lines >= maxPostcodes)
+                {
+                    break;
+                }
             }
         }
         catch (const std::exception& e)
