@@ -24,7 +24,7 @@ void registerSBMRFunctions() __attribute__((constructor));
 ipmi::RspType<> ipmiSBMRSendBootProgress(ipmi::Context::ptr ctx,
                                          std::vector<uint8_t> data)
 {
-    using postcode_t = std::tuple<uint64_t, std::vector<uint8_t>>;
+    using postcode_t = std::tuple<std::vector<uint8_t>, std::vector<uint8_t>>;
 
     std::optional<size_t> hostId = findHost(ctx->hostIdx);
 
@@ -43,11 +43,7 @@ ipmi::RspType<> ipmiSBMRSendBootProgress(ipmi::Context::ptr ctx,
 
     try
     {
-        auto primaryPostCode = reinterpret_cast<const uint64_t*>(data.data());
-        auto secondaryPostCode =
-            std::vector<uint8_t>(data.begin() + 8, data.end());
-        auto postCode =
-            postcode_t(bigEndianToHost(*primaryPostCode), secondaryPostCode);
+        auto postCode = postcode_t(data, std::vector<uint8_t>());
         auto conn = getSdBus();
         auto hostbootRawObj =
             std::string(bootRawObjPrefix) + std::to_string(*hostId);
