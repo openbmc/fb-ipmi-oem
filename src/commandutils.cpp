@@ -50,7 +50,7 @@ std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void)
         return std::nullopt;
     }
 
-    const std::string suffix = "/MB_FRU";
+    const std::string suffix = "/" + mbFruEEpromName;
     for (const auto& path : paths)
     {
         if (path.ends_with(suffix))

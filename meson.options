@@ -10,3 +10,8 @@ option(
   'machine',
   type: 'string',
   description: 'Machine')
+option(
+  'mb-fru-eeprom-name',
+  type: 'string',
+  description: 'Primary Mother Board FRU EEPROM Name',
+  value: 'MB_FRU')
