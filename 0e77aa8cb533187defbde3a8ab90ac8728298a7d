@@ -16,6 +16,24 @@
       "message": "Is there any other way to detect which of the entities is the main server board? IMHO this code is broken on multi-host platforms anyway, so it cannot be a consistent feature to begin with.\n\nI am thinking, we could check to see if there are other decorators to confirm if this is indeed our server platform?",
       "revId": "0e77aa8cb533187defbde3a8ab90ac8728298a7d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a02638b2_aa98ee81",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1001264
+      },
+      "writtenOn": "2024-10-04T03:14:45Z",
+      "side": 1,
+      "message": "\u003e Is there any other way to detect which of the entities is the main server board? IMHO this code is broken on multi-host platforms anyway, so it cannot be a consistent feature to begin with.\n\nYes, actually this FRU ID 0 to specific FRU EEPROM mapping does not support multi-hots platform.\n\n\u003e I am thinking, we could check to see if there are other decorators to confirm if this is indeed our server platform?\n\nI saw Yv4 has added SlotNumber, probally multi-host platform can use this property to find correct FRU EEPROM bus and address.\nhttps://github.com/openbmc/entity-manager/blob/master/configurations/yosemite4_sentineldome_t1.json#L360-L362\n\nHowever, Catalina is a single-host system with two MB module, it a different case compare to Harma (single-host) \u0026 Yv4 (multi-host).\n\nCould we use this patch as a quick fix for single-host platform?",
+      "parentUuid": "d969db70_289e841c",
+      "revId": "0e77aa8cb533187defbde3a8ab90ac8728298a7d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
