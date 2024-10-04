@@ -34,6 +34,24 @@
       "parentUuid": "d969db70_289e841c",
       "revId": "0e77aa8cb533187defbde3a8ab90ac8728298a7d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ecbba2c7_b1121524",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2024-10-04T19:54:28Z",
+      "side": 1,
+      "message": "IMHO I dont see the urgency here? From what I have noticed by grepping through the callers of this function, the use cases is to get GUID/FRUID via IPMI.\n\nBoth features are considered not-required and unused. So, I dont see the need to push a workaround if it is not needed immediately.",
+      "parentUuid": "a02638b2_aa98ee81",
+      "revId": "0e77aa8cb533187defbde3a8ab90ac8728298a7d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
