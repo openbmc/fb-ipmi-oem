@@ -787,11 +787,6 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
     // up to 70 codes can be displayed on 10 pages
     static constexpr size_t maxPostcodes = 70;
 
-    static constexpr const char* formatStr =
-        (postCodeSize == 4)   ? "{:08X}"
-        : (postCodeSize == 8) ? "{:016X}"
-                              : "{:02X}";
-
     if (page == 1)
     {
         // Initialize and clear frame (example initialization)
@@ -816,17 +811,19 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
             auto reply = bus.call(method); // Send synchronous method call
 
             // Read postcode value
-            std::vector<std::tuple<uint64_t, std::vector<uint8_t>>> postcodes;
+            std::vector<std::tuple<std::vector<uint8_t>, std::vector<uint8_t>>>
+                postcodes;
             reply.read(postcodes);
 
             // retrieve the latest postcodes
             size_t numEntries = std::min(maxPostcodes, postcodes.size());
-            for (auto it = postcodes.rbegin();
-                 it != postcodes.rbegin() + numEntries; ++it)
+            auto range = std::ranges::subrange(postcodes.rbegin(),
+                                               postcodes.rbegin() + numEntries);
+            for (const auto& [code, extra] : range)
             {
-                const auto& [code, extra] = *it;
-                std::string result = std::format(formatStr, code);
-                for (const auto& byte : extra)
+                std::string result;
+                result.reserve(2 * code.size());
+                for (const auto& byte : code)
                 {
                     result += std::format("{:02X}", byte);
                 }
