@@ -1393,18 +1393,6 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
             }
         }
 
-        time_t timeStamp = static_cast<time_t>(data->timeStamp);
-        std::string timeStr;
-        std::tm ts;
-        if (localtime_r(&timeStamp, &ts))
-        {
-            char buf[64];
-            if (strftime(buf, sizeof(buf), "%c", &ts))
-            {
-                timeStr = buf;
-            }
-        }
-
         parseStdSel(data, errLog);
         ptr = &(data->eventData1);
         std::vector<uint8_t> evtData(ptr, ptr + 3);
@@ -1416,7 +1404,7 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
                      << std::setw(2) << (int)(data->sensorNum);
 
         msgLog += errType + " (0x" + recTypeStream.str() +
-                  "), Time: " + timeStr + ", Sensor: " + sensorName + " (0x" +
+                  "), Sensor: " + sensorName + " (0x" +
                   senNumStream.str() + "), Event Data: (" + eventData + ") " +
                   errLog;
     }
@@ -1434,23 +1422,11 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
         std::string oemDataStr;
         toHexStr(oemData, oemDataStr);
 
-        time_t timeStamp = static_cast<time_t>(data->timeStamp);
-        std::string timeStr;
-        std::tm ts;
-        if (localtime_r(&timeStamp, &ts))
-        {
-            char buf[64];
-            if (strftime(buf, sizeof(buf), "%c", &ts))
-            {
-                timeStr = buf;
-            }
-        }
-
         errType = oemTSErr;
         parseOemSel(data, errLog);
 
         msgLog += errType + " (0x" + recTypeStream.str() +
-                  "), Time: " + timeStr + ", MFG ID: " + mfrIdStr +
+                  "), MFG ID: " + mfrIdStr +
                   ", OEM Data: (" + oemDataStr + ") " + errLog;
     }
     else if (recType == fbUniErrType)
