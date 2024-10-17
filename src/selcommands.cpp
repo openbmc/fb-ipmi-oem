@@ -343,17 +343,39 @@ static void logPostErr(uint8_t* data, std::string& errLog)
 static void logMchChkErr(uint8_t* data, std::string& errLog)
 {
     /* TODO: Call add_cri_sel for CRITICAL_IRQ */
-    if ((data[0] & 0x0F) == 0x0B)
+    switch (data[0] & 0x0F)
     {
-        errLog = "Uncorrectable";
-    }
-    else if ((data[0] & 0x0F) == 0x0C)
-    {
-        errLog = "Correctable";
-    }
-    else
-    {
-        errLog = "Unknown";
+        case 0x0B:
+            switch ((data[1]>>5) & 0x03)
+            {
+                case 0x00:
+                    errLog = "Uncorrected Recoverable Error";
+                    break;
+                case 0x01:
+                    errLog = "Uncorrected Thread Fatal Error";
+                    break;
+                case 0x02:
+                    errLog = "Uncorrected System Fatal Error";
+                    break;
+                default:
+                    errLog = "Unknown";
+            }
+            break;
+        case 0x0C:
+            switch ((data[1]>>5) & 0x03)
+            {
+                case 0x00:
+                    errLog = "Correctable Error";
+                    break;
+                case 0x01:
+                    errLog = "Deferred Error";
+                    break;
+                default:
+                    errLog = "Unknown";
+            }
+            break;
+        default:
+            errLog = "Unknown";
     }
 
     errLog += ", Machine Check bank Number " + std::to_string(data[1]) +
