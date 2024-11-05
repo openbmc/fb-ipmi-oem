@@ -2643,8 +2643,25 @@ static void registerOEMFunctions(void)
     std::ifstream file(JSON_OEM_DATA_FILE);
     if (file)
     {
-        file >> oemData;
+        try
+        {
+            file >> oemData;
+        }
+        // If parsing fails, initialize oemData as an empty JSON and
+        // overwrite the file
+        catch (const nlohmann::json::parse_error& e)
+        {
+            lg2::error("Error parsing JSON file: {ERROR}", "ERROR", e);
+            oemData = nlohmann::json::object();
+            std::ofstream outFile(JSON_OEM_DATA_FILE, std::ofstream::trunc);
+            outFile << oemData.dump(4); // Write empty JSON object to the file
+            outFile.close();
+        }
         file.close();
+    }
+    else
+    {
+        lg2::error("Failed to open JSON file.");
     }
 
     phosphor::logging::log<phosphor::logging::level::INFO>(
