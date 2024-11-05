@@ -128,6 +128,22 @@ class SELData
         selDataObj[KEY_FREE_SPACE] = 0xFFFF;
     }
 
+    void writeEmptyJson()
+    {
+        selDataObj = nlohmann::json::object(); // Create an empty JSON object
+        std::ofstream outFile(SEL_JSON_DATA_FILE);
+        if (outFile)
+        {
+            // Write empty JSON object to the file
+            outFile << selDataObj.dump(4);
+            outFile.close();
+        }
+        else
+        {
+            lg2::info("Failed to create SEL JSON file with empty JSON.");
+        }
+    }
+
   public:
     SELData()
     {
@@ -135,8 +151,23 @@ class SELData
         std::ifstream file(SEL_JSON_DATA_FILE);
         if (file)
         {
-            file >> selDataObj;
+            try
+            {
+                file >> selDataObj;
+            }
+            catch (const nlohmann::json::parse_error& e)
+            {
+                lg2::error("Error parsing SEL JSON file: {ERROR}", "ERROR", e);
+                writeEmptyJson();
+                init(); // Initialize to default values
+            }
             file.close();
+        }
+        else
+        {
+            lg2::info("Failed to open SEL JSON file.");
+            writeEmptyJson();
+            init();
         }
 
         /* Initialize SelData object if no entries. */
