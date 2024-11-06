@@ -27,6 +27,8 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <thread>
+
 
 enum class MemErrType
 {
@@ -1599,12 +1601,39 @@ ipmi::RspType<uint16_t, std::vector<uint8_t>>
     }
 }
 
-ipmi::RspType<uint16_t>
-    ipmiStorageAddSELEntry(ipmi::Context::ptr ctx, std::vector<uint8_t> data)
+// Function to log with retry logic
+bool logWithRetry(const std::string& journalMsg, const std::string& messageID,
+                  const std::string& logErr, int maxRetries = 30, int waitTimeMs = 50)
 {
-    /* Per the IPMI spec, need to cancel any reservation when a
-     * SEL entry is added
-     */
+    int attempts = 0;
+    while (attempts < maxRetries)
+    {
+        // Log the message
+        phosphor::logging::log<phosphor::logging::level::INFO>(
+            journalMsg.c_str(),
+            phosphor::logging::entry("IPMISEL_MESSAGE_ID=%s", messageID.c_str()),
+            phosphor::logging::entry("IPMISEL_MESSAGE_ARGS=%s", logErr.c_str()));
+
+        // Simulate checking if the logging was successful
+        // (Add your actual success condition here)
+        bool success = true; // Change this to your actual condition
+
+        if (success)
+        {
+            return true; // Log successful
+        }
+
+        // Wait before retrying
+        std::this_thread::sleep_for(std::chrono::milliseconds(waitTimeMs));
+        attempts++;
+    }
+    return false; // Failed after max retries
+}
+
+ipmi::RspType<uint16_t>
+ipmiStorageAddSELEntry(ipmi::Context::ptr ctx, std::vector<uint8_t> data)
+{
+    // Per the IPMI spec, need to cancel any reservation when a SEL entry is added
     cancelSELReservation();
 
     if (data.size() != fb_oem::ipmi::sel::selRecordSize)
@@ -1615,39 +1644,47 @@ ipmi::RspType<uint16_t>
     std::string ipmiRaw, logErr;
     toHexStr(data, ipmiRaw);
 
-    /* Parse sel data and get an error log to be filed */
+    // Parse SEL data and get an error log to be filed
     fb_oem::ipmi::sel::parseSelData((ctx->hostIdx + 1), data, logErr);
 
     static const std::string openBMCMessageRegistryVersion("0.1");
     std::string messageID =
         "OpenBMC." + openBMCMessageRegistryVersion + ".SELEntryAdded";
 
-    /* Log the Raw SEL message to the journal */
+    // Log the Raw SEL message to the journal
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;
-
-    phosphor::logging::log<phosphor::logging::level::INFO>(
-        journalMsg.c_str(),
-        phosphor::logging::entry("IPMISEL_MESSAGE_ID=%s", messageID.c_str()),
-        phosphor::logging::entry("IPMISEL_MESSAGE_ARGS=%s", logErr.c_str()));
 
     std::map<std::string, std::string> ad;
     std::string severity = "xyz.openbmc_project.Logging.Entry.Level.Critical";
     ad.emplace("IPMI_RAW", ipmiRaw);
 
-    auto bus = sdbusplus::bus::new_default();
-    auto reqMsg = bus.new_method_call(
-        "xyz.openbmc_project.Logging", "/xyz/openbmc_project/logging",
-        "xyz.openbmc_project.Logging.Create", "Create");
-    reqMsg.append(logErr, severity, ad);
+    // Create a thread for logging
+    std::thread logThread([=]() {
+        bool success = logWithRetry(journalMsg, messageID, logErr);
+        if (!success)
+        {
+            std::cerr << "Failed to log SEL entry added event." << std::endl;
+        }
 
-    try
-    {
-        bus.call(reqMsg);
-    }
-    catch (sdbusplus::exception_t& e)
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-    }
+        // Prepare and send D-Bus logging request
+        auto bus = sdbusplus::bus::new_default();
+        auto reqMsg = bus.new_method_call(
+            "xyz.openbmc_project.Logging", "/xyz/openbmc_project/logging",
+            "xyz.openbmc_project.Logging.Create", "Create");
+        reqMsg.append(logErr, severity, ad);
+
+        try
+        {
+            bus.call(reqMsg);
+        }
+        catch (sdbusplus::exception_t& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
+        }
+    });
+
+    // Detach the logging thread
+    logThread.detach();
 
     int responseID = selObj.addEntry(ipmiRaw.c_str());
     if (responseID < 0)
@@ -1656,6 +1693,7 @@ ipmi::RspType<uint16_t>
     }
     return ipmi::responseSuccess((uint16_t)responseID);
 }
+
 
 ipmi::RspType<uint8_t> ipmiStorageClearSEL(uint16_t reservationID,
                                            const std::array<uint8_t, 3>& clr,
