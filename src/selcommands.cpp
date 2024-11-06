@@ -27,6 +27,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 enum class MemErrType
 {
@@ -1599,6 +1600,47 @@ ipmi::RspType<uint16_t, std::vector<uint8_t>>
     }
 }
 
+// Retry function to log the SEL entry message and make D-Bus call
+bool logWithRetry(
+    const std::string& journalMsg, const std::string& messageID,
+    const std::string& logErr, const std::string& severity,
+    const std::map<std::string, std::string>& ad, int maxRetries = 10,
+    std::chrono::milliseconds waitTimeMs = std::chrono::milliseconds(100))
+{
+    // Attempt to log the SEL entry message
+    lg2::info("SEL Entry Added: {IPMI_RAW}, IPMISEL_MESSAGE_ID={MESSAGE_ID}, IPMISEL_MESSAGE_ARGS={LOG_ERR}",
+              "IPMI_RAW", journalMsg, "MESSAGE_ID",  messageID, "LOG_ERR", logErr);
+
+    int attempts = 0;
+    while (attempts < maxRetries)
+    {
+        // Create D-Bus call
+        auto bus = sdbusplus::bus::new_default();
+        auto reqMsg = bus.new_method_call(
+            "xyz.openbmc_project.Logging", "/xyz/openbmc_project/logging",
+            "xyz.openbmc_project.Logging.Create", "Create");
+        reqMsg.append(logErr, severity, ad);
+
+        try
+        {
+            // Attempt to make the D-Bus call
+            bus.call(reqMsg);
+            return true; // D-Bus call successful, exit the loop
+        }
+        catch (sdbusplus::exception_t& e)
+        {
+            lg2::error("D-Bus call failed: {ERROR}", "ERROR", e);
+        }
+
+        // Wait before retrying
+        std::this_thread::sleep_for(std::chrono::milliseconds(waitTimeMs));
+        attempts++;
+    }
+
+    return false; // Failed after max retries
+}
+
+// Main function to add SEL entry
 ipmi::RspType<uint16_t>
     ipmiStorageAddSELEntry(ipmi::Context::ptr ctx, std::vector<uint8_t> data)
 {
@@ -1625,36 +1667,26 @@ ipmi::RspType<uint16_t>
     /* Log the Raw SEL message to the journal */
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;
 
-    phosphor::logging::log<phosphor::logging::level::INFO>(
-        journalMsg.c_str(),
-        phosphor::logging::entry("IPMISEL_MESSAGE_ID=%s", messageID.c_str()),
-        phosphor::logging::entry("IPMISEL_MESSAGE_ARGS=%s", logErr.c_str()));
-
     std::map<std::string, std::string> ad;
     std::string severity = "xyz.openbmc_project.Logging.Entry.Level.Critical";
     ad.emplace("IPMI_RAW", ipmiRaw);
 
-    auto bus = sdbusplus::bus::new_default();
-    auto reqMsg = bus.new_method_call(
-        "xyz.openbmc_project.Logging", "/xyz/openbmc_project/logging",
-        "xyz.openbmc_project.Logging.Create", "Create");
-    reqMsg.append(logErr, severity, ad);
-
-    try
-    {
-        bus.call(reqMsg);
-    }
-    catch (sdbusplus::exception_t& e)
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-    }
+    // Launch the logging thread
+    std::thread([=]() {
+        bool success =
+            logWithRetry(journalMsg, messageID, logErr, severity, ad);
+        if (!success)
+        {
+            lg2::error("Failed to log SEL entry added event after retries.");
+        }
+    }).detach();
 
     int responseID = selObj.addEntry(ipmiRaw.c_str());
     if (responseID < 0)
     {
         return ipmi::responseUnspecifiedError();
     }
-    return ipmi::responseSuccess((uint16_t)responseID);
+    return ipmi::responseSuccess(static_cast<uint16_t>(responseID));
 }
 
 ipmi::RspType<uint8_t> ipmiStorageClearSEL(uint16_t reservationID,
