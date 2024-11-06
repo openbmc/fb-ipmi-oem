@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2dd75111_a87495db",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-06T06:24:42Z",
+      "side": 1,
+      "message": "Just `e`, not `e.what()`.",
+      "range": {
+        "startLine": 2654,
+        "startChar": 68,
+        "endLine": 2654,
+        "endChar": 76
+      },
+      "revId": "094822d74789d4b92191c5b55f22cc86cfeecedc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a520204_59a910ee",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 2664,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-06T06:24:42Z",
+      "side": 1,
+      "message": "`lg2::info` also.",
+      "range": {
+        "startLine": 2664,
+        "startChar": 8,
+        "endLine": 2664,
+        "endChar": 62
+      },
+      "revId": "094822d74789d4b92191c5b55f22cc86cfeecedc",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
