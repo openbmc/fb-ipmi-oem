@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a20c77c_3de72cab",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1607,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-07T18:07:05Z",
+      "side": 1,
+      "message": "Use std::chrono::millisconds here.",
+      "range": {
+        "startLine": 1607,
+        "startChar": 39,
+        "endLine": 1607,
+        "endChar": 42
+      },
+      "revId": "5c25f56d5dc8052a4eb7a8552961b8a828c624bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "80bb4d00_406078ba",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1618,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-07T18:07:05Z",
+      "side": 1,
+      "message": "Move this outside of the while-loop.  It is a journal call which is certain to pass.",
+      "range": {
+        "startLine": 1612,
+        "startChar": 0,
+        "endLine": 1618,
+        "endChar": 54
+      },
+      "revId": "5c25f56d5dc8052a4eb7a8552961b8a828c624bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "095ab269_a055e464",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1635,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-07T18:07:05Z",
+      "side": 1,
+      "message": "Ideally new code would use lg2.",
+      "range": {
+        "startLine": 1635,
+        "startChar": 12,
+        "endLine": 1635,
+        "endChar": 35
+      },
+      "revId": "5c25f56d5dc8052a4eb7a8552961b8a828c624bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "151ceaef_1544dd31",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1678,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-07T18:07:05Z",
+      "side": 1,
+      "message": "nit: this can just be:\n\nstd::thread( ... lambda ...).detach();\n\nie. There is no need for a named variable here.",
+      "range": {
+        "startLine": 1678,
+        "startChar": 4,
+        "endLine": 1678,
+        "endChar": 25
+      },
+      "revId": "5c25f56d5dc8052a4eb7a8552961b8a828c624bb",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
