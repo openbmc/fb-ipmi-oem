@@ -211,69 +211,78 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     {
         return IPMI_CC_OK; // cache already up to date
     }
+
     // if timer is running, stop it and writeFru manually
-    else if (timerRunning)
+    if (timerRunning)
     {
         cacheTimer->stop();
         writeFru();
     }
 
-    sdbusplus::message_t getObjects = dbus.new_method_call(
-        fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
-        "GetManagedObjects");
-    ManagedObjectType frus;
-    try
-    {
-        sdbusplus::message_t resp = dbus.call(getObjects);
-        resp.read(frus);
-    }
-    catch (const sdbusplus::exception_t&)
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "replaceCacheFru: error getting managed objects");
-        return IPMI_CC_RESPONSE_ERROR;
-    }
-
     deviceHashes.clear();
-
-    uint8_t fruHash = 0;
-    uint8_t mbFruBus = 0, mbFruAddr = 0;
-
-    auto device = getMbFruDevice();
-    if (device)
+    auto devices = getFruDevices();
+    if (!devices.empty())
     {
-        std::tie(mbFruBus, mbFruAddr) = *device;
-        deviceHashes.emplace(0, std::make_pair(mbFruBus, mbFruAddr));
-        fruHash++;
-    }
-
-    for (const auto& fru : frus)
-    {
-        auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
-        if (fruIface == fru.second.end())
+        for (const auto& fruid : devices)
         {
-            continue;
-        }
-
-        auto busFind = fruIface->second.find("BUS");
-        auto addrFind = fruIface->second.find("ADDRESS");
-        if (busFind == fruIface->second.end() ||
-            addrFind == fruIface->second.end())
-        {
-            phosphor::logging::log<phosphor::logging::level::INFO>(
-                "fru device missing Bus or Address",
-                phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
-            continue;
-        }
-
-        uint8_t fruBus = std::get<uint32_t>(busFind->second);
-        uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
-        if (fruBus != mbFruBus || fruAddr != mbFruAddr)
-        {
-            deviceHashes.emplace(fruHash, std::make_pair(fruBus, fruAddr));
-            fruHash++;
+            deviceHashes.emplace(fruid.id,
+                                 std::make_pair(fruid.bus, fruid.address));
         }
     }
+    else
+    {
+        uint8_t fruHash = 0;
+        uint8_t mbFruBus = 0, mbFruAddr = 0;
+        if (auto device = getMbFruDevice())
+        {
+            std::tie(mbFruBus, mbFruAddr) = *device;
+            deviceHashes.emplace(fruHash++,
+                                 std::make_pair(mbFruBus, mbFruAddr));
+        }
+
+        sdbusplus::message_t getObjects = dbus.new_method_call(
+            fruDeviceServiceName, "/", "org.freedesktop.DBus.ObjectManager",
+            "GetManagedObjects");
+        ManagedObjectType frus;
+        try
+        {
+            sdbusplus::message_t resp = dbus.call(getObjects);
+            resp.read(frus);
+        }
+        catch (const sdbusplus::exception_t& e)
+        {
+            lg2::error("GetManagedObjects failed: {ERROR}", "ERROR", e);
+            return IPMI_CC_RESPONSE_ERROR;
+        }
+
+        for (const auto& fru : frus)
+        {
+            auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
+            if (fruIface == fru.second.end())
+            {
+                continue;
+            }
+
+            auto busFind = fruIface->second.find("BUS");
+            auto addrFind = fruIface->second.find("ADDRESS");
+            if (busFind == fruIface->second.end() ||
+                addrFind == fruIface->second.end())
+            {
+                lg2::info("FRU device missing Bus or Address: {FRU}", "FRU",
+                          fru.first.str);
+                continue;
+            }
+
+            uint8_t fruBus = std::get<uint32_t>(busFind->second);
+            uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
+            if (fruBus != mbFruBus || fruAddr != mbFruAddr)
+            {
+                deviceHashes.emplace(fruHash++,
+                                     std::make_pair(fruBus, fruAddr));
+            }
+        }
+    }
+
     auto deviceFind = deviceHashes.find(devId);
     if (deviceFind == deviceHashes.end())
     {
@@ -292,8 +301,9 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         sdbusplus::message_t getRawResp = dbus.call(getRawFru);
         getRawResp.read(fruCache);
     }
-    catch (const sdbusplus::exception_t&)
+    catch (const sdbusplus::exception_t& e)
     {
+        lg2::error("GetRawFru failed: {ERROR}", "ERROR", e);
         lastDevId = 0xFF;
         cacheBus = 0xFFFF;
         cacheAddr = 0xFF;

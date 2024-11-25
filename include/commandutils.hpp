@@ -96,10 +96,18 @@ inline static void printCommand(unsigned int netfn, unsigned int cmd)
     }
 }
 
-std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void);
-
 namespace ipmi
 {
 using DbusVariant = std::variant<std::string, bool, uint8_t, uint16_t, int16_t,
                                  uint32_t, int32_t, uint64_t, int64_t, double>;
+
+struct FruDevice
+{
+    uint8_t id; // IPMI FRU ID 0 ~ 255
+    uint64_t bus;
+    uint64_t address;
+};
+
+std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void);
+std::vector<FruDevice> getFruDevices(void);
 } // namespace ipmi
