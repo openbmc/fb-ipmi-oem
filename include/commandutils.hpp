@@ -97,6 +97,8 @@ inline static void printCommand(unsigned int netfn, unsigned int cmd)
 }
 
 std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void);
+std::optional<std::vector<std::tuple<uint8_t, uint8_t, uint8_t>>>
+    getFruDevices(void);
 
 namespace ipmi
 {

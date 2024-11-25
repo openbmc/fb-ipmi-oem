@@ -236,42 +236,55 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
 
     deviceHashes.clear();
 
-    uint8_t fruHash = 0;
-    uint8_t mbFruBus = 0, mbFruAddr = 0;
-
-    auto device = getMbFruDevice();
-    if (device)
+    auto devices = getFruDevices();
+    if (devices)
     {
-        std::tie(mbFruBus, mbFruAddr) = *device;
-        deviceHashes.emplace(0, std::make_pair(mbFruBus, mbFruAddr));
-        fruHash++;
+        for (const auto& fruid : *devices)
+        {
+            uint8_t id, bus, addr;
+            std::tie(id, bus, addr) = fruid;
+            deviceHashes.emplace(id, std::make_pair(bus, addr));
+        }
     }
-
-    for (const auto& fru : frus)
+    else
     {
-        auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
-        if (fruIface == fru.second.end())
-        {
-            continue;
-        }
+        uint8_t fruHash = 0;
+        uint8_t mbFruBus = 0, mbFruAddr = 0;
 
-        auto busFind = fruIface->second.find("BUS");
-        auto addrFind = fruIface->second.find("ADDRESS");
-        if (busFind == fruIface->second.end() ||
-            addrFind == fruIface->second.end())
+        auto device = getMbFruDevice();
+        if (device)
         {
-            phosphor::logging::log<phosphor::logging::level::INFO>(
-                "fru device missing Bus or Address",
-                phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
-            continue;
-        }
-
-        uint8_t fruBus = std::get<uint32_t>(busFind->second);
-        uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
-        if (fruBus != mbFruBus || fruAddr != mbFruAddr)
-        {
-            deviceHashes.emplace(fruHash, std::make_pair(fruBus, fruAddr));
+            std::tie(mbFruBus, mbFruAddr) = *device;
+            deviceHashes.emplace(0, std::make_pair(mbFruBus, mbFruAddr));
             fruHash++;
+        }
+
+        for (const auto& fru : frus)
+        {
+            auto fruIface = fru.second.find("xyz.openbmc_project.FruDevice");
+            if (fruIface == fru.second.end())
+            {
+                continue;
+            }
+
+            auto busFind = fruIface->second.find("BUS");
+            auto addrFind = fruIface->second.find("ADDRESS");
+            if (busFind == fruIface->second.end() ||
+                addrFind == fruIface->second.end())
+            {
+                phosphor::logging::log<phosphor::logging::level::INFO>(
+                    "fru device missing Bus or Address",
+                    phosphor::logging::entry("FRU=%s", fru.first.str.c_str()));
+                continue;
+            }
+
+            uint8_t fruBus = std::get<uint32_t>(busFind->second);
+            uint8_t fruAddr = std::get<uint32_t>(addrFind->second);
+            if (fruBus != mbFruBus || fruAddr != mbFruAddr)
+            {
+                deviceHashes.emplace(fruHash, std::make_pair(fruBus, fruAddr));
+                fruHash++;
+            }
         }
     }
     auto deviceFind = deviceHashes.find(devId);
