@@ -704,7 +704,7 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
             }
         }
 
-        if (hostPosition != BMC_POSITION)
+        if (hostPosition != BMC_POSITION || hostInstances == "0")
         {
             // BIOS ver
             std::string biosVer;
