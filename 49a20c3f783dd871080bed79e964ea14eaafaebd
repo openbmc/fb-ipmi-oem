@@ -1,0 +1,233 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f6398ef6_27db4c54",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "What does the tuple represent?  Can we make a struct for this for clarity?",
+      "range": {
+        "startLine": 73,
+        "startChar": 26,
+        "endLine": 73,
+        "endChar": 63
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9f4fd4f_3de50e8c",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Can\u0027t this return an empty vector rather than a std::optional?",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74bf5cb4_b9238178",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Why static?",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 31
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8542cc65_8477bded",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Please use lg2 in new code.\n\nShow the exception.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 44
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cacda307_65208b37",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "This does not seem like the appropriate interface to be looking for.  Why are we looking for an EEPROM and not an inventory item?",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8d6fa1b_eebf8186",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Log more than just the exception.",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef6cb85a_64b92ef1",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Why is this a uint8_t and not a size_t?",
+      "range": {
+        "startLine": 128,
+        "startChar": 8,
+        "endLine": 128,
+        "endChar": 15
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e369ed3_ec9bffa1",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Seems like fruDevices should be a map.",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 134,
+        "endChar": 9
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1844081e_0c534c6b",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "paths is certain to be longer than fruDevices.  I would suggest we start with the paths and look them up in the fruidMap, rather than searching through the paths list N times.\n\nYou can probably create a map from fruidMap-json in order to make lookups clearer.",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 30
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0b3e4f6_64dd34c5",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "Not clear why we are using `get\u003cuint64_t\u003e` and then forcing to a uint8_t.\n\nAren\u0027t i3c devices more than uint8_t?  We should go ahead and be able to support those now.\n\nWhy are we needing to save the Bus and Address anyhow?  This is rather surprising.  Don\u0027t we need the Inventory information and not low-level bus access information?  fru-device has already gotten the data parsed and handed off to entity-manager.",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 65
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4510850_b2e4bc82",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-11-26T17:08:36Z",
+      "side": 1,
+      "message": "I don\u0027t understand why this code is going to FruDevice directly to begin with.",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
