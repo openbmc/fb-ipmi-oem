@@ -41,6 +41,48 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d5d8675_0b51157e",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK.",
+      "parentUuid": "a9f4fd4f_3de50e8c",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "44213ffb_bfd569e3",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK. (it represent id, bus, address)",
+      "parentUuid": "f6398ef6_27db4c54",
+      "range": {
+        "startLine": 73,
+        "startChar": 26,
+        "endLine": 73,
+        "endChar": 63
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "74bf5cb4_b9238178",
@@ -54,6 +96,30 @@
       "writtenOn": "2024-11-26T17:08:36Z",
       "side": 1,
       "message": "Why static?",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 31
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4dcd109_ab8d0727",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "to avoid traverse the map file each time processing the IPMI FRU Read command.",
+      "parentUuid": "74bf5cb4_b9238178",
       "range": {
         "startLine": 76,
         "startChar": 0,
@@ -87,6 +153,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b4d73075_63942819",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK.",
+      "parentUuid": "8542cc65_8477bded",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 44
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cacda307_65208b37",
@@ -100,6 +190,24 @@
       "writtenOn": "2024-11-26T17:08:36Z",
       "side": 1,
       "message": "This does not seem like the appropriate interface to be looking for.  Why are we looking for an EEPROM and not an inventory item?",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a8e3e89_a29c4e29",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "It\u0027s used for handling IPMI FRU Read command, that BIOS/Host send to get raw data.\nThat is, get bus/address, and then call \"GetRawFru\" method.",
+      "parentUuid": "cacda307_65208b37",
       "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -121,6 +229,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "69b0055c_115f7d74",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK.",
+      "parentUuid": "c8d6fa1b_eebf8186",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef6cb85a_64b92ef1",
@@ -134,6 +260,30 @@
       "writtenOn": "2024-11-26T17:08:36Z",
       "side": 1,
       "message": "Why is this a uint8_t and not a size_t?",
+      "range": {
+        "startLine": 128,
+        "startChar": 8,
+        "endLine": 128,
+        "endChar": 15
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4834986_b5584483",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "ID of IPMI FRU Read command is 0 ~ 255 (1 byte)",
+      "parentUuid": "ef6cb85a_64b92ef1",
       "range": {
         "startLine": 128,
         "startChar": 8,
@@ -167,6 +317,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a0e3702_20fed823",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK. Thanks for the suggestion!",
+      "parentUuid": "8e369ed3_ec9bffa1",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 134,
+        "endChar": 9
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1844081e_0c534c6b",
@@ -180,6 +354,30 @@
       "writtenOn": "2024-11-26T17:08:36Z",
       "side": 1,
       "message": "paths is certain to be longer than fruDevices.  I would suggest we start with the paths and look them up in the fruidMap, rather than searching through the paths list N times.\n\nYou can probably create a map from fruidMap-json in order to make lookups clearer.",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 30
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2a1c19a_7c8192e7",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK. Thanks for the suggestion!",
+      "parentUuid": "1844081e_0c534c6b",
       "range": {
         "startLine": 136,
         "startChar": 0,
@@ -213,6 +411,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e1fb4bd_7994f276",
+        "filename": "src/commandutils.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "OK. will use uint64_t, which also align with the properties.\nIt\u0027s for handling IPMI FRU Read command, that BIOS/Host send to get raw data.\n(BIOS/Host will get complete raw data and then parse)",
+      "parentUuid": "c0b3e4f6_64dd34c5",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 65
+      },
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a4510850_b2e4bc82",
@@ -226,6 +448,24 @@
       "writtenOn": "2024-11-26T17:08:36Z",
       "side": 1,
       "message": "I don\u0027t understand why this code is going to FruDevice directly to begin with.",
+      "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bdaee99f_4b1b4718",
+        "filename": "src/storagecommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1001127
+      },
+      "writtenOn": "2024-12-01T04:11:44Z",
+      "side": 1,
+      "message": "This is the original way; here is just to go original way when the new json map file is not found.",
+      "parentUuid": "a4510850_b2e4bc82",
       "revId": "49a20c3f783dd871080bed79e964ea14eaafaebd",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
