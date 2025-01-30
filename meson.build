@@ -41,7 +41,7 @@ configure_file(input: 'meson_config.h.in',
                output: 'config.h',
                configuration: conf_data)
 
-if not get_option('bic').disabled()
+if get_option('bic').allowed()
   add_project_arguments(
     cpp.get_supported_arguments([
         '-DBIC_ENABLED',
