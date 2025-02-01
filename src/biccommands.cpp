@@ -154,9 +154,9 @@ void dimmLoopPatternDetection(size_t hostId, std::vector<uint8_t> data)
 // netfn=0x38 and cmd=0x08 or 0x33 send the response back to the sender.
 //----------------------------------------------------------------------
 
-ipmi::RspType<IanaType>
-    ipmiOemPostCodeHandler(ipmi::Context::ptr ctx, IanaType reqIana,
-                           uint8_t dataLen, std::vector<uint8_t> data)
+ipmi::RspType<IanaType> ipmiOemPostCodeHandler(
+    ipmi::Context::ptr ctx, IanaType reqIana, uint8_t dataLen,
+    std::vector<uint8_t> data)
 {
     // creating bus connection
     auto conn = getSdBus();
@@ -211,8 +211,8 @@ ipmi::RspType<IanaType>
 // netfn=0x38 and cmd=0x03 send the response back to the sender.
 //----------------------------------------------------------------------
 
-ipmi::RspType<IanaType, std::vector<uint8_t>>
-    ipmiOemGetBicGpioState(ipmi::Context::ptr ctx, std::vector<uint8_t> reqIana)
+ipmi::RspType<IanaType, std::vector<uint8_t>> ipmiOemGetBicGpioState(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> reqIana)
 {
     std::vector<uint8_t> respData;
 

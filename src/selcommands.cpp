@@ -1539,8 +1539,8 @@ ipmi::RspType<uint8_t,  // SEL version
                                  info.operationSupport);
 }
 
-ipmi::RspType<uint16_t, std::vector<uint8_t>>
-    ipmiStorageGetSELEntry(std::vector<uint8_t> data)
+ipmi::RspType<uint16_t, std::vector<uint8_t>> ipmiStorageGetSELEntry(
+    std::vector<uint8_t> data)
 {
     if (data.size() != sizeof(fb_oem::ipmi::sel::GetSELEntryRequest))
     {
@@ -1669,8 +1669,8 @@ bool logWithRetry(
 }
 
 // Main function to add SEL entry
-ipmi::RspType<uint16_t>
-    ipmiStorageAddSELEntry(ipmi::Context::ptr ctx, std::vector<uint8_t> data)
+ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
+                                               std::vector<uint8_t> data)
 {
     /* Per the IPMI spec, need to cancel any reservation when a
      * SEL entry is added

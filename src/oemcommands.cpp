@@ -1028,8 +1028,8 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 //----------------------------------------------------------------------
 // Get port 80 record (CMD_OEM_GET_80PORT_RECORD)
 //----------------------------------------------------------------------
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemGet80PortRecord(ipmi::Context::ptr ctx)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemGet80PortRecord(
+    ipmi::Context::ptr ctx)
 {
     auto postCodeService = "xyz.openbmc_project.State.Boot.PostCode" +
                            std::to_string(ctx->hostIdx + 1);
@@ -1091,8 +1091,8 @@ ipmi::RspType<std::vector<uint8_t>>
 //----------------------------------------------------------------------
 // Set Boot Order (CMD_OEM_SET_BOOT_ORDER)
 //----------------------------------------------------------------------
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemSetBootOrder(ipmi::Context::ptr ctx, std::vector<uint8_t> bootSeq)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemSetBootOrder(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> bootSeq)
 {
     size_t len = bootSeq.size();
 
@@ -1677,9 +1677,9 @@ ipmi::RspType<> ipmiOemQSetProcInfo(
 // Byte 6..7 – Revision
 //
 
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemQGetProcInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t,
-                        uint8_t procIndex, uint8_t paramSel)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemQGetProcInfo(
+    ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t, uint8_t procIndex,
+    uint8_t paramSel)
 {
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
@@ -1864,9 +1864,9 @@ ipmi::RspType<> ipmiOemQSetDimmInfo(
 // Byte 1 - Module Manufacturer ID, LSB
 // Byte 2 - Module Manufacturer ID, MSB
 //
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiOemQGetDimmInfo(ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t,
-                        uint8_t dimmIndex, uint8_t paramSel)
+ipmi::RspType<std::vector<uint8_t>> ipmiOemQGetDimmInfo(
+    ipmi::Context::ptr ctx, uint8_t, uint8_t, uint8_t, uint8_t dimmIndex,
+    uint8_t paramSel)
 {
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
     uint8_t res[MAX_BUF];
@@ -2085,9 +2085,9 @@ ipmi_ret_t ipmiOemQGetDriveInfo(
 /* Helper function for sending DCMI commands to ME/BIC and
  * getting response back
  */
-ipmi::RspType<std::vector<uint8_t>>
-    sendDCMICmd([[maybe_unused]] ipmi::Context::ptr ctx,
-                [[maybe_unused]] uint8_t cmd, std::vector<uint8_t>& cmdData)
+ipmi::RspType<std::vector<uint8_t>> sendDCMICmd(
+    [[maybe_unused]] ipmi::Context::ptr ctx, [[maybe_unused]] uint8_t cmd,
+    std::vector<uint8_t>& cmdData)
 {
     std::vector<uint8_t> respData;
 
@@ -2348,9 +2348,9 @@ static ipmi_ret_t handleCpuWdtBank(std::span<const uint8_t> data,
 }
 
 template <size_t N>
-static ipmi_ret_t
-    handleHwAssertBank(const char* name, std::span<const uint8_t> data,
-                       CrdState& currState, std::stringstream& ss)
+static ipmi_ret_t handleHwAssertBank(const char* name,
+                                     std::span<const uint8_t> data,
+                                     CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdHwAssertBank<N>))
         return IPMI_CC_REQ_DATA_LEN_INVALID;

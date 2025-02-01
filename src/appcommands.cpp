@@ -223,8 +223,8 @@ ipmi_ret_t ipmiAppClearMsgFlags(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 // Get System GUID (CMD_APP_GET_SYS_GUID)
 //----------------------------------------------------------------------
 #if BIC_ENABLED
-ipmi::RspType<std::vector<uint8_t>>
-    ipmiAppGetSysGUID(ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
+ipmi::RspType<std::vector<uint8_t>> ipmiAppGetSysGUID(
+    ipmi::Context::ptr ctx, std::vector<uint8_t> reqData)
 
 {
     std::vector<uint8_t> respData;
@@ -323,8 +323,8 @@ static int platGetSysFWVer(std::vector<uint8_t>& respData,
 //----------------------------------------------------------------------
 // Set Sys Info Params (IPMI/Sec 22.14a) (CMD_APP_SET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
-ipmi::RspType<uint8_t>
-    ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx, std::vector<uint8_t> req)
+ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
+                                               std::vector<uint8_t> req)
 {
     uint8_t param = req[0];
     uint8_t req_len = req.size();
