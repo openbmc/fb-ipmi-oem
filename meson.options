@@ -1,12 +1,16 @@
 option('tests', type: 'feature', description: 'Build tests')
 option('bic', type: 'feature', description: 'Enable bic handlers')
-option('post-code-bytes', type: 'integer', description: 'Post code byte size.', value: 1)
-option('debug-card-frame-size', type: 'integer', description: 'debug card frame size.', value: 2)
 option(
-  'host-instances',
-  type: 'string',
-  description: 'Host Instances')
+    'post-code-bytes',
+    type: 'integer',
+    description: 'Post code byte size.',
+    value: 1,
+)
 option(
-  'machine',
-  type: 'string',
-  description: 'Machine')
+    'debug-card-frame-size',
+    type: 'integer',
+    description: 'debug card frame size.',
+    value: 2,
+)
+option('host-instances', type: 'string', description: 'Host Instances')
+option('machine', type: 'string', description: 'Machine')
