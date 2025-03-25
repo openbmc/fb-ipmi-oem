@@ -17,8 +17,10 @@
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/container/flat_map.hpp>
+#include <com/meta/IPMI/UnifiedSEL/event.hpp>
 #include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
+#include <phosphor-logging/commit.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 #include <sdbusplus/timer.hpp>
@@ -1627,47 +1629,6 @@ ipmi::RspType<uint16_t, std::vector<uint8_t>> ipmiStorageGetSELEntry(
     }
 }
 
-// Retry function to log the SEL entry message and make D-Bus call
-bool logWithRetry(
-    const std::string& journalMsg, const std::string& messageID,
-    const std::string& logErr, const std::string& severity,
-    const std::map<std::string, std::string>& ad, int maxRetries = 10,
-    std::chrono::milliseconds waitTimeMs = std::chrono::milliseconds(100))
-{
-    // Attempt to log the SEL entry message
-    lg2::info(
-        "SEL Entry Added: {IPMI_RAW}, IPMISEL_MESSAGE_ID={MESSAGE_ID}, IPMISEL_MESSAGE_ARGS={LOG_ERR}",
-        "IPMI_RAW", journalMsg, "MESSAGE_ID", messageID, "LOG_ERR", logErr);
-
-    int attempts = 0;
-    while (attempts < maxRetries)
-    {
-        // Create D-Bus call
-        auto bus = sdbusplus::bus::new_default();
-        auto reqMsg = bus.new_method_call(
-            "xyz.openbmc_project.Logging", "/xyz/openbmc_project/logging",
-            "xyz.openbmc_project.Logging.Create", "Create");
-        reqMsg.append(logErr, severity, ad);
-
-        try
-        {
-            // Attempt to make the D-Bus call
-            bus.call(reqMsg);
-            return true; // D-Bus call successful, exit the loop
-        }
-        catch (sdbusplus::exception_t& e)
-        {
-            lg2::error("D-Bus call failed: {ERROR}", "ERROR", e);
-        }
-
-        // Wait before retrying
-        std::this_thread::sleep_for(std::chrono::milliseconds(waitTimeMs));
-        attempts++;
-    }
-
-    return false; // Failed after max retries
-}
-
 // Main function to add SEL entry
 ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
                                                std::vector<uint8_t> data)
@@ -1696,17 +1657,18 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
     std::string journalMsg = "SEL Entry Added: " + ipmiRaw;
 
     std::map<std::string, std::string> ad;
-    std::string severity = "xyz.openbmc_project.Logging.Entry.Level.Critical";
     ad.emplace("IPMI_RAW", ipmiRaw);
+    std::string source = "/xyz/openbmc_project/state/host0";
+
+    lg2::info(
+        "SEL Entry Added: {IPMI_RAW}, IPMISEL_MESSAGE_ID={MESSAGE_ID}, IPMISEL_MESSAGE_ARGS={LOG_ERR}",
+        "IPMI_RAW", journalMsg, "MESSAGE_ID", messageID, "LOG_ERR", logErr);
 
     // Launch the logging thread
     std::thread([=]() {
-        bool success =
-            logWithRetry(journalMsg, messageID, logErr, severity, ad);
-        if (!success)
-        {
-            lg2::error("Failed to log SEL entry added event after retries.");
-        }
+        namespace Errors = sdbusplus::error::com::meta::ipmi::UnifiedSEL;
+        lg2::commit(Errors::UnifiedSELEvent("SOURCE", source, "EVENT", logErr,
+                                            "RAW_EVENT", ad.at("IPMI_RAW")));
     }).detach();
 
     int responseID = selObj.addEntry(ipmiRaw.c_str());
