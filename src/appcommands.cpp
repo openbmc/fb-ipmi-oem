@@ -496,19 +496,19 @@ void registerAPPFunctions()
         file.close();
     }
 
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SELFTEST_RESULTS, NULL,
+    ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_GET_SELFTEST_RESULTS, NULL,
                          ipmiAppGetSTResults,
                          PRIVILEGE_USER); // Get Self Test Results
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_MFR_TEST_ON, NULL,
+    ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_MFR_TEST_ON, NULL,
                          ipmiAppMfrTestOn,
                          PRIVILEGE_USER); // Manufacturing Test On
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_SET_GLOBAL_ENABLES, NULL,
+    ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_SET_GLOBAL_ENABLES, NULL,
                          ipmiAppSetGlobalEnables,
                          PRIVILEGE_USER); // Set Global Enables
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_GLOBAL_ENABLES, NULL,
+    ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_GET_GLOBAL_ENABLES, NULL,
                          ipmiAppGetGlobalEnables,
                          PRIVILEGE_USER); // Get Global Enables
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_CLEAR_MESSAGE_FLAGS, NULL,
+    ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_CLEAR_MESSAGE_FLAGS, NULL,
                          ipmiAppClearMsgFlags,
                          PRIVILEGE_USER); // Clear Message flags
 #if BIC_ENABLED
@@ -516,7 +516,7 @@ void registerAPPFunctions()
                           ipmi::app::cmdGetSystemGuid, ipmi::Privilege::User,
                           ipmiAppGetSysGUID);
 #else
-    ipmiPrintAndRegister(NETFUN_APP, CMD_APP_GET_SYS_GUID, NULL,
+    ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_GET_SYS_GUID, NULL,
                          ipmiAppGetSysGUID,
                          PRIVILEGE_USER); // Get System GUID
 #endif

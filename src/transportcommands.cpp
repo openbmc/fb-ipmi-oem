@@ -107,8 +107,8 @@ ipmi_ret_t ipmiTransGetSolConfig(
 
 void registerTransportFunctions()
 {
-    ipmiPrintAndRegister(NETFUN_TRANSPORT, CMD_TRANSPORT_GET_SOL_CONFIG, NULL,
-                         ipmiTransGetSolConfig,
+    ipmiPrintAndRegister(ipmi::netFnTransport, CMD_TRANSPORT_GET_SOL_CONFIG,
+                         NULL, ipmiTransGetSolConfig,
                          PRIVILEGE_OPERATOR); // Get Sol Config
 
     return;

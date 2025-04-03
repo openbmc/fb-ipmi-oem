@@ -2685,25 +2685,25 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(NETFN_OEM_USB_DBG_REQ, CMD_OEM_USB_DBG_CTRL_PANEL,
                          NULL, ipmiOemDbgGetCtrlPanel,
                          PRIVILEGE_USER); // get debug control panel
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_DIMM_INFO, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_DIMM_INFO, NULL,
                          ipmiOemSetDimmInfo,
                          PRIVILEGE_USER); // Set Dimm Info
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_BOARD_ID, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_GET_BOARD_ID, NULL,
                          ipmiOemGetBoardID,
                          PRIVILEGE_USER); // Get Board ID
     ipmi::registerHandler(ipmi::prioOemBase, ipmi::netFnOemOne,
                           CMD_OEM_GET_80PORT_RECORD, ipmi::Privilege::User,
                           ipmiOemGet80PortRecord); // Get 80 Port Record
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_MACHINE_CONFIG_INFO, NULL,
-                         ipmiOemSetMachineCfgInfo,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_MACHINE_CONFIG_INFO,
+                         NULL, ipmiOemSetMachineCfgInfo,
                          PRIVILEGE_USER); // Set Machine Config Info
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_POST_START, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_POST_START, NULL,
                          ipmiOemSetPostStart,
                          PRIVILEGE_USER); // Set POST start
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_POST_END, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_POST_END, NULL,
                          ipmiOemSetPostEnd,
                          PRIVILEGE_USER); // Set POST End
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_PPIN_INFO, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_PPIN_INFO, NULL,
                          ipmiOemSetPPINInfo,
                          PRIVILEGE_USER); // Set PPIN Info
 #if BIC_ENABLED
@@ -2713,19 +2713,21 @@ static void registerOEMFunctions(void)
                           ipmiOemSetSystemGuid);
 #else
 
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_SYSTEM_GUID, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_SYSTEM_GUID, NULL,
                          ipmiOemSetSystemGuid,
                          PRIVILEGE_USER); // Set System GUID
 #endif
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_ADR_TRIGGER, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_ADR_TRIGGER, NULL,
                          ipmiOemSetAdrTrigger,
                          PRIVILEGE_USER); // Set ADR Trigger
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_BIOS_FLASH_INFO, NULL,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_BIOS_FLASH_INFO, NULL,
                          ipmiOemSetBiosFlashInfo,
                          PRIVILEGE_USER); // Set Bios Flash Info
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_SET_PPR, NULL, ipmiOemSetPpr,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_PPR, NULL,
+                         ipmiOemSetPpr,
                          PRIVILEGE_USER); // Set PPR
-    ipmiPrintAndRegister(NETFUN_NONE, CMD_OEM_GET_PPR, NULL, ipmiOemGetPpr,
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_GET_PPR, NULL,
+                         ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
     /* FB OEM QC Commands */
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
