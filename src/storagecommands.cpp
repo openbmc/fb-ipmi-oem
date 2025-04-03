@@ -1004,31 +1004,31 @@ void registerStorageFunctions()
 {
     // <Get FRU Inventory Area Info>
     ipmiPrintAndRegister(
-        NETFUN_STORAGE,
+        ipmi::netFnStorage,
         static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdGetFRUInvAreaInfo),
         NULL, ipmiStorageGetFRUInvAreaInfo, PRIVILEGE_OPERATOR);
 
     // <READ FRU Data>
     ipmiPrintAndRegister(
-        NETFUN_STORAGE,
+        ipmi::netFnStorage,
         static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdReadFRUData), NULL,
         ipmiStorageReadFRUData, PRIVILEGE_OPERATOR);
 
     // <WRITE FRU Data>
     ipmiPrintAndRegister(
-        NETFUN_STORAGE,
+        ipmi::netFnStorage,
         static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdWriteFRUData),
         NULL, ipmiStorageWriteFRUData, PRIVILEGE_OPERATOR);
 
     // <Reserve SDR Repo>
     ipmiPrintAndRegister(
-        NETFUN_STORAGE,
+        ipmi::netFnStorage,
         static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdReserveSDR),
         nullptr, ipmiStorageReserveSDR, PRIVILEGE_USER);
 
     // <Get Sdr>
     ipmiPrintAndRegister(
-        NETFUN_STORAGE,
+        ipmi::netFnStorage,
         static_cast<ipmi_cmd_t>(IPMINetfnStorageCmds::ipmiCmdGetSDR), nullptr,
         ipmiStorageGetSDR, PRIVILEGE_USER);
     return;
