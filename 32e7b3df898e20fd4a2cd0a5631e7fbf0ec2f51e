@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "639e1e21_510d4964",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1659,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2025-04-11T06:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e274849_96a2d68f",
+      "revId": "32e7b3df898e20fd4a2cd0a5631e7fbf0ec2f51e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b12ce267_0a9bd2c1",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-03-28T05:33:19Z",
       "side": 1,
       "message": "I would say remove everything here all the way from openBMCMessageRegistryVersion, messageID, journalMsg, ad. Not need to spend more cycles to print to lg2:info().\n\nUnless you want to catch issues which is not send to phosphor-logging.",
+      "revId": "32e7b3df898e20fd4a2cd0a5631e7fbf0ec2f51e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c72b166_a3061072",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1665,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2025-04-11T06:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b12ce267_0a9bd2c1",
       "revId": "32e7b3df898e20fd4a2cd0a5631e7fbf0ec2f51e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -52,6 +88,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "978f3241_b6941642",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1670,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2025-04-11T06:47:23Z",
+      "side": 1,
+      "message": "Yes, I agree with you, so I’ve removed the try statement.",
+      "parentUuid": "05f8a0c0_bb6968b5",
+      "revId": "32e7b3df898e20fd4a2cd0a5631e7fbf0ec2f51e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "72290655_3846e96c",
@@ -65,6 +119,24 @@
       "writtenOn": "2025-03-28T05:33:19Z",
       "side": 1,
       "message": "Just use ipmiRaw instead of ad.at(\"IPMI_RAW\")",
+      "revId": "32e7b3df898e20fd4a2cd0a5631e7fbf0ec2f51e",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc258b72_ca064701",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1671,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2025-04-11T06:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72290655_3846e96c",
       "revId": "32e7b3df898e20fd4a2cd0a5631e7fbf0ec2f51e",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
