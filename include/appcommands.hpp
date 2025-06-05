@@ -45,6 +45,7 @@ enum fb_app_cmds
 #define SIZE_PCIE_PORT_CONFIG 2
 
 #define JSON_APP_DATA_FILE "/var/lib/fb-ipmi-oem/appData.json"
+#define SYSFW_VER_FILE "/var/bios/host{}_bios_version.txt"
 #define KEY_SYSFW_VER "sysfw_ver_server"
 #define KEY_BIOS_BOOT_LEN "bios_boot_list_len"
 

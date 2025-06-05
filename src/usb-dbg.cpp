@@ -528,23 +528,20 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
 
 static int getBiosVer(std::string& ver, size_t hostPosition)
 {
-    nlohmann::json appObj;
-
-    std::ifstream file(JSON_APP_DATA_FILE);
-    if (file)
+    std::string sysfwVersionFile = std::format(SYSFW_VER_FILE, hostPosition);
+    std::ifstream file(sysfwVersionFile);
+    if (!file)
     {
-        file >> appObj;
-        file.close();
-        std::string version_key = KEY_SYSFW_VER + std::to_string(hostPosition);
-
-        if (appObj.find(version_key) != appObj.end())
-        {
-            ver = appObj[version_key].get<std::string>();
-            return 0;
-        }
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Failed to open system firmware version file",
+            phosphor::logging::entry("FILE=%s", sysfwVersionFile.c_str()));
+        return -1;
     }
 
-    return -1;
+    std::getline(file, ver);
+    file.close();
+
+    return 0;
 }
 
 int sendBicCmd(uint8_t netFn, uint8_t cmd, uint8_t bicAddr,
