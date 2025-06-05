@@ -28,6 +28,7 @@
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 
+#include <format>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -265,7 +266,7 @@ void flush_app_data()
     return;
 }
 
-static int platSetSysFWVer(uint8_t* ver, const std::string key)
+static int platSetSysFWVer(uint8_t* ver, const size_t hostId)
 {
     std::stringstream ss;
     int i;
@@ -283,27 +284,48 @@ static int platSetSysFWVer(uint8_t* ver, const std::string key)
         ss << (char)ver[i];
     }
 
-    appData[key] = ss.str();
-    flush_app_data();
+    std::string sysfwVersionFile = std::format(SYSFW_VER_FILE, hostId);
+    std::ofstream file(sysfwVersionFile);
+    if (file)
+    {
+        file << ss.str();
+        file.close();
+    }
+    else
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Failed to open system firmware version file for writing",
+            phosphor::logging::entry("FILE=%s", sysfwVersionFile.c_str()));
+        return -1;
+    }
 
     return 0;
 }
 
-static int platGetSysFWVer(std::vector<uint8_t>& respData,
-                           const std::string key)
+static int platGetSysFWVer(std::vector<uint8_t>& respData, const size_t hostId)
 {
-    int len = -1;
-
-    if (!appData.contains(std::string(key)))
+    std::string sysfwVersionFile = std::format(SYSFW_VER_FILE, hostId);
+    std::ifstream file(sysfwVersionFile);
+    if (!file)
     {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Failed to open system firmware version file for reading",
+            phosphor::logging::entry("FILE=%s", sysfwVersionFile.c_str()));
         return -1;
     }
-    std::string str = appData[key].get<std::string>();
+    std::string str;
+    std::getline(file, str);
+    file.close();
 
-    respData.push_back(0); // byte 1: Set selector not supported
-    respData.push_back(0); // byte 2: Only ASCII supported
+    if (str.length() > SIZE_SYSFW_VER - 3)
+    {
+        str = str.substr(0, SIZE_SYSFW_VER - 3);
+    }
+    int len = str.length();
 
-    len = str.length();
+    respData.push_back(0);   // byte 1: Set selector not supported
+    respData.push_back(0);   // byte 2: Only ASCII supported
+
     respData.push_back(len); // byte 3: Size of version
 
     for (auto c : str)
@@ -345,8 +367,7 @@ ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
         case SYS_INFO_PARAM_SYSFW_VER:
         {
             memcpy(sysInfoParams.sysfw_ver, &req[1], SIZE_SYSFW_VER);
-            std::string version_key = KEY_SYSFW_VER + std::to_string(*hostId);
-            if (platSetSysFWVer(sysInfoParams.sysfw_ver, version_key))
+            if (platSetSysFWVer(sysInfoParams.sysfw_ver, *hostId))
                 return ipmi::responseSystemInfoParamterNotSupportCommand();
             break;
         }
@@ -424,8 +445,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiAppGetSysInfoParams(
             break;
         case SYS_INFO_PARAM_SYSFW_VER:
         {
-            std::string version_key = KEY_SYSFW_VER + std::to_string(*hostId);
-            if ((platGetSysFWVer(respData, version_key)) < 0)
+            if ((platGetSysFWVer(respData, *hostId)) < 0)
                 return ipmi::responseSystemInfoParamterNotSupportCommand();
             break;
         }
