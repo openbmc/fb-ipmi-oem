@@ -96,7 +96,7 @@ enum fb_oem_qc_cmds
 #define MAX_BUF 50
 
 #define BMC_POS 0
-#define SIZE_CPU_PPIN 8
+#define SIZE_CPU_PPIN 16
 #define SIZE_BOOT_ORDER 6
 #define BOOT_MODE_UEFI 0x01
 #define BOOT_MODE_CMOS_CLR 0x02
