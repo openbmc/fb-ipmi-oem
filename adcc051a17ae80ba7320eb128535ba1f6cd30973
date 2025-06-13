@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a0d077f_ac68b9ad",
+        "filename": "OWNERS",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-06-13T15:19:20Z",
+      "side": 1,
+      "message": "This isn\u0027t Jagpal\u0027s email address.",
+      "revId": "adcc051a17ae80ba7320eb128535ba1f6cd30973",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
