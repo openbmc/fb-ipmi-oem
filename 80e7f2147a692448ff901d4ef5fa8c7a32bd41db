@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b1a0792_11446b52",
+        "filename": "include/appcommands.hpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2025-06-17T16:27:46Z",
+      "side": 0,
+      "message": "We cannot break the existing flow to read FW version via settingsd until there is a complete migration to the redfish flow as this file should be getting used on multiple platforms. So, i think we can also write (only) to old file (sysfw_ver_server i supppose) for time being. Once we completely move to the new flow we can drop the old file.",
+      "revId": "80e7f2147a692448ff901d4ef5fa8c7a32bd41db",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
