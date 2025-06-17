@@ -33,6 +33,7 @@
 
 owners:
 - amithash@meta.com
+- paligill@gmail.com
 - patrick@stwcx.xyz
 
 reviewers:
@@ -43,6 +44,9 @@ openbmc:
 - name: Amithash Prasad
   email: amithash@meta.com
   discord: amithash
+- name: Jagpal Singh Gill
+  email: paligill@gmail.com
+  discord: jagpalgill
 - name: Patrick Williams
   email: patrick@stwcx.xyz
   discord: stwcx
