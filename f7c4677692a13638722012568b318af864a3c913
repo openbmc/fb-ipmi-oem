@@ -35,6 +35,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e290993_6cbcb91c",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1002253
+      },
+      "writtenOn": "2025-06-18T03:02:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9535fcfd_22c00b1b",
+      "revId": "f7c4677692a13638722012568b318af864a3c913",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "63af8e6a_eac27826",
@@ -52,6 +70,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9f0abaf_5bce4a1e",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1002253
+      },
+      "writtenOn": "2025-06-18T03:02:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63af8e6a_eac27826",
+      "revId": "f7c4677692a13638722012568b318af864a3c913",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fcaaf91e_8409a427",
@@ -65,6 +101,24 @@
       "writtenOn": "2025-06-17T16:27:46Z",
       "side": 1,
       "message": "Can you please add some comment stating whats the purpose of this substitution?",
+      "revId": "f7c4677692a13638722012568b318af864a3c913",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b70b977_7611dfe8",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1002253
+      },
+      "writtenOn": "2025-06-18T03:02:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fcaaf91e_8409a427",
       "revId": "f7c4677692a13638722012568b318af864a3c913",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
