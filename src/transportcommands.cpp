@@ -17,8 +17,9 @@
 #include <ipmid/api.h>
 
 #include <commandutils.hpp>
+#include <ipmid/api-types.hpp>
 
-#define IPMI_CC_PARAMETER_NOT_SUPPORTED 0x80
+constexpr ipmi::Cc ccParameterNotSupported = 0x80;
 
 namespace ipmi
 {
@@ -62,7 +63,7 @@ ipmi_ret_t ipmiTransGetSolConfig(
      * with only one byte of data
      */
     if (param & 0x80)
-        return IPMI_CC_OK;
+        return ipmi::ccSuccess;
 
     switch (paramSel)
     {
@@ -98,11 +99,11 @@ ipmi_ret_t ipmiTransGetSolConfig(
             break;
         default:
             *data_len = 0;
-            return IPMI_CC_PARAMETER_NOT_SUPPORTED;
+            return ccParameterNotSupported;
             break;
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 void registerTransportFunctions()

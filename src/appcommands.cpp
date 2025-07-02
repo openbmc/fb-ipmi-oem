@@ -49,12 +49,16 @@ static uint8_t globEna = 0x09;
 static SysInfoParam sysInfoParams;
 nlohmann::json appData __attribute__((init_priority(101)));
 
+// Custom completion codes can be defined in individual modules for command
+// specific errors in the 0x80-0xBE range
+constexpr ipmi::Cc ccSystemInfoParameterNotSupported = 0x80;
+
 int sendBicCmd(uint8_t, uint8_t, uint8_t, std::vector<uint8_t>&,
                std::vector<uint8_t>&);
 
 static inline auto responseSystemInfoParamterNotSupportCommand()
 {
-    return response(IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED);
+    return response(ccSystemInfoParameterNotSupported);
 }
 
 void printGUID(uint8_t* guid, off_t offset)
@@ -143,7 +147,7 @@ ipmi_ret_t ipmiAppGetSTResults(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 
     *data_len = 2;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -155,7 +159,7 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
     std::string mfrTest = "sled-cycle";
-    ipmi_ret_t rc = IPMI_CC_OK;
+    ipmi_ret_t rc = ipmi::ccSuccess;
 
     if (!memcmp(req, mfrTest.data(), mfrTest.length()) &&
         (*data_len == mfrTest.length()))
@@ -164,12 +168,12 @@ ipmi_ret_t ipmiAppMfrTestOn(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
         auto ret = system("/usr/sbin/power-util sled-cycle");
         if (ret)
         {
-            rc = IPMI_CC_UNSPECIFIED_ERROR;
+            rc = ipmi::ccUnspecifiedError;
         }
     }
     else
     {
-        rc = IPMI_CC_SYSTEM_INFO_PARAMETER_NOT_SUPPORTED;
+        rc = ccSystemInfoParameterNotSupported;
     }
 
     *data_len = 0;
@@ -189,7 +193,7 @@ ipmi_ret_t ipmiAppSetGlobalEnables(ipmi_netfn_t, ipmi_cmd_t,
     globEna = *req;
     *data_len = 0;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -204,7 +208,7 @@ ipmi_ret_t ipmiAppGetGlobalEnables(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     *data_len = 1;
     *res++ = globEna;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -217,7 +221,7 @@ ipmi_ret_t ipmiAppClearMsgFlags(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     // Do Nothing and just return success
     *data_len = 0;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -246,10 +250,10 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     uint8_t* res = reinterpret_cast<uint8_t*>(response);
     if (getSystemGUID(res))
     {
-        return IPMI_CC_UNSPECIFIED_ERROR;
+        return ipmi::ccUnspecifiedError;
     }
     *data_len = GUID_SIZE;
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 #endif

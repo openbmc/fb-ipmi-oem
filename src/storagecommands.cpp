@@ -209,7 +209,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     bool timerRunning = (cacheTimer != nullptr) && !cacheTimer->isExpired();
     if (lastDevId == devId && timerRunning)
     {
-        return IPMI_CC_OK; // cache already up to date
+        return ipmi::ccSuccess; // cache already up to date
     }
     // if timer is running, stop it and writeFru manually
     else if (timerRunning)
@@ -231,7 +231,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "replaceCacheFru: error getting managed objects");
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
 
     deviceHashes.clear();
@@ -277,7 +277,7 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
     auto deviceFind = deviceHashes.find(devId);
     if (deviceFind == deviceHashes.end())
     {
-        return IPMI_CC_SENSOR_INVALID;
+        return ipmi::ccSensorInvalid;
     }
 
     fruCache.clear();
@@ -297,11 +297,11 @@ ipmi_ret_t replaceCacheFru(uint8_t devId)
         lastDevId = 0xFF;
         cacheBus = 0xFFFF;
         cacheAddr = 0xFF;
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
 
     lastDevId = devId;
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi_ret_t ipmiStorageReadFRUData(
@@ -311,7 +311,7 @@ ipmi_ret_t ipmiStorageReadFRUData(
     if (*dataLen != 4)
     {
         *dataLen = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
     *dataLen = 0; // default to 0 in case of an error
 
@@ -319,11 +319,11 @@ ipmi_ret_t ipmiStorageReadFRUData(
 
     if (req->countToRead > maxMessageSize - 1)
     {
-        return IPMI_CC_INVALID_FIELD_REQUEST;
+        return ipmi::ccInvalidFieldRequest;
     }
     ipmi_ret_t status = replaceCacheFru(req->fruDeviceID);
 
-    if (status != IPMI_CC_OK)
+    if (status != ipmi::ccSuccess)
     {
         return status;
     }
@@ -351,7 +351,7 @@ ipmi_ret_t ipmiStorageReadFRUData(
     }
     *dataLen = fromFRUByteLen + 1;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi_ret_t ipmiStorageWriteFRUData(
@@ -364,7 +364,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(
                       // byte of data after the three request data bytes
     {
         *dataLen = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     auto req = static_cast<WriteFRUDataReq*>(request);
@@ -372,7 +372,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(
     *dataLen = 0; // default to 0 in case of an error
 
     ipmi_ret_t status = replaceCacheFru(req->fruDeviceID);
-    if (status != IPMI_CC_OK)
+    if (status != ipmi::ccSuccess)
     {
         return status;
     }
@@ -419,7 +419,7 @@ ipmi_ret_t ipmiStorageWriteFRUData(
         cacheTimer->stop();
         if (!writeFru())
         {
-            return IPMI_CC_INVALID_FIELD_REQUEST;
+            return ipmi::ccInvalidFieldRequest;
         }
         *respPtr = std::min(fruCache.size(), static_cast<size_t>(0xFF));
     }
@@ -435,30 +435,30 @@ ipmi_ret_t ipmiStorageWriteFRUData(
 
     *dataLen = 1;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi_ret_t getFruSdrCount(size_t& count)
 {
     ipmi_ret_t ret = replaceCacheFru(0);
-    if (ret != IPMI_CC_OK)
+    if (ret != ipmi::ccSuccess)
     {
         return ret;
     }
     count = deviceHashes.size();
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
 {
     ipmi_ret_t ret = replaceCacheFru(0); // this will update the hash list
-    if (ret != IPMI_CC_OK)
+    if (ret != ipmi::ccSuccess)
     {
         return ret;
     }
     if (deviceHashes.size() < index)
     {
-        return IPMI_CC_INVALID_FIELD_REQUEST;
+        return ipmi::ccInvalidFieldRequest;
     }
     auto device = deviceHashes.begin() + index;
     uint8_t& bus = device->second.first;
@@ -476,7 +476,7 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
     }
     catch (const sdbusplus::exception_t&)
     {
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
     boost::container::flat_map<std::string, DbusVariant>* fruData = nullptr;
     auto fru = std::find_if(
@@ -508,7 +508,7 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
         });
     if (fru == frus.end())
     {
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
     std::string name;
     auto findProductName = fruData->find("BOARD_PRODUCT_NAME");
@@ -548,7 +548,7 @@ ipmi_ret_t getFruSdrs(size_t index, get_sdr::SensorDataFruRecord& resp)
     resp.body.deviceIDLen = name.size();
     name.copy(resp.body.deviceID, name.size());
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi_ret_t ipmiStorageReserveSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
@@ -560,7 +560,7 @@ ipmi_ret_t ipmiStorageReserveSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     if (*dataLen)
     {
         *dataLen = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
     *dataLen = 0; // default to 0 in case of an error
     sdrReservationID++;
@@ -573,7 +573,7 @@ ipmi_ret_t ipmiStorageReserveSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     resp[0] = sdrReservationID & 0xFF;
     resp[1] = sdrReservationID >> 8;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
@@ -585,7 +585,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     if (*dataLen != 6)
     {
         *dataLen = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
     auto requestedSize = *dataLen;
     *dataLen = 0; // default to 0 in case of an error
@@ -598,17 +598,17 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     if ((sdrReservationID == 0 || req->reservationID != sdrReservationID) &&
         req->offset)
     {
-        return IPMI_CC_INVALID_RESERVATION_ID;
+        return ipmi::ccInvalidReservationId;
     }
 
     if (!getSensorSubtree(sensorTree) && sensorTree.empty())
     {
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
 
     size_t fruCount = 0;
     ipmi_ret_t ret = ipmi::storage::getFruSdrCount(fruCount);
-    if (ret != IPMI_CC_OK)
+    if (ret != ipmi::ccSuccess)
     {
         return ret;
     }
@@ -620,7 +620,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     }
     if (req->recordID > lastRecord)
     {
-        return IPMI_CC_INVALID_FIELD_REQUEST;
+        return ipmi::ccInvalidFieldRequest;
     }
 
     uint16_t nextRecord = lastRecord >= static_cast<size_t>(req->recordID + 1)
@@ -639,15 +639,15 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         size_t fruIndex = req->recordID - sensorTree.size();
         if (fruIndex >= fruCount)
         {
-            return IPMI_CC_INVALID_FIELD_REQUEST;
+            return ipmi::ccInvalidFieldRequest;
         }
         get_sdr::SensorDataFruRecord data;
         if (req->offset > sizeof(data))
         {
-            return IPMI_CC_INVALID_FIELD_REQUEST;
+            return ipmi::ccInvalidFieldRequest;
         }
         ret = ipmi::storage::getFruSdrs(fruIndex, data);
-        if (ret != IPMI_CC_OK)
+        if (ret != ipmi::ccSuccess)
         {
             return ret;
         }
@@ -660,7 +660,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         *dataLen = req->bytesToRead + 2; // next record
         std::memcpy(&resp->record_data, (char*)&data + req->offset,
                     req->bytesToRead);
-        return IPMI_CC_OK;
+        return ipmi::ccSuccess;
     }
 
     std::string connection;
@@ -672,7 +672,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         {
             if (!sensor.second.size())
             {
-                return IPMI_CC_RESPONSE_ERROR;
+                return ipmi::ccResponseError;
             }
             connection = sensor.second.begin()->first;
             path = sensor.first;
@@ -683,7 +683,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     SensorMap sensorMap;
     if (!getSensorMap(connection, path, sensorMap))
     {
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
     uint8_t sensornumber = (req->recordID & 0xFF);
     get_sdr::SensorDataFullRecord record = {};
@@ -716,7 +716,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     auto sensorObject = sensorMap.find("xyz.openbmc_project.Sensor.Value");
     if (sensorObject == sensorMap.end())
     {
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
 
     auto maxObject = sensorObject->second.find("MaxValue");
@@ -741,7 +741,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
 
     if (!getSensorAttributes(max, min, mValue, rExp, bValue, bExp, bSigned))
     {
-        return IPMI_CC_RESPONSE_ERROR;
+        return ipmi::ccResponseError;
     }
 
     // apply M, B, and exponents, M and B are 10 bit values, exponents are 4
@@ -817,7 +817,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     std::memcpy(&resp->record_data, (char*)&record + req->offset,
                 req->bytesToRead);
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static int getSensorConnectionByName(std::string& name, std::string& connection,
@@ -975,18 +975,18 @@ ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(
     if (*dataLen != 1)
     {
         *dataLen = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
     *dataLen = 0; // default to 0 in case of an error
 
     uint8_t reqDev = *(static_cast<uint8_t*>(request));
     if (reqDev == 0xFF)
     {
-        return IPMI_CC_INVALID_FIELD_REQUEST;
+        return ipmi::ccInvalidFieldRequest;
     }
     ipmi_ret_t status = replaceCacheFru(reqDev);
 
-    if (status != IPMI_CC_OK)
+    if (status != ipmi::ccSuccess)
     {
         return status;
     }
@@ -997,7 +997,7 @@ ipmi_ret_t ipmiStorageGetFRUInvAreaInfo(
     respPtr->accessType = static_cast<uint8_t>(GetFRUAreaAccessType::byte);
 
     *dataLen = sizeof(GetFRUAreaResp);
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 void registerStorageFunctions()

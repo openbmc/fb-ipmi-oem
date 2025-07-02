@@ -434,7 +434,7 @@ int readDimmType(std::string& data, uint8_t param)
 
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 {
-    ipmi_ret_t rc = IPMI_CC_OK;
+    ipmi_ret_t rc = ipmi::ccSuccess;
     sdbusplus::bus_t bus(ipmid_get_sd_bus_connection());
 
     const std::string ethdevice = "eth0";
@@ -496,7 +496,7 @@ ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
         break;
 
         default:
-            rc = IPMI_CC_PARM_OUT_OF_RANGE;
+            rc = ipmi::ccParmOutOfRange;
     }
     return rc;
 }
@@ -813,7 +813,7 @@ ipmi_ret_t ipmiOemDbgGetFrameInfo(
     res[SIZE_IANA_ID] = num_frames;
     *data_len = SIZE_IANA_ID + 1;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -835,7 +835,7 @@ ipmi_ret_t ipmiOemDbgGetUpdFrames(
     res[SIZE_IANA_ID + 2] = 2; // cri sel update
     res[SIZE_IANA_ID + 3] = 3; // cri sensor update
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -862,7 +862,7 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(
     {
         memcpy(res, req, SIZE_IANA_ID); // IANA ID
         *data_len = SIZE_IANA_ID;
-        return IPMI_CC_UNSPECIFIED_ERROR;
+        return ipmi::ccUnspecifiedError;
     }
 
     memcpy(res, req, SIZE_IANA_ID); // IANA ID
@@ -873,7 +873,7 @@ ipmi_ret_t ipmiOemDbgGetPostDesc(
     res[7] = descLen;
     *data_len = SIZE_IANA_ID + 5 + descLen;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -901,7 +901,7 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(
     {
         memcpy(res, req, SIZE_IANA_ID); // IANA ID
         *data_len = SIZE_IANA_ID;
-        return IPMI_CC_UNSPECIFIED_ERROR;
+        return ipmi::ccUnspecifiedError;
     }
 
     memcpy(res, req, SIZE_IANA_ID); // IANA ID
@@ -912,7 +912,7 @@ ipmi_ret_t ipmiOemDbgGetGpioDesc(
     res[7] = descLen;
     *data_len = SIZE_IANA_ID + 5 + descLen;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -938,7 +938,7 @@ ipmi_ret_t ipmiOemDbgGetFrameData(
     {
         memcpy(res, req, SIZE_IANA_ID); // IANA ID
         *data_len = SIZE_IANA_ID;
-        return IPMI_CC_UNSPECIFIED_ERROR;
+        return ipmi::ccUnspecifiedError;
     }
 
     memcpy(res, req, SIZE_IANA_ID); // IANA ID
@@ -948,7 +948,7 @@ ipmi_ret_t ipmiOemDbgGetFrameData(
     res[6] = count;
     *data_len = SIZE_IANA_ID + 4 + count;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1009,7 +1009,7 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 
     *data_len = 0;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1022,7 +1022,7 @@ ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     /* TODO: Needs to implement this after GPIO implementation */
     *data_len = 0;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1154,7 +1154,7 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t, ipmi_cmd_t,
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid machine configuration length received");
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     if (req->chassis_type >= sizeof(chassisType) / sizeof(uint8_t*))
@@ -1217,7 +1217,7 @@ ipmi_ret_t ipmiOemSetMachineCfgInfo(ipmi_netfn_t, ipmi_cmd_t,
 
     flushOemData();
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1231,7 +1231,7 @@ ipmi_ret_t ipmiOemSetPostStart(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 
     /* Do nothing, return success */
     *data_len = 0;
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1255,7 +1255,7 @@ ipmi_ret_t ipmiOemSetPostEnd(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     // Sync time with system
     // TODO: Add code for syncing time
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1288,7 +1288,7 @@ ipmi_ret_t ipmiOemSetPPINInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
     oemData[KEY_PPIN_INFO] = ppinStr.c_str();
     flushOemData();
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1300,7 +1300,7 @@ ipmi_ret_t ipmiOemSetAdrTrigger(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 {
     /* Do nothing, return success */
     *data_len = 0;
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 // Helper function to set guid at offset in EEPROM
@@ -1388,16 +1388,16 @@ ipmi_ret_t ipmiOemSetSystemGuid(ipmi_netfn_t, ipmi_cmd_t,
     if (*data_len != GUID_SIZE) // 16bytes
     {
         *data_len = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     *data_len = 0;
 
     if (setGUID(OFFSET_SYS_GUID, req))
     {
-        return IPMI_CC_UNSPECIFIED_ERROR;
+        return ipmi::ccUnspecifiedError;
     }
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 #endif
 
@@ -1410,7 +1410,7 @@ ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 {
     /* Do nothing, return success */
     *data_len = 0;
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1449,20 +1449,20 @@ ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
             break;
         case PPR_ROW_COUNT:
             if (req[1] > 100)
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             oemData[KEY_PPR][KEY_PPR_ROW_COUNT] = req[1];
             break;
         case PPR_ROW_ADDR:
             pprIndex = req[1];
             if (pprIndex > 100)
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             if (len < PPR_ROW_ADDR_LEN + 1)
             {
                 phosphor::logging::log<phosphor::logging::level::ERR>(
                     "Invalid PPR Row Address length received");
-                return IPMI_CC_REQ_DATA_LEN_INVALID;
+                return ipmi::ccReqDataLenInvalid;
             }
 
             ss << std::hex;
@@ -1476,13 +1476,13 @@ ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
         case PPR_HISTORY_DATA:
             pprIndex = req[1];
             if (pprIndex > 100)
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             if (len < PPR_HST_DATA_LEN + 1)
             {
                 phosphor::logging::log<phosphor::logging::level::ERR>(
                     "Invalid PPR history data length received");
-                return IPMI_CC_REQ_DATA_LEN_INVALID;
+                return ipmi::ccReqDataLenInvalid;
             }
 
             ss << std::hex;
@@ -1494,13 +1494,13 @@ ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
             oemData[KEY_PPR][ss.str()][KEY_PPR_HST_DATA] = str.c_str();
             break;
         default:
-            return IPMI_CC_PARM_OUT_OF_RANGE;
+            return ipmi::ccParmOutOfRange;
             break;
     }
 
     flushOemData();
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -1550,17 +1550,17 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
         case PPR_ROW_ADDR:
             pprIndex = req[1];
             if (pprIndex > 100)
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             ss << std::hex;
             ss << std::setw(2) << std::setfill('0') << (int)pprIndex;
 
             if (oemData[KEY_PPR].find(ss.str()) == oemData[KEY_PPR].end())
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             if (oemData[KEY_PPR][ss.str()].find(KEY_PPR_ROW_ADDR) ==
                 oemData[KEY_PPR][ss.str()].end())
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             str = oemData[KEY_PPR][ss.str()][KEY_PPR_ROW_ADDR];
             *data_len = strToBytes(str, res);
@@ -1568,27 +1568,27 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
         case PPR_HISTORY_DATA:
             pprIndex = req[1];
             if (pprIndex > 100)
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             ss << std::hex;
             ss << std::setw(2) << std::setfill('0') << (int)pprIndex;
 
             if (oemData[KEY_PPR].find(ss.str()) == oemData[KEY_PPR].end())
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             if (oemData[KEY_PPR][ss.str()].find(KEY_PPR_HST_DATA) ==
                 oemData[KEY_PPR][ss.str()].end())
-                return IPMI_CC_PARM_OUT_OF_RANGE;
+                return ipmi::ccParmOutOfRange;
 
             str = oemData[KEY_PPR][ss.str()][KEY_PPR_HST_DATA];
             *data_len = strToBytes(str, res);
             break;
         default:
-            return IPMI_CC_PARM_OUT_OF_RANGE;
+            return ipmi::ccParmOutOfRange;
             break;
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 /* FB OEM QC Commands */
@@ -1997,7 +1997,7 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::ccParmOutOfRange;
     }
 
     len = len - 6; // Get Actual data length
@@ -2013,7 +2013,7 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
            [driveInfoKey[req->paramSel]] = str.c_str();
     flushOemData();
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 //----------------------------------------------------------------------
@@ -2056,7 +2056,7 @@ ipmi_ret_t ipmiOemQGetDriveInfo(
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::ccParmOutOfRange;
     }
 
     if (oemData[KEY_Q_DRIVE_INFO].find(ctrlTypeKey[ctrlType]) ==
@@ -2079,7 +2079,7 @@ ipmi_ret_t ipmiOemQGetDriveInfo(
                  [dimmInfoKey[req->paramSel]];
     *data_len = strToBytes(str, res);
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 /* Helper function for sending DCMI commands to ME/BIC and
@@ -2236,11 +2236,11 @@ static ipmi_ret_t setDumpState(CrdState& currState, CrdState newState)
         case CrdState::free:
             break;
         default:
-            return IPMI_CC_UNSPECIFIED_ERROR;
+            return ipmi::ccUnspecifiedError;
     }
     currState = newState;
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t handleMcaBank(const CrashDumpHdr& hdr,
@@ -2248,7 +2248,7 @@ static ipmi_ret_t handleMcaBank(const CrashDumpHdr& hdr,
                                 CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdMcaBank))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2270,7 +2270,7 @@ static ipmi_ret_t handleMcaBank(const CrashDumpHdr& hdr,
     ss << std::format(" MCA_MISC1     : 0x{:016X}\n", pBank->mcaMisc1);
     ss << "\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 template <typename T>
@@ -2278,12 +2278,12 @@ static ipmi_ret_t handleVirtualBank(std::span<const uint8_t> data,
                                     CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(T))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     const auto* pBank = reinterpret_cast<const T*>(data.data());
 
     if (data.size() < sizeof(T) + sizeof(BankCorePair) * pBank->mcaCount)
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2310,14 +2310,14 @@ static ipmi_ret_t handleVirtualBank(std::span<const uint8_t> data,
     }
     ss << "\n\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t handleCpuWdtBank(std::span<const uint8_t> data,
                                    CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdCpuWdtBank))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2344,7 +2344,7 @@ static ipmi_ret_t handleCpuWdtBank(std::span<const uint8_t> data,
     }
     ss << "\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 template <size_t N>
@@ -2353,7 +2353,7 @@ static ipmi_ret_t handleHwAssertBank(const char* name,
                                      CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdHwAssertBank<N>))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2376,14 +2376,14 @@ static ipmi_ret_t handleHwAssertBank(const char* name,
     }
     ss << "\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t handlePcieAerBank(std::span<const uint8_t> data,
                                     CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdPcieAerBank))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2438,18 +2438,18 @@ static ipmi_ret_t handlePcieAerBank(std::span<const uint8_t> data,
                       pBank->laneErrSts);
     ss << "\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t handleWdtRegBank(std::span<const uint8_t> data,
                                    CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdWdtRegBank))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     const auto* pBank = reinterpret_cast<const CrdWdtRegBank*>(data.data());
     if (data.size() < sizeof(CrdWdtRegBank) + sizeof(uint32_t) * pBank->count)
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2465,14 +2465,14 @@ static ipmi_ret_t handleWdtRegBank(std::span<const uint8_t> data,
     }
     ss << "\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t handleCrdHdrBank(std::span<const uint8_t> data,
                                    CrdState& currState, std::stringstream& ss)
 {
     if (data.size() < sizeof(CrdHdrBank))
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
@@ -2494,7 +2494,7 @@ static ipmi_ret_t handleCrdHdrBank(std::span<const uint8_t> data,
                       (pBank->pmio & 0x10) >> 4);
     ss << "\n";
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static std::string getFilename(const std::filesystem::path& dir,
@@ -2527,7 +2527,7 @@ static ipmi_ret_t handleCtrlBank(std::span<const uint8_t> data,
                                  CrdState& currState, std::stringstream& ss)
 {
     if (data.empty())
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
 
     switch (static_cast<CrdCtrl>(data[0]))
     {
@@ -2543,7 +2543,7 @@ static ipmi_ret_t handleCtrlBank(std::span<const uint8_t> data,
             std::string filename = getFilename(dumpDir, "crashdump_");
             std::ofstream outFile(dumpDir / filename);
             if (!outFile.is_open())
-                return IPMI_CC_UNSPECIFIED_ERROR;
+                return ipmi::ccUnspecifiedError;
 
             auto now = std::chrono::system_clock::to_time_t(
                 std::chrono::system_clock::now());
@@ -2561,7 +2561,7 @@ static ipmi_ret_t handleCtrlBank(std::span<const uint8_t> data,
             return ccInvalidParam;
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
@@ -2620,7 +2620,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
             break;
         case BankType::ctrl:
             res = handleCtrlBank(bData, dumpState, ss);
-            if (res == IPMI_CC_OK &&
+            if (res == ipmi::ccSuccess &&
                 static_cast<CrdCtrl>(bData[0]) == CrdCtrl::getState)
             {
                 return ipmi::responseSuccess(

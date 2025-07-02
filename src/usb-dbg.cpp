@@ -1004,11 +1004,11 @@ ipmi_ret_t plat_udbg_control_panel(uint8_t cur_panel, uint8_t operation,
                                    uint8_t* buffer)
 {
     if (cur_panel > panelNum || cur_panel < std::to_underlying(panel::MAIN))
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::ccParmOutOfRange;
 
     // No more item; End of item list
     if (item > panels[cur_panel].item_num)
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::ccParmOutOfRange;
 
     switch (operation)
     {
@@ -1023,7 +1023,7 @@ ipmi_ret_t plat_udbg_control_panel(uint8_t cur_panel, uint8_t operation,
             item = 0;
             break;
         default:
-            return IPMI_CC_PARM_OUT_OF_RANGE;
+            return ipmi::ccParmOutOfRange;
     }
 
     buffer[0] = cur_panel;
@@ -1036,7 +1036,7 @@ ipmi_ret_t plat_udbg_control_panel(uint8_t cur_panel, uint8_t operation,
                     buffer[2]);
     }
     *count = buffer[2] + 3;
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 } // end of namespace ipmi
