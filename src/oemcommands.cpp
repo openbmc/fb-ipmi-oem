@@ -1992,7 +1992,7 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
     *data_len = 0;
 
     /* check for requested data params */
-    if (len < 6 || req->paramSel < 1 || req->paramSel >= numParam ||
+    if (len < 6 || req->paramSel >= numParam ||
         ctrlType > 2)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -2052,7 +2052,7 @@ ipmi_ret_t ipmiOemQGetDriveInfo(
     *data_len = 0;
 
     /* check for requested data params */
-    if (req->paramSel < 1 || req->paramSel >= numParam || ctrlType > 2)
+    if (req->paramSel >= numParam || ctrlType > 2)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
@@ -2067,16 +2067,16 @@ ipmi_ret_t ipmiOemQGetDriveInfo(
     ss << std::setw(2) << std::setfill('0') << (int)req->hddIndex;
 
     if (oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]].find(ss.str()) ==
-        oemData[KEY_Q_DRIVE_INFO].end())
+        oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]].end())
         return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
 
     if (oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()].find(
-            dimmInfoKey[req->paramSel]) ==
-        oemData[KEY_Q_DRIVE_INFO][ss.str()].end())
+            driveInfoKey[req->paramSel]) ==
+        oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()].end())
         return CC_PARAM_NOT_SUPP_IN_CURR_STATE;
 
     str = oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()]
-                 [dimmInfoKey[req->paramSel]];
+                 [driveInfoKey[req->paramSel]];
     *data_len = strToBytes(str, res);
 
     return ipmi::ccSuccess;
