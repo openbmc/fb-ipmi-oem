@@ -25,6 +25,7 @@ std::string getMotherBoardFruName();
 int8_t getFruData(std::string& serial, std::string& name);
 int8_t sysConfig(std::vector<std::string>& data, size_t pos);
 int8_t procInfo(std::string& result, size_t pos);
+std::vector<std::pair<std::string, std::string>> getHostFWVersions(int hostNum);
 
 bool isMultiHostPlatform();
 
@@ -650,19 +651,43 @@ static int udbg_get_info_page(uint8_t, uint8_t page, uint8_t* next,
         }
 
         getMaxHostPosition(maxPosition);
+        std::string data;
         if (hostPosition == BMC_POSITION || hostInstances == "0")
         {
-            std::string data = "FRU:" + getMotherBoardFruName();
-            frame_info.append(data);
+            data = "FRU:" + getMotherBoardFruName();
         }
         else if (hostPosition != BMC_POSITION && hostPosition <= maxPosition)
         {
-            std::string data = "FRU:slot" + std::to_string(hostPosition);
-            frame_info.append(data);
+            if (getMotherBoardFruName() != "")
+            {
+                data = "FRU:" + getMotherBoardFruName();
+            }
+            else
+            {
+                data = "FRU:slot" + std::to_string(hostPosition);
+            }
+        }
+        frame_info.append(data);
+
+        if (hostPosition <= 8 && hostPosition >= 1)
+        {
+            auto fwVec = getHostFWVersions(hostPosition);
+            if (fwVec.empty())
+            {
+                std::cout << "No FW version found for host " << hostPosition
+                          << std::endl;
+            }
+            else
+            {
+                for (const auto& fw : fwVec)
+                {
+                    frame_info.append(fw.first + "_FW_ver:");
+                    frame_info.append(fw.second, 1);
+                }
+            }
         }
 
         // FRU
-        std::string data;
         frame_info.append("SN:");
         if (getFruData(data, serialName) != 0)
         {
@@ -783,6 +808,8 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
 {
     // up to 70 codes can be displayed on 10 pages
     static constexpr size_t maxPostcodes = 70;
+    bool platform = isMultiHostPlatform();
+    size_t hostPosition = 0;
 
     if (page == 1)
     {
@@ -791,18 +818,24 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
         snprintf(frame_postcode.title, 32, "POST CODE");
         frame_postcode.max_page = 10;
 
+        if (platform)
+            getSelectorPosition(hostPosition);
+
         // Synchronously get D-Bus connection
         auto bus = sdbusplus::bus::new_default();
+        std::string serviceName =
+            BOOT_POSTCODE_SERVICE + std::to_string(hostPosition);
+        std::string objectPath =
+            BOOT_POSTCODE_OBJECTPATH + std::to_string(hostPosition);
 
         // Build D-Bus method call
         auto method = bus.new_method_call(
-            "xyz.openbmc_project.State.Boot.PostCode0",  // Target service name
-            "/xyz/openbmc_project/State/Boot/PostCode0", // Object path
-            "xyz.openbmc_project.State.Boot.PostCode",   // Interface name
-            "GetPostCodes");                             // Method name
+            serviceName.c_str(),     // Target service name
+            objectPath.c_str(),      // Object path
+            BOOT_POSTCODE_INTERFACE, // Interface name
+            "GetPostCodes");         // Method name
 
-        method.append(uint16_t(1)); // Add method parameter, assuming it's page
-
+        method.append(uint16_t(1));  // Add method parameter, assuming it's pag
         try
         {
             auto reply = bus.call(method); // Send synchronous method call

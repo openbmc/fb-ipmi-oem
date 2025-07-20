@@ -32,10 +32,24 @@ if get_option('host-instances') != ''
     host_instances = get_option('host-instances')
 endif
 
+host_fw_types_inits = ''
+if get_option('machine') == 'yosemite4'
+    fw_opt = get_option('host-fw-types')
+    fw_list = fw_opt == '' ? [] : fw_opt.split(';')
+    fw_quoted = []
+    foreach t : fw_list
+        fw_quoted += ['"' + t + '"']
+    endforeach
+
+    host_fw_types_inits = ',\n    '.join(fw_quoted)
+endif
+
 conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES', host_instances)
 conf_data.set('POST_CODE_BYTES', get_option('post-code-bytes'))
 conf_data.set('DEBUG_CARD_FRAME_SIZE', get_option('debug-card-frame-size'))
+conf_data.set('HOST_FW_TYPES_INITS', host_fw_types_inits)
+
 
 configure_file(
     input: 'meson_config.h.in',
@@ -108,3 +122,4 @@ if get_option('machine') != ''
         endif
     endforeach
 endif
+

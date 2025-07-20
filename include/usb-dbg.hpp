@@ -60,6 +60,9 @@ static constexpr size_t FRAME_BUFF_SIZE = 4096;
 static constexpr size_t FRAME_PAGE_BUF_SIZE = 256;
 
 #define FRU_ALL 0
+#define BOOT_POSTCODE_SERVICE "xyz.openbmc_project.State.Boot.PostCode"
+#define BOOT_POSTCODE_OBJECTPATH "/xyz/openbmc_project/State/Boot/PostCode"
+#define BOOT_POSTCODE_INTERFACE "xyz.openbmc_project.State.Boot.PostCode"
 
 static constexpr auto DEBUG_GPIO_KEY = "GpioDesc";
 static constexpr auto GPIO_ARRAY_SIZE = 4;
