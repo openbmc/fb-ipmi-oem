@@ -14,3 +14,8 @@ option(
 )
 option('host-instances', type: 'string', description: 'Host Instances')
 option('machine', type: 'string', description: 'Machine')
+option('host-fw-types',
+  type: 'string',
+  value: 'Sentinel_Dome_bic;Wailua_Falls_bic;Sentinel_Dome_bios;Sentinel_Dome_cpld',
+  description: 'List of firmware types, separated by semicolon'
+)
