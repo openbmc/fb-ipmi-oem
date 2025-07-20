@@ -33,12 +33,14 @@
 #include <array>
 #include <cstring>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <optional>
 
 #define SIZE_IANA_ID 3
 
@@ -432,71 +434,95 @@ int readDimmType(std::string& data, uint8_t param)
     return 0;
 }
 
+static std::optional<std::string> findIpAddress(
+    sdbusplus::bus_t& bus,
+    const std::string& protocol,
+    const std::vector<std::string>& ifaces)
+{
+    for (auto& dev : ifaces)
+    {
+        try
+        {
+            auto ipObjectInfo =
+                ipmi::network::getIPObject(bus, ipmi::network::IP_INTERFACE,
+                                           ipmi::network::ROOT, protocol, dev);
+
+            auto props = ipmi::getAllDbusProperties(
+                bus, ipObjectInfo.second, ipObjectInfo.first,
+                ipmi::network::IP_INTERFACE);
+
+            auto addr = std::get<std::string>(props.at("Address"));
+            if (!addr.empty())
+                return addr;
+        }
+        catch (const sdbusplus::exception::SdBusError&)
+        {}
+    }
+    return std::nullopt;
+}
+static std::optional<std::string> findMacAddress(
+    sdbusplus::bus_t& bus, const std::vector<std::string>& ifaces)
+{
+    for (auto& dev : ifaces)
+    {
+        try
+        {
+            auto [path, obj] = ipmi::getDbusObject(
+                bus, ipmi::network::MAC_INTERFACE, ipmi::network::ROOT, dev);
+
+            auto var = ipmi::getDbusProperty(
+                bus, obj, path, ipmi::network::MAC_INTERFACE, "MACAddress");
+
+            auto mac = std::get<std::string>(var);
+            if (!mac.empty())
+                return mac;
+        }
+        catch (const sdbusplus::exception::SdBusError&)
+        {}
+    }
+    return std::nullopt;
+}
+
 ipmi_ret_t getNetworkData(uint8_t lan_param, char* data)
 {
-    ipmi_ret_t rc = ipmi::ccSuccess;
-    sdbusplus::bus_t bus(ipmid_get_sd_bus_connection());
+    static const std::vector<std::string> ifaces{"eth0", "eth1"};
 
-    const std::string ethdevice = "eth0";
+    sdbusplus::bus_t bus(ipmid_get_sd_bus_connection());
+    ipmi_ret_t rc = IPMI_CC_OK;
+    std::optional<std::string> result;
 
     switch (static_cast<LanParam>(lan_param))
     {
         case LanParam::IP:
-        {
-            std::string ipaddress;
-            auto ipObjectInfo = ipmi::network::getIPObject(
-                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT,
-                ipmi::network::IPV4_PROTOCOL, ethdevice);
-
-            auto properties = ipmi::getAllDbusProperties(
-                bus, ipObjectInfo.second, ipObjectInfo.first,
-                ipmi::network::IP_INTERFACE);
-
-            ipaddress = std::get<std::string>(properties["Address"]);
-
-            std::strcpy(data, ipaddress.c_str());
-        }
-        break;
+            result = findIpAddress(bus, ipmi::network::IPV4_PROTOCOL, ifaces);
+            lg2::info("Found IP Address: {ADDR}", "ADDR",
+                      result.value_or("Not Found"));
+            break;
 
         case LanParam::IPV6:
-        {
-            std::string ipaddress;
-            auto ipObjectInfo = ipmi::network::getIPObject(
-                bus, ipmi::network::IP_INTERFACE, ipmi::network::ROOT,
-                ipmi::network::IPV6_PROTOCOL, ethdevice);
-
-            auto properties = ipmi::getAllDbusProperties(
-                bus, ipObjectInfo.second, ipObjectInfo.first,
-                ipmi::network::IP_INTERFACE);
-
-            ipaddress = std::get<std::string>(properties["Address"]);
-
-            std::strcpy(data, ipaddress.c_str());
-        }
-        break;
+            result = findIpAddress(bus, ipmi::network::IPV6_PROTOCOL, ifaces);
+            lg2::info("Found IPv6 Address: {ADDR}", "ADDR",
+                      result.value_or("Not Found"));
+            break;
 
         case LanParam::MAC:
-        {
-            std::string macAddress;
-            auto macObjectInfo =
-                ipmi::getDbusObject(bus, ipmi::network::MAC_INTERFACE,
-                                    ipmi::network::ROOT, ethdevice);
-
-            auto variant = ipmi::getDbusProperty(
-                bus, macObjectInfo.second, macObjectInfo.first,
-                ipmi::network::MAC_INTERFACE, "MACAddress");
-
-            macAddress = std::get<std::string>(variant);
-
-            sscanf(macAddress.c_str(), ipmi::network::MAC_ADDRESS_FORMAT,
-                   (data), (data + 1), (data + 2), (data + 3), (data + 4),
-                   (data + 5));
-            std::strcpy(data, macAddress.c_str());
-        }
-        break;
+            result = findMacAddress(bus, ifaces);
+            lg2::info("Found MAC Address: {ADDR}", "ADDR",
+                      result.value_or("Not Found"));
+            break;
 
         default:
-            rc = ipmi::ccParmOutOfRange;
+            return IPMI_CC_PARM_OUT_OF_RANGE;
+    }
+
+    if (!result.has_value())
+    {
+        rc = IPMI_CC_UNSPECIFIED_ERROR;
+        data[0] = '\0';
+    }
+    else
+    {
+        std::strcpy(data, result->c_str());
     }
     return rc;
 }
@@ -514,38 +540,87 @@ bool isMultiHostPlatform()
     }
     return platform;
 }
-
-// return "" equals failed
-std::string getMotherBoardFruPath()
+static std::optional<std::string> findFruPathByInterface(
+    sdbusplus::bus_t& dbus, const std::string& interfaceName,
+    std::function<bool(const std::string&)> predicate)
 {
+    const int depth = 0;
     std::vector<std::string> paths;
-    static constexpr const auto depth = 0;
-    sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
 
     auto mapperCall = dbus.new_method_call(
         "xyz.openbmc_project.ObjectMapper",
         "/xyz/openbmc_project/object_mapper",
         "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
-    static constexpr auto interface = {
-        "xyz.openbmc_project.Inventory.Item.Board.Motherboard"};
+    mapperCall.append("/xyz/openbmc_project/inventory/", depth,
+                      std::array<const char*, 1>{interfaceName.c_str()});
 
-    mapperCall.append("/xyz/openbmc_project/inventory/", depth, interface);
     try
     {
         auto reply = dbus.call(mapperCall);
         reply.read(paths);
     }
-    catch (sdbusplus::exception_t& e)
+    catch (const sdbusplus::exception_t& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
-        return "";
+        return std::nullopt;
     }
 
     for (const auto& path : paths)
     {
-        return path;
+        if (predicate(path))
+        {
+            return path;
+        }
+    }
+    return std::nullopt;
+}
+// return "" equals failed
+std::string getMotherBoardFruPath()
+{
+    sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
+
+    bool platform = isMultiHostPlatform();
+    size_t hostPosition;
+    if (platform)
+        getSelectorPosition(hostPosition);
+
+    if (hostPosition == 0)
+    {
+        if (auto path = findFruPathByInterface(
+                dbus, "xyz.openbmc_project.Inventory.Item.Board",
+                [](const std::string& p) {
+                    return p.find("Management_Board") != std::string::npos;
+                }))
+        {
+            lg2::info("[1] Found Motherboard: {PATH}", "PATH", *path);
+            return *path;
+        }
     }
 
+    std::string regexStr =
+        std::string{"Sentinel_Dome_T[12](_with_Retimer)?_Slot_"} +
+        std::to_string(hostPosition) + "$";
+    std::regex re(regexStr);
+    lg2::info("Searching for Motherboard with regex: {REGEX}", "REGEX",
+              regexStr);
+    if (auto path = findFruPathByInterface(
+            dbus, "xyz.openbmc_project.Inventory.Item.Board.Motherboard",
+            [re](const std::string& p) { return std::regex_search(p, re); }))
+    {
+        lg2::info("[2] Found Motherboard: {PATH}", "PATH", *path);
+        return *path;
+    }
+
+    if (auto path = findFruPathByInterface(
+            dbus, "xyz.openbmc_project.Inventory.Item.Board.Motherboard",
+            [](auto&) { return true; }))
+    {
+        lg2::info("[3] Found Motherboard: {PATH}", "PATH", *path);
+        return *path;
+    }
+
+    phosphor::logging::log<phosphor::logging::level::ERR>(
+        "getMotherBoardFruPath: no valid FRU path found");
     return "";
 }
 
@@ -568,6 +643,45 @@ std::string getMotherBoardFruName()
         phosphor::logging::log<phosphor::logging::level::ERR>(e.what());
         return "";
     }
+}
+std::string getFWVersion(const std::string& objPath)
+{
+    constexpr auto service = "xyz.openbmc_project.Settings";
+    constexpr auto interface = "xyz.openbmc_project.Software.Version";
+    constexpr auto propertyName = "Version";
+    try
+    {
+        std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+        ipmi::Value result =
+            getDbusProperty(*dbus, service, objPath, interface, propertyName);
+        if (!std::holds_alternative<std::string>(result))
+        {
+            return "";
+        }
+        return std::get<std::string>(result);
+    }
+    catch (const std::exception& e)
+    {
+        return "";
+    }
+}
+std::vector<std::pair<std::string, std::string>> getHostFWVersions(int hostNum)
+{
+    std::vector<std::pair<std::string, std::string>> result;
+    std::vector<std::string> fwTypes = {
+        "Sentinel_Dome_bic",
+        "Wailua_Falls_bic",
+        "Sentinel_Dome_bios",
+        "Sentinel_Dome_cpld",
+    };
+    for (const auto& fwType : fwTypes)
+    {
+        std::string objPath = "/xyz/openbmc_project/software/host" +
+                              std::to_string(hostNum) + "/" + fwType;
+        std::string version = getFWVersion(objPath);
+        result.emplace_back(fwType, version); // <fwType, version>
+    }
+    return result;
 }
 
 // return code: 0 successful
