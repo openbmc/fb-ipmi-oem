@@ -1,8 +1,13 @@
 #pragma once
 #include <string>
+#include <vector>
 
 inline static const std::string hostInstances = @INSTANCES@;
 
 inline static const size_t postCodeSize = @POST_CODE_BYTES@;
 
 inline static const size_t debugCardFrameSize = @DEBUG_CARD_FRAME_SIZE@;
+
+inline static const std::vector<std::string> fwTypes = {
+    @HOST_FW_TYPES_INITS@
+};
