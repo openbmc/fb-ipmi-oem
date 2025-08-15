@@ -33,6 +33,75 @@
       "message": "Hi @patrick@stwcx.xyz, @amithash@meta.com, @paligill@gmail.com, @pmb@meta.com,\n\nCould you please kindly help review this change and proceed with merging if there are no further concerns?\nThank you very much!",
       "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5661022a_7ea52484",
+        "filename": "meson.build",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-08-15T14:47:34Z",
+      "side": 1,
+      "message": "I\u0027m not very pleased that we already have the machine option, but right now the machine option only affects a JSON file that gets loaded.  This is changing it to become a compile difference as well.  I\u0027d prefer we do not do that.\n\nLet\u0027s at least split that part into a separate commit so other parts can get in quicker.",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 5
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "837201a6_ff27a996",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-08-15T14:47:34Z",
+      "side": 1,
+      "message": "This name is something specific to Yv4.  This isn\u0027t acceptable to be embedded in code.",
+      "range": {
+        "startLine": 591,
+        "startChar": 0,
+        "endLine": 594,
+        "endChar": 9
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "043d9945_7a48ec16",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-08-15T14:47:34Z",
+      "side": 1,
+      "message": "Why do we need a list?  Can\u0027t we expose all of them?",
+      "range": {
+        "startLine": 665,
+        "startChar": 0,
+        "endLine": 668,
+        "endChar": 62
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
