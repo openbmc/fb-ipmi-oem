@@ -60,6 +60,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6aeabac4_b5de518b",
+        "filename": "meson.build",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1002229
+      },
+      "writtenOn": "2025-08-18T16:53:52Z",
+      "side": 1,
+      "message": "Hi @patrick@stwcx.xyz,\n\nThanks for the feedback. If exposing all host firmware types is acceptable, we won’t need the machine option for this anymore. I will remove this Meson logic.",
+      "parentUuid": "5661022a_7ea52484",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 5
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "837201a6_ff27a996",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 4
@@ -83,6 +107,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "62dee1c9_18b7e267",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1002229
+      },
+      "writtenOn": "2025-08-18T16:53:52Z",
+      "side": 1,
+      "message": "Hi @patrick@stwcx.xyz,\n\nThank you for pointing that out, and my apologies for missing that detail. I wasn’t aware this name was Yv4-specific. I plan to remove the hardcoded \"Management_Board\" and identify the BMC by querying the D-Bus interface \"xyz.openbmc_project.Inventory.Item.Bmc.\" Is this approach acceptable, or would you recommend a different interface or property for cross-platform identification?",
+      "parentUuid": "837201a6_ff27a996",
+      "range": {
+        "startLine": 591,
+        "startChar": 0,
+        "endLine": 594,
+        "endChar": 9
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "043d9945_7a48ec16",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 4
@@ -94,6 +142,30 @@
       "writtenOn": "2025-08-15T14:47:34Z",
       "side": 1,
       "message": "Why do we need a list?  Can\u0027t we expose all of them?",
+      "range": {
+        "startLine": 665,
+        "startChar": 0,
+        "endLine": 668,
+        "endChar": 62
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bafc0975_a8a4466b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 1002229
+      },
+      "writtenOn": "2025-08-18T16:53:52Z",
+      "side": 1,
+      "message": "Hi @patrick@stwcx.xyz,\n\nThank you for the review. Originally, this phosphor component did not support host-related firmware, so I wasn’t sure whether exposing all host firmware types would be acceptable. If it is, I will implement an automatic, platform-agnostic enumeration to expose all host firmware types.\n\nFor example, on YV4 I can enumerate all objects implementing xyz.openbmc_project.Software.Version under /xyz/openbmc_project/software/hostN via ObjectMapper (GetSubTreePaths). This returns entries including VR and CXL firmware, removing the need for a predefined list and adapting to different platforms automatically. Here is a sample result:\n\u0027\u0027\u0027\nroot@bmc:~# dbus-send --system --print-reply --dest\u003dxyz.openbmc_project.ObjectMapper /xyz/openbmc_project/object_mapper xyz.openbmc_project.ObjectMapper.GetSubTreePaths string:\"/xyz/openbmc_project/software/host8\" int32:0 array:string:\"xyz.openbmc_project.Software.Version\"\nmethod return time\u003d1755530817.740166 sender\u003d:1.34 -\u003e destination\u003d:1.966 serial\u003d159040 reply_serial\u003d2\n   array [\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_bic\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_bios\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_cpld\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_vr_pvdd11_s3\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_vr_pvddcr_cpu0\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_vr_pvddcr_cpu1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_bic\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_cxl_1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_cxl_2\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_ab_asic1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_ab_asic2\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_cd_asic1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_cd_asic2\"\n   ]\n\n\u0027\u0027\u0027",
+      "parentUuid": "043d9945_7a48ec16",
       "range": {
         "startLine": 665,
         "startChar": 0,
