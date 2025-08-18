@@ -131,6 +131,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "18cf0adc_17b2af36",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-08-18T20:58:26Z",
+      "side": 1,
+      "message": "Sounds good.",
+      "parentUuid": "62dee1c9_18b7e267",
+      "range": {
+        "startLine": 591,
+        "startChar": 0,
+        "endLine": 594,
+        "endChar": 9
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "043d9945_7a48ec16",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 4
@@ -166,6 +190,30 @@
       "side": 1,
       "message": "Hi @patrick@stwcx.xyz,\n\nThank you for the review. Originally, this phosphor component did not support host-related firmware, so I wasn’t sure whether exposing all host firmware types would be acceptable. If it is, I will implement an automatic, platform-agnostic enumeration to expose all host firmware types.\n\nFor example, on YV4 I can enumerate all objects implementing xyz.openbmc_project.Software.Version under /xyz/openbmc_project/software/hostN via ObjectMapper (GetSubTreePaths). This returns entries including VR and CXL firmware, removing the need for a predefined list and adapting to different platforms automatically. Here is a sample result:\n\u0027\u0027\u0027\nroot@bmc:~# dbus-send --system --print-reply --dest\u003dxyz.openbmc_project.ObjectMapper /xyz/openbmc_project/object_mapper xyz.openbmc_project.ObjectMapper.GetSubTreePaths string:\"/xyz/openbmc_project/software/host8\" int32:0 array:string:\"xyz.openbmc_project.Software.Version\"\nmethod return time\u003d1755530817.740166 sender\u003d:1.34 -\u003e destination\u003d:1.966 serial\u003d159040 reply_serial\u003d2\n   array [\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_bic\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_bios\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_cpld\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_vr_pvdd11_s3\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_vr_pvddcr_cpu0\"\n      string \"/xyz/openbmc_project/software/host8/Sentinel_Dome_vr_pvddcr_cpu1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_bic\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_cxl_1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_cxl_2\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_ab_asic1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_ab_asic2\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_cd_asic1\"\n      string \"/xyz/openbmc_project/software/host8/Wailua_Falls_vr_pvddq_cd_asic2\"\n   ]\n\n\u0027\u0027\u0027",
       "parentUuid": "043d9945_7a48ec16",
+      "range": {
+        "startLine": 665,
+        "startChar": 0,
+        "endLine": 668,
+        "endChar": 62
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "744eb4e6_6740fcd5",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-08-18T20:58:26Z",
+      "side": 1,
+      "message": "The `/software/hostN` paths are the temporary settingsd values that should be going away once we have PLDM support for firmware done, right?  You probably don\u0027t want to hard-code a mapper lookup like that.",
+      "parentUuid": "bafc0975_a8a4466b",
       "range": {
         "startLine": 665,
         "startChar": 0,
