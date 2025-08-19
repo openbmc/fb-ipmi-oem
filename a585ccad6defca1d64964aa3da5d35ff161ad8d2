@@ -153,6 +153,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcdea4c4_502a3776",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1002229
+      },
+      "writtenOn": "2025-08-19T08:23:08Z",
+      "side": 1,
+      "message": "Thanks for the feedback. I’ve updated the patch to remove the hardcoded name and now use the xyz.openbmc_project.Inventory.Item.Bmc interface for identification. Please let me know if anything else needs changes.",
+      "parentUuid": "18cf0adc_17b2af36",
+      "range": {
+        "startLine": 591,
+        "startChar": 0,
+        "endLine": 594,
+        "endChar": 9
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "043d9945_7a48ec16",
@@ -214,6 +238,30 @@
       "side": 1,
       "message": "The `/software/hostN` paths are the temporary settingsd values that should be going away once we have PLDM support for firmware done, right?  You probably don\u0027t want to hard-code a mapper lookup like that.",
       "parentUuid": "bafc0975_a8a4466b",
+      "range": {
+        "startLine": 665,
+        "startChar": 0,
+        "endLine": 668,
+        "endChar": 62
+      },
+      "revId": "a585ccad6defca1d64964aa3da5d35ff161ad8d2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a74c724_b09f7365",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 1002229
+      },
+      "writtenOn": "2025-08-19T08:23:08Z",
+      "side": 1,
+      "message": "Hi @patrick@stwcx.xyz,\n\nThank you for the clarification. Based on your comment, I understand that relying on the /software/hostN (settingsd) paths is not recommended and may be unstable going forward.\n\nTo avoid impacting the current Gerrit change, I’ve submitted an updated patch that temporarily removes the host firmware retrieval code. I’d prefer to pause further work on this feature until the PLDM-based firmware support and the corresponding D-Bus model are finalized. Once those are in place, I can revisit this and propose a PLDM-aligned implementation.\n\nPlease let me know if this plan sounds reasonable, or if you would suggest a different interim approach. Thank you very much!",
+      "parentUuid": "744eb4e6_6740fcd5",
       "range": {
         "startLine": 665,
         "startChar": 0,
