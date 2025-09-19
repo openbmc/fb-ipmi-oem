@@ -1656,6 +1656,107 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
     return ipmi::ccSuccess;
 }
 
+//----------------------------------------------------------------------
+// Get FRU ID (CMD_OEM_GET_FRU_ID)
+//----------------------------------------------------------------------
+// BIOS issues this command to retrieve the FRU ID using the bus and slave
+// address.  FRU IDs are dynamic based on entity-manager probe orders so
+// this allows a look-up based on known data from the host to identify a
+// specific FRU.
+//
+// netfn 0x30, cmd 0x84
+//
+// Request:
+// - Byte 1: bus
+// - Byte 2: slave address
+//
+// Response:
+// - Byte 1 - Completion Code
+// - Byte 2 - FRU ID
+
+ipmi_ret_t ipmiOemGetFruId(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                           ipmi_response_t response, ipmi_data_len_t data_len,
+                           ipmi_context_t)
+{
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
+    auto bus = sdbusplus::bus::new_default();
+
+    const uint32_t targetBus = req[0];
+    const uint32_t targetAddress = req[1];
+    *data_len = 1;
+
+    const std::string service = "xyz.openbmc_project.FruDevice";
+    const std::string rootPath = "/xyz/openbmc_project/FruDevice";
+
+    auto method = bus.new_method_call(service.c_str(), "/",
+                                      "org.freedesktop.DBus.ObjectManager",
+                                      "GetManagedObjects");
+
+    auto reply = bus.call(method);
+
+    using PropertyValue = std::variant<std::string, uint32_t, int32_t, bool>;
+
+    std::map<sdbusplus::message::object_path,
+             std::map<std::string, std::map<std::string, PropertyValue>>>
+        objects;
+
+    reply.read(objects);
+
+    int index = 0;
+    bool found = false;
+
+    for (const auto& [path, interfaces] : objects)
+    {
+        if (path.str.find(rootPath) != 0)
+            continue;
+
+        auto it = interfaces.find("xyz.openbmc_project.FruDevice");
+        if (it != interfaces.end())
+        {
+            const auto& properties = it->second;
+
+            auto busIt = properties.find("BUS");
+            auto addrIt = properties.find("ADDRESS");
+
+            if (busIt != properties.end() && addrIt != properties.end())
+            {
+                try
+                {
+                    uint32_t busValue = std::get<uint32_t>(busIt->second);
+                    uint32_t addrValue = std::get<uint32_t>(addrIt->second);
+
+                    if (busValue == targetBus && addrValue == targetAddress)
+                    {
+                        std::cout
+                            << "Match found at index: " << index << std::endl;
+                        std::cout << "Path: " << path.str << std::endl;
+                        res[0] = index;
+                        found = true;
+                        break;
+                    }
+                }
+                catch (const std::bad_variant_access& e)
+                {
+                    std::cerr << "️Unexpected property type at index " << index
+                              << std::endl;
+                    return -1;
+                }
+            }
+            index++;
+        }
+    }
+
+    if (!found)
+    {
+        std::cout << "No matching FRU device found for BUS=" << targetBus
+                  << " and ADDRESS=" << targetAddress << std::endl;
+        return -1;
+    }
+
+    return ipmi::ccSuccess;
+}
+
 /* FB OEM QC Commands */
 
 //----------------------------------------------------------------------
@@ -2793,6 +2894,9 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_GET_PPR, NULL,
                          ipmiOemGetPpr,
                          PRIVILEGE_USER); // Get PPR
+    ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_GET_FRU_ID, NULL,
+                         ipmiOemGetFruId,
+                         PRIVILEGE_USER); // Get FRU ID
     /* FB OEM QC Commands */
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
                           CMD_OEM_Q_SET_PROC_INFO, ipmi::Privilege::User,
