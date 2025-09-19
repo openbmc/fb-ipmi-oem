@@ -77,7 +77,7 @@ enum fb_oem_cmds
     CMD_OEM_RISER_SENSOR_MON_CRL = 0xE7,
     CMD_OEM_BBV_POWER_CYCLE = 0xE9,
     CMD_OEM_CRASHDUMP = 0x70,
-
+    CMD_OEM_GET_FRU_ID = 0x84,
 };
 
 // OEM Command Codes for QC
