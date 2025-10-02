@@ -46,6 +46,30 @@
       },
       "revId": "b5e2cb0ae1a5750b1d4895bcfacd1727638609e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0475382_161d26fd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-02T02:37:32Z",
+      "side": 1,
+      "message": "I\u0027d like to call this something other than \"FRU ID\" because that is very overloaded.  5 years from now we\u0027re not going to remember this conversation and why this FRU ID means \"index into an entity-manager object list\".  Can we come up with a name less generic than \"FRU ID\"?",
+      "parentUuid": "c3d85a10_0addc0b5",
+      "range": {
+        "startLine": 10,
+        "startChar": 28,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "b5e2cb0ae1a5750b1d4895bcfacd1727638609e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
