@@ -70,6 +70,30 @@
       },
       "revId": "b5e2cb0ae1a5750b1d4895bcfacd1727638609e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8a57c2a1_46f6ad3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2025-10-02T02:38:11Z",
+      "side": 1,
+      "message": "Or... is this related to some IPMI concept of a \"FRU ID\"?  Can we related it to a different set of commands as they match?",
+      "parentUuid": "a0475382_161d26fd",
+      "range": {
+        "startLine": 10,
+        "startChar": 28,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "b5e2cb0ae1a5750b1d4895bcfacd1727638609e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
