@@ -22,6 +22,30 @@
       },
       "revId": "b5e2cb0ae1a5750b1d4895bcfacd1727638609e1",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3d85a10_0addc0b5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1002479
+      },
+      "writtenOn": "2025-10-02T02:34:26Z",
+      "side": 1,
+      "message": "When the BIOS reads the FRU, there are two Bianca entries, and the BIOS cannot tell which FRU ID corresponds to the first or the second Bianca FRU. This OEM command uses the I2C bus and slave address as parameters to clearly map which FRU ID comes from which Bianca.",
+      "parentUuid": "9d35bf8b_aa277e5a",
+      "range": {
+        "startLine": 10,
+        "startChar": 28,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "b5e2cb0ae1a5750b1d4895bcfacd1727638609e1",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
