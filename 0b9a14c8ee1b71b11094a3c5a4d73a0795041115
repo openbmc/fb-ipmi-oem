@@ -16,6 +16,24 @@
       "message": "Hi Alex, I\u0027m trying to understand more about the proposed changes. Looks like you are adding a new OEM command (GET_FRU_ID). But, it\u0027s not clear:\n\n1. Where/when is this new command to be invoked? Is it prior \"Read FRU Data\"?\n2. How is the output of the new command to be used by BIOS?\n3. How is this going to solve the intermittent issue reported in the bug https://metainfra.atlassian.net/browse/CGC-460?",
       "revId": "0b9a14c8ee1b71b11094a3c5a4d73a0795041115",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "92b3eb5e_85aabc4b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002479
+      },
+      "writtenOn": "2025-10-15T07:24:34Z",
+      "side": 1,
+      "message": "Hi Sathish,\nAnswers below:\n\n1.This command will be executed before the \"Read FRU Data\" operation.\n\n2.The BIOS can use the FRU ID returned by this command to unambiguously determine which module is the first Bianca (HPM0) and which is the second Bianca (HPM1). With that mapping, the BIOS can correctly associate each FRU\u0027s contents.\n\n3.After every AC power cycle the FRU ID used to read FRUs is not fixed, so the BIOS cannot rely on a fixed FRU ID to tell which Bianca (HPM) is which. With this new OEM command the BIOS can explicitly learn which FRU ID corresponds to which Bianca (HPM), and therefore will not write the wrong Asset Tag.",
+      "parentUuid": "cd796e72_463211c9",
+      "revId": "0b9a14c8ee1b71b11094a3c5a4d73a0795041115",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
