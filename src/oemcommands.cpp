@@ -1755,6 +1755,45 @@ ipmi_ret_t ipmiOemGetFruId(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
     return ipmi::ccSuccess;
 }
 
+//----------------------------------------------------------------------
+// Sled AC Cycle (CMD_OEM_SLED_AC_CYCLE)
+//----------------------------------------------------------------------
+// Request:
+// Byte 1:2 – [0x55, 0x66], Fixed code for command validation
+// Byte 3   – 0xAC, Sled AC cycle
+// Response:
+// Byte 1   – Completion code
+ipmi::RspType<> ipmiOemSledACCycle([[maybe_unused]] ipmi::Context::ptr ctx,
+                                   uint16_t cmdCheckCode, uint8_t cmdAction)
+{
+    constexpr auto chassisStatePath = "/xyz/openbmc_project/state/chassis0";
+    constexpr auto chassisStateIntf = "xyz.openbmc_project.State.Chassis";
+    constexpr auto chassisTransition = "RequestedPowerTransition";
+    constexpr auto chassisPowerCycle =
+        "xyz.openbmc_project.State.Chassis.Transition.PowerCycle";
+
+    constexpr uint16_t ValidCmdCode = 0x6655;
+    constexpr uint16_t SledACCmd = 0xac;
+
+    if (cmdCheckCode != ValidCmdCode)
+    {
+        return ipmi::responseInvalidCommand();
+    }
+
+    if (cmdAction != SledACCmd)
+    {
+        return ipmi::responseInvalidCommand();
+    }
+
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string service = getService(*dbus, chassisStateIntf, chassisStatePath);
+
+    setDbusProperty(*dbus, service, chassisStatePath, chassisStateIntf,
+                    chassisTransition, chassisPowerCycle);
+
+    return ipmi::responseSuccess();
+}
+
 /* FB OEM QC Commands */
 
 //----------------------------------------------------------------------
@@ -2895,6 +2934,9 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_GET_FRU_ID, NULL,
                          ipmiOemGetFruId,
                          PRIVILEGE_USER); // Get FRU ID
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_SLED_AC_CYCLE, ipmi::Privilege::User,
+                          ipmiOemSledACCycle); // Sled AC Cycle
     /* FB OEM QC Commands */
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
                           CMD_OEM_Q_SET_PROC_INFO, ipmi::Privilege::User,
