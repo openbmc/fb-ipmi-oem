@@ -1755,6 +1755,26 @@ ipmi_ret_t ipmiOemGetFruId(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
     return ipmi::ccSuccess;
 }
 
+//----------------------------------------------------------------------
+// Sled AC Cycle (CMD_OEM_SLED_AC_CYCLE)
+//----------------------------------------------------------------------
+ipmi::RspType<> ipmiOemSledACCycle([[maybe_unused]] ipmi::Context::ptr ctx)
+{
+    constexpr auto chassisStatePath = "/xyz/openbmc_project/state/chassis0";
+    constexpr auto chassisStateIntf = "xyz.openbmc_project.State.Chassis";
+    constexpr auto chassisTransition = "RequestedPowerTransition";
+    constexpr auto chassisPowerCycle =
+        "xyz.openbmc_project.State.Chassis.Transition.PowerCycle";
+
+    std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+    std::string service = getService(*dbus, chassisStateIntf, chassisStatePath);
+
+    setDbusProperty(*dbus, service, chassisStatePath, chassisStateIntf,
+                    chassisTransition, chassisPowerCycle);
+
+    return ipmi::responseSuccess();
+}
+
 /* FB OEM QC Commands */
 
 //----------------------------------------------------------------------
@@ -2895,6 +2915,9 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_GET_FRU_ID, NULL,
                          ipmiOemGetFruId,
                          PRIVILEGE_USER); // Get FRU ID
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_SLED_AC_CYCLE, ipmi::Privilege::User,
+                          ipmiOemSledACCycle); // Sled AC Cycle
     /* FB OEM QC Commands */
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemFour,
                           CMD_OEM_Q_SET_PROC_INFO, ipmi::Privilege::User,
