@@ -574,6 +574,36 @@ static std::optional<std::string> findFruPathByInterface(
     return std::nullopt;
 }
 
+static auto makeMotherboardMatcher(size_t pos)
+{
+    return [pos](const std::string& path) {
+        const auto lastSlash = path.find_last_of('/');
+        const std::string leaf = (lastSlash == std::string::npos)
+                                     ? path
+                                     : path.substr(lastSlash + 1);
+
+        const std::string slotSuffix = "_Slot_" + std::to_string(pos);
+        const std::string indexSuffix = "_" + std::to_string(pos);
+
+        auto endsWith = [](const std::string& str, const std::string& suffix) {
+            return str.size() >= suffix.size() &&
+                   str.compare(str.size() - suffix.size(), suffix.size(),
+                               suffix) == 0;
+        };
+
+        if (endsWith(leaf, slotSuffix))
+        {
+            return true;
+        }
+        if (endsWith(leaf, indexSuffix))
+        {
+            return true;
+        }
+
+        return false;
+    };
+}
+
 // return "" equals failed
 std::string getMotherBoardFruPath()
 {
@@ -581,8 +611,18 @@ std::string getMotherBoardFruPath()
 
     bool platform = isMultiHostPlatform();
     size_t hostPosition = 0;
+    std::function<bool(const std::string&)> candidate = [](const std::string&) {
+        return true;
+    };
     if (platform)
+    {
         getSelectorPosition(hostPosition);
+
+        if (hostPosition > 0)
+        {
+            candidate = makeMotherboardMatcher(hostPosition);
+        }
+    }
 
     if (platform == true && hostPosition == 0)
     {
@@ -595,15 +635,9 @@ std::string getMotherBoardFruPath()
         }
     }
 
-    size_t targetIndex = (hostPosition > 0 ? hostPosition - 1 : 0);
-    auto predNth = [targetIndex,
-                    counter = size_t{0}](const std::string& /*path*/) mutable {
-        return (counter++ == targetIndex);
-    };
-
     if (auto path = findFruPathByInterface(
             dbus, "xyz.openbmc_project.Inventory.Item.Board.Motherboard",
-            predNth))
+            candidate))
     {
         lg2::info("[2] Found Motherboard: {PATH}", "PATH", *path);
         return *path;
@@ -643,7 +677,35 @@ int8_t getFruData(std::string& data, std::string& name)
     std::vector<std::string> paths;
     std::string machinePath;
     std::string baseBoard = getMotherBoardFruPath();
-    baseBoard = baseBoard.empty() ? "Baseboard" : baseBoard;
+
+    // If getMotherBoardFruPath() not return "", prefer a direct Asset read on
+    // that object
+    if (!baseBoard.empty())
+    {
+        try
+        {
+            std::shared_ptr<sdbusplus::asio::connection> dbus = getSdBus();
+            std::string service = getService(
+                *dbus, "xyz.openbmc_project.Inventory.Decorator.Asset",
+                baseBoard);
+
+            auto Value = ipmi::getDbusProperty(
+                *dbus, service, baseBoard,
+                "xyz.openbmc_project.Inventory.Decorator.Asset", name);
+
+            data = std::get<std::string>(Value);
+            return 0;
+        }
+        catch (const std::exception& e)
+        {
+            lg2::error("DBus call failed: {ERR}", "ERR", e.what());
+            return -1;
+        }
+    }
+    else
+    {
+        baseBoard = "Baseboard";
+    }
 
     bool platform = isMultiHostPlatform();
     if (platform == true)
@@ -685,18 +747,10 @@ int8_t getFruData(std::string& data, std::string& name)
     {
         if (platform == true)
         {
-            if (pos == BMC_POS)
-            {
-                machinePath = baseBoard;
-            }
-            else
+            if (pos != BMC_POS)
             {
                 machinePath = "_" + std::to_string(pos);
             }
-        }
-        else
-        {
-            machinePath = baseBoard;
         }
 
         auto found = path.find(machinePath);
