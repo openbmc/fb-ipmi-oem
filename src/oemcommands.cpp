@@ -580,7 +580,7 @@ std::string getMotherBoardFruPath()
     sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
 
     bool platform = isMultiHostPlatform();
-    size_t hostPosition;
+    size_t hostPosition = 0;
     if (platform)
         getSelectorPosition(hostPosition);
 
