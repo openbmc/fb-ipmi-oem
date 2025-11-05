@@ -556,19 +556,22 @@ int sendBicCmd(uint8_t netFn, uint8_t cmd, uint8_t bicAddr,
                                        "org.openbmc.Ipmb", "sendRequest");
     method.append(bicAddr, netFn, lun, cmd, cmdData);
 
-    auto reply = bus->call(method);
-    if (reply.is_method_error())
+    try
+    {
+        auto reply = bus->call(method);
+
+        IpmbMethodType resp;
+        reply.read(resp);
+
+        respData = std::move(
+            std::get<std::remove_reference_t<decltype(respData)>>(resp));
+    }
+    catch (const sdbusplus::exception_t& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Error reading from BIC");
         return -1;
     }
-
-    IpmbMethodType resp;
-    reply.read(resp);
-
-    respData =
-        std::move(std::get<std::remove_reference_t<decltype(respData)>>(resp));
 
     return 0;
 }
@@ -594,19 +597,22 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
                                        "org.openbmc.Ipmb", "sendRequest");
     method.append(meAddress, netFn, lun, cmd, cmdData);
 
-    auto reply = bus->call(method);
-    if (reply.is_method_error())
+    try
+    {
+        auto reply = bus->call(method);
+
+        IpmbMethodType resp;
+        reply.read(resp);
+
+        respData = std::move(
+            std::get<std::remove_reference_t<decltype(respData)>>(resp));
+    }
+    catch (const sdbusplus::exception_t& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Error reading from ME");
         return -1;
     }
-
-    IpmbMethodType resp;
-    reply.read(resp);
-
-    respData =
-        std::move(std::get<std::remove_reference_t<decltype(respData)>>(resp));
 
     if (DEBUG)
     {
