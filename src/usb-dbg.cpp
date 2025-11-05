@@ -560,8 +560,7 @@ int sendBicCmd(uint8_t netFn, uint8_t cmd, uint8_t bicAddr,
     {
         auto reply = bus->call(method);
 
-        IpmbMethodType resp;
-        reply.read(resp);
+        auto resp = reply.unpack<IpmbMethodType>();
 
         respData = std::move(
             std::get<std::remove_reference_t<decltype(respData)>>(resp));
@@ -601,8 +600,7 @@ int sendMeCmd(uint8_t netFn, uint8_t cmd, std::vector<uint8_t>& cmdData,
     {
         auto reply = bus->call(method);
 
-        IpmbMethodType resp;
-        reply.read(resp);
+        auto resp = reply.unpack<IpmbMethodType>();
 
         respData = std::move(
             std::get<std::remove_reference_t<decltype(respData)>>(resp));
@@ -828,9 +826,8 @@ static int udbg_get_postcode(uint8_t, uint8_t page, uint8_t* next,
             auto reply = bus.call(method); // Send synchronous method call
 
             // Read postcode value
-            std::vector<std::tuple<std::vector<uint8_t>, std::vector<uint8_t>>>
-                postcodes;
-            reply.read(postcodes);
+            auto postcodes = reply.unpack<std::vector<
+                std::tuple<std::vector<uint8_t>, std::vector<uint8_t>>>>();
 
             // retrieve the latest postcodes
             size_t numEntries = std::min(maxPostcodes, postcodes.size());
