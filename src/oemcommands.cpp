@@ -584,7 +584,7 @@ std::string getMotherBoardFruPath()
     if (platform)
         getSelectorPosition(hostPosition);
 
-    if (hostPosition == 0)
+    if (platform == true && hostPosition == 0)
     {
         if (auto path = findFruPathByInterface(
                 dbus, "xyz.openbmc_project.Inventory.Item.Bmc",
