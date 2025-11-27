@@ -281,7 +281,6 @@ enum class CrdCtrl
     finish = 0x02
 };
 
-constexpr uint8_t ccmNum = 8;
 constexpr uint8_t tcdxNum = 12;
 constexpr uint8_t cakeNum = 6;
 constexpr uint8_t pie0Num = 1;
@@ -340,6 +339,31 @@ struct CrdMcaBank
     uint64_t mcaMisc1;
 };
 
+struct CrdMcaBankV3
+{
+    uint64_t syncfldSts;
+    uint64_t mcaCtrl;
+    uint64_t mcaSts;
+    uint64_t mcaAddr;
+    uint64_t mcaMisc0;
+    uint64_t mcaCtrlMask;
+    uint64_t mcaConfig;
+    uint64_t mcaIpid;
+    uint64_t mcaSynd;
+    uint64_t mcaDestat;
+    uint64_t mcaDeaddr;
+    uint64_t mcaMisc1;
+    uint64_t mcaSynd1msr;
+    uint64_t mcaSynd2msr;
+};
+
+struct CrdMcaBankV4 : public CrdMcaBankV3
+{
+    uint64_t mcaTransaddr;
+    uint64_t mcaTranssynd;
+    uint64_t mcaTransstat;
+};
+
 struct BankCorePair
 {
     uint8_t bankId;
@@ -379,6 +403,7 @@ struct CrdVirtualBankV3
 // Type 0x03: CPU/Data Fabric Watchdog Timer Bank
 struct CrdCpuWdtBank
 {
+    static constexpr size_t ccmNum = 8;
     uint32_t hwAssertStsHi[ccmNum];
     uint32_t hwAssertStsLo[ccmNum];
     uint32_t origWdtAddrLogHi[ccmNum];
@@ -387,6 +412,18 @@ struct CrdCpuWdtBank
     uint32_t hwAssertMskLo[ccmNum];
     uint32_t origWdtAddrLogStat[ccmNum];
 };
+
+template <size_t N>
+struct CrdCpuWdtBankVx
+{
+    static constexpr size_t ccmNum = N;
+    uint32_t origWdtAddrLogHi[ccmNum];
+    uint32_t origWdtAddrLogLo[ccmNum];
+    uint32_t origWdtAddrLogStat[ccmNum];
+};
+
+using CrdCpuWdtBankV4 = CrdCpuWdtBankVx<8>;
+using CrdCpuWdtBankV5 = CrdCpuWdtBankVx<16>;
 
 template <size_t N>
 struct CrdHwAssertBank
