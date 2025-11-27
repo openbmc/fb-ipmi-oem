@@ -340,6 +340,31 @@ struct CrdMcaBank
     uint64_t mcaMisc1;
 };
 
+struct CrdMcaBankV3
+{
+    uint64_t syncfldSts;
+    uint64_t mcaCtrl;
+    uint64_t mcaSts;
+    uint64_t mcaAddr;
+    uint64_t mcaMisc0;
+    uint64_t mcaCtrlMask;
+    uint64_t mcaConfig;
+    uint64_t mcaIpid;
+    uint64_t mcaSynd;
+    uint64_t mcaDestat;
+    uint64_t mcaDeaddr;
+    uint64_t mcaMisc1;
+    uint64_t mcaSynd1msr;
+    uint64_t mcaSynd2msr;
+};
+
+struct CrdMcaBankV4 : public CrdMcaBankV3
+{
+    uint64_t mcaTransaddr;
+    uint64_t mcaTranssynd;
+    uint64_t mcaTransstat;
+};
+
 struct BankCorePair
 {
     uint8_t bankId;
@@ -385,6 +410,13 @@ struct CrdCpuWdtBank
     uint32_t origWdtAddrLogLo[ccmNum];
     uint32_t hwAssertMskHi[ccmNum];
     uint32_t hwAssertMskLo[ccmNum];
+    uint32_t origWdtAddrLogStat[ccmNum];
+};
+
+struct CrdCpuWdtBankV4
+{
+    uint32_t origWdtAddrLogHi[ccmNum];
+    uint32_t origWdtAddrLogLo[ccmNum];
     uint32_t origWdtAddrLogStat[ccmNum];
 };
 

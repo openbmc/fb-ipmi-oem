@@ -2406,31 +2406,52 @@ static ipmi_ret_t setDumpState(CrdState& currState, CrdState newState)
     return ipmi::ccSuccess;
 }
 
+template <typename T>
 static ipmi_ret_t handleMcaBank(const CrashDumpHdr& hdr,
                                 std::span<const uint8_t> data,
                                 CrdState& currState, std::stringstream& ss)
 {
-    if (data.size() < sizeof(CrdMcaBank))
+    if (data.size() < sizeof(T))
         return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
         return res;
 
-    const auto* pBank = reinterpret_cast<const CrdMcaBank*>(data.data());
+    const auto* pBank = reinterpret_cast<const T*>(data.data());
     ss << std::format(" Bank ID : 0x{:02X}, Core ID : 0x{:02X}\n",
                       hdr.bankHdr.bankId, hdr.bankHdr.coreId);
-    ss << std::format(" MCA_CTRL      : 0x{:016X}\n", pBank->mcaCtrl);
-    ss << std::format(" MCA_STATUS    : 0x{:016X}\n", pBank->mcaSts);
-    ss << std::format(" MCA_ADDR      : 0x{:016X}\n", pBank->mcaAddr);
-    ss << std::format(" MCA_MISC0     : 0x{:016X}\n", pBank->mcaMisc0);
-    ss << std::format(" MCA_CTRL_MASK : 0x{:016X}\n", pBank->mcaCtrlMask);
-    ss << std::format(" MCA_CONFIG    : 0x{:016X}\n", pBank->mcaConfig);
-    ss << std::format(" MCA_IPID      : 0x{:016X}\n", pBank->mcaIpid);
-    ss << std::format(" MCA_SYND      : 0x{:016X}\n", pBank->mcaSynd);
-    ss << std::format(" MCA_DESTAT    : 0x{:016X}\n", pBank->mcaDestat);
-    ss << std::format(" MCA_DEADDR    : 0x{:016X}\n", pBank->mcaDeaddr);
-    ss << std::format(" MCA_MISC1     : 0x{:016X}\n", pBank->mcaMisc1);
+    if constexpr (!std::is_same_v<T, CrdMcaBank>)
+    {
+        ss << std::format(" SYNCFLOOD_STATUS : 0x{:016X}\n", pBank->syncfldSts);
+    }
+    ss << std::format(" MCA_CTRL         : 0x{:016X}\n", pBank->mcaCtrl);
+    ss << std::format(" MCA_STATUS       : 0x{:016X}\n", pBank->mcaSts);
+    ss << std::format(" MCA_ADDR         : 0x{:016X}\n", pBank->mcaAddr);
+    ss << std::format(" MCA_MISC0        : 0x{:016X}\n", pBank->mcaMisc0);
+    ss << std::format(" MCA_CTRL_MASK    : 0x{:016X}\n", pBank->mcaCtrlMask);
+    ss << std::format(" MCA_CONFIG       : 0x{:016X}\n", pBank->mcaConfig);
+    ss << std::format(" MCA_IPID         : 0x{:016X}\n", pBank->mcaIpid);
+    ss << std::format(" MCA_SYND         : 0x{:016X}\n", pBank->mcaSynd);
+    ss << std::format(" MCA_DESTAT       : 0x{:016X}\n", pBank->mcaDestat);
+    ss << std::format(" MCA_DEADDR       : 0x{:016X}\n", pBank->mcaDeaddr);
+    ss << std::format(" MCA_MISC1        : 0x{:016X}\n", pBank->mcaMisc1);
+    if constexpr (!std::is_same_v<T, CrdMcaBank>)
+    {
+        ss << std::format(" MCA_SYND1MSR     : 0x{:016X}\n",
+                          pBank->mcaSynd1msr);
+        ss << std::format(" MCA_SYND2MSR     : 0x{:016X}\n",
+                          pBank->mcaSynd2msr);
+    }
+    if constexpr (std::is_same_v<T, CrdMcaBankV4>)
+    {
+        ss << std::format(" MCA_TRANSADDR    : 0x{:016X}\n",
+                          pBank->mcaTransaddr);
+        ss << std::format(" MCA_TRANSSYND    : 0x{:016X}\n",
+                          pBank->mcaTranssynd);
+        ss << std::format(" MCA_TRANSSTAT    : 0x{:016X}\n",
+                          pBank->mcaTransstat);
+    }
     ss << "\n";
 
     return ipmi::ccSuccess;
@@ -2476,32 +2497,39 @@ static ipmi_ret_t handleVirtualBank(std::span<const uint8_t> data,
     return ipmi::ccSuccess;
 }
 
+template <typename T>
 static ipmi_ret_t handleCpuWdtBank(std::span<const uint8_t> data,
                                    CrdState& currState, std::stringstream& ss)
 {
-    if (data.size() < sizeof(CrdCpuWdtBank))
+    if (data.size() < sizeof(T))
         return ipmi::ccReqDataLenInvalid;
 
     ipmi_ret_t res = setDumpState(currState, CrdState::waitData);
     if (res)
         return res;
 
-    const auto* pBank = reinterpret_cast<const CrdCpuWdtBank*>(data.data());
+    const auto* pBank = reinterpret_cast<const T*>(data.data());
     for (size_t i = 0; i < ccmNum; i++)
     {
         ss << std::format("  [CCM{}]\n", i);
-        ss << std::format("    HwAssertStsHi      : 0x{:08X}\n",
-                          pBank->hwAssertStsHi[i]);
-        ss << std::format("    HwAssertStsLo      : 0x{:08X}\n",
-                          pBank->hwAssertStsLo[i]);
+        if constexpr (std::is_same_v<T, CrdCpuWdtBank>)
+        {
+            ss << std::format("    HwAssertStsHi      : 0x{:08X}\n",
+                              pBank->hwAssertStsHi[i]);
+            ss << std::format("    HwAssertStsLo      : 0x{:08X}\n",
+                              pBank->hwAssertStsLo[i]);
+        }
         ss << std::format("    OrigWdtAddrLogHi   : 0x{:08X}\n",
                           pBank->origWdtAddrLogHi[i]);
         ss << std::format("    OrigWdtAddrLogLo   : 0x{:08X}\n",
                           pBank->origWdtAddrLogLo[i]);
-        ss << std::format("    HwAssertMskHi      : 0x{:08X}\n",
-                          pBank->hwAssertMskHi[i]);
-        ss << std::format("    HwAssertMskLo      : 0x{:08X}\n",
-                          pBank->hwAssertMskLo[i]);
+        if constexpr (std::is_same_v<T, CrdCpuWdtBank>)
+        {
+            ss << std::format("    HwAssertMskHi      : 0x{:08X}\n",
+                              pBank->hwAssertMskHi[i]);
+            ss << std::format("    HwAssertMskLo      : 0x{:08X}\n",
+                              pBank->hwAssertMskLo[i]);
+        }
         ss << std::format("    OrigWdtAddrLogStat : 0x{:08X}\n",
                           pBank->origWdtAddrLogStat[i]);
     }
@@ -2553,7 +2581,7 @@ static ipmi_ret_t handlePcieAerBank(std::span<const uint8_t> data,
         return res;
 
     const auto* pBank = reinterpret_cast<const CrdPcieAerBank*>(data.data());
-    ss << std::format("  [Bus{} Dev{} Fun{}]\n", pBank->bus, pBank->dev,
+    ss << std::format("  [Bus{:x} Dev{} Fun{}]\n", pBank->bus, pBank->dev,
                       pBank->fun);
     ss << std::format("    Command                      : 0x{:04X}\n",
                       pBank->cmd);
@@ -2744,7 +2772,18 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
     switch (pHdr->bankHdr.bankType)
     {
         case BankType::mca:
-            res = handleMcaBank(*pHdr, bData, dumpState, ss);
+            if (pHdr->bankHdr.version >= 4)
+            {
+                res = handleMcaBank<CrdMcaBankV4>(*pHdr, bData, dumpState, ss);
+                break;
+            }
+            if (pHdr->bankHdr.version == 3 &&
+                bData.size() >= sizeof(CrdMcaBankV3))
+            {
+                res = handleMcaBank<CrdMcaBankV3>(*pHdr, bData, dumpState, ss);
+                break;
+            }
+            res = handleMcaBank<CrdMcaBank>(*pHdr, bData, dumpState, ss);
             break;
         case BankType::virt:
             if (pHdr->bankHdr.version >= 3)
@@ -2755,7 +2794,12 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
             res = handleVirtualBank<CrdVirtualBankV2>(bData, dumpState, ss);
             break;
         case BankType::cpuWdt:
-            res = handleCpuWdtBank(bData, dumpState, ss);
+            if (pHdr->bankHdr.version >= 4)
+            {
+                res = handleCpuWdtBank<CrdCpuWdtBankV4>(bData, dumpState, ss);
+                break;
+            }
+            res = handleCpuWdtBank<CrdCpuWdtBank>(bData, dumpState, ss);
             break;
         case BankType::tcdx:
             res = handleHwAssertBank<tcdxNum>("TCDX", bData, dumpState, ss);
