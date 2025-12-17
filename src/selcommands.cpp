@@ -412,7 +412,7 @@ static void logMchChkErr(uint8_t* data, std::string& errLog)
             errLog = "Unknown";
     }
 
-    errLog += ", Machine Check bank Number " + std::to_string(data[1]) +
+    errLog += ", Machine Check bank Number " + std::to_string(data[1] & 0x1F) +
               ", CPU " + std::to_string(data[2] >> 5) + ", Core " +
               std::to_string(data[2] & 0x1F);
 }
