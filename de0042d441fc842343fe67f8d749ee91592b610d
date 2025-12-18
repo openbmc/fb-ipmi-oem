@@ -33,6 +33,24 @@
       "message": "Does this change also need to be done in pldm? oem/meta/event/oem_event_manager.cpp",
       "revId": "de0042d441fc842343fe67f8d749ee91592b610d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e0258d8_15b85684",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002296
+      },
+      "writtenOn": "2025-12-18T11:22:42Z",
+      "side": 1,
+      "message": "Looks like PLDM and IPMI define MCE event data differently — e.g. Error Severity is in a different field. But I don’t have the PLDM OEM event spec.  @sora.suu.wiwynn@gmail.com, could you help check if any update’s needed?",
+      "parentUuid": "1dc2f5c9_e43412cd",
+      "revId": "de0042d441fc842343fe67f8d749ee91592b610d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
