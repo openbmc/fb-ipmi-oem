@@ -2474,19 +2474,15 @@ static ipmi_ret_t handleVirtualBank(std::span<const uint8_t> data,
         return res;
 
     ss << " Virtual Bank\n";
-    ss << std::format(" S5_RESET_STATUS   : 0x{:08X}\n", pBank->s5ResetSts);
-    ss << std::format(" PM_BREAKEVENT     : 0x{:08X}\n", pBank->breakevent);
-    if constexpr (std::is_same_v<T, CrdVirtualBankV3>)
-    {
-        ss << std::format(" WARMCOLDRSTSTATUS : 0x{:08X}\n", pBank->rstSts);
-    }
-    ss << std::format(" PROCESSOR NUMBER  : 0x{:04X}\n", pBank->procNum);
-    ss << std::format(" APIC ID           : 0x{:08X}\n", pBank->apicId);
-    ss << std::format(" EAX               : 0x{:08X}\n", pBank->eax);
-    ss << std::format(" EBX               : 0x{:08X}\n", pBank->ebx);
-    ss << std::format(" ECX               : 0x{:08X}\n", pBank->ecx);
-    ss << std::format(" EDX               : 0x{:08X}\n", pBank->edx);
-    ss << " VALID LIST        : ";
+    ss << std::format(" S5_RESET_STATUS  : 0x{:08X}\n", pBank->s5ResetSts);
+    ss << std::format(" PM_BREAKEVENT    : 0x{:08X}\n", pBank->breakevent);
+    ss << std::format(" PROCESSOR NUMBER : 0x{:04X}\n", pBank->procNum);
+    ss << std::format(" APIC ID          : 0x{:08X}\n", pBank->apicId);
+    ss << std::format(" EAX              : 0x{:08X}\n", pBank->eax);
+    ss << std::format(" EBX              : 0x{:08X}\n", pBank->ebx);
+    ss << std::format(" ECX              : 0x{:08X}\n", pBank->ecx);
+    ss << std::format(" EDX              : 0x{:08X}\n", pBank->edx);
+    ss << " VALID LIST       : ";
     for (size_t i = 0; i < pBank->mcaCount; i++)
     {
         ss << std::format("(0x{:02X},0x{:02X}) ", pBank->mcaList[i].bankId,
@@ -2781,11 +2777,6 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
                 res = handleMcaBank<CrdMcaBank>(*pHdr, bData, dumpState, ss);
             break;
         case BankType::virt:
-            if (pHdr->bankHdr.version >= 3)
-            {
-                res = handleVirtualBank<CrdVirtualBankV3>(bData, dumpState, ss);
-                break;
-            }
             res = handleVirtualBank<CrdVirtualBankV2>(bData, dumpState, ss);
             break;
         case BankType::cpuWdt:

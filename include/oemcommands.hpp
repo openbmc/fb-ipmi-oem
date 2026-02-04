@@ -385,21 +385,6 @@ struct CrdVirtualBankV2
     struct BankCorePair mcaList[];
 };
 
-struct CrdVirtualBankV3
-{
-    uint32_t s5ResetSts;
-    uint32_t breakevent;
-    uint32_t rstSts;
-    uint16_t mcaCount;
-    uint16_t procNum;
-    uint32_t apicId;
-    uint32_t eax;
-    uint32_t ebx;
-    uint32_t ecx;
-    uint32_t edx;
-    struct BankCorePair mcaList[];
-};
-
 // Type 0x03: CPU/Data Fabric Watchdog Timer Bank
 struct CrdCpuWdtBank
 {
