@@ -2476,6 +2476,7 @@ static ipmi_ret_t handleVirtualBank(std::span<const uint8_t> data,
     ss << " Virtual Bank\n";
     ss << std::format(" S5_RESET_STATUS  : 0x{:08X}\n", pBank->s5ResetSts);
     ss << std::format(" PM_BREAKEVENT    : 0x{:08X}\n", pBank->breakevent);
+    ss << std::format(" MCA COUNT        : 0x{:04X}\n", pBank->mcaCount);
     ss << std::format(" PROCESSOR NUMBER : 0x{:04X}\n", pBank->procNum);
     ss << std::format(" APIC ID          : 0x{:08X}\n", pBank->apicId);
     ss << std::format(" EAX              : 0x{:08X}\n", pBank->eax);
