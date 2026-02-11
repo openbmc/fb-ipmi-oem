@@ -1,0 +1,7 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Amithash Prasad <amithash@meta.com>
+Submitted-by: Amithash Prasad <amithash@meta.com>
+Submitted-at: Wed, 11 Feb 2026 18:47:52 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/fb-ipmi-oem/+/86949
+Project: openbmc/fb-ipmi-oem
+Branch: refs/heads/master
