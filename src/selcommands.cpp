@@ -1216,8 +1216,8 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
         "Memory uncorrectable error",
         "Memory correctable error (Patrol scrub)",
         "Memory uncorrectable error (Patrol scrub)",
-        "Memory Parity Error (PCC=0)",
-        "Memory Parity Error (PCC=1)",
+        "Memory correctable error (Command/Address Parity)",
+        "Memory uncorrectable error (Command/Address Parity)",
         "Memory PMIC Error",
         "CXL Memory training error",
         "Reserved"};
