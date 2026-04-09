@@ -1698,7 +1698,7 @@ ipmi_ret_t ipmiOemGetFruId(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
     using PropertyValue = std::variant<std::string, uint32_t, int32_t, bool>;
 
     auto objects = reply.unpack<std::map<
-        sdbusplus::message::object_path,
+        sdbusplus::object_path,
         std::map<std::string, std::map<std::string, PropertyValue>>>>();
 
     int index = 0;

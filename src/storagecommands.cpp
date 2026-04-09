@@ -42,7 +42,7 @@ static constexpr int sensorMapUpdatePeriod = 2;
 using SensorMap = std::map<std::string, std::map<std::string, DbusVariant>>;
 
 using ManagedObjectSensor =
-    std::map<sdbusplus::message::object_path,
+    std::map<sdbusplus::object_path,
              std::map<std::string, std::map<std::string, DbusVariant>>>;
 
 static uint16_t sdrReservationID;
@@ -52,11 +52,11 @@ static SensorSubTree sensorTree;
 
 void registerSensorFunctions() __attribute__((constructor));
 using ManagedObjectType = boost::container::flat_map<
-    sdbusplus::message::object_path,
+    sdbusplus::object_path,
     boost::container::flat_map<
         std::string, boost::container::flat_map<std::string, DbusVariant>>>;
 using ManagedEntry = std::pair<
-    sdbusplus::message::object_path,
+    sdbusplus::object_path,
     boost::container::flat_map<
         std::string, boost::container::flat_map<std::string, DbusVariant>>>;
 
