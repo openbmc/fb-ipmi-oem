@@ -474,8 +474,8 @@ const char* cpuInfoKey[] = {"",     "product_name", "basic_info",
                             "type", "micro_code",   "turbo_mode"};
 
 const char* dimmInfoKey[] = {
-    "",           "location",        "type",   "speed",      "part_name",
-    "serial_num", "manufacturer_id", "status", "present_bit"};
+    "",           "location",        "type",     "speed",      "part_name",
+    "serial_num", "manufacturer_id", "mfr_date", "present_bit"};
 
 const char* driveInfoKey[] = {"location",   "serial_num", "model_name",
                               "fw_version", "capacity",   "quantity",
