@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "484fb964_8f7e9f67",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002253
+      },
+      "writtenOn": "2026-05-07T12:49:41Z",
+      "side": 1,
+      "message": "Hi @amithash@meta.com I’m not sure whether mfr_date is OK, or if manufacturing_date would be better. Could you please advise on this? Thanks.",
+      "revId": "3ff6b8604e9cd73bccc9290cf158cb29ef8d96c5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
