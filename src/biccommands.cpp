@@ -279,7 +279,7 @@ ipmi::RspType<IanaType> ipmiOemSetHostPowerState(
     {
         conn->call_noreply(method);
     }
-    catch (const sdbusplus::exception::SdBusError& e)
+    catch (const sdbusplus::exception::internal_exception& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "IPMI ipmiOemHostPowerStatus Failed in call method",

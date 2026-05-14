@@ -454,7 +454,7 @@ static std::optional<std::string> findIpAddress(
             if (!addr.empty())
                 return addr;
         }
-        catch (const sdbusplus::exception::SdBusError&)
+        catch (const sdbusplus::exception::internal_exception&)
         {}
     }
     return std::nullopt;
@@ -476,7 +476,7 @@ static std::optional<std::string> findMacAddress(
             if (!mac.empty())
                 return mac;
         }
-        catch (const sdbusplus::exception::SdBusError&)
+        catch (const sdbusplus::exception::internal_exception&)
         {}
     }
     return std::nullopt;
@@ -1122,7 +1122,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemGet80PortRecord(
         auto reply = conn->call(msg);
         reply.read(postCodes);
     }
-    catch (const sdbusplus::exception::SdBusError& e)
+    catch (const sdbusplus::exception::internal_exception& e)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "IPMI Get80PortRecord Failed in call method",
