@@ -2833,6 +2833,47 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
     return ipmi::response(res);
 }
 
+//----------------------------------------------------------------------
+// I2C Write Read (CMD_OEM_I2C_WRITE_READ)
+//----------------------------------------------------------------------
+// OEM Master Write-Read command supports 8-bit length bus ID
+//
+// Request:
+// - Byte 1: Bus ID
+// - Byte 2
+//    [7:1] Target address
+//    [0] Read/Write bit
+// - Byte 3: Number of bytes to read
+// - Byte 4..N: Data to write
+// Response:
+// - Byte 1: Completion code
+// - Byte 2..N: Read data bytes
+
+ipmi::RspType<std::vector<uint8_t>> ipmiOemI2cWriteRead(
+    [[maybe_unused]] ipmi::Context::ptr ctx, uint8_t busId,
+    [[maybe_unused]] bool isRead, uint7_t targetAddr, uint8_t readBytes,
+    std::vector<uint8_t> writeData)
+{
+    int writeBytes = writeData.size();
+    if (!readBytes && !writeBytes)
+    {
+        lg2::error("Controller write read command: Read & write count are 0");
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    std::vector<uint8_t> readBuf(readBytes);
+    std::string i2cBus =
+        "/dev/i2c-" + std::to_string(static_cast<uint8_t>(busId));
+
+    ipmi::Cc ret = ipmi::i2cWriteRead(i2cBus, static_cast<uint8_t>(targetAddr),
+                                      writeData, readBuf);
+    if (ret != ipmi::ccSuccess)
+    {
+        return ipmi::response(ret);
+    }
+    return ipmi::responseSuccess(readBuf);
+}
+
 static void registerOEMFunctions(void)
 {
     /* Get OEM data from json file */
@@ -2989,6 +3030,10 @@ static void registerOEMFunctions(void)
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
                           CMD_OEM_CRASHDUMP, ipmi::Privilege::User,
                           ipmiOemCrashdump);
+
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_I2C_WRITE_READ, ipmi::Privilege::User,
+                          ipmiOemI2cWriteRead);
 
     return;
 }
