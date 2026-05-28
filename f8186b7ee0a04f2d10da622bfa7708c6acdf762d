@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0020f7f2_f15bb453",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2863,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2026-05-28T21:54:19Z",
+      "side": 1,
+      "message": "What I would like to see is a check here. In the simplest a file access /var/lib/fb-ipmi-oem/i2c-readwrite.lock as an example) and only if that file exists should we allow this command to succeed.\n\nIn the longer term, we could maintain a per-bus/addr allow-list as a JSON file.\n\nThat way, we could add this during testing when the functionality is needed and not have it bleed into prod use cases.",
+      "revId": "f8186b7ee0a04f2d10da622bfa7708c6acdf762d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
