@@ -31,15 +31,19 @@
 #include <xyz/openbmc_project/Control/Boot/Type/server.hpp>
 
 #include <array>
+#include <charconv>
 #include <cstring>
+#include <flat_map>
 #include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
 #include <optional>
 #include <regex>
+#include <set>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #define SIZE_IANA_ID 3
@@ -82,6 +86,9 @@ static constexpr size_t GUID_SIZE = 16;
 static constexpr off_t OFFSET_SYS_GUID = 0x17F0;
 static constexpr const char* FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
 void flushOemData();
+
+constexpr const char* i2cAllowlistPath =
+    "/usr/share/ipmi-providers/i2c_write_read_allowlist.json";
 
 enum class LanParam : uint8_t
 {
@@ -2833,6 +2840,188 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemCrashdump(
     return ipmi::response(res);
 }
 
+static std::flat_map<uint8_t, std::optional<std::set<uint8_t>>>&
+    getI2cAllowlist()
+{
+    static std::flat_map<uint8_t, std::optional<std::set<uint8_t>>> map;
+    return map;
+}
+
+static bool parseI2cAllowlist(const char* path)
+{
+    auto& i2cAllowlist = getI2cAllowlist();
+
+    std::ifstream allowlistStream(path);
+    if (!allowlistStream.good())
+    {
+        lg2::error("Failed to open allowlist file, {PATH}", "PATH", path);
+        return false;
+    }
+
+    lg2::info("I2C allowlist file is loaded: {PATH}", "PATH", path);
+
+    nlohmann::json data =
+        nlohmann::json::parse(allowlistStream, nullptr, false);
+
+    if (data.is_discarded())
+    {
+        lg2::error(
+            "Illegal allowlist file detected, cannot validate JSON, exiting");
+        return false;
+    }
+
+    if (!data.contains("buses"))
+    {
+        lg2::error("Missing buses field in the allowlist");
+        return false;
+    }
+
+    auto buses = data.at("buses");
+    if (buses.type() != nlohmann::json::value_t::array)
+    {
+        lg2::error(
+            "Invalid contents for allowlist buses field, expected array");
+        return false;
+    }
+
+    try
+    {
+        for (const auto& busIt : buses)
+        {
+            if (busIt.contains("bus") && busIt.contains("addresses"))
+            {
+                auto busEntry = busIt.at("bus");
+                auto busId = busEntry.get<uint8_t>();
+
+                const auto& addrEntry = busIt.at("addresses");
+                if (addrEntry.type() != nlohmann::json::value_t::array)
+                {
+                    lg2::error(
+                        "Invalid contents for allowlist addresses field, expected array");
+                    return false;
+                }
+
+                auto addresses = addrEntry.get<std::set<std::string_view>>();
+                auto& allowedAddr = i2cAllowlist[busId].emplace();
+
+                for (const auto& address : addresses)
+                {
+                    uint8_t addrInt{};
+                    if (!(address.starts_with("0x") ||
+                          address.starts_with("0X")))
+                    {
+                        lg2::error("Address must start with 0x or 0X: {ADDR}",
+                                   "ADDR", address);
+                        return false;
+                    }
+
+                    if (address.size() <= 2)
+                    {
+                        lg2::error("Invalid address length: {ADDR}", "ADDR",
+                                   address);
+                        return false;
+                    }
+
+                    auto [ptr, ec] = std::from_chars(
+                        address.data() + 2, address.data() + address.size(),
+                        addrInt, 16);
+
+                    if (ptr != (address.data() + address.size()) ||
+                        ec != std::errc{})
+                    {
+                        lg2::error("Parsing address failed: {ADDR}", "ADDR",
+                                   address);
+                        return false;
+                    }
+
+                    lg2::debug("Allowed target, bus:{BUS} addr:{ADDR}", "BUS",
+                               busId, "ADDR", addrInt);
+                    allowedAddr.insert(addrInt);
+                }
+            }
+            else
+            {
+                auto busId = busIt.get<uint8_t>();
+                lg2::debug("Allowed bus:{BUS}", "BUS", busId);
+                i2cAllowlist[busId] = std::nullopt;
+            }
+        }
+    }
+    catch (const nlohmann::detail::type_error& e)
+    {
+        lg2::error("Invalid type, {ERROR}", "ERROR", e.what());
+        return false;
+    }
+
+    return true;
+}
+
+static bool isTargetAllowed(uint8_t bus, uint8_t address)
+{
+    auto& i2cAllowlist = getI2cAllowlist();
+
+    auto busIt = i2cAllowlist.find(bus);
+    if (busIt == i2cAllowlist.end())
+    {
+        return false;
+    }
+
+    if (!busIt->second.has_value())
+    {
+        return true;
+    }
+
+    return busIt->second->contains(address);
+}
+
+//----------------------------------------------------------------------
+// I2C Write Read (CMD_OEM_I2C_WRITE_READ)
+//----------------------------------------------------------------------
+// OEM Master Write-Read command supports 8-bit length bus ID
+//
+// Request:
+// - Byte 1: Bus ID
+// - Byte 2
+//    [7:1] Target address
+//    [0] Read/Write bit
+// - Byte 3: Number of bytes to read
+// - Byte 4..N: Data to write
+// Response:
+// - Byte 1: Completion code
+// - Byte 2..N: Read data bytes
+
+ipmi::RspType<std::vector<uint8_t>> ipmiOemI2cWriteRead(
+    [[maybe_unused]] ipmi::Context::ptr ctx, uint8_t busId,
+    [[maybe_unused]] bool isRead, uint7_t targetAddr, uint8_t readBytes,
+    std::vector<uint8_t> writeData)
+{
+    int writeBytes = writeData.size();
+    if (!readBytes && !writeBytes)
+    {
+        lg2::error("Controller write read command: Read & write count are 0");
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    if (!isTargetAllowed(busId, static_cast<uint8_t>(targetAddr)))
+    {
+        lg2::error(
+            "Bus: {BUS}, address: {ADDR} are not listed in the allowlist",
+            "BUS", busId, "ADDR", static_cast<uint8_t>(targetAddr));
+        return ipmi::responseInvalidCommand();
+    }
+
+    std::vector<uint8_t> readBuf(readBytes);
+    std::string i2cBus = "/dev/i2c-" + std::to_string(busId);
+
+    ipmi::Cc ret = ipmi::i2cWriteRead(i2cBus, static_cast<uint8_t>(targetAddr),
+                                      writeData, readBuf);
+    if (ret != ipmi::ccSuccess)
+    {
+        return ipmi::response(ret);
+    }
+    return ipmi::responseSuccess(readBuf);
+}
+
 static void registerOEMFunctions(void)
 {
     /* Get OEM data from json file */
@@ -2858,6 +3047,13 @@ static void registerOEMFunctions(void)
     else
     {
         lg2::info("Failed to open JSON file.");
+    }
+
+    bool i2cWriteReadReady = false;
+    std::filesystem::path allowlistPath = i2cAllowlistPath;
+    if (std::filesystem::exists(allowlistPath))
+    {
+        i2cWriteReadReady = parseI2cAllowlist(i2cAllowlistPath);
     }
 
     lg2::info("Registering OEM commands.");
@@ -2989,6 +3185,12 @@ static void registerOEMFunctions(void)
     ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
                           CMD_OEM_CRASHDUMP, ipmi::Privilege::User,
                           ipmiOemCrashdump);
+    if (i2cWriteReadReady)
+    {
+        ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                              CMD_OEM_I2C_WRITE_READ, ipmi::Privilege::User,
+                              ipmiOemI2cWriteRead);
+    }
 
     return;
 }
