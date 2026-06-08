@@ -16,6 +16,24 @@
       "message": "@patrick@stwcx.xyz Would this change break any of our tooling?",
       "revId": "dd89bbca1b08d6a2177a32b20e62bebb036e33c9",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51fdd427_273b28cb",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2026-06-08T17:36:30Z",
+      "side": 0,
+      "message": "Checked internally with tooling teams.",
+      "parentUuid": "d05d8b14_b4dfe0ed",
+      "revId": "dd89bbca1b08d6a2177a32b20e62bebb036e33c9",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
