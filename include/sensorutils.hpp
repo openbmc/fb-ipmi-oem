@@ -219,7 +219,7 @@ static inline bool getSensorAttributes(
         }
         // check to see if we reached the limit of where we can adjust back the
         // B value
-        if (bDouble / std::pow(10, rExp + minInt4 - 1) > bDouble)
+        if (fabs(bDouble / std::pow(10, rExp + maxInt4)) > maxInt10)
         {
             if (mDouble < 1.0)
             {
