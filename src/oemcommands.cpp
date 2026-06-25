@@ -19,6 +19,7 @@
 
 #include <boost/crc.hpp>
 #include <commandutils.hpp>
+#include <gpiod.hpp>
 #include <ipmid/api-types.hpp>
 #include <ipmid/api.hpp>
 #include <ipmid/utils.hpp>
@@ -1081,12 +1082,58 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 // Get Board ID (CMD_OEM_GET_BOARD_ID)
 //----------------------------------------------------------------------
 ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
-                             ipmi_response_t, ipmi_data_len_t data_len,
+                             ipmi_response_t response, ipmi_data_len_t data_len,
                              ipmi_context_t)
 {
-    /* TODO: Needs to implement this after GPIO implementation */
-    *data_len = 0;
+    if (machineName != "santabarbara")
+    {
+        *data_len = 0;
+        return ipmi::ccSuccess;
+    }
 
+    constexpr std::array<const char*, 4> skuGpioNames = {
+        "SWB_SKU_ID_0",
+        "SWB_SKU_ID_1",
+        "SWB_SKU_ID_2",
+        "SWB_SKU_ID_3",
+    };
+
+    uint8_t boardId = 0;
+    try
+    {
+        for (size_t i = 0; i < skuGpioNames.size(); ++i)
+        {
+            auto line = gpiod::find_line(skuGpioNames[i]);
+            if (!line)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "ipmiOemGetBoardID: GPIO line not found",
+                    phosphor::logging::entry("LINE=%s", skuGpioNames[i]));
+                *data_len = 0;
+                return ipmi::ccUnspecifiedError;
+            }
+            line.request(
+                {"fb-ipmi-oem", gpiod::line_request::DIRECTION_INPUT, 0});
+            if (line.get_value())
+                boardId |= static_cast<uint8_t>(1 << i);
+            line.release();
+        }
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "ipmiOemGetBoardID: failed to read GPIO line",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        *data_len = 0;
+        return ipmi::ccUnspecifiedError;
+    }
+
+    phosphor::logging::log<phosphor::logging::level::INFO>(
+        "ipmiOemGetBoardID",
+        phosphor::logging::entry("BOARD_ID=0x%02X", boardId));
+
+    *reinterpret_cast<uint8_t*>(response) = boardId;
+    *data_len = 1;
     return ipmi::ccSuccess;
 }
 

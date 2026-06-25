@@ -36,6 +36,7 @@ conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES', host_instances)
 conf_data.set('POST_CODE_BYTES', get_option('post-code-bytes'))
 conf_data.set('DEBUG_CARD_FRAME_SIZE', get_option('debug-card-frame-size'))
+conf_data.set_quoted('MACHINE', get_option('machine'))
 
 configure_file(
     input: 'meson_config.h.in',
@@ -61,12 +62,14 @@ channellayer_dep = dependency('libchannellayer')
 userlayer_dep = dependency('libuserlayer')
 
 nlohmann_json_dep = dependency('nlohmann_json', include_type: 'system')
+libgpiod_dep = dependency('libgpiodcxx', include_type: 'system')
 
 zfboemcmds_pre = declare_dependency(
     include_directories: root_inc,
     dependencies: [
         channellayer_dep,
         ipmid_dep,
+        libgpiod_dep,
         nlohmann_json_dep,
         phosphor_dbus_interfaces_dep,
         phosphor_logging_dep,
