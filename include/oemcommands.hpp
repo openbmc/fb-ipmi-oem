@@ -138,17 +138,12 @@ enum fb_oem_qc_cmds
 #define KEY_DIMM_TYPE "dimm_type"
 #define KEY_DIMM_SPEED "dimm_speed"
 #define KEY_DIMM_SIZE "dimm_size"
-#define KEY_PPR "ppr"
-#define KEY_PPR_ACTION "ppr_row_action"
-#define KEY_PPR_ROW_COUNT "ppr_row_count"
-#define KEY_PPR_INDEX "ppr_index"
-#define KEY_PPR_ROW_ADDR "ppr_row_addr"
-#define KEY_PPR_HST_DATA "ppr_history_data"
 #define CC_PARAM_NOT_SUPP_IN_CURR_STATE 0xD5
-#define PPR_ROW_ADDR_LEN 8
-#define PPR_HST_DATA_LEN 17
 
 #define BOOT_SEQ_ARRAY_SIZE 10
+
+#include <algorithm>
+#include <filesystem>
 
 const char* bootSeqDefine[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
                                "OTHER",   "",         "",         "",
@@ -180,12 +175,28 @@ const char* riserType[] = {"NO_CARD", "2_SLOT", "3_SLOT"};
 const char* pcieType[] = {"ABSENT", "AVA1",     "AVA2", "AVA3",
                           "AVA4",   "Re-timer", "HBA",  "OTHER"};
 
+constexpr size_t BTPPR_PAYLOAD_SIZE = 10;
+
 enum fb_ppr_sel
 {
-    PPR_ACTION = 1,
     PPR_ROW_COUNT,
     PPR_ROW_ADDR,
-    PPR_HISTORY_DATA,
+};
+
+struct BtpprEntry
+{
+    uint32_t index;
+    std::filesystem::path path;
+};
+
+struct BtpprData
+{
+    uint8_t index;
+    uint16_t repairType;
+    uint8_t socNum;
+    uint8_t repairEntryNumber;
+    uint8_t dataLen;
+    uint16_t data[BTPPR_PAYLOAD_SIZE];
 };
 
 typedef struct
