@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "27b73280_b2bbac7e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2026-07-01T21:42:35Z",
+      "side": 1,
+      "message": "Can you please add a description stating why this is being added ?",
+      "revId": "e00a20184ac0ff3fc206021b0eafdcab4f745225",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5033ca41_532af0df",
         "filename": "include/oemcommands.hpp",
         "patchSetId": 2
