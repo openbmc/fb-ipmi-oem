@@ -34,6 +34,24 @@
       "parentUuid": "0020f7f2_f15bb453",
       "revId": "f8186b7ee0a04f2d10da622bfa7708c6acdf762d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22e89243_0e5db464",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2863,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2026-07-01T21:42:09Z",
+      "side": 1,
+      "message": "@elton.wang.wiwynn@gmail.com Can you provide link to the patch which adds this functionality ?",
+      "parentUuid": "cf36f702_b2a9d747",
+      "revId": "f8186b7ee0a04f2d10da622bfa7708c6acdf762d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

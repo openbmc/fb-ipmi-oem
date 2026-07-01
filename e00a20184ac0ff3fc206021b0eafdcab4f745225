@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5033ca41_532af0df",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2026-07-01T21:42:09Z",
+      "side": 1,
+      "message": "Whats the general use case for this addition ?",
+      "revId": "e00a20184ac0ff3fc206021b0eafdcab4f745225",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
