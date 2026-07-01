@@ -150,6 +150,11 @@ enum fb_oem_qc_cmds
 
 #define BOOT_SEQ_ARRAY_SIZE 10
 
+#ifdef BOOT_TIME_PPR
+#include <algorithm>
+#include <filesystem>
+#endif
+
 const char* bootSeqDefine[] = {"USB_DEV", "NET_IPV4", "SATA_HDD", "SATA_CD",
                                "OTHER",   "",         "",         "",
                                "",        "NET_IPV6"};
@@ -179,6 +184,43 @@ const char* mbType[] = {"SS", "DS", "TYPE3"};
 const char* riserType[] = {"NO_CARD", "2_SLOT", "3_SLOT"};
 const char* pcieType[] = {"ABSENT", "AVA1",     "AVA2", "AVA3",
                           "AVA4",   "Re-timer", "HBA",  "OTHER"};
+#ifdef BOOT_TIME_PPR
+
+#define OEM_PPR_CPU_CPER_DIR "/var/lib/amd-bmc-ras"
+constexpr size_t BTPPR_PAYLOAD_SIZE = 10;
+
+enum fb_ppr_sel
+{
+    PPR_ROW_COUNT,
+    PPR_ROW_ADDR,
+};
+
+struct BtpprEntry
+{
+    uint32_t index;
+    std::filesystem::path path;
+};
+
+struct BtpprData
+{
+    uint8_t index;
+    uint16_t repairType;
+    uint8_t socNum;
+    uint8_t repairEntryNumber;
+    uint8_t dataLen;
+    uint16_t data[BTPPR_PAYLOAD_SIZE];
+};
+
+struct BtpprDataResult
+{
+    uint8_t index;
+    uint8_t repairEntryNumber;
+    uint8_t repairResult;
+    uint16_t repairType;
+    uint8_t socNum;
+};
+
+#else
 
 enum fb_ppr_sel
 {
@@ -187,6 +229,7 @@ enum fb_ppr_sel
     PPR_ROW_ADDR,
     PPR_HISTORY_DATA,
 };
+#endif
 
 typedef struct
 {
