@@ -36,6 +36,7 @@ conf_data = configuration_data()
 conf_data.set_quoted('INSTANCES', host_instances)
 conf_data.set('POST_CODE_BYTES', get_option('post-code-bytes'))
 conf_data.set('DEBUG_CARD_FRAME_SIZE', get_option('debug-card-frame-size'))
+conf_data.set('BOOT_TIME_PPR', get_option('boot-time-ppr').allowed())
 
 configure_file(
     input: 'meson_config.h.in',

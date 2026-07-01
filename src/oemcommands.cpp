@@ -1478,6 +1478,277 @@ ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     return ipmi::ccSuccess;
 }
 
+#ifdef BOOT_TIME_PPR
+std::vector<BtpprEntry> scanBtpprFiles()
+{
+    std::vector<BtpprEntry> out;
+    std::error_code ec;
+    const std::regex pat(R"(.*error([0-9]+)_btppr\.json$)");
+
+    for (std::filesystem::directory_iterator it(
+             OEM_PPR_CPU_CPER_DIR,
+             std::filesystem::directory_options::skip_permission_denied, ec),
+         end;
+         it != end; it.increment(ec))
+    {
+        if (ec)
+        {
+            ec.clear();
+            continue;
+        }
+        if (!it->is_regular_file(ec) || ec)
+        {
+            ec.clear();
+            continue;
+        }
+
+        const std::string name = it->path().filename().string();
+        std::smatch m;
+        if (!std::regex_match(name, m, pat))
+        {
+            continue;
+        }
+
+        uint32_t idx = 0;
+        try
+        {
+            idx = static_cast<uint32_t>(std::stoul(m[1].str()));
+        }
+        catch (...)
+        {
+            continue;
+        }
+
+        out.emplace_back(BtpprEntry{idx, it->path()});
+    }
+
+    // Remove entries that already have a corresponding status file
+    out.erase(
+        std::remove_if(out.begin(), out.end(),
+                        [](const BtpprEntry& e) {
+            std::string stem = e.path.stem().string();
+            std::filesystem::path statusPath =
+                e.path.parent_path() / (stem + "_status.json");
+            return std::filesystem::exists(statusPath);
+        }),
+        out.end());
+
+    std::sort(out.begin(), out.end(),
+              [](const BtpprEntry& a, const BtpprEntry& b) {
+        return a.index < b.index;
+    });
+
+    return out;
+}
+
+std::vector<BtpprData> parseBtpprFile(
+    const std::filesystem::path& path, uint8_t fileIndex)
+{
+    std::vector<BtpprData> entries;
+    std::ifstream in(path);
+    if (!in)
+    {
+        return entries;
+    }
+
+    try
+    {
+        nlohmann::json j;
+        in >> j;
+
+        if (!j.contains("pprDataIn") || !j["pprDataIn"].is_array())
+        {
+            return entries;
+        }
+
+        for (const auto& item : j["pprDataIn"])
+        {
+            BtpprData d{};
+            d.index = fileIndex;
+            d.repairEntryNumber = item.value("RepairEntryNum", 0u);
+            d.repairType = item.value("RepairType", 0u);
+            d.socNum = item.value("SocNum", 0u);
+
+            if (item.contains("Payload") &&
+                item["Payload"].is_array())
+            {
+                const auto& pl = item["Payload"];
+                d.dataLen = static_cast<uint8_t>(pl.size());
+                for (size_t i = 0;
+                     i < BTPPR_PAYLOAD_SIZE && i < pl.size(); ++i)
+                {
+                    d.data[i] = static_cast<uint16_t>(
+                        pl[i].get<uint32_t>());
+                }
+            }
+            entries.push_back(d);
+        }
+    }
+    catch (...)
+    {
+    }
+    return entries;
+}
+
+//----------------------------------------------------------------------
+// Get PPR (CMD_OEM_GET_PPR)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                         ipmi_response_t response, ipmi_data_len_t data_len,
+                         ipmi_context_t)
+{
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
+    uint8_t selParam = req[0];
+
+    if(selParam == PPR_ROW_COUNT && *data_len != 1)
+    {
+        return ipmi::ccReqDataLenInvalid;
+    }
+    else if(selParam == PPR_ROW_ADDR && *data_len != 2)
+    {
+        return ipmi::ccReqDataLenInvalid;
+    }
+
+    *data_len = 0;
+
+    switch (selParam)
+    {
+        case PPR_ROW_COUNT:
+        {
+            *data_len = 1;
+            res[0] = scanBtpprFiles().size();
+            break;
+        }
+        case PPR_ROW_ADDR:
+        {
+            uint8_t pprIndex = req[1];
+            auto files = scanBtpprFiles();
+            if (pprIndex >= files.size())
+                return ipmi::ccParmOutOfRange;
+
+            auto entries = parseBtpprFile(
+                files[pprIndex].path,
+                pprIndex);
+            if (entries.empty())
+                return ipmi::ccUnspecifiedError;
+
+            size_t totalBytes = entries.size() * sizeof(BtpprData);
+            std::memcpy(res, entries.data(), totalBytes);
+            *data_len = totalBytes;
+            break;
+        }
+        default:
+            return ipmi::ccParmOutOfRange;
+            break;
+    }
+
+    return ipmi::ccSuccess;
+}
+
+//----------------------------------------------------------------------
+// Set PPR Result (CMD_OEM_SET_PPR)
+//----------------------------------------------------------------------
+ipmi_ret_t ipmiOemSetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
+                         ipmi_response_t, ipmi_data_len_t data_len,
+                         ipmi_context_t)
+{
+    uint8_t* req = reinterpret_cast<uint8_t*>(request);
+    uint8_t pprIndex = req[0];
+    uint8_t pprResult = req[1];
+
+    if (*data_len != 2)
+    {
+        return ipmi::ccReqDataLenInvalid;
+    }
+
+    *data_len = 0;
+
+    // Find the file matching this index
+    auto files = scanBtpprFiles();
+    if (pprIndex >= files.size())
+    {
+        return ipmi::ccParmOutOfRange;
+    }
+
+    const auto& filePath = files[pprIndex].path;
+
+    // Read the original btppr JSON
+    std::ifstream in(filePath);
+    if (!in)
+    {
+        std::cout << "Read JSON failed: " << filePath << std::endl;
+        return ipmi::ccUnspecifiedError;
+    }
+
+    nlohmann::json j;
+    try
+    {
+        in >> j;
+    }
+    catch (...)
+    {
+        std::cout << "Parse JSON failed: " << filePath << std::endl;
+        return ipmi::ccUnspecifiedError;
+    }
+    in.close();
+
+    if (!j.contains("pprDataIn") || !j["pprDataIn"].is_array() ||
+        j["pprDataIn"].empty())
+    {
+        std::cout << "Read JSON field failed: " << filePath << std::endl;
+        return ipmi::ccUnspecifiedError;
+    }
+
+    // Build pprStatusOut array
+    nlohmann::json statusOut = nlohmann::json::array();
+    for (const auto& item : j["pprDataIn"])
+    {
+        std::string resultStr;
+        if (pprResult == 0)
+        {
+            resultStr = "FAIL";
+        }
+        else if (pprResult == 1)
+        {
+            resultStr = "PASS";
+        }
+        else
+        {
+            resultStr = "NOT_PROCESSED";
+        }
+
+        nlohmann::json entry;
+        entry["RepairEntryNum"] = item.value("RepairEntryNum", 0u);
+        entry["RepairType"] = item.value("RepairType", 0u);
+        entry["SocNum"] = item.value("SocNum", 0u);
+        entry["RepairResult"] = static_cast<uint16_t>(pprResult);
+        entry["RepairResultStr"] = resultStr;
+        statusOut.push_back(entry);
+    }
+
+    nlohmann::json output;
+    output["pprStatusOut"] = statusOut;
+
+    // Write status file: *_btppr.json -> *_btppr_status.json
+    std::string stem = filePath.stem().string();    // e.g. "dram-runtime-ras-error0_btppr"
+    std::string statusName = stem + "_status.json";
+    std::filesystem::path statusPath =
+        filePath.parent_path() / statusName;
+
+    std::ofstream out(statusPath);
+    if (!out)
+    {
+        std::cout << "Result JSON output failed: " << statusPath << std::endl;
+        return ipmi::ccUnspecifiedError;
+    }
+    out << output.dump(4) << std::endl;
+    out.close();
+
+    return ipmi::ccSuccess;
+}
+
+#else
 //----------------------------------------------------------------------
 // Set PPR (CMD_OEM_SET_PPR)
 //----------------------------------------------------------------------
@@ -1655,6 +1926,8 @@ ipmi_ret_t ipmiOemGetPpr(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 
     return ipmi::ccSuccess;
 }
+
+#endif
 
 //----------------------------------------------------------------------
 // Get FRU ID (CMD_OEM_GET_FRU_ID)
