@@ -33,6 +33,24 @@
       "message": "Whats the general use case for this addition ?",
       "revId": "e00a20184ac0ff3fc206021b0eafdcab4f745225",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e1a654d_0eb14e99",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1002591
+      },
+      "writtenOn": "2026-07-07T08:55:33Z",
+      "side": 1,
+      "message": "This command was added to support a DFM vendor\u0027s requirements for manufacturing testing. The vendor\u0027s testing tool runs on the host and requires in-band access to the BMC\u0027s I2C bus.\nA similar command already exists in phosphor-host-ipmid, but the standard IPMI specification only allocates 3 bits for the bus number, which is insufficient for most use cases. This new command was introduced to address that limitation.\nRelated discussion on discord: https://discord.com/channels/986224305987784725/986252729410273290/1506909622316040344",
+      "parentUuid": "5033ca41_532af0df",
+      "revId": "e00a20184ac0ff3fc206021b0eafdcab4f745225",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
