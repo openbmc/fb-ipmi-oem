@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f67cb10f_4bf98355",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-07-07T19:13:09Z",
+      "side": 1,
+      "message": "No way we should had a permanent backdoor in production for a manufacturing use case.\n\nI don\u0027t know what DFM means.  Why can\u0027t these tests run on the BMC or ssh to the BMC to poke at i2c busses?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 32
+      },
+      "revId": "4a2c3acf2607239dbb000f85a6cec596e2b8377d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
