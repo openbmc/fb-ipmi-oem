@@ -26,8 +26,10 @@
 #include <sdbusplus/timer.hpp>
 #include <storagecommands.hpp>
 
+#include <condition_variable>
 #include <fstream>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <thread>
 
@@ -112,12 +114,49 @@ class SELData
 {
   private:
     nlohmann::json selDataObj;
+    std::mutex dataMutex;
+    std::mutex ioMutex;
+    std::condition_variable flushCv;
+    std::thread flushThread;
+    bool flushPending = false;
+    bool stopFlushThread = false;
 
-    void flush()
+    void flush(const nlohmann::json& snapshot)
     {
+        std::lock_guard<std::mutex> ioLock(ioMutex);
         std::ofstream file(SEL_JSON_DATA_FILE);
-        file << selDataObj;
+        file << snapshot;
         file.close();
+    }
+
+    void requestFlushLocked()
+    {
+        flushPending = true;
+        flushCv.notify_one();
+    }
+
+    void flushWorker()
+    {
+        while (true)
+        {
+            nlohmann::json snapshot;
+            {
+                std::unique_lock<std::mutex> lock(dataMutex);
+                flushCv.wait(lock, [this] {
+                    return stopFlushThread || flushPending;
+                });
+
+                if (stopFlushThread && !flushPending)
+                {
+                    return;
+                }
+
+                snapshot = selDataObj;
+                flushPending = false;
+            }
+
+            flush(snapshot);
+        }
     }
 
     void init()
@@ -178,32 +217,59 @@ class SELData
         {
             init();
         }
+
+        flushThread = std::thread(&SELData::flushWorker, this);
+    }
+
+    ~SELData()
+    {
+        {
+            std::lock_guard<std::mutex> lock(dataMutex);
+            flushPending = true;
+            stopFlushThread = true;
+        }
+        flushCv.notify_one();
+        if (flushThread.joinable())
+        {
+            flushThread.join();
+        }
     }
 
     int clear()
     {
-        /* Clear the complete Sel Json object */
-        selDataObj.clear();
-        /* Reinitialize it with basic data */
-        init();
-        /* Save the erase time */
-        struct timespec selTime = {};
-        if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
+        nlohmann::json snapshot;
+
         {
-            return -1;
+            std::lock_guard<std::mutex> lock(dataMutex);
+
+            /* Clear the complete Sel Json object */
+            selDataObj.clear();
+            /* Reinitialize it with basic data */
+            init();
+            /* Save the erase time */
+            struct timespec selTime = {};
+            if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
+            {
+                return -1;
+            }
+            selDataObj[KEY_ERASE_TIME] = selTime.tv_sec;
+            snapshot = selDataObj;
+            flushPending = false;
         }
-        selDataObj[KEY_ERASE_TIME] = selTime.tv_sec;
-        flush();
+
+        flush(snapshot);
         return 0;
     }
 
     uint32_t getCount()
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
         return selDataObj[KEY_SEL_COUNT];
     }
 
     void getInfo(GetSELInfoData& info)
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
         info.selVersion = selDataObj[KEY_SEL_VER];
         info.entries = selDataObj[KEY_SEL_COUNT];
         info.freeSpace = selDataObj[KEY_FREE_SPACE];
@@ -218,6 +284,8 @@ class SELData
         ss << std::hex;
         ss << std::setw(2) << std::setfill('0') << index;
 
+        std::lock_guard<std::mutex> lock(dataMutex);
+
         /* Check or the requested SEL Entry, if record is available */
         if (selDataObj.find(ss.str()) == selDataObj.end())
         {
@@ -230,6 +298,7 @@ class SELData
 
     int addEntry(std::string keyStr)
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
         struct timespec selTime = {};
 
         if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
@@ -247,7 +316,7 @@ class SELData
         ss << std::setw(2) << std::setfill('0') << selCount;
 
         selDataObj[ss.str()][KEY_SEL_ENTRY_RAW] = keyStr;
-        flush();
+        requestFlushLocked();
         return selCount;
     }
 };
