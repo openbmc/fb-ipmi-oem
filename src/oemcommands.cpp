@@ -417,7 +417,27 @@ int readDimmType(std::string& data, uint8_t param)
     std::ifstream file(JSON_DIMM_TYPE_FILE);
     if (file)
     {
-        file >> dimmObj;
+        try
+        {
+            dimmObj = nlohmann::json::parse(file, nullptr, false);
+            if (dimmObj.is_discarded())
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Parsing DIMM type JSON failed",
+                    phosphor::logging::entry("FILE=%s", JSON_DIMM_TYPE_FILE));
+                file.close();
+                return -1;
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing DIMM type JSON",
+                phosphor::logging::entry("FILE=%s", JSON_DIMM_TYPE_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            file.close();
+            return -1;
+        }
         file.close();
     }
     else
@@ -428,10 +448,23 @@ int readDimmType(std::string& data, uint8_t param)
         return -1;
     }
 
-    std::string dimmKey = "dimm_type" + std::to_string(param);
-    auto obj = dimmObj[dimmKey]["short_name"];
-    data = obj;
-    return 0;
+    try
+    {
+        std::string dimmKey = "dimm_type" + std::to_string(param);
+        if (!dimmObj.contains(dimmKey) || !dimmObj[dimmKey].contains("short_name"))
+        {
+            return -1;
+        }
+        data = dimmObj[dimmKey]["short_name"].get<std::string>();
+        return 0;
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Exception in readDimmType processing keys",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return -1;
+    }
 }
 
 static std::optional<std::string> findIpAddress(
@@ -730,7 +763,27 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
     std::ifstream file(JSON_OEM_DATA_FILE);
     if (file)
     {
-        file >> sysObj;
+        try
+        {
+            sysObj = nlohmann::json::parse(file, nullptr, false);
+            if (sysObj.is_discarded())
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Parsing sysConfig JSON failed",
+                    phosphor::logging::entry("FILE=%s", JSON_OEM_DATA_FILE));
+                file.close();
+                return -1;
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing sysConfig JSON",
+                phosphor::logging::entry("FILE=%s", JSON_OEM_DATA_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            file.close();
+            return -1;
+        }
         file.close();
     }
     else
@@ -751,9 +804,29 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
     /* Get dimm type names stored in json file */
     nlohmann::json dimmObj;
     std::ifstream dimmFile(JSON_DIMM_TYPE_FILE);
-    if (file)
+    if (dimmFile)
     {
-        dimmFile >> dimmObj;
+        try
+        {
+            dimmObj = nlohmann::json::parse(dimmFile, nullptr, false);
+            if (dimmObj.is_discarded())
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Parsing DIMM type JSON failed",
+                    phosphor::logging::entry("FILE=%s", JSON_DIMM_TYPE_FILE));
+                dimmFile.close();
+                return -1;
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing DIMM type JSON",
+                phosphor::logging::entry("FILE=%s", JSON_DIMM_TYPE_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            dimmFile.close();
+            return -1;
+        }
         dimmFile.close();
     }
     else
@@ -774,33 +847,53 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
     for (uint8_t ii = 0; ii < len; ii++)
     {
         std::string indKey = std::to_string(ii);
-        std::string speedSize = sysObj[dimmInfo][indKey][DIMM_SPEED];
-        strToBytes(speedSize, res);
-        auto speed = (res[1] << 8 | res[0]);
-        size_t dimmSize = ((res[3] << 8 | res[2]) / 1000);
+        try
+        {
+            if (!sysObj[dimmInfo].contains(indKey))
+            {
+                continue;
+            }
+            auto& indObj = sysObj[dimmInfo][indKey];
+            if (!indObj.contains(DIMM_SPEED) || !indObj.contains(DIMM_TYPE) || !indObj.contains(KEY_DIMM_TYPE))
+            {
+                continue;
+            }
 
-        if (dimmSize == 0)
-        {
-            std::cerr << "Dimm information not available for slot_" +
-                             std::to_string(ii)
-                      << std::endl;
-            continue;
+            std::string speedSize = indObj[DIMM_SPEED].get<std::string>();
+            strToBytes(speedSize, res);
+            auto speed = (res[1] << 8 | res[0]);
+            size_t dimmSize = ((res[3] << 8 | res[2]) / 1000);
+
+            if (dimmSize == 0)
+            {
+                std::cerr << "Dimm information not available for slot_" +
+                                 std::to_string(ii)
+                          << std::endl;
+                continue;
+            }
+            std::string type = indObj[DIMM_TYPE].get<std::string>();
+            std::string dualInlineMem = indObj[KEY_DIMM_TYPE].get<std::string>();
+            strToBytes(type, res);
+            size_t dimmType = res[0];
+            if (dimmVenMap.find(dimmType) == dimmVenMap.end())
+            {
+                typeName = "unknown";
+            }
+            else
+            {
+                typeName = dimmVenMap[dimmType];
+            }
+            result = dualInlineMem + "/" + typeName + "/" + std::to_string(speed) +
+                     "MHz" + "/" + std::to_string(dimmSize) + "GB";
+            data.push_back(result);
         }
-        std::string type = sysObj[dimmInfo][indKey][DIMM_TYPE];
-        std::string dualInlineMem = sysObj[dimmInfo][indKey][KEY_DIMM_TYPE];
-        strToBytes(type, res);
-        size_t dimmType = res[0];
-        if (dimmVenMap.find(dimmType) == dimmVenMap.end())
+        catch (const std::exception& e)
         {
-            typeName = "unknown";
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception processing sysConfig entry",
+                phosphor::logging::entry("INDEX=%d", ii),
+                phosphor::logging::entry("ERROR=%s", e.what()));
         }
-        else
-        {
-            typeName = dimmVenMap[dimmType];
-        }
-        result = dualInlineMem + "/" + typeName + "/" + std::to_string(speed) +
-                 "MHz" + "/" + std::to_string(dimmSize) + "GB";
-        data.push_back(result);
     }
     return 0;
 }
@@ -811,12 +904,32 @@ int8_t procInfo(std::string& result, size_t pos)
     uint8_t res[MAX_BUF];
     std::string procIndex = "00";
     nlohmann::json proObj;
-    std::string procInfo = KEY_Q_PROC_INFO + std::to_string(pos);
+    std::string procInfoKey = KEY_Q_PROC_INFO + std::to_string(pos);
     /* Get processor data stored in json file */
     std::ifstream file(JSON_OEM_DATA_FILE);
     if (file)
     {
-        file >> proObj;
+        try
+        {
+            proObj = nlohmann::json::parse(file, nullptr, false);
+            if (proObj.is_discarded())
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Parsing procInfo JSON failed",
+                    phosphor::logging::entry("FILE=%s", JSON_OEM_DATA_FILE));
+                file.close();
+                return -1;
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing procInfo JSON",
+                phosphor::logging::entry("FILE=%s", JSON_OEM_DATA_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            file.close();
+            return -1;
+        }
         file.close();
     }
     else
@@ -826,32 +939,70 @@ int8_t procInfo(std::string& result, size_t pos)
             phosphor::logging::entry("OEM_DATA_FILE=%s", JSON_OEM_DATA_FILE));
         return -1;
     }
-    if (proObj.find(procInfo) == proObj.end())
+    if (proObj.find(procInfoKey) == proObj.end())
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "processor info key not available",
-            phosphor::logging::entry("PROC_JSON_KEY=%s", procInfo.c_str()));
+            phosphor::logging::entry("PROC_JSON_KEY=%s", procInfoKey.c_str()));
         return -1;
     }
-    std::string procName = proObj[procInfo][procIndex][KEY_PROC_NAME];
-    std::string basicInfo = proObj[procInfo][procIndex][KEY_BASIC_INFO];
-    // Processor Product Name
-    strToBytes(procName, res);
-    data.assign(reinterpret_cast<char*>(&res),
-                reinterpret_cast<char*>(&res) + sizeof(res));
 
-    std::string s(data.begin(), data.end());
-    std::regex regex(" ");
-    std::vector<std::string> productName(
-        std::sregex_token_iterator(s.begin(), s.end(), regex, -1),
-        std::sregex_token_iterator());
+    try
+    {
+        auto& procGroupObj = proObj[procInfoKey];
+        if (!procGroupObj.contains(procIndex))
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "processor index not found",
+                phosphor::logging::entry("INDEX=%s", procIndex.c_str()));
+            return -1;
+        }
+        auto& procEntryObj = procGroupObj[procIndex];
+        if (!procEntryObj.contains(KEY_PROC_NAME) || !procEntryObj.contains(KEY_BASIC_INFO))
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>("proc_name or basic_info keys not found");
+            return -1;
+        }
 
-    // Processor core and frequency
-    strToBytes(basicInfo, res);
-    uint16_t coreNum = res[0];
-    double procFrequency = (float)(res[4] << 8 | res[3]) / 1000;
-    result = "CPU:" + productName[2] + "/" + std::to_string(procFrequency) +
-             "GHz" + "/" + std::to_string(coreNum) + "c";
+        std::string procName = procEntryObj[KEY_PROC_NAME].get<std::string>();
+        std::string basicInfo = procEntryObj[KEY_BASIC_INFO].get<std::string>();
+
+        // Processor Product Name
+        strToBytes(procName, res);
+        data.assign(reinterpret_cast<char*>(&res),
+                    reinterpret_cast<char*>(&res) + sizeof(res));
+
+        std::string s(data.begin(), data.end());
+        std::regex regex(" ");
+        std::vector<std::string> productName(
+            std::sregex_token_iterator(s.begin(), s.end(), regex, -1),
+            std::sregex_token_iterator());
+
+        // Processor core and frequency
+        strToBytes(basicInfo, res);
+        uint16_t coreNum = res[0];
+        double procFrequency = (float)(res[4] << 8 | res[3]) / 1000;
+
+        std::string nameToken = "unknown";
+        if (productName.size() > 2)
+        {
+            nameToken = productName[2];
+        }
+        else if (!productName.empty())
+        {
+            nameToken = productName.back();
+        }
+
+        result = "CPU:" + nameToken + "/" + std::to_string(procFrequency) +
+                 "GHz" + "/" + std::to_string(coreNum) + "c";
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Exception in procInfo processing keys",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return -1;
+    }
     return 0;
 }
 
@@ -2841,13 +2992,20 @@ static void registerOEMFunctions(void)
     {
         try
         {
-            file >> oemData;
+            oemData = nlohmann::json::parse(file, nullptr, false);
+            if (oemData.is_discarded())
+            {
+                lg2::error("Error parsing JSON file: {FILE}", "FILE", std::string(JSON_OEM_DATA_FILE));
+                oemData = nlohmann::json::object();
+                std::ofstream outFile(JSON_OEM_DATA_FILE, std::ofstream::trunc);
+                outFile << oemData.dump(4); // Write empty JSON object to the file
+                outFile.close();
+            }
         }
-        // If parsing fails, initialize oemData as an empty JSON and
-        // overwrite the file
-        catch (const nlohmann::json::parse_error& e)
+        catch (const std::exception& e)
         {
-            lg2::error("Error parsing JSON file: {ERROR}", "ERROR", e);
+            lg2::error("Exception parsing JSON file {FILE}: {ERROR}", "FILE",
+                       std::string(JSON_OEM_DATA_FILE), "ERROR", e.what());
             oemData = nlohmann::json::object();
             std::ofstream outFile(JSON_OEM_DATA_FILE, std::ofstream::trunc);
             outFile << oemData.dump(4); // Write empty JSON object to the file
@@ -2857,6 +3015,7 @@ static void registerOEMFunctions(void)
     }
     else
     {
+        oemData = nlohmann::json::object();
         lg2::info("Failed to open JSON file.");
     }
 
