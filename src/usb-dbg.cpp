@@ -15,6 +15,7 @@
  */
 
 #include <commandutils.hpp>
+#include <stdexcept>
 #include <usb-dbg.hpp>
 
 namespace ipmi
@@ -382,7 +383,23 @@ int plat_udbg_get_post_desc(uint8_t index, uint8_t* next, uint8_t phase,
     std::ifstream file(JSON_POST_DATA_FILE);
     if (file)
     {
-        file >> postObj;
+        try
+        {
+            postObj = nlohmann::json::parse(file, nullptr, false);
+            if (postObj.is_discarded())
+            {
+                throw std::runtime_error("Parsing POST JSON failed");
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing POST JSON",
+                phosphor::logging::entry("FILE=%s", JSON_POST_DATA_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            file.close();
+            return -1;
+        }
         file.close();
     }
     else
@@ -394,57 +411,68 @@ int plat_udbg_get_post_desc(uint8_t index, uint8_t* next, uint8_t phase,
     }
 
     std::string phaseStr = "PhaseAny";
-    if (postObj.find(phaseStr) == postObj.end())
+    try
     {
-        phaseStr = "Phase" + std::to_string(phase);
-    }
-
-    if (postObj.find(phaseStr) == postObj.end())
-    {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "Post code phase not available",
-            phosphor::logging::entry("PHASE=%d", phase));
-        return -1;
-    }
-
-    auto phaseObj = postObj[phaseStr];
-    int phaseSize = phaseObj.size();
-
-    for (int i = 0; i < phaseSize; i++)
-    {
-        postCode = phaseObj[i][0];
-        if (index == stoul(postCode, nullptr, 16))
+        if (postObj.find(phaseStr) == postObj.end())
         {
-            std::string postDesc = phaseObj[i][1];
-            *length = postDesc.size();
-            memcpy(buffer, postDesc.data(), *length);
-            buffer[*length] = '\0';
+            phaseStr = "Phase" + std::to_string(phase);
+        }
 
-            if (phaseSize != i + 1)
+        if (postObj.find(phaseStr) == postObj.end())
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Post code phase not available",
+                phosphor::logging::entry("PHASE=%d", phase));
+            return -1;
+        }
+
+        auto phaseObj = postObj[phaseStr];
+        int phaseSize = phaseObj.size();
+
+        for (int i = 0; i < phaseSize; i++)
+        {
+            postCode = phaseObj[i][0].get<std::string>();
+            if (index == stoul(postCode, nullptr, 16))
             {
-                postCode = phaseObj[i + 1][0];
-                *next = stoul(postCode, nullptr, 16);
-                *end = 0;
-            }
-            else
-            {
-                if (postObj.size() != phase)
+                std::string postDesc = phaseObj[i][1].get<std::string>();
+                *length = postDesc.size();
+                memcpy(buffer, postDesc.data(), *length);
+                buffer[*length] = '\0';
+
+                if (phaseSize != i + 1)
                 {
-                    std::string nextPhaseStr =
-                        "Phase" + std::to_string(phase + 1);
-                    postCode = postObj[nextPhaseStr][0][0];
+                    postCode = phaseObj[i + 1][0].get<std::string>();
                     *next = stoul(postCode, nullptr, 16);
                     *end = 0;
                 }
                 else
                 {
-                    *next = 0xff;
-                    *end = 1;
+                    if (postObj.size() != phase)
+                    {
+                        std::string nextPhaseStr =
+                            "Phase" + std::to_string(phase + 1);
+                        postCode =
+                            postObj[nextPhaseStr][0][0].get<std::string>();
+                        *next = stoul(postCode, nullptr, 16);
+                        *end = 0;
+                    }
+                    else
+                    {
+                        *next = 0xff;
+                        *end = 1;
+                    }
                 }
-            }
 
-            return 0;
+                return 0;
+            }
         }
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Exception in plat_udbg_get_post_desc",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return -1;
     }
 
     phosphor::logging::log<phosphor::logging::level::ERR>(
@@ -463,7 +491,23 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
     std::ifstream file(JSON_GPIO_DATA_FILE);
     if (file)
     {
-        file >> gpioObj;
+        try
+        {
+            gpioObj = nlohmann::json::parse(file, nullptr, false);
+            if (gpioObj.is_discarded())
+            {
+                throw std::runtime_error("Parsing GPIO JSON failed");
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing GPIO JSON",
+                phosphor::logging::entry("FILE=%s", JSON_GPIO_DATA_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            file.close();
+            return -1;
+        }
         file.close();
     }
     else
@@ -475,49 +519,61 @@ int plat_udbg_get_gpio_desc(uint8_t index, uint8_t* next, uint8_t* level,
         return -1;
     }
 
-    if (gpioObj.find(DEBUG_GPIO_KEY) == gpioObj.end())
+    try
     {
-        phosphor::logging::log<phosphor::logging::level::ERR>(
-            "GPIO pin details not available",
-            phosphor::logging::entry("GPIO_JSON_KEY=%d", DEBUG_GPIO_KEY));
-        return -1;
-    }
-
-    auto obj = gpioObj[DEBUG_GPIO_KEY];
-    int objSize = obj.size();
-
-    for (int i = 0; i < objSize; i++)
-    {
-        if (obj[i].size() != GPIO_ARRAY_SIZE)
+        if (gpioObj.find(DEBUG_GPIO_KEY) == gpioObj.end())
         {
             phosphor::logging::log<phosphor::logging::level::ERR>(
-                "Size of gpio array is incorrect",
-                phosphor::logging::entry("EXPECTED_SIZE=%d", GPIO_ARRAY_SIZE));
+                "GPIO pin details not available",
+                phosphor::logging::entry("GPIO_JSON_KEY=%d", DEBUG_GPIO_KEY));
             return -1;
         }
 
-        gpioPin = obj[i][GPIO_PIN_INDEX];
-        if (index == stoul(gpioPin, nullptr, 16))
+        auto obj = gpioObj[DEBUG_GPIO_KEY];
+        int objSize = obj.size();
+
+        for (int i = 0; i < objSize; i++)
         {
-            if (objSize != i + 1)
+            if (obj[i].size() != GPIO_ARRAY_SIZE)
             {
-                gpioPin = obj[i + 1][GPIO_PIN_INDEX];
-                *next = stoul(gpioPin, nullptr, 16);
-            }
-            else
-            {
-                *next = 0xff;
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Size of gpio array is incorrect",
+                    phosphor::logging::entry("EXPECTED_SIZE=%d",
+                                             GPIO_ARRAY_SIZE));
+                return -1;
             }
 
-            *level = obj[i][GPIO_LEVEL_INDEX];
-            *def = obj[i][GPIO_DEF_INDEX];
-            std::string gpioDesc = obj[i][GPIO_DESC_INDEX];
-            *length = gpioDesc.size();
-            memcpy(buffer, gpioDesc.data(), *length);
-            buffer[*length] = '\0';
+            gpioPin = obj[i][GPIO_PIN_INDEX].get<std::string>();
+            if (index == stoul(gpioPin, nullptr, 16))
+            {
+                if (objSize != i + 1)
+                {
+                    gpioPin = obj[i + 1][GPIO_PIN_INDEX].get<std::string>();
+                    *next = stoul(gpioPin, nullptr, 16);
+                }
+                else
+                {
+                    *next = 0xff;
+                }
 
-            return 0;
+                *level = obj[i][GPIO_LEVEL_INDEX].get<uint8_t>();
+                *def = obj[i][GPIO_DEF_INDEX].get<uint8_t>();
+                std::string gpioDesc =
+                    obj[i][GPIO_DESC_INDEX].get<std::string>();
+                *length = gpioDesc.size();
+                memcpy(buffer, gpioDesc.data(), *length);
+                buffer[*length] = '\0';
+
+                return 0;
+            }
         }
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "Exception in plat_udbg_get_gpio_desc",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        return -1;
     }
 
     phosphor::logging::log<phosphor::logging::level::ERR>(
