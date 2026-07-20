@@ -487,12 +487,33 @@ ipmi::RspType<std::vector<uint8_t>> ipmiAppGetSysInfoParams(
                             std::end(sysInfoParams.os_hv_url));
             break;
         case SYS_INFO_PARAM_BIOS_CURRENT_BOOT_LIST:
-            len = appData[KEY_BIOS_BOOT_LEN].get<uint8_t>();
+        {
+            len = 0;
+            try
+            {
+                if (appData.contains(KEY_BIOS_BOOT_LEN))
+                {
+                    len = appData[KEY_BIOS_BOOT_LEN].get<uint8_t>();
+                }
+            }
+            catch (const std::exception& e)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Exception getting BIOS boot list len",
+                    phosphor::logging::entry("ERROR=%s", e.what()));
+            }
+
+            if (len > SIZE_BIOS_CURRENT_BOOT_LIST)
+            {
+                len = SIZE_BIOS_CURRENT_BOOT_LIST;
+            }
+
             respData.insert(
                 respData.end(),
                 std::begin(sysInfoParams.bios_current_boot_list),
                 std::begin(sysInfoParams.bios_current_boot_list) + len);
             break;
+        }
         case SYS_INFO_PARAM_BIOS_FIXED_BOOT_DEVICE:
             respData.insert(respData.end(),
                             std::begin(sysInfoParams.bios_fixed_boot_device),
@@ -522,8 +543,36 @@ void registerAPPFunctions()
     std::ifstream file(JSON_APP_DATA_FILE);
     if (file)
     {
-        file >> appData;
+        try
+        {
+            appData = nlohmann::json::parse(file, nullptr, false);
+            if (appData.is_discarded())
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "Error parsing APP JSON file",
+                    phosphor::logging::entry("FILE=%s", JSON_APP_DATA_FILE));
+                appData = nlohmann::json::object();
+                std::ofstream outFile(JSON_APP_DATA_FILE, std::ofstream::trunc);
+                outFile << appData.dump(4);
+                outFile.close();
+            }
+        }
+        catch (const std::exception& e)
+        {
+            phosphor::logging::log<phosphor::logging::level::ERR>(
+                "Exception parsing APP JSON file",
+                phosphor::logging::entry("FILE=%s", JSON_APP_DATA_FILE),
+                phosphor::logging::entry("ERROR=%s", e.what()));
+            appData = nlohmann::json::object();
+            std::ofstream outFile(JSON_APP_DATA_FILE, std::ofstream::trunc);
+            outFile << appData.dump(4);
+            outFile.close();
+        }
         file.close();
+    }
+    else
+    {
+        appData = nlohmann::json::object();
     }
 
     ipmiPrintAndRegister(ipmi::netFnApp, CMD_APP_GET_SELFTEST_RESULTS, NULL,
