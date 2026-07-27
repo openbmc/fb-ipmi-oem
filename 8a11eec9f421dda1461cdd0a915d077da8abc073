@@ -18,6 +18,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "53193e93_a49b5954",
+        "filename": "src/appcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2026-07-27T03:22:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e367a46d_78283ebb",
+      "revId": "8a11eec9f421dda1461cdd0a915d077da8abc073",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2c8d2ede_93b2afcc",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-07-22T01:46:30Z",
       "side": 1,
       "message": "same comment, just throw here to not duplocate the error handling in the catch block.",
+      "revId": "8a11eec9f421dda1461cdd0a915d077da8abc073",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a455297d_fc0ff11f",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1001906
+      },
+      "writtenOn": "2026-07-27T03:22:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c8d2ede_93b2afcc",
       "revId": "8a11eec9f421dda1461cdd0a915d077da8abc073",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
