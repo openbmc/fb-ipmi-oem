@@ -1,0 +1,163 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9da37aba_f536d50d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "please address the consistency issue around logging with the rest of the file. also, let me know if your testing works when there are more than 9 entries",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4f6960e_89d800e3",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1519,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "can we log that we\u0027re skipping on a catch all exception?",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57d6efb0_387e8624",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1586,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "errors shouldn\u0027t go to `std::cout`, but we should be using the phosphor logging convention:\n```\nphosphor::logging::log\u003cphosphor::logging::level::ERR\u003e(\"Parse btppr JSON Failed...\");\n```",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92cff466_e68e088a",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1606,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "nit: the `else if` can just be an `if`",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3986c115_c3f2f2d5",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "this makes me nervous. there\u0027s no bounding checks on this, and iirc the max length is around 255, `sizeof(BtpprData)` is 28, so we could get a max of around 9 entries before we exceed the limits.",
+      "range": {
+        "startLine": 1632,
+        "startChar": 12,
+        "endLine": 1634,
+        "endChar": 35
+      },
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "939ea2d1_c0bba50b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1676,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "same logging comment",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d375ef32_5774bd4e",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1687,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "same logging comment",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "85818eea_6698f968",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1695,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "loggin",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d21b715_eca4b6ab",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1738,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-15T14:55:31Z",
+      "side": 1,
+      "message": "logging",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
