@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "49a75717_5e7a8a6e",
+        "filename": "meson.build",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-08-17T21:03:59Z",
+      "side": 1,
+      "message": "I\u0027m not accepting a machine-specific compile flag.  Use entity-manager look ups if you really need some way to know what platform you\u0027re on.",
+      "revId": "d5270b6c26be54432f92344c5d69f21b71f70885",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c49612d8_6ab94810",
         "filename": "src/oemcommands.cpp",
         "patchSetId": 3
