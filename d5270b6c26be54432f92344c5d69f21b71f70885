@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c49612d8_6ab94810",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1088,
+      "author": {
+        "id": 1001758
+      },
+      "writtenOn": "2026-08-17T17:57:17Z",
+      "side": 1,
+      "message": "1. Why do we need to implement this specifically for SantaBarbara ? \n2. How is the related usecase handled on other platforms ?",
+      "revId": "d5270b6c26be54432f92344c5d69f21b71f70885",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
