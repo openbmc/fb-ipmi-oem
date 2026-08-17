@@ -652,7 +652,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
         {
             return ret;
         }
-        data.header.record_id_msb = req->recordID << 8;
+        data.header.record_id_msb = req->recordID >> 8;
         data.header.record_id_lsb = req->recordID & 0xFF;
         if (sizeof(data) < (req->offset + req->bytesToRead))
         {
@@ -689,7 +689,7 @@ ipmi_ret_t ipmiStorageGetSDR(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     uint8_t sensornumber = (req->recordID & 0xFF);
     get_sdr::SensorDataFullRecord record = {};
 
-    record.header.record_id_msb = req->recordID << 8;
+    record.header.record_id_msb = req->recordID >> 8;
     record.header.record_id_lsb = req->recordID & 0xFF;
     record.header.sdr_version = ipmiSdrVersion;
     record.header.record_type = get_sdr::SENSOR_DATA_FULL_RECORD;
