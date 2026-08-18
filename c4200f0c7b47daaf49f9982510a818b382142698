@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6e9fc54_a19fd036",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-18T19:33:45Z",
+      "side": 1,
+      "message": "nit: this is only referenced once, so perhaps it doesn\u0027t need to live in this header file",
+      "revId": "c4200f0c7b47daaf49f9982510a818b382142698",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d27c0d84_c1c6be3b",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1624,
+      "author": {
+        "id": 1002302
+      },
+      "writtenOn": "2026-08-18T19:33:45Z",
+      "side": 1,
+      "message": "@amithash@meta.com do you know if we can remove these `#ifdef BOOT_TIME_PPR` and just remove the existing `ipmiOemGetPpr` implementation? i dont think we\u0027re currently using this in any active platform",
+      "revId": "c4200f0c7b47daaf49f9982510a818b382142698",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
