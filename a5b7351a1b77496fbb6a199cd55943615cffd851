@@ -41,6 +41,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f13f2c5c_697794c7",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "done. removed it",
+      "parentUuid": "cd53924f_b3eb3eeb",
+      "range": {
+        "startLine": 153,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 6
+      },
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "87e18d92_75c8c26c",
@@ -54,6 +78,24 @@
       "writtenOn": "2026-08-19T01:43:35Z",
       "side": 1,
       "message": "Let\u0027s get rid of the original PPR support.  Nothing is using it.",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea0242a2_ea7ee56a",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Done. Removed the original PPR command and replaced it with our implementation.",
+      "parentUuid": "87e18d92_75c8c26c",
       "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -75,6 +117,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "98cad693_74921750",
+        "filename": "meson.options",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "done. keep it alway enable",
+      "parentUuid": "1d70b0c6_1d019aaf",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c4f6960e_89d800e3",
@@ -88,6 +148,24 @@
       "writtenOn": "2026-08-15T14:55:31Z",
       "side": 1,
       "message": "can we log that we\u0027re skipping on a catch all exception?",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd4e73c0_db343276",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1519,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "I added lg2::error here to log any exceptions, including their causes.",
+      "parentUuid": "c4f6960e_89d800e3",
       "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -109,6 +187,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4a3411c_9ebf9446",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1586,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "I changed it to lg2::error() instead, as lg2 is the preferred C++ logging interface in OpenBMC. Please let me know if there is any concern with using lg2 here.",
+      "parentUuid": "57d6efb0_387e8624",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "92cff466_e68e088a",
@@ -122,6 +218,24 @@
       "writtenOn": "2026-08-15T14:55:31Z",
       "side": 1,
       "message": "nit: the `else if` can just be an `if`",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b0e94c7_2cfc0f8d",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1606,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Fixed in Patch Set 5",
+      "parentUuid": "92cff466_e68e088a",
       "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -149,6 +263,30 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "088dbc37_0ed38e6c",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Added a bounds check (totalBytes \u003e 255) before the memcpy as a safeguard. In practice, each btppr JSON file contains only one entry in pprDataIn, so we won\u0027t hit this limit, but the check is here for defensive programming in case the data grows in the future.",
+      "parentUuid": "3986c115_c3f2f2d5",
+      "range": {
+        "startLine": 1632,
+        "startChar": 12,
+        "endLine": 1634,
+        "endChar": 35
+      },
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "939ea2d1_c0bba50b",
@@ -162,6 +300,24 @@
       "writtenOn": "2026-08-15T14:55:31Z",
       "side": 1,
       "message": "same logging comment",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59bdb171_9e4ab9d2",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1676,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Fixed in Patch Set 5.",
+      "parentUuid": "939ea2d1_c0bba50b",
       "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
@@ -183,6 +339,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6404069c_c22c0863",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1687,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Fixed in Patch Set 5.",
+      "parentUuid": "d375ef32_5774bd4e",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "85818eea_6698f968",
@@ -200,6 +374,24 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "61b1dd88_9a5d4421",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1695,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Fixed in Patch Set 5.",
+      "parentUuid": "85818eea_6698f968",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d21b715_eca4b6ab",
@@ -213,6 +405,24 @@
       "writtenOn": "2026-08-15T14:55:31Z",
       "side": 1,
       "message": "logging",
+      "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8e6106eb_f3c10862",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1738,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "Fixed in Patch Set 5.",
+      "parentUuid": "1d21b715_eca4b6ab",
       "revId": "a5b7351a1b77496fbb6a199cd55943615cffd851",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }

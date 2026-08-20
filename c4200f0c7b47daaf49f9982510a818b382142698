@@ -35,6 +35,42 @@
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "522329cf_8549022c",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "c6e9fc54_a19fd036",
+      "revId": "c4200f0c7b47daaf49f9982510a818b382142698",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb6fcee4_77e60e1b",
+        "filename": "include/oemcommands.hpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "/var/lib/amd-bmc-ras is the directory where CPER-related files are stored, including the original CPER files and their corresponding BTPPR and RTPPR JSON files, if needed.\n\nWe plan to rename this directory to /var/lib/bmc-ras, so I updated the path here accordingly.",
+      "parentUuid": "9f89927e_0bd63e9c",
+      "revId": "c4200f0c7b47daaf49f9982510a818b382142698",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d27c0d84_c1c6be3b",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-08-18T19:33:45Z",
       "side": 1,
       "message": "@amithash@meta.com do you know if we can remove these `#ifdef BOOT_TIME_PPR` and just remove the existing `ipmiOemGetPpr` implementation? i dont think we\u0027re currently using this in any active platform",
+      "revId": "c4200f0c7b47daaf49f9982510a818b382142698",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da27faf4_700e7567",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1624,
+      "author": {
+        "id": 1001602
+      },
+      "writtenOn": "2026-08-20T03:31:46Z",
+      "side": 1,
+      "message": "base on @patrick@stwcx.xyz comment. we removed the original PPR command and replaced it with our implementation.",
+      "parentUuid": "d27c0d84_c1c6be3b",
       "revId": "c4200f0c7b47daaf49f9982510a818b382142698",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
