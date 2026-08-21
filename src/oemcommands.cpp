@@ -31,6 +31,7 @@
 #include <xyz/openbmc_project/Control/Boot/Source/server.hpp>
 #include <xyz/openbmc_project/Control/Boot/Type/server.hpp>
 
+#include <algorithm>
 #include <array>
 #include <cstring>
 #include <fstream>
@@ -1224,12 +1225,94 @@ ipmi_ret_t ipmiOemSetDimmInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t request,
 // Get Board ID (CMD_OEM_GET_BOARD_ID)
 //----------------------------------------------------------------------
 ipmi_ret_t ipmiOemGetBoardID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
-                             ipmi_response_t, ipmi_data_len_t data_len,
+                             ipmi_response_t response, ipmi_data_len_t data_len,
                              ipmi_context_t)
 {
-    /* TODO: Needs to implement this after GPIO implementation */
-    *data_len = 0;
+    uint8_t* res = reinterpret_cast<uint8_t*>(response);
 
+    sdbusplus::bus_t dbus(ipmid_get_sd_bus_connection());
+
+    static constexpr const char* compatibleInterface =
+        "xyz.openbmc_project.Inventory.Decorator.Compatible";
+    static constexpr const char* santabarbaraCompatible =
+        "com.meta.Hardware.Santabarbara.Boards.MB";
+    auto matchesSantabarbara = [&dbus](const std::string& path) {
+        try
+        {
+            auto variant =
+                ipmi::getDbusProperty(dbus, "xyz.openbmc_project.EntityManager",
+                                      path, compatibleInterface, "Names");
+            auto names = std::get<std::vector<std::string>>(variant);
+            return std::find(names.begin(), names.end(),
+                             santabarbaraCompatible) != names.end();
+        }
+        catch (const std::exception&)
+        {
+            return false;
+        }
+    };
+    // TODO: only implemented for santabarbara; no-op on other platforms.
+    if (!findFruPathByInterface(dbus, compatibleInterface, matchesSantabarbara)
+             .has_value())
+    {
+        *data_len = 0;
+        return ipmi::ccSuccess;
+    }
+
+    uint8_t boardId = 0;
+    try
+    {
+        static constexpr const char* presenceInterface =
+            "xyz.openbmc_project.Inventory.Source.DevicePresence";
+        constexpr int depth = 0;
+        std::vector<std::string> paths;
+        auto mapperCall = dbus.new_method_call(
+            "xyz.openbmc_project.ObjectMapper",
+            "/xyz/openbmc_project/object_mapper",
+            "xyz.openbmc_project.ObjectMapper", "GetSubTreePaths");
+        mapperCall.append("/xyz/openbmc_project/GPIODeviceDetected", depth,
+                          std::array<const char*, 1>{presenceInterface});
+        auto reply = dbus.call(mapperCall);
+        reply.read(paths);
+
+        static constexpr const char* presenceService =
+            "xyz.openbmc_project.gpiopresence";
+        static constexpr std::array<const char*, 4> skuIdPinNames = {
+            "SWB_SKU_ID_0",
+            "SWB_SKU_ID_1",
+            "SWB_SKU_ID_2",
+            "SWB_SKU_ID_3",
+        };
+        for (const auto& path : paths)
+        {
+            auto variant = ipmi::getDbusProperty(dbus, presenceService, path,
+                                                 presenceInterface, "Name");
+            const auto& name = std::get<std::string>(variant);
+            for (size_t bit = 0; bit < skuIdPinNames.size(); ++bit)
+            {
+                if (name == skuIdPinNames[bit])
+                {
+                    boardId |= static_cast<uint8_t>(1 << bit);
+                    break;
+                }
+            }
+        }
+    }
+    catch (const std::exception& e)
+    {
+        phosphor::logging::log<phosphor::logging::level::ERR>(
+            "ipmiOemGetBoardID: failed to read SWB SKU DevicePresence",
+            phosphor::logging::entry("ERROR=%s", e.what()));
+        *data_len = 0;
+        return ipmi::ccUnspecifiedError;
+    }
+
+    phosphor::logging::log<phosphor::logging::level::INFO>(
+        "ipmiOemGetBoardID",
+        phosphor::logging::entry("BOARD_ID=0x%02X", boardId));
+
+    res[0] = boardId;
+    *data_len = 1;
     return ipmi::ccSuccess;
 }
 
