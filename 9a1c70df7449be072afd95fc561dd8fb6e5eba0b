@@ -1,0 +1,9 @@
+Code-Review+1: Pete O_o <pmb@meta.com>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Fri, 28 Aug 2026 18:16:25 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/fb-ipmi-oem/+/91901
+Comments-Total: 29
+Project: openbmc/fb-ipmi-oem
+Branch: refs/heads/master
