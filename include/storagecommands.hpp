@@ -128,6 +128,8 @@ static constexpr uint8_t oemNTSErrTypeMin = 0xE0;
 static constexpr uint8_t fbUniErrType = 0xFB;
 static constexpr uint8_t oemNTSErrTypeMax = 0xFF;
 
+static constexpr uint8_t oemDriveErrType = 0xE1;
+
 static constexpr uint8_t unifiedPcieErr = 0;
 static constexpr uint8_t unifiedMemErr = 1;
 static constexpr uint8_t unifiedIioErr = 3;

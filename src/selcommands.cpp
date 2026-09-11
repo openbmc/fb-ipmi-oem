@@ -1135,7 +1135,7 @@ static void parseStdSel(StdSELEntry* data, std::string& errStr)
     return;
 }
 
-static void parseOemSel(TsOemSELEntry* data, std::string& errStr)
+static void parseTsOemSel(TsOemSELEntry* data, std::string& errStr)
 {
     std::stringstream tmpStream;
     tmpStream << std::hex << std::uppercase << std::setfill('0');
@@ -1169,6 +1169,31 @@ static void parseOemSel(TsOemSELEntry* data, std::string& errStr)
                       << (int)data->oemData[3] << std::setw(2)
                       << (int)data->oemData[4] << std::setw(2)
                       << (int)data->oemData[5];
+    }
+
+    errStr = tmpStream.str();
+
+    return;
+}
+
+static void parseNtsOemSel(NtsOemSELEntry* data, std::string& errStr)
+{
+    std::vector<std::string> driveEvent = {"Drive Deasserted", "Drive Asserted",
+                                           "Reserved"};
+
+    std::stringstream tmpStream;
+    tmpStream << std::hex << std::uppercase << std::setfill('0');
+
+    switch (data->recordType)
+    {
+        case oemDriveErrType:
+            tmpStream << "Drive Slot:0x" << std::setw(2)
+                      << (int)data->oemData[0] << " Event:0x" << std::setw(2)
+                      << (int)data->oemData[1] << " Event Desc:"
+                      << driveEvent[std::min(
+                             data->oemData[1],
+                             static_cast<uint8_t>(driveEvent.size() - 1))];
+            break;
     }
 
     errStr = tmpStream.str();
@@ -1489,7 +1514,7 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
         toHexStr(oemData, oemDataStr);
 
         errType = oemTSErr;
-        parseOemSel(data, errLog);
+        parseTsOemSel(data, errLog);
 
         msgLog += errType + " (0x" + recTypeStream.str() + "), MFG ID: " +
                   mfrIdStr + ", OEM Data: (" + oemDataStr + ") " + errLog;
@@ -1512,7 +1537,7 @@ static void parseSelData(uint8_t fruId, std::vector<uint8_t>& reqData,
         std::string oemDataStr;
         toHexStr(oemData, oemDataStr);
 
-        parseOemSel((TsOemSELEntry*)data, errLog);
+        parseNtsOemSel(data, errLog);
         msgLog += errType + " (0x" + recTypeStream.str() + "), OEM Data: (" +
                   oemDataStr + ") " + errLog;
     }
