@@ -1221,8 +1221,6 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
         "Memory PMIC Error",
         "CXL Memory training error",
         "Reserved"};
-    std::vector<std::string> driveEvent = {"Drive Deasserted", "Drive Asserted",
-                                           "Reserved"};
     std::vector<std::string> postEvent = {
         "System PXE boot fail",
         "CMOS/NVRAM configuration cleared",
@@ -1304,15 +1302,6 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
                 ", Error ID: 0x{:02X}",
                 genInfo, (ptr[5] >> 4) & 0x3, ptr[5] & 0xf, ptr[6], ptr[10],
                 ptr[11] & 0xf, ptr[12]);
-            break;
-        case unifiedDriveEvt:
-            tmpStream << std::format(
-                "GeneralInfo: DriveEvent(0x{:02X})"
-                ", Drive Slot: {:02}"
-                ", Drive Event : {}",
-                genInfo, ptr[1],
-                driveEvent[std::min(
-                    eventType, static_cast<uint8_t>(driveEvent.size() - 1))]);
             break;
         case unifiedPostEvt:
             tmpStream << std::format(
