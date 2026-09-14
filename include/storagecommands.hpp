@@ -131,7 +131,6 @@ static constexpr uint8_t oemNTSErrTypeMax = 0xFF;
 static constexpr uint8_t unifiedPcieErr = 0;
 static constexpr uint8_t unifiedMemErr = 1;
 static constexpr uint8_t unifiedIioErr = 3;
-static constexpr uint8_t unifiedDriveEvt = 5;
 static constexpr uint8_t unifiedPostEvt = 8;
 static constexpr uint8_t unifiedPcieEvt = 9;
 static constexpr uint8_t unifiedMemEvt = 10;
