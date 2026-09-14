@@ -1221,6 +1221,15 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
         "Memory PMIC Error",
         "CXL Memory training error",
         "Reserved"};
+    std::vector<std::string> mcaErrSeverityDetail = {
+        "Correctable Error",
+        "Deferred Error",
+        "Uncorrected Recoverable Error",
+        "Uncorrected Thread Fatal Error",
+        "Uncorrected System Fatal Error",
+        "Reserved",
+        "Reserved",
+        "Reserved"};
     std::vector<std::string> postEvent = {
         "System PXE boot fail",
         "CMOS/NVRAM configuration cleared",
@@ -1303,6 +1312,41 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
                 genInfo, (ptr[5] >> 4) & 0x3, ptr[5] & 0xf, ptr[6], ptr[10],
                 ptr[11] & 0xf, ptr[12]);
             break;
+        case unifiedMcaErr:
+        {
+            uint8_t mcaSeverity = (ptr[5] & 0x70) >> 4;
+            uint8_t cpuNumber = (ptr[6] & 0xE0) >> 5;
+            uint8_t coreNumber = ptr[6] & 0x1F;
+            uint8_t bankNumber = ptr[7];
+            uint32_t errorInfo = (ptr[10] << 16) | (ptr[9] << 8) | ptr[8];
+            uint8_t errorCode = ptr[11];
+            uint8_t errorStatus = ptr[12];
+
+            tmpStream << std::format(
+                "GeneralInfo: MCAErr(0x{:02X})"
+                ", MCA Severity: {}, CPU Number: {}, Core Number: {}"
+                ", Machine Check Bank: 0x{:02X}, Error Info: 0x{:06X}"
+                ", Error Code: 0x{:02X}, Error Status: 0x{:02X}",
+                genInfo, mcaErrSeverityDetail[mcaSeverity], cpuNumber,
+                coreNumber, bankNumber, errorInfo, errorCode, errorStatus);
+            break;
+        }
+        case unifiedMcaErrExt:
+        {
+            uint8_t mcaSeverity = (ptr[5] & 0x70) >> 4;
+            uint8_t cpuNumber = (ptr[6] & 0xE0) >> 5;
+            uint8_t coreNumber = ptr[6] & 0x1F;
+            uint8_t bankNumber = ptr[7];
+            uint16_t errorCode = (ptr[9] << 8) | ptr[8];
+
+            tmpStream << std::format(
+                "GeneralInfo: MCAErrExt(0x{:02X})"
+                ", MCA Severity: {}, CPU Number: {}, Core Number: {}"
+                ", Machine Check Bank: 0x{:02X}, Error Code: 0x{:04X}",
+                genInfo, mcaErrSeverityDetail[mcaSeverity], cpuNumber,
+                coreNumber, bankNumber, errorCode);
+            break;
+        }
         case unifiedPostEvt:
             tmpStream << std::format(
                 "GeneralInfo: POST(0x{:02X}), POST Failure Event: {}", genInfo,
