@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f16f750_deee828d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1002134
+      },
+      "writtenOn": "2026-09-15T07:20:34Z",
+      "side": 1,
+      "message": "nit: The subject keeps the existing typo from 91671. The actual symbol is `unifiedDriveEvt`, not `unifiedDriveErr`. Consider renaming it in this change as well.",
+      "range": {
+        "startLine": 11,
+        "startChar": 30,
+        "endLine": 11,
+        "endChar": 31
+      },
+      "revId": "bec700e45e21fd90757b9ac04183edd8a5b18a72",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
