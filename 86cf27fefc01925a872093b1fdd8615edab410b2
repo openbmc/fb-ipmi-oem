@@ -22,6 +22,30 @@
       },
       "revId": "86cf27fefc01925a872093b1fdd8615edab410b2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a0985fef_a7c215a1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002591
+      },
+      "writtenOn": "2026-09-16T02:51:20Z",
+      "side": 1,
+      "message": "We still need an OEM SEL format to record drive assertion and deassertion events. We see two possible approaches:\n1. Define a dedicated OEM SEL record type, for example, a new non-timestamped OEM SEL record for drive events.\n2. Reuse an existing Meta Unified BIOS SEL subtype, such as PCIe Error (genInfo[3:0] \u003d 0x0) or Reserved (genInfo[3:0] \u003d 0xF).\n\nCould you advise which approach you would prefer?",
+      "parentUuid": "84c30d5a_c2f8fff6",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "86cf27fefc01925a872093b1fdd8615edab410b2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
