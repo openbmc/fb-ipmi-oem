@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c10976e6_71ade2ad",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1815,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2026-09-17T11:44:52Z",
+      "side": 1,
+      "message": "Why aren\u0027t we just moving this into the thread 3 lines above?\n\nUse a `std::promise` to get the response ID back quickly if you want.\n\nI don\u0027t think order matters much here.  We could do the `selObj.addEntry` before the call to lg2, right?",
+      "revId": "a24510f02357cb061c680f60afa20a64c35a5eaa",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
