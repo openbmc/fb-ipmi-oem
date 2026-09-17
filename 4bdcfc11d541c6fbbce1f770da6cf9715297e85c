@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91aa61db_606dc1d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1002134
+      },
+      "writtenOn": "2026-09-17T06:22:29Z",
+      "side": 1,
+      "message": "nit: I\u0027d suggest using \"selcommands:\" as the prefix here.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 4
+      },
+      "revId": "4bdcfc11d541c6fbbce1f770da6cf9715297e85c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f424d773_9f2f58d8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002134
+      },
+      "writtenOn": "2026-09-17T06:22:29Z",
+      "side": 1,
+      "message": "Could you provide more details about the timeout scenario here? Which IPMI command timed out, what the timeout threshold was, and what the resulting impact was (e.g. duplicate SEL entries vs. lost entries)? If this was observed with a specific type of SEL event, that context would also be helpful.",
+      "range": {
+        "startLine": 14,
+        "startChar": 26,
+        "endLine": 15,
+        "endChar": 51
+      },
+      "revId": "4bdcfc11d541c6fbbce1f770da6cf9715297e85c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
