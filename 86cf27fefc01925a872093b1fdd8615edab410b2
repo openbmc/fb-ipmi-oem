@@ -46,6 +46,30 @@
       },
       "revId": "86cf27fefc01925a872093b1fdd8615edab410b2",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9d20a21_329776c9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002591
+      },
+      "writtenOn": "2026-09-18T08:42:49Z",
+      "side": 1,
+      "message": "We prefer option #1, defining a new OEM SEL record type (e.g., recordType \u003d 0xE1) for this.",
+      "parentUuid": "a0985fef_a7c215a1",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "86cf27fefc01925a872093b1fdd8615edab410b2",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
