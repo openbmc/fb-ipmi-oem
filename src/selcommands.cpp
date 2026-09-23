@@ -27,7 +27,9 @@
 #include <storagecommands.hpp>
 
 #include <fstream>
+#include <future>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <thread>
 
@@ -112,6 +114,10 @@ class SELData
 {
   private:
     nlohmann::json selDataObj;
+    /* addEntry() now runs on the logging thread, so several callers can
+     * touch selDataObj at once. The lock is held across flush() as well,
+     * which keeps the file writes serialized and in entry order. */
+    std::mutex dataMutex;
 
     void flush()
     {
@@ -182,6 +188,8 @@ class SELData
 
     int clear()
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
+
         /* Clear the complete Sel Json object */
         selDataObj.clear();
         /* Reinitialize it with basic data */
@@ -199,11 +207,13 @@ class SELData
 
     uint32_t getCount()
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
         return selDataObj[KEY_SEL_COUNT];
     }
 
     void getInfo(GetSELInfoData& info)
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
         info.selVersion = selDataObj[KEY_SEL_VER];
         info.entries = selDataObj[KEY_SEL_COUNT];
         info.freeSpace = selDataObj[KEY_FREE_SPACE];
@@ -218,6 +228,8 @@ class SELData
         ss << std::hex;
         ss << std::setw(2) << std::setfill('0') << index;
 
+        std::lock_guard<std::mutex> lock(dataMutex);
+
         /* Check or the requested SEL Entry, if record is available */
         if (selDataObj.find(ss.str()) == selDataObj.end())
         {
@@ -228,12 +240,14 @@ class SELData
         return 0;
     }
 
-    int addEntry(std::string keyStr)
+    int addEntry(std::string keyStr, std::promise<int>& idPromise)
     {
+        std::lock_guard<std::mutex> lock(dataMutex);
         struct timespec selTime = {};
 
         if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
         {
+            idPromise.set_value(-1);
             return -1;
         }
 
@@ -247,6 +261,11 @@ class SELData
         ss << std::setw(2) << std::setfill('0') << selCount;
 
         selDataObj[ss.str()][KEY_SEL_ENTRY_RAW] = keyStr;
+
+        /* Hand the record ID back before the slow part: the IPMI response
+         * can then return while flush() is still writing the file. */
+        idPromise.set_value(selCount);
+
         flush();
         return selCount;
     }
@@ -1661,14 +1680,46 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
     fb_oem::ipmi::sel::parseSelData((ctx->hostIdx + 1), data, logErr);
 
     std::string source = "/xyz/openbmc_project/state/host0";
-    // Launch the logging thread
-    std::thread([=]() {
-        namespace Errors = sdbusplus::error::com::meta::ipmi::UnifiedSEL;
-        lg2::commit(Errors::UnifiedSELEvent("SOURCE", source, "EVENT", logErr,
-                                            "RAW_EVENT", ipmiRaw));
+
+    std::promise<int> idPromise;
+    std::future<int> idFuture = idPromise.get_future();
+
+    /* Launch the logging thread. The SEL entry is added first so the record
+     * ID is published as early as possible; the file write and the event log
+     * then both happen off the IPMI response path. */
+    std::thread([=, promise = std::move(idPromise)]() mutable {
+        try
+        {
+            selObj.addEntry(ipmiRaw.c_str(), promise);
+
+            namespace Errors = sdbusplus::error::com::meta::ipmi::UnifiedSEL;
+            lg2::commit(Errors::UnifiedSELEvent("SOURCE", source, "EVENT",
+                                                logErr, "RAW_EVENT", ipmiRaw));
+        }
+        catch (const std::exception& e)
+        {
+            /* An exception escaping a std::thread calls std::terminate().
+             * If it fired before the promise was set, the waiter below sees
+             * a broken promise and fails the command. */
+            lg2::error("Failed to record SEL entry: {ERROR}", "ERROR", e);
+        }
+        catch (...)
+        {
+            lg2::error("Failed to record SEL entry: unknown exception");
+        }
     }).detach();
 
-    int responseID = selObj.addEntry(ipmiRaw.c_str());
+    int responseID = -1;
+    try
+    {
+        responseID = idFuture.get();
+    }
+    catch (const std::exception& e)
+    {
+        lg2::error("No SEL record ID returned: {ERROR}", "ERROR", e);
+        return ipmi::responseUnspecifiedError();
+    }
+
     if (responseID < 0)
     {
         return ipmi::responseUnspecifiedError();
