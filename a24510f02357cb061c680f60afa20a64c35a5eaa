@@ -16,6 +16,24 @@
       "message": "Why aren\u0027t we just moving this into the thread 3 lines above?\n\nUse a `std::promise` to get the response ID back quickly if you want.\n\nI don\u0027t think order matters much here.  We could do the `selObj.addEntry` before the call to lg2, right?",
       "revId": "a24510f02357cb061c680f60afa20a64c35a5eaa",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f93eec1a_785a6ebe",
+        "filename": "src/selcommands.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1815,
+      "author": {
+        "id": 1002753
+      },
+      "writtenOn": "2026-09-23T07:36:22Z",
+      "side": 1,
+      "message": "Thanks for the suggestions!\nReworked as suggested, and the dedicated worker thread is gone.\n\naddEntry() now runs on the logging thread this command already had,\nahead of the lg2::commit() call, and the record ID comes back through a\nstd::promise that is set as soon as the ID is assigned, before flush()\nwrites the file.\n\nselDataObj still needs a lock. With addEntry() on the logging thread,\nseveral of those can be in flight at once, so a mutex guards it and\nevery accessor takes it. I am holding it across flush() as well, which\nkeeps the file writes serialized and in entry order.",
+      "parentUuid": "c10976e6_71ade2ad",
+      "revId": "a24510f02357cb061c680f60afa20a64c35a5eaa",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
