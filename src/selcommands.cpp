@@ -913,6 +913,27 @@ static void logHprWarn(uint8_t* data, std::string& errLog)
     }
 }
 
+static void logPsbPass(uint8_t* data, std::string& errLog)
+{
+    if (data[1] == 0x00)
+    {
+        switch (data[0])
+        {
+            //Venice Prefix
+            case 0xEE:
+            case 0xEF:
+                errLog = "PSB Pass";
+                break;
+            default:
+                errLog = "Unknown";
+        }
+    }
+    else
+    {
+        errLog = "Unknown";
+    }
+}
+
 static const boost::container::flat_map<
     uint8_t,
     std::pair<std::string, std::function<void(uint8_t*, std::string&)>>>
@@ -945,7 +966,8 @@ static const boost::container::flat_map<
         {0x1B, {"NM_THRESHOLD", logNmThreshold}},
         {0x3B, {"PWR_THRESH_EVT", logPwrThreshold}},
         {0xE7, {"MSMI", logMSMI}},
-        {0xC5, {"HPR_WARNING", logHprWarn}}};
+        {0xC5, {"HPR_WARNING", logHprWarn}},
+        {0x46, {"PSB_STS", logPsbPass}}};
 
 static void parseSelHelper(StdSELEntry* data, std::string& errStr)
 {
@@ -988,6 +1010,9 @@ static void parseSelHelper(StdSELEntry* data, std::string& errStr)
             case memoryErrLogDIS:
                 findSensorName->second.second(&(data->sensorType), errStr);
                 break;
+            case psbStatus:
+                findSensorName->second.second(&(data->eventData1), errStr);
+                return;
             /* Other sensor function needs only event data for parsing */
             default:
                 findSensorName->second.second(&(data->eventData1), errStr);

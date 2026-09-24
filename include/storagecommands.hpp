@@ -141,6 +141,7 @@ static constexpr uint8_t unifiedPprEvt = 13;
 /* event sensor name in processing SEL */
 static constexpr uint8_t memoryEccError = 0x63;
 static constexpr uint8_t memoryErrLogDIS = 0x87;
+static constexpr uint8_t psbStatus = 0x46;
 
 /** @struct GetSELInfoData
  *
