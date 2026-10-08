@@ -29,7 +29,6 @@ enum fb_app_cmds
     CMD_APP_GET_SYS_GUID = 0x37,
     CMD_APP_SET_SYS_INFO_PARAMS = 0x58,
     CMD_APP_GET_SYS_INFO_PARAMS = 0x59,
-
 };
 
 #define SIZE_SYSFW_VER 17
