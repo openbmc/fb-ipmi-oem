@@ -30,6 +30,7 @@
 #include <xyz/openbmc_project/Control/Boot/Mode/server.hpp>
 #include <xyz/openbmc_project/Control/Boot/Source/server.hpp>
 #include <xyz/openbmc_project/Control/Boot/Type/server.hpp>
+#include <xyz/openbmc_project/Led/Group/common.hpp>
 
 #include <algorithm>
 #include <array>
@@ -165,6 +166,18 @@ DbusObjectInfo getIPObject(sdbusplus::bus_t& bus, const std::string& interface,
 }
 
 } // namespace network
+
+namespace led
+{
+using Group = sdbusplus::common::xyz::openbmc_project::led::Group;
+
+constexpr auto service = "xyz.openbmc_project.LED.GroupManager";
+
+std::string getGroupPath(const std::string& groupName)
+{
+    return std::string(Group::namespace_path) + "/" + groupName;
+}
+} // namespace led
 
 namespace boot
 {
@@ -1702,6 +1715,60 @@ ipmi_ret_t ipmiOemSetBiosFlashInfo(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
     /* Do nothing, return success */
     *data_len = 0;
     return ipmi::ccSuccess;
+}
+
+//----------------------------------------------------------------------
+// Set LED Group (CMD_OEM_SET_LED_GROUP)
+//----------------------------------------------------------------------
+// Set the "Asserted" property of the target LED group.
+//
+// Request:
+// Byte 1   - Action: 0x00 deassert, 0x01 assert
+// Byte 2   - LED group name length
+// Byte 3:N - LED group name
+//
+// Response:
+// Byte 1 - Completion Code
+ipmi::RspType<> ipmiOemSetLedGroup(ipmi::Context::ptr ctx, uint8_t action,
+                                   std::string groupName)
+{
+    if (action > 0x01)
+    {
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    const bool asserted = action != 0x00;
+
+    // list the LED groups hosted by phosphor-led-manager
+    ObjectValueTree groups;
+    if (auto ec = ipmi::getManagedObjects(ctx, led::service,
+                                          led::Group::namespace_path, groups))
+    {
+        lg2::error("Failed to list LED groups: {ERROR}", "ERROR", ec.message());
+        return ipmi::responseUnspecifiedError();
+    }
+
+    // only accept groups hosted by phosphor-led-manager
+    const std::string groupPath = led::getGroupPath(groupName);
+    if (!groups.contains(sdbusplus::object_path(groupPath)))
+    {
+        lg2::error("LED group not found: {GROUP}", "GROUP", groupName);
+        return ipmi::responseInvalidFieldRequest();
+    }
+
+    if (auto ec = ipmi::setDbusProperty(
+            ctx, led::service, groupPath, led::Group::interface,
+            led::Group::property_names::asserted, asserted))
+    {
+        lg2::error("Failed to set {GROUP} Asserted to {ASSERTED}: {ERROR}",
+                   "GROUP", groupName, "ASSERTED", asserted, "ERROR",
+                   ec.message());
+        return ipmi::responseUnspecifiedError();
+    }
+
+    lg2::info("LED group {GROUP} Asserted set to {ASSERTED}", "GROUP",
+              groupName, "ASSERTED", asserted);
+    return ipmi::responseSuccess();
 }
 
 std::vector<BtpprEntry> scanBtpprFiles()
@@ -3249,6 +3316,9 @@ static void registerOEMFunctions(void)
     ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_BIOS_FLASH_INFO, NULL,
                          ipmiOemSetBiosFlashInfo,
                          PRIVILEGE_USER); // Set Bios Flash Info
+    ipmi::registerHandler(ipmi::prioOpenBmcBase, ipmi::netFnOemOne,
+                          CMD_OEM_SET_LED_GROUP, ipmi::Privilege::User,
+                          ipmiOemSetLedGroup); // Set LED Group
     ipmiPrintAndRegister(ipmi::netFnOemOne, CMD_OEM_SET_PPR, NULL,
                          ipmiOemSetPpr,
                          PRIVILEGE_USER); // Set PPR
