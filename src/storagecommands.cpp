@@ -115,7 +115,7 @@ const std::unordered_map<std::string, std::map<AlarmType, Property>>
         {"xyz.openbmc_project.Sensor.Threshold.Warning",
          {{AlarmType::low, Property{"WarningAlarmLow", "LNC"}},
           {AlarmType::high, Property{"WarningAlarmHigh", "UNC"}}}},
-    };
+};
 
 static bool getSensorMap(std::string sensorConnection, std::string sensorPath,
                          SensorMap& sensorMap)

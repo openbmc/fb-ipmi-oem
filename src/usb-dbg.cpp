@@ -1015,7 +1015,7 @@ static panel panel_boot_order(size_t selectedItemIndex)
         bootOrderMappingTable = {
             {0x00, " USB device"}, {0x01, " Network v4"}, {0x02, " SATA HDD"},
             {0x03, " SATA-CDROM"}, {0x04, " Other"},      {0x09, " Network v6"},
-        };
+    };
 
     size_t validItem = 0;
     for (size_t i = 1; i < sizeBootOrder; i++)
