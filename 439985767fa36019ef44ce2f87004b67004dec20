@@ -16,6 +16,24 @@
       "message": "Adding the host-side SSD fault LED control use case to the commit message would make the purpose clearer.",
       "revId": "439985767fa36019ef44ce2f87004b67004dec20",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bf84a8b7_622c9f62",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002134
+      },
+      "writtenOn": "2026-10-13T08:51:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5def5344_959f3b72",
+      "revId": "439985767fa36019ef44ce2f87004b67004dec20",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
