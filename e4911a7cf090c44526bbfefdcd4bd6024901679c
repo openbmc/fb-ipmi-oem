@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c1789782_f5e045b9",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1760,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2026-10-19T19:14:45Z",
+      "side": 1,
+      "message": "Why not use the PDI server.hpp APIs? https://github.com/openbmc/phosphor-dbus-interfaces/blob/master/yaml/xyz/openbmc_project/Led/Group.interface.yaml#L4\n\nauto group \u003d sdbusplus::client::xyz::openbmc_project::led::Group(...);\ngroup.asserted(true/false);",
+      "revId": "e4911a7cf090c44526bbfefdcd4bd6024901679c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}
