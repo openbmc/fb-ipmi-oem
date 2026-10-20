@@ -34,6 +34,24 @@
       "parentUuid": "c1789782_f5e045b9",
       "revId": "e4911a7cf090c44526bbfefdcd4bd6024901679c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91f6945c_82708cc9",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1760,
+      "author": {
+        "id": 1002591
+      },
+      "writtenOn": "2026-10-20T02:25:38Z",
+      "side": 1,
+      "message": "Could you clarify why we should use the client.hpp APIs here?\nI used the existing ipmid utils because they work with the ipmi::Context and match the other handlers.\nipmi::getManagedObjects/setDbusProperty(ctx, ...) call ctx-\u003ebus-\u003eyield_method_call with ctx-\u003eyield, so the D-Bus calls are already non-blocking.",
+      "parentUuid": "78d9717c_5a314eca",
+      "revId": "e4911a7cf090c44526bbfefdcd4bd6024901679c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
