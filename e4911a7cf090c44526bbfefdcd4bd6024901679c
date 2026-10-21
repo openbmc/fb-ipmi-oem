@@ -52,6 +52,24 @@
       "parentUuid": "78d9717c_5a314eca",
       "revId": "e4911a7cf090c44526bbfefdcd4bd6024901679c",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56532aa4_7155c733",
+        "filename": "src/oemcommands.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 1760,
+      "author": {
+        "id": 1000212
+      },
+      "writtenOn": "2026-10-21T16:43:23Z",
+      "side": 1,
+      "message": "We use the PDI client framework for others like lg2::commit etc. Is it a technical difficulty to do so in fb-ipmi-oem?",
+      "parentUuid": "91f6945c_82708cc9",
+      "revId": "e4911a7cf090c44526bbfefdcd4bd6024901679c",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
