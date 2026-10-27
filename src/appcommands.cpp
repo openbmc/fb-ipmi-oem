@@ -28,10 +28,12 @@
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/message/types.hpp>
 
+#include <algorithm>
 #include <format>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <span>
 #include <sstream>
 #include <stdexcept>
 
@@ -268,22 +270,24 @@ void flush_app_data()
     writeFileAtomic(JSON_APP_DATA_FILE, appData.dump());
 }
 
-static int platSetSysFWVer(uint8_t* ver, const size_t hostId)
+static int platSetSysFWVer(std::span<const uint8_t> ver, const size_t hostId)
 {
     std::stringstream ss;
-    int i;
 
     /* TODO: implement byte 1: Set selector
      * byte 2: encodeing, currently only supported
      * ASCII which is value 0, UTF and unicode are
      * not supported yet.
      */
-    if (ver[1] & 0x0f)
+    if (ver.size() < 3 || (ver[1] & 0x0f))
         return -1;
 
-    for (i = 3; i < 3 + ver[2]; i++)
+    /* Byte 3 is the string length; never read past the received data. */
+    auto str = ver.subspan(3);
+    size_t len = std::min<size_t>(ver[2], str.size());
+    for (size_t i = 0; i < len; i++)
     {
-        ss << (char)ver[i];
+        ss << (char)str[i];
     }
 
     /* Save to legacy sysfw version file for backward compatibility */
@@ -353,11 +357,31 @@ static int platGetSysFWVer(std::vector<uint8_t>& respData, const size_t hostId)
 //----------------------------------------------------------------------
 // Set Sys Info Params (IPMI/Sec 22.14a) (CMD_APP_SET_SYS_INFO_PARAMS)
 //----------------------------------------------------------------------
+/* Copy a request payload into a fixed-size parameter buffer and zero the
+ * rest. Returns false, leaving dst untouched, if the payload is too long.
+ */
+template <size_t N>
+static bool copySysInfoParam(uint8_t (&dst)[N], std::span<const uint8_t> data)
+{
+    if (data.size() > N)
+    {
+        return false;
+    }
+    std::ranges::fill(dst, 0);
+    std::ranges::copy(data, dst);
+    return true;
+}
+
 ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
                                                std::vector<uint8_t> req)
 {
+    if (req.empty())
+    {
+        return ipmi::responseReqDataLenInvalid();
+    }
+
     uint8_t param = req[0];
-    uint8_t req_len = req.size();
+    std::span<const uint8_t> data(req.begin() + 1, req.end());
     std::optional<size_t> hostId = findHost(ctx->hostIdx);
 
     if (!hostId)
@@ -370,54 +394,62 @@ ipmi::RspType<uint8_t> ipmiAppSetSysInfoParams(ipmi::Context::ptr ctx,
     switch (param)
     {
         case SYS_INFO_PARAM_SET_IN_PROG:
-            sysInfoParams.set_in_prog = req[1];
+            if (data.empty())
+                return ipmi::responseReqDataLenInvalid();
+            sysInfoParams.set_in_prog = data[0];
             break;
         case SYS_INFO_PARAM_SYSFW_VER:
         {
-            memcpy(sysInfoParams.sysfw_ver, &req[1], SIZE_SYSFW_VER);
-            if (platSetSysFWVer(sysInfoParams.sysfw_ver, *hostId))
+            if (!copySysInfoParam(sysInfoParams.sysfw_ver, data))
+                return ipmi::responseReqDataLenInvalid();
+            if (platSetSysFWVer(data, *hostId))
                 return ipmi::responseSystemInfoParamterNotSupportCommand();
             break;
         }
         case SYS_INFO_PARAM_SYS_NAME:
-            memcpy(sysInfoParams.sys_name, &req[1], SIZE_SYS_NAME);
+            if (!copySysInfoParam(sysInfoParams.sys_name, data))
+                return ipmi::responseReqDataLenInvalid();
             break;
         case SYS_INFO_PARAM_PRI_OS_NAME:
-            memcpy(sysInfoParams.pri_os_name, &req[1], SIZE_OS_NAME);
+            if (!copySysInfoParam(sysInfoParams.pri_os_name, data))
+                return ipmi::responseReqDataLenInvalid();
             break;
         case SYS_INFO_PARAM_PRESENT_OS_NAME:
-            memcpy(sysInfoParams.present_os_name, &req[1], SIZE_OS_NAME);
+            if (!copySysInfoParam(sysInfoParams.present_os_name, data))
+                return ipmi::responseReqDataLenInvalid();
             break;
         case SYS_INFO_PARAM_PRESENT_OS_VER:
-            memcpy(sysInfoParams.present_os_ver, &req[1], SIZE_OS_VER);
+            if (!copySysInfoParam(sysInfoParams.present_os_ver, data))
+                return ipmi::responseReqDataLenInvalid();
             break;
         case SYS_INFO_PARAM_BMC_URL:
-            memcpy(sysInfoParams.bmc_url, &req[1], SIZE_BMC_URL);
+            if (!copySysInfoParam(sysInfoParams.bmc_url, data))
+                return ipmi::responseReqDataLenInvalid();
             break;
         case SYS_INFO_PARAM_OS_HV_URL:
-            memcpy(sysInfoParams.os_hv_url, &req[1], SIZE_OS_HV_URL);
+            if (!copySysInfoParam(sysInfoParams.os_hv_url, data))
+                return ipmi::responseReqDataLenInvalid();
             break;
         case SYS_INFO_PARAM_BIOS_CURRENT_BOOT_LIST:
-            memcpy(sysInfoParams.bios_current_boot_list, &req[1], req_len);
-            appData[KEY_BIOS_BOOT_LEN] = req_len;
+            if (!copySysInfoParam(sysInfoParams.bios_current_boot_list, data))
+                return ipmi::responseReqDataLenInvalid();
+            appData[KEY_BIOS_BOOT_LEN] = data.size();
             flush_app_data();
             break;
         case SYS_INFO_PARAM_BIOS_FIXED_BOOT_DEVICE:
-            if (SIZE_BIOS_FIXED_BOOT_DEVICE != req_len)
+            if (data.size() != SIZE_BIOS_FIXED_BOOT_DEVICE)
                 break;
-            memcpy(sysInfoParams.bios_fixed_boot_device, &req[1],
-                   SIZE_BIOS_FIXED_BOOT_DEVICE);
+            copySysInfoParam(sysInfoParams.bios_fixed_boot_device, data);
             break;
         case SYS_INFO_PARAM_BIOS_RSTR_DFLT_SETTING:
-            if (SIZE_BIOS_RSTR_DFLT_SETTING != req_len)
+            if (data.size() != SIZE_BIOS_RSTR_DFLT_SETTING)
                 break;
-            memcpy(sysInfoParams.bios_rstr_dflt_setting, &req[1],
-                   SIZE_BIOS_RSTR_DFLT_SETTING);
+            copySysInfoParam(sysInfoParams.bios_rstr_dflt_setting, data);
             break;
         case SYS_INFO_PARAM_LAST_BOOT_TIME:
-            if (SIZE_LAST_BOOT_TIME != req_len)
+            if (data.size() != SIZE_LAST_BOOT_TIME)
                 break;
-            memcpy(sysInfoParams.last_boot_time, &req[1], SIZE_LAST_BOOT_TIME);
+            copySysInfoParam(sysInfoParams.last_boot_time, data);
             break;
         default:
             return ipmi::responseSystemInfoParamterNotSupportCommand();
