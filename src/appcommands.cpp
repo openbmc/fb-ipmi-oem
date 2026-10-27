@@ -265,10 +265,7 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 
 void flush_app_data()
 {
-    std::ofstream file(JSON_APP_DATA_FILE);
-    file << appData;
-    file.close();
-    return;
+    writeFileAtomic(JSON_APP_DATA_FILE, appData.dump());
 }
 
 static int platSetSysFWVer(uint8_t* ver, const size_t hostId)
@@ -559,9 +556,7 @@ void registerAPPFunctions()
                 phosphor::logging::entry("FILE=%s", JSON_APP_DATA_FILE),
                 phosphor::logging::entry("ERROR=%s", e.what()));
             appData = nlohmann::json::object();
-            std::ofstream outFile(JSON_APP_DATA_FILE, std::ofstream::trunc);
-            outFile << appData.dump(4);
-            outFile.close();
+            writeFileAtomic(JSON_APP_DATA_FILE, appData.dump(4));
         }
         file.close();
     }

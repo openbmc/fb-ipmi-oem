@@ -20,7 +20,9 @@
 #include <ipmid/api.hpp>
 #include <sdbusplus/bus.hpp>
 
+#include <filesystem>
 #include <iostream>
+#include <string_view>
 
 static constexpr bool debug = false;
 
@@ -97,6 +99,12 @@ inline static void printCommand(unsigned int netfn, unsigned int cmd)
 }
 
 std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void);
+
+/* Replace the file at path with data. The data is written to a temporary
+ * file, synced, and renamed over path, so a crash or power loss leaves
+ * either the old or the new content, never a truncated file.
+ */
+bool writeFileAtomic(const std::filesystem::path& path, std::string_view data);
 
 namespace ipmi
 {

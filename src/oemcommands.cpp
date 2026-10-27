@@ -395,10 +395,7 @@ void getBootOrder(std::string bootObjPath, std::vector<uint8_t>& bootSeq,
 
 void flushOemData()
 {
-    std::ofstream file(JSON_OEM_DATA_FILE);
-    file << oemData;
-    file.close();
-    return;
+    writeFileAtomic(JSON_OEM_DATA_FILE, oemData.dump());
 }
 
 std::string bytesToStr(uint8_t* byte, int len)
@@ -3249,9 +3246,8 @@ static void registerOEMFunctions(void)
             lg2::error("Exception parsing JSON file {FILE}: {ERROR}", "FILE",
                        std::string(JSON_OEM_DATA_FILE), "ERROR", e.what());
             oemData = nlohmann::json::object();
-            std::ofstream outFile(JSON_OEM_DATA_FILE, std::ofstream::trunc);
-            outFile << oemData.dump(4); // Write empty JSON object to the file
-            outFile.close();
+            // Write empty JSON object to the file
+            writeFileAtomic(JSON_OEM_DATA_FILE, oemData.dump(4));
         }
         file.close();
     }
