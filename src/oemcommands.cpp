@@ -395,7 +395,11 @@ void getBootOrder(std::string bootObjPath, std::vector<uint8_t>& bootSeq,
 
 void flushOemData()
 {
-    writeFileAtomic(JSON_OEM_DATA_FILE, oemData.dump());
+    /* Strings come from the host and may not be valid UTF-8; replace bad
+     * bytes rather than throw and lose the whole file. */
+    writeFileAtomic(
+        JSON_OEM_DATA_FILE,
+        oemData.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace));
 }
 
 std::string bytesToStr(uint8_t* byte, int len)

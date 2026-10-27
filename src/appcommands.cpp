@@ -267,7 +267,11 @@ ipmi_ret_t ipmiAppGetSysGUID(ipmi_netfn_t, ipmi_cmd_t, ipmi_request_t,
 
 void flush_app_data()
 {
-    writeFileAtomic(JSON_APP_DATA_FILE, appData.dump());
+    /* Strings come from the host and may not be valid UTF-8; replace bad
+     * bytes rather than throw and lose the whole file. */
+    writeFileAtomic(
+        JSON_APP_DATA_FILE,
+        appData.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace));
 }
 
 static int platSetSysFWVer(std::span<const uint8_t> ver, const size_t hostId)
