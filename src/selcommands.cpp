@@ -18,6 +18,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/container/flat_map.hpp>
 #include <com/meta/IPMI/UnifiedSEL/event.hpp>
+#include <commandutils.hpp>
 #include <ipmid/api.hpp>
 #include <nlohmann/json.hpp>
 #include <phosphor-logging/commit.hpp>
@@ -121,9 +122,7 @@ class SELData
 
     void flush()
     {
-        std::ofstream file(SEL_JSON_DATA_FILE);
-        file << selDataObj;
-        file.close();
+        writeFileAtomic(SEL_JSON_DATA_FILE, selDataObj.dump());
     }
 
     void init()
@@ -140,17 +139,8 @@ class SELData
     void writeEmptyJson()
     {
         selDataObj = nlohmann::json::object(); // Create an empty JSON object
-        std::ofstream outFile(SEL_JSON_DATA_FILE);
-        if (outFile)
-        {
-            // Write empty JSON object to the file
-            outFile << selDataObj.dump(4);
-            outFile.close();
-        }
-        else
-        {
-            lg2::info("Failed to create SEL JSON file with empty JSON.");
-        }
+        // Write empty JSON object to the file
+        writeFileAtomic(SEL_JSON_DATA_FILE, selDataObj.dump(4));
     }
 
   public:

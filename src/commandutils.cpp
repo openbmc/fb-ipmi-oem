@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #include <commandutils.hpp>
 #include <ipmid/utils.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <phosphor-logging/log.hpp>
+
+#include <cerrno>
+#include <cstring>
 
 std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void)
 {
@@ -65,4 +72,63 @@ std::optional<std::pair<uint8_t, uint8_t>> getMbFruDevice(void)
     }
 
     return device;
+}
+
+bool writeFileAtomic(const std::filesystem::path& path, std::string_view data)
+{
+    std::filesystem::path tmpPath = path;
+    tmpPath += ".tmp";
+
+    int fd =
+        open(tmpPath.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+    if (fd < 0)
+    {
+        lg2::error("Failed to create {FILE}: {ERROR}", "FILE", tmpPath.string(),
+                   "ERROR", std::strerror(errno));
+        return false;
+    }
+
+    auto fail = [&](const char* step) {
+        lg2::error("Failed to {STEP} {FILE}: {ERROR}", "STEP", step, "FILE",
+                   tmpPath.string(), "ERROR", std::strerror(errno));
+        if (fd >= 0)
+        {
+            close(fd);
+        }
+        unlink(tmpPath.c_str());
+        return false;
+    };
+
+    while (!data.empty())
+    {
+        ssize_t n = write(fd, data.data(), data.size());
+        if (n < 0)
+        {
+            if (errno == EINTR)
+            {
+                continue;
+            }
+            return fail("write");
+        }
+        data.remove_prefix(n);
+    }
+
+    if (fsync(fd) < 0)
+    {
+        return fail("sync");
+    }
+
+    int rc = close(fd);
+    fd = -1;
+    if (rc < 0)
+    {
+        return fail("close");
+    }
+
+    if (rename(tmpPath.c_str(), path.c_str()) < 0)
+    {
+        return fail("rename");
+    }
+
+    return true;
 }
