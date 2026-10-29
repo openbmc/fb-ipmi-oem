@@ -14,3 +14,9 @@ option(
 )
 option('host-instances', type: 'string', description: 'Host Instances')
 option('machine', type: 'string', description: 'Machine')
+option(
+    'reject-event-message-buffer',
+    type: 'boolean',
+    value: false,
+    description: 'Reject requests to enable the IPMI Event Message Buffer',
+)
