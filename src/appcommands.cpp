@@ -49,6 +49,13 @@ static constexpr const char* FRU_EEPROM = "/sys/bus/i2c/devices/6-0054/eeprom";
 
 // TODO: Need to store this info after identifying proper storage
 static uint8_t globEna = 0x09;
+
+#if defined(REJECT_EVENT_MESSAGE_BUFFER)
+// Set/Get BMC Global Enables bits
+static constexpr uint8_t eventMsgBufferFullIntrEnable = 0x02;
+static constexpr uint8_t eventMsgBufferEnable = 0x04;
+#endif
+
 static SysInfoParam sysInfoParams;
 nlohmann::json appData __attribute__((init_priority(101)));
 
@@ -192,6 +199,20 @@ ipmi_ret_t ipmiAppSetGlobalEnables(ipmi_netfn_t, ipmi_cmd_t,
                                    ipmi_data_len_t data_len, ipmi_context_t)
 {
     uint8_t* req = reinterpret_cast<uint8_t*>(request);
+
+#if defined(REJECT_EVENT_MESSAGE_BUFFER)
+    if (*data_len != 1)
+    {
+        *data_len = 0;
+        return ipmi::ccReqDataLenInvalid;
+    }
+
+    if (*req & (eventMsgBufferEnable | eventMsgBufferFullIntrEnable))
+    {
+        *data_len = 0;
+        return ipmi::ccInvalidFieldRequest;
+    }
+#endif
 
     globEna = *req;
     *data_len = 0;
