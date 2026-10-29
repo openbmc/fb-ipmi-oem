@@ -50,6 +50,13 @@ if get_option('bic').allowed()
     )
 endif
 
+if get_option('reject-event-message-buffer')
+    add_project_arguments(
+        cpp.get_supported_arguments(['-DREJECT_EVENT_MESSAGE_BUFFER']),
+        language: 'cpp',
+    )
+endif
+
 root_inc = include_directories('.', 'include')
 
 # Dependencies
