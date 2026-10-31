@@ -416,12 +416,13 @@ std::string bytesToStr(uint8_t* byte, int len)
     return ss.str();
 }
 
-int strToBytes(std::string& str, uint8_t* data)
+int strToBytes(const std::string& str, uint8_t* data, size_t maxLen)
 {
     std::string sstr;
     size_t i;
+    size_t count = std::min(str.length() / 2, maxLen);
 
-    for (i = 0; i < (str.length()) / 2; i++)
+    for (i = 0; i < count; i++)
     {
         sstr = str.substr(i * 2, 2);
         data[i] = (uint8_t)std::strtol(sstr.c_str(), NULL, 16);
@@ -773,7 +774,7 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
     nlohmann::json sysObj;
     std::string dimmInfo = KEY_Q_DIMM_INFO + std::to_string(pos);
     std::string result, typeName;
-    uint8_t res[MAX_BUF];
+    uint8_t res[MAX_BUF] = {};
 
     /* Get sysConfig data stored in json file */
     std::ifstream file(JSON_OEM_DATA_FILE);
@@ -869,7 +870,7 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
             }
 
             std::string speedSize = indObj[DIMM_SPEED].get<std::string>();
-            strToBytes(speedSize, res);
+            strToBytes(speedSize, res, sizeof(res));
             auto speed = (res[1] << 8 | res[0]);
             size_t dimmSize = ((res[3] << 8 | res[2]) / 1000);
 
@@ -883,7 +884,7 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
             std::string type = indObj[DIMM_TYPE].get<std::string>();
             std::string dualInlineMem =
                 indObj[KEY_DIMM_TYPE].get<std::string>();
-            strToBytes(type, res);
+            strToBytes(type, res, sizeof(res));
             size_t dimmType = res[0];
             if (dimmVenMap.find(dimmType) == dimmVenMap.end())
             {
@@ -912,7 +913,7 @@ int8_t sysConfig(std::vector<std::string>& data, size_t pos)
 int8_t procInfo(std::string& result, size_t pos)
 {
     std::vector<char> data;
-    uint8_t res[MAX_BUF];
+    uint8_t res[MAX_BUF] = {};
     std::string procIndex = "00";
     nlohmann::json proObj;
     std::string procInfoKey = KEY_Q_PROC_INFO + std::to_string(pos);
@@ -977,7 +978,7 @@ int8_t procInfo(std::string& result, size_t pos)
         std::string basicInfo = procEntryObj[KEY_BASIC_INFO].get<std::string>();
 
         // Processor Product Name
-        strToBytes(procName, res);
+        strToBytes(procName, res, sizeof(res));
         data.assign(reinterpret_cast<char*>(&res),
                     reinterpret_cast<char*>(&res) + sizeof(res));
 
@@ -988,7 +989,7 @@ int8_t procInfo(std::string& result, size_t pos)
             std::sregex_token_iterator());
 
         // Processor core and frequency
-        strToBytes(basicInfo, res);
+        strToBytes(basicInfo, res, sizeof(res));
         uint16_t coreNum = res[0];
         double procFrequency = (float)(res[4] << 8 | res[3]) / 1000;
 
@@ -2188,7 +2189,7 @@ ipmi::RspType<> ipmiOemQSetProcInfo(
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
-    uint8_t len = request.size();
+    size_t len = request.size();
     auto hostId = findHost(ctx->hostIdx);
     if (!hostId)
     {
@@ -2198,7 +2199,7 @@ ipmi::RspType<> ipmiOemQSetProcInfo(
     }
     std::string procInfo = KEY_Q_PROC_INFO + std::to_string(*hostId);
     /* check for requested data params */
-    if (len < 5 || paramSel < 1 || paramSel >= numParam)
+    if (len < 5 || len > MAX_BUF || paramSel < 1 || paramSel >= numParam)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
@@ -2246,7 +2247,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemQGetProcInfo(
     uint8_t numParam = sizeof(cpuInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
-    uint8_t res[MAX_BUF];
+    uint8_t res[MAX_BUF] = {};
     auto hostId = findHost(ctx->hostIdx);
     if (!hostId)
     {
@@ -2269,7 +2270,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemQGetProcInfo(
         oemData[procInfo][ss.str()].end())
         return ipmi::responseCommandNotAvailable();
     str = oemData[procInfo][ss.str()][cpuInfoKey[paramSel]];
-    int dataLen = strToBytes(str, res);
+    int dataLen = strToBytes(str, res, sizeof(res));
     std::vector<uint8_t> response(&res[0], &res[dataLen]);
     return ipmi::responseSuccess(response);
 }
@@ -2338,7 +2339,7 @@ ipmi::RspType<> ipmiOemQSetDimmInfo(
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
     std::stringstream ss;
     std::string str;
-    uint8_t len = request.size();
+    size_t len = request.size();
     std::string dimmType;
     readDimmType(dimmType, dimmIndex);
     auto hostId = findHost(ctx->hostIdx);
@@ -2351,7 +2352,7 @@ ipmi::RspType<> ipmiOemQSetDimmInfo(
 
     std::string dimmInfo = KEY_Q_DIMM_INFO + std::to_string(*hostId);
 
-    if (len < 3 || paramSel < 1 || paramSel >= numParam)
+    if (len < 3 || len > MAX_BUF || paramSel < 1 || paramSel >= numParam)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
@@ -2431,7 +2432,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemQGetDimmInfo(
     uint8_t paramSel)
 {
     uint8_t numParam = sizeof(dimmInfoKey) / sizeof(uint8_t*);
-    uint8_t res[MAX_BUF];
+    uint8_t res[MAX_BUF] = {};
     std::stringstream ss;
     std::string str;
     std::string dimmType;
@@ -2460,7 +2461,7 @@ ipmi::RspType<std::vector<uint8_t>> ipmiOemQGetDimmInfo(
         oemData[dimmInfo][ss.str()].end())
         return ipmi::responseCommandNotAvailable();
     str = oemData[dimmInfo][ss.str()][dimmInfoKey[paramSel]];
-    int data_length = strToBytes(str, res);
+    int data_length = strToBytes(str, res, sizeof(res));
     std::vector<uint8_t> response(&res[0], &res[data_length]);
     return ipmi::responseSuccess(response);
 }
@@ -2549,12 +2550,13 @@ ipmi_ret_t ipmiOemQSetDriveInfo(ipmi_netfn_t, ipmi_cmd_t,
     uint8_t ctrlType = req->hddCtrlType & 0x0f;
     std::stringstream ss;
     std::string str;
-    uint8_t len = *data_len;
+    size_t len = *data_len;
 
     *data_len = 0;
 
     /* check for requested data params */
-    if (len < 6 || req->paramSel >= numParam || ctrlType > 2)
+    if (len < 6 || (len - 6) > MAX_BUF || req->paramSel >= numParam ||
+        ctrlType > 2)
     {
         phosphor::logging::log<phosphor::logging::level::ERR>(
             "Invalid parameter received");
@@ -2638,7 +2640,7 @@ ipmi_ret_t ipmiOemQGetDriveInfo(
 
     str = oemData[KEY_Q_DRIVE_INFO][ctrlTypeKey[ctrlType]][ss.str()]
                  [driveInfoKey[req->paramSel]];
-    *data_len = strToBytes(str, res);
+    *data_len = strToBytes(str, res, MAX_BUF);
 
     return ipmi::ccSuccess;
 }
