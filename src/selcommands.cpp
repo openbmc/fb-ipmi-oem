@@ -116,13 +116,20 @@ class SELData
   private:
     nlohmann::json selDataObj;
     /* addEntry() now runs on the logging thread, so several callers can
-     * touch selDataObj at once. The lock is held across flush() as well,
-     * which keeps the file writes serialized and in entry order. */
+     * touch selDataObj at once. */
     std::mutex dataMutex;
+    std::mutex flushMutex;
 
     void flush()
     {
-        writeFileAtomic(SEL_JSON_DATA_FILE, selDataObj.dump());
+        std::lock_guard<std::mutex> flushLock(flushMutex);
+        nlohmann::json selCache;
+        {
+            std::lock_guard<std::mutex> dataLock(dataMutex);
+            selCache = selDataObj;
+        }
+
+        writeFileAtomic(SEL_JSON_DATA_FILE, selCache.dump());
     }
 
     void init()
@@ -232,7 +239,6 @@ class SELData
 
     int addEntry(std::string keyStr, std::promise<int>& idPromise)
     {
-        std::lock_guard<std::mutex> lock(dataMutex);
         struct timespec selTime = {};
 
         if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
@@ -241,16 +247,22 @@ class SELData
             return -1;
         }
 
-        selDataObj[KEY_ADD_TIME] = selTime.tv_sec;
+        int selCount;
 
-        int selCount = selDataObj[KEY_SEL_COUNT];
-        selDataObj[KEY_SEL_COUNT] = ++selCount;
+        {
+            std::lock_guard<std::mutex> lock(dataMutex);
 
-        std::stringstream ss;
-        ss << std::hex;
-        ss << std::setw(2) << std::setfill('0') << selCount;
+            selDataObj[KEY_ADD_TIME] = selTime.tv_sec;
 
-        selDataObj[ss.str()][KEY_SEL_ENTRY_RAW] = keyStr;
+            selCount = selDataObj[KEY_SEL_COUNT];
+            selDataObj[KEY_SEL_COUNT] = ++selCount;
+
+            std::stringstream ss;
+            ss << std::hex;
+            ss << std::setw(2) << std::setfill('0') << selCount;
+
+            selDataObj[ss.str()][KEY_SEL_ENTRY_RAW] = keyStr;
+        }
 
         /* Hand the record ID back before the slow part: the IPMI response
          * can then return while flush() is still writing the file. */
