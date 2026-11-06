@@ -24,6 +24,7 @@
 #include <ipmid/utils.hpp>
 #include <nlohmann/json.hpp>
 #include <oemcommands.hpp>
+#include <org/freedesktop/DBus/Error/event.hpp>
 #include <phosphor-logging/lg2.hpp>
 #include <phosphor-logging/log.hpp>
 #include <sdbusplus/async.hpp>
@@ -46,7 +47,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <string_view>
 #include <vector>
 
 #define SIZE_IANA_ID 3
@@ -1756,16 +1756,18 @@ ipmi::RspType<> ipmiOemSetLedGroup(uint8_t action, std::string groupName)
                       groupName, "ASSERTED", asserted);
             rsp = ipmi::responseSuccess();
         }
-        catch (const sdbusplus::exception_t& e)
+        catch (const sdbusplus::error::org::freedesktop::d_bus::Error::
+                   UnknownObject& e)
         {
             lg2::error("Failed to set {GROUP} Asserted to {ASSERTED}: {ERROR}",
                        "GROUP", groupName, "ASSERTED", asserted, "ERROR", e);
             // only accept group hosted by phosphor-led-manager
-            if (std::string_view(e.name()) ==
-                "org.freedesktop.DBus.Error.UnknownObject")
-            {
-                rsp = ipmi::responseInvalidFieldRequest();
-            }
+            rsp = ipmi::responseInvalidFieldRequest();
+        }
+        catch (const sdbusplus::exception_t& e)
+        {
+            lg2::error("Failed to set {GROUP} Asserted to {ASSERTED}: {ERROR}",
+                       "GROUP", groupName, "ASSERTED", asserted, "ERROR", e);
         }
         ctx.request_stop();
     };
