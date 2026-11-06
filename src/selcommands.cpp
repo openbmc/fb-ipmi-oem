@@ -27,8 +27,8 @@
 #include <sdbusplus/timer.hpp>
 #include <storagecommands.hpp>
 
+#include <condition_variable>
 #include <fstream>
-#include <future>
 #include <iostream>
 #include <mutex>
 #include <sstream>
@@ -115,14 +115,106 @@ class SELData
 {
   private:
     nlohmann::json selDataObj;
-    /* addEntry() now runs on the logging thread, so several callers can
-     * touch selDataObj at once. The lock is held across flush() as well,
-     * which keeps the file writes serialized and in entry order. */
     std::mutex dataMutex;
+    std::condition_variable flushCv;
+    std::condition_variable flushDoneCv;
+    std::thread flushThread;
+    bool flushPending = false;
+    bool stopFlushThread = false;
 
-    void flush()
+    /* pendingVersion:   bumped on every selDataObj mutation.
+     * flushedVersion:   last version the worker finished processing, whether
+     *                   it succeeded or not. Tracks progress, so a waiter is
+     *                   never left hanging.
+     * persistedVersion: last version actually written to the file. Advances
+     *                   only on success. Both counters are monotonic, so a
+     *                   later round can never overwrite an earlier verdict.
+     * Since flush() always writes a full snapshot and selDataObj only moves
+     * forward, persistedVersion >= v means every update up to v is on disk. */
+    uint64_t pendingVersion = 0;
+    uint64_t flushedVersion = 0;
+    uint64_t persistedVersion = 0;
+
+    bool flush(const nlohmann::json& snapshot)
     {
-        writeFileAtomic(SEL_JSON_DATA_FILE, selDataObj.dump());
+        return writeFileAtomic(SEL_JSON_DATA_FILE, snapshot.dump());
+    }
+
+    uint64_t requestFlushLocked()
+    {
+        flushPending = true;
+        uint64_t version = ++pendingVersion;
+        flushCv.notify_one();
+        return version;
+    }
+
+    void flushWorker()
+    {
+        while (true)
+        {
+            nlohmann::json snapshot;
+            uint64_t snapshotVersion = 0;
+            bool ok = false;
+
+            /* Nothing may escape this loop: an uncaught exception in a
+             * std::thread calls std::terminate() and takes down ipmid.
+             * A single failed flush is harmless, since every flush writes
+             * a full snapshot and the next one self-heals the file. */
+            try
+            {
+                {
+                    std::unique_lock<std::mutex> lock(dataMutex);
+                    flushCv.wait(lock, [this] {
+                        return stopFlushThread || flushPending;
+                    });
+
+                    if (stopFlushThread && !flushPending)
+                    {
+                        return;
+                    }
+
+                    /* Take the version and consume the request before the
+                     * copy below, which may throw: otherwise flushPending
+                     * would stay set and this loop would spin on it. */
+                    snapshotVersion = pendingVersion;
+                    flushPending = false;
+                    snapshot = selDataObj;
+                }
+                /* dataMutex is released here on purpose: the file write
+                 * must not block callers of addEntry(). */
+
+                ok = flush(snapshot);
+                if (!ok)
+                {
+                    lg2::error("Failed to write SEL JSON file");
+                }
+            }
+            catch (const std::exception& e)
+            {
+                lg2::error("SEL flush failed: {ERROR}", "ERROR", e);
+            }
+            catch (...)
+            {
+                lg2::error("SEL flush failed with an unknown exception");
+            }
+
+            /* Version 0 means no request was picked up, so there is
+             * nothing to report and flushedVersion must not go backwards. */
+            if (snapshotVersion != 0)
+            {
+                {
+                    std::lock_guard<std::mutex> lock(dataMutex);
+                    /* Advance even on failure: this tracks progress, not
+                     * success, so a waiter is never left hanging. */
+                    flushedVersion = snapshotVersion;
+                    if (ok)
+                    {
+                        persistedVersion = snapshotVersion;
+                    }
+                }
+                flushDoneCv.notify_all();
+            }
+        }
     }
 
     void init()
@@ -174,11 +266,30 @@ class SELData
         {
             init();
         }
+
+        flushThread = std::thread(&SELData::flushWorker, this);
+    }
+
+    ~SELData()
+    {
+        {
+            std::lock_guard<std::mutex> lock(dataMutex);
+            flushPending = true;
+            stopFlushThread = true;
+        }
+        flushCv.notify_one();
+        /* Wake any clear() still waiting, so it does not block on a
+         * worker that is about to exit. */
+        flushDoneCv.notify_all();
+        if (flushThread.joinable())
+        {
+            flushThread.join();
+        }
     }
 
     int clear()
     {
-        std::lock_guard<std::mutex> lock(dataMutex);
+        std::unique_lock<std::mutex> lock(dataMutex);
 
         /* Clear the complete Sel Json object */
         selDataObj.clear();
@@ -191,7 +302,26 @@ class SELData
             return -1;
         }
         selDataObj[KEY_ERASE_TIME] = selTime.tv_sec;
-        flush();
+
+        /* Route through the same worker as addEntry(), then wait for this
+         * exact update to land. flushWorker is the only writer and always
+         * snapshots the latest selDataObj, so no older snapshot can
+         * overwrite this clear. */
+        uint64_t version = requestFlushLocked();
+        flushDoneCv.wait(lock, [this, version] {
+            return flushedVersion >= version || stopFlushThread;
+        });
+
+        /* Report erase complete only if this update actually reached the
+         * file. persistedVersion is monotonic and bound to a version, so a
+         * later round cannot flip this verdict either way. It also covers
+         * waking up early on stopFlushThread, since nothing was written. */
+        if (persistedVersion < version)
+        {
+            lg2::error("SEL clear did not reach persistent storage");
+            return -1;
+        }
+
         return 0;
     }
 
@@ -230,14 +360,13 @@ class SELData
         return 0;
     }
 
-    int addEntry(std::string keyStr, std::promise<int>& idPromise)
+    int addEntry(std::string keyStr)
     {
         std::lock_guard<std::mutex> lock(dataMutex);
         struct timespec selTime = {};
 
         if (clock_gettime(CLOCK_REALTIME, &selTime) < 0)
         {
-            idPromise.set_value(-1);
             return -1;
         }
 
@@ -251,12 +380,7 @@ class SELData
         ss << std::setw(2) << std::setfill('0') << selCount;
 
         selDataObj[ss.str()][KEY_SEL_ENTRY_RAW] = keyStr;
-
-        /* Hand the record ID back before the slow part: the IPMI response
-         * can then return while flush() is still writing the file. */
-        idPromise.set_value(selCount);
-
-        flush();
+        requestFlushLocked();
         return selCount;
     }
 };
@@ -1728,46 +1852,14 @@ ipmi::RspType<uint16_t> ipmiStorageAddSELEntry(ipmi::Context::ptr ctx,
     fb_oem::ipmi::sel::parseSelData((ctx->hostIdx + 1), data, logErr);
 
     std::string source = "/xyz/openbmc_project/state/host0";
-
-    std::promise<int> idPromise;
-    std::future<int> idFuture = idPromise.get_future();
-
-    /* Launch the logging thread. The SEL entry is added first so the record
-     * ID is published as early as possible; the file write and the event log
-     * then both happen off the IPMI response path. */
-    std::thread([=, promise = std::move(idPromise)]() mutable {
-        try
-        {
-            selObj.addEntry(ipmiRaw.c_str(), promise);
-
-            namespace Errors = sdbusplus::error::com::meta::ipmi::UnifiedSEL;
-            lg2::commit(Errors::UnifiedSELEvent("SOURCE", source, "EVENT",
-                                                logErr, "RAW_EVENT", ipmiRaw));
-        }
-        catch (const std::exception& e)
-        {
-            /* An exception escaping a std::thread calls std::terminate().
-             * If it fired before the promise was set, the waiter below sees
-             * a broken promise and fails the command. */
-            lg2::error("Failed to record SEL entry: {ERROR}", "ERROR", e);
-        }
-        catch (...)
-        {
-            lg2::error("Failed to record SEL entry: unknown exception");
-        }
+    // Launch the logging thread
+    std::thread([=]() {
+        namespace Errors = sdbusplus::error::com::meta::ipmi::UnifiedSEL;
+        lg2::commit(Errors::UnifiedSELEvent("SOURCE", source, "EVENT", logErr,
+                                            "RAW_EVENT", ipmiRaw));
     }).detach();
 
-    int responseID = -1;
-    try
-    {
-        responseID = idFuture.get();
-    }
-    catch (const std::exception& e)
-    {
-        lg2::error("No SEL record ID returned: {ERROR}", "ERROR", e);
-        return ipmi::responseUnspecifiedError();
-    }
-
+    int responseID = selObj.addEntry(ipmiRaw.c_str());
     if (responseID < 0)
     {
         return ipmi::responseUnspecifiedError();
