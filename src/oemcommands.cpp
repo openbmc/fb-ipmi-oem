@@ -3143,6 +3143,30 @@ static ipmi_ret_t handleCtrlBank(std::span<const uint8_t> data,
             ss.str("");
             ss.clear();
             setDumpState(currState, CrdState::free);
+
+            auto conn = getSdBus();
+            auto method = conn->new_method_call("xyz.openbmc_project.Dump.Manager", "/xyz/openbmc_project/dump/faultlog",
+                                                "xyz.openbmc_project.Dump.Create", "CreateDump");
+
+            method.append(
+                std::map<std::string, std::variant<std::string>>{
+                    {"xyz.openbmc_project.Dump.Create.CreateParameters.OriginatorId", "BIOS"},
+                    {"xyz.openbmc_project.Dump.Create.CreateParameters.OriginatorType", "xyz.openbmc_project.Common.OriginatedBy.OriginatorTypes.Client"},
+                    {"CrashdumpFile", dumpDir / filename}
+                });
+
+            try
+            {
+                conn->call_noreply(method);
+            }
+            catch (const sdbusplus::exception::internal_exception& e)
+            {
+                phosphor::logging::log<phosphor::logging::level::ERR>(
+                    "IPMI ipmiOemCrashdump Failed in call method",
+                    phosphor::logging::entry("ERROR=%s", e.what()));
+                return ipmi::ccUnspecifiedError;
+            }
+            
             break;
         }
         default:
