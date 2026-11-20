@@ -120,6 +120,10 @@ static constexpr auto oemTSErr = "OEM timestamped";
 static constexpr auto fbUniSELErr = "Facebook Unified SEL";
 static constexpr auto oemNTSErr = "OEM non-timestamped";
 static constexpr auto unknownErr = "Unknown";
+static constexpr auto memoryCxlEvent =
+    std::to_array({"DIMM A0", "DIMM B0", "DIMM A1", "DIMM B1",
+                   "DIMM A2", "DIMM B2", "DIMM C0", "DIMM D0",
+                   "DIMM C1", "DIMM D1", "DIMM C2", "DIMM D2"});
 
 static constexpr uint8_t stdErrType = 0x02;
 static constexpr uint8_t oemTSErrTypeMin = 0xC0;
@@ -138,6 +142,7 @@ static constexpr uint8_t unifiedPcieEvt = 9;
 static constexpr uint8_t unifiedMemEvt = 10;
 static constexpr uint8_t unifiedBootGuard = 12;
 static constexpr uint8_t unifiedPprEvt = 13;
+static constexpr uint8_t unifiedCxlMemErr = 14;
 
 /* event sensor name in processing SEL */
 static constexpr uint8_t memoryEccError = 0x63;
