@@ -1268,6 +1268,7 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
         "Memory uncorrectable error (Command/Address Parity)",
         "Memory PMIC Error",
         "CXL Memory training error",
+        "CXL Memory runtime uncorrectable",
         "Reserved"};
     std::vector<std::string> mcaErrSeverityDetail = {
         "Correctable Error",
@@ -1321,6 +1322,10 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
         "r-Rank VLS + re-buddy", "Reserved"};
     std::vector<std::string> pprEvent = {"PPR disable", "Soft PPR", "Hard PPR",
                                          "Reserved"};
+    std::vector<std::string> memoryCxlEvent = {
+        "DIMM A0", "DIMM B0", "DIMM A1", "DIMM B1", "DIMM A2", "DIMM B2",
+        "DIMM C0", "DIMM D0", "DIMM C1", "DIMM D1", "DIMM C2", "DIMM D2",
+        "Reserved"};
 
     std::stringstream tmpStream;
 
@@ -1490,6 +1495,25 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
                                   static_cast<uint8_t>(pprEvent.size() - 1))],
                 ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12]);
             break;
+        case unifiedCxlMemErr:
+        {
+            uint8_t busNumber = ptr[6];
+            uint8_t deviceNumber = ptr[7] >> 3;
+            uint8_t functionNumber = ptr[7] & 0x7;
+            uint8_t dimmNumber = ptr[10] & 0xf;
+            eventType = ptr[9] & 0xf;
+
+            tmpStream << std::format(
+                "GeneralInfo: CXLMemErr(0x{:02X})"
+                ", Bus {:02X}/Dev {:02X}/Fun {:02X}"
+                ", DIMM Failure Event: {}, {}",
+                genInfo, busNumber, deviceNumber, functionNumber,
+                dimmErr[std::min(eventType,
+                                 static_cast<uint8_t>(dimmErr.size() - 1))],
+                memoryCxlEvent[std::min(static_cast<size_t>(dimmNumber),
+                                        memoryCxlEvent.size() - 1)]);
+            break;
+        }
         default:
             std::vector<uint8_t> oemData(ptr, ptr + 13);
             std::string oemDataStr;

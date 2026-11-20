@@ -138,6 +138,7 @@ static constexpr uint8_t unifiedPcieEvt = 9;
 static constexpr uint8_t unifiedMemEvt = 10;
 static constexpr uint8_t unifiedBootGuard = 12;
 static constexpr uint8_t unifiedPprEvt = 13;
+static constexpr uint8_t unifiedCxlMemErr = 14;
 
 /* event sensor name in processing SEL */
 static constexpr uint8_t memoryEccError = 0x63;
