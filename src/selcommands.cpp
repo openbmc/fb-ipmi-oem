@@ -1268,6 +1268,7 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
         "Memory uncorrectable error (Command/Address Parity)",
         "Memory PMIC Error",
         "CXL Memory training error",
+        "CXL Memory runtime uncorrectable",
         "Reserved"};
     std::vector<std::string> mcaErrSeverityDetail = {
         "Correctable Error",
@@ -1489,6 +1490,17 @@ static void parseOemUnifiedSel(NtsOemSELEntry* data, std::string& errStr)
                 pprEvent[std::min(eventType,
                                   static_cast<uint8_t>(pprEvent.size() - 1))],
                 ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12]);
+            break;
+        case unifiedCxlMemErr:
+            eventType = ptr[9] & 0xf;
+            tmpStream << std::format(
+                "GeneralInfo: CXLMemErr(0x{:02X})"
+                ", Bus {:02X}/Dev {:02X}/Fun {:02X}"
+                ", DIMM Failure Event: {}, {}",
+                genInfo, ptr[6], ptr[7] >> 3, ptr[7] & 0x7,
+                dimmErr[std::min(eventType,
+                                 static_cast<uint8_t>(dimmErr.size() - 1))],
+                memoryCxlEvent[ptr[10] & 0xf]);
             break;
         default:
             std::vector<uint8_t> oemData(ptr, ptr + 13);
