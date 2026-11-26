@@ -190,6 +190,7 @@ struct BtpprEntry
     std::filesystem::path path;
 };
 
+#pragma pack(push, 1)
 struct BtpprData
 {
     uint8_t index;
@@ -199,6 +200,7 @@ struct BtpprData
     uint8_t dataLen;
     uint16_t data[BTPPR_PAYLOAD_SIZE];
 };
+#pragma pack(pop)
 
 typedef struct
 {
